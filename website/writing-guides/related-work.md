@@ -16,6 +16,8 @@ this guide fixes what changes in the port.
 - **Scale**: eleven pages plus a hand-written index, shipped with the v0.8.0 relaunch
 - **Records**: one entry in [site-structure.md](../site-structure.md) for the whole section, per
   the [ported-catalog exception](../AGENTS.md#registering-a-document)
+- **Reading**: the shared set and [the comparison pages' row](README.md#comparison-pages) of the
+  reading map
 
 ## What the page is for
 
@@ -109,10 +111,14 @@ Every comparison page descends through the same sections in the same order, so a
 one can skim the next by habit. The section titles below are jobs; the headings on the page name the
 compared tool where that reads better.
 
-**Orientation.** Two or three sentences. Say what CGP is in one sentence, with the settled
-descriptor from [identity.md](../../communication-strategy/identity.md) and a link to the
-Introduction, since this page may be a reader's first contact. Say who the page is for and what it
-covers, and say how far it goes, because these pages are long.
+**Orientation.** Two or three sentences. Say what CGP is in one sentence, naming Context-Generic
+Programming in full beside a short form of the tag line and linking the Introduction, since this
+page may be a reader's first contact. Relate the short form to the compared idea where it meets it,
+as a type-class page can say that CGP extends Rust with pluggable trait implementations chosen per
+context; the
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) owns
+the detail. Say who the page is for and what it covers, and say how far it goes, because these pages
+are long.
 
 **In your terms.** A short table mapping the reader's vocabulary onto CGP's: their interface, their
 implementation, their resolution step, their constraint, and their environment against component,
@@ -223,12 +229,12 @@ keeps them.
 
 The category needs a hand-written index rather than a generated list, because a reader arrives
 holding one background and needs to be routed to one page. The index opens by saying what the
-section is for in two sentences, then routes by the reader's background: a short table from *what
-you know* to *the page to read*, grouped as the internal [catalog](../../related-work/README.md)
-groups them, with the two pages a Rust reader compares CGP to first, Rust's own proposals and C++
-policy-based design, listed first. It closes by saying what every page shares, so a reader knows the
-shape before opening one: a mapping into their terms, code side by side, costs on both sides, and
-where their tool wins.
+section is for in two sentences, naming Context-Generic Programming as every page does, then routes
+by the reader's background: a short table from *what you know* to *the page to read*, grouped as the
+internal [catalog](../../related-work/README.md) groups them, with the two pages a Rust reader
+compares CGP to first, Rust's own proposals and C++ policy-based design, listed first. It closes by
+saying what every page shares, so a reader knows the shape before opening one: a mapping into their
+terms, code side by side, costs on both sides, and where their tool wins.
 
 ## Placement, navigation, and bookkeeping
 

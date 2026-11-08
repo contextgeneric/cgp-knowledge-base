@@ -17,6 +17,9 @@ base, and two of them are the site's first how-to guides.
   `AGENTS.md` files for the contributor workflows
 - **Scale**: four pages, namely an index, one explanation of the process, and two how-to guides
 - **Recorded in**: one entry in [site-structure.md](../site-structure.md#knowledge-base)
+- **Reading**: the shared set and
+  [the knowledge-base pages' row](README.md#the-knowledge-base-pages-and-the-ai-disclosure-page) of
+  the reading map
 
 ## Why this is its own kind of page
 
@@ -37,16 +40,19 @@ as a feature, so each page holds one direction.
 Four pages, ordered by what the reader is doing: orienting, deciding whether to trust the process,
 then acting on it.
 
-**The index** (`index.md`, the subsection's `link` target) orients. It opens with the settled
-descriptor and a link to the Introduction, then says what the base is, who writes it, and who it is
-written for. It gives a one-line map of each top-level section, named in prose rather than linked.
-It states the order of authority: the source code outranks the base, and the base outranks the agent
-skill and the website pages derived from it. It concedes that the base is written for agents and
-records unfinished work and known defects, and it states in a section of its own that the base is in
-an early phase and under active development, with many documents still awaiting review, and that it
-improves step by step toward full accuracy to the author's intent. It routes onward by the question
-each page answers. Avoid exact document counts, which go stale with every change to the base;
-"several hundred documents" stays true.
+**The index** (`index.md`, the subsection's `link` target) orients. It opens by naming
+Context-Generic Programming beside a plain description and linking the Introduction, then says what
+the base is, who writes it, and who it is written for. Every page here opens the same way, per the
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page), and
+leaves out the tag line, since these pages are about how CGP is documented rather than about
+choosing an implementation. It gives a one-line map of each top-level section, named in prose rather
+than linked. It states the order of authority: the source code outranks the base, and the base
+outranks the agent skill and the website pages derived from it. It concedes that the base is written
+for agents and records unfinished work and known defects, and it states in a section of its own that
+the base is in an early phase and under active development, with many documents still awaiting
+review, and that it improves step by step toward full accuracy to the author's intent. It routes
+onward by the question each page answers. Avoid exact document counts, which go stale with every
+change to the base; "several hundred documents" stays true.
 
 **How CGP's Documentation Is Written** (`how-cgp-is-documented.md`) explains the process. It opens
 with the problem the process answers, as a mechanism rather than a judgement: an agent reading CGP's

@@ -13,6 +13,8 @@ it from becoming any of those.
 - **Governed by**: [identity.md](../../communication-strategy/identity.md) for the line, the frame, and
   the features; [message.md](../../communication-strategy/message.md) for the pains and strengths;
   [readers.md](../../communication-strategy/readers.md) for who is reading
+- **Reading**: the shared set and [the front page's row](README.md#the-front-page-and-the-overview)
+  of the reading map
 
 ## What the page is for, stated precisely
 
@@ -58,10 +60,14 @@ length is capped by structure rather than by willpower, which is what the offloa
 
 Four elements, in this order, and nothing else.
 
-**The tag line, verbatim.** *"A language extension for Rust, with pluggable trait implementations at
-compile-time."* It sits beneath the project name and is not paraphrased, reworded for the hero, or
-replaced by something snappier. The current hero headline (*"Build modular Rust applications with
-zero-cost abstractions"*) leads with the word
+**The project's name, then the tag line, verbatim.** The hero names the project in text as
+**Context-Generic Programming**, so a reader and a search engine can read it rather than only see it
+in the logo image, and the tag line beneath it is the plain description the
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) asks
+the name to stand beside: *"A language extension for Rust, with pluggable trait implementations at
+compile-time."* The front page presents the project, so it states the line whole, and the line is
+not paraphrased, reworded for the hero, or replaced by something snappier. The current hero headline
+(*"Build modular Rust applications with zero-cost abstractions"*) leads with the word
 [identity.md](../../communication-strategy/identity.md) retires and must go.
 
 **The reassurance line.** One sentence that heads off the two misreadings the tag line invites: that
@@ -234,9 +240,10 @@ which is placed second in the tutorial order for this reason and is naturally en
 the hero as it is depends on those two doing their job, so a change to either is a change to this
 trade.
 
-**Do not use the word "context" anywhere in the hero.** At the retrofit shape the context and the target
-are the same type, so calling `String` a context, while true, contradicts the gloss every other page
-gives, and a reader who meets that contradiction concludes they have misunderstood something. "Each type
+**Do not use the word "context" anywhere in the hero**, apart from the project's name above the tag
+line, which is a name rather than the term. At the retrofit shape the context and the target are the
+same type, so calling `String` a context, while true, contradicts the gloss every other page gives,
+and a reader who meets that contradiction concludes they have misunderstood something. "Each type
 names the implementation it uses" says everything the block needs.
 
 ### What it deliberately does not show
@@ -404,14 +411,18 @@ together with which Concepts page plays each role.
   directly from above the fold. Its frankness is a genuine asset and must not be softened when it
   moves; [explanation.md](explanation.md#project-status-and-adoption-risk) says what the move keeps and
   adds.
-- **Overview**: the fifth destination, and the one that already exists. It is the **feature tour**: every
-  high-level CGP feature walked through in more detail than any other surface carries, which makes it
-  the destination for both section 3 and section 4 of the essay. That job resolves the site's three
-  disagreeing feature lists rather than merely reconciling them: the front page carries the curated five
-  from [identity.md](../../communication-strategy/identity.md#the-headline-feature-set) as prose beats,
+- **Overview**: the fifth destination, and the one that already exists. It is the **feature tour**:
+  every high-level CGP feature walked through in more detail than any other surface carries, which
+  makes it the destination for both section 3 and section 4 of the essay. That job resolves the
+  site's three disagreeing feature lists rather than merely reconciling them: the front page carries
+  the curated five from
+  [identity.md](../../communication-strategy/identity.md#the-headline-feature-set) as prose beats,
   and the Overview expands each one and adds the breadth features the tag line only gestures at, so
   it is not competing with the front page's list and is not capped at five. Its problems half stays
-  anchored to [message.md](../../communication-strategy/message.md#the-problems-cgp-removes).
+  anchored to [message.md](../../communication-strategy/message.md#the-problems-cgp-removes). It is
+  a docs page that presents the project, so its opening paragraph names Context-Generic Programming
+  and may state the tag line whole, per the
+  [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
 
 ## What must not be on the homepage
 
@@ -424,8 +435,10 @@ tells the reader what to type, it is competing with the tutorials and losing.
 **No construct reference.** No table of macros, no attribute list, no syntax grammar. A reader who wants
 to know what `#[uses]` does is past the homepage.
 
-**No paradigm name as the hook.** "Context-generic programming" may appear once the reader understands
-what CGP does (late in the essay, beside a plain descriptor) and never in the hero.
+**No paradigm name as the hook.** The project's name heads the hero as identification, with the tag
+line as its description, and that is its one appearance. It is never the hook: the hero does not
+pitch "context-generic programming" or "a new paradigm" as the reason to read on, because the name
+does not tell an unfamiliar reader what CGP does, and the tag line and the code block do.
 
 **No coherence theory above the fold.** Section 1 explains coherence because the reader has just seen an
 `E0119` and wants to know why the rule exists. Opening on it, before the code that motivates it, loses
@@ -464,9 +477,9 @@ captions are copy and are governed by this guide.
 
 Run five checks, in this order.
 
-**Read only above the fold and ask whether it stands alone**: tag line, reassurance, the contrast, two
-links. If a reader stopping there could not say what CGP does, the hook has failed and nothing below
-matters.
+**Read only above the fold and ask whether it stands alone**: the name and the tag line,
+reassurance, the contrast, two links. If a reader stopping there could not say what CGP does, the
+hook has failed and nothing below matters.
 
 **Find the cost section.** If there isn't one, the page is overselling to the audience least tolerant of
 it.
@@ -476,7 +489,7 @@ improving on it? A draft that opens by describing coherence as a limitation rath
 has the frame backwards.
 
 **Count the sections and the links.** Six sections below the fold, two links above it. A seventh section
-means something needs offloading; a third hero link means one of them is not load-bearing.
+means something needs offloading; a third hero link means one of them is not needed.
 
 **Verify every snippet** against the source and the `/cgp` skill, preferring code already verified in
 [examples/](../../examples/README.md). For the hero block specifically, compile it rather than reading it:

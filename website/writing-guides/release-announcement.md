@@ -12,6 +12,8 @@ how it is written than the subject does.
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Status once published**: a dated historical record; see
   [Publishing, and what happens afterwards](#publishing-and-what-happens-afterwards)
+- **Reading**: the shared set and [the release post's row](README.md#the-release-post) of the
+  reading map
 
 ## The two readers, and the tension between them
 
@@ -29,11 +31,16 @@ announcement is routinely somebody's first page, and the reception of those thre
 what the project knows about its own framing comes from.
 
 The tension is real and cannot be resolved by writing for the average of the two. The resolution is
-**structural**: a release post opens on the *problem* the release addresses, which serves both readers at
-once: the newcomer meets a concrete Rust pain rather than a changelog, and the existing user learns
-immediately what the release is about. Orientation for the newcomer is then **one paragraph and a link**,
-never a re-introduction to the paradigm. Migration detail for the existing user is a clearly-marked
-section they can jump to. Neither reader is asked to wade through the other's material.
+**structural**: a release post opens on the *problem* the release addresses, which serves both
+readers at once: the newcomer meets a concrete Rust pain rather than a changelog, and the existing
+user learns immediately what the release is about. Orientation for the newcomer is then **one
+paragraph and a link**, never a re-introduction to the paradigm. That paragraph names
+**Context-Generic Programming** in full beside a plain description and links the Introduction, and
+it uses or echoes the tag line, as
+[the naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page)
+asks of a post before it publishes; a published post is a dated record and keeps the wording it
+shipped with. Migration detail for the existing user is a clearly-marked section they can jump to.
+Neither reader is asked to wade through the other's material.
 
 ## Give the release a clear lead
 
@@ -52,9 +59,12 @@ under 800 words because it introduces one crate, and the v0.5.0 post runs to nea
 introduces a family of ideas and removes a trait. Neither is wrong. What is wrong is a post whose length
 is set by the number of entries rather than by the weight of the lead.
 
-The title names the news in plain words: **`CGP vX.Y.Z - <the main improvement>`**, or a short set of
-independent improvements when those form the opening. Match its emphasis to what readers encounter
-first. A title that says only "CGP v0.8.0 released" wastes the pitch for readers who see only the title.
+The title names the news in plain words: **`CGP vX.Y.Z - <the main improvement>`**, or a short set
+of independent improvements when those form the opening. Match its emphasis to what readers
+encounter first. A title that says only "CGP v0.8.0 released" wastes the pitch for readers who see
+only the title. A search result shows roughly the first sixty characters, so the improvement must
+fit inside them; the longest release titles were cut before they said anything, per
+[seo.md](../seo.md#the-longest-titles-are-truncated-before-they-say-anything).
 
 ## The shape
 
@@ -63,8 +73,9 @@ before the main problem-and-solution walkthrough, as explained above. Only the f
 discussion links are mechanical; the rest is the argument.
 
 **Front matter.** `slug` (always; without one, Docusaurus publishes under a dated path rather than a
-flat URL), `authors: [soares]`, and `tags: [release]`. A post that is also a deep dive carries
-`deepdive` too. The full conventions, including the tag set, are in
+flat URL), `authors: [soares]`, `tags: [release]`, and a written `description` saying what the
+release is for, since a derived one is cut from the first source line. A post that is also a deep
+dive carries `deepdive` too. The full conventions, including the tag set, are in
 [blog/README.md](../blog/README.md).
 
 **The opening and the truncate marker.** Two or three sentences saying what shipped and what it is for,

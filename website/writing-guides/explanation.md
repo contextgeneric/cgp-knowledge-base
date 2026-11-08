@@ -25,6 +25,8 @@ state of the section in [site-structure.md](../site-structure.md).
   [voice-and-register.md](../../communication-strategy/voice-and-register.md), with one real tension
   worked out below
 - **Raw material**: [cgp/concepts/](../../cgp/concepts/README.md), rewritten rather than copied
+- **Reading**: the shared set and [the concept pages' row](README.md#concept-pages) of the reading
+  map
 
 ## Writing style
 
@@ -148,6 +150,19 @@ reader who has read one page should be able to skim the next by habit.
 **Open with the concept, its purpose, and the page's scope.** Establish what the page explains
 and why a reader would care, then say how far the explanation goes. Any example in the opening
 must support that purpose without making the example appear to be the page's subject.
+
+The opening paragraph also names **Context-Generic Programming** once, beside a plain description,
+and links the Introduction, because a reader arriving from a search result may not know what the
+page belongs to. Where the concept concerns choosing an implementation, as coherence, the
+consumer/provider split, and wiring do, relate a short form of the tag line to it, as in "CGP
+extends Rust with pluggable trait implementations, and Rust's coherence rules are why that needs
+more than an ordinary impl"; where it does not, as with the `Send`-bound workaround, leave the line
+out. The
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) owns
+the detail. Every page carries a written `description` and a problem-oriented `title` in the
+reader's words, per
+[formats.md](../../communication-strategy/formats.md#titles-first-lines-and-search), written in the
+same edit as the opening.
 
 **Develop the idea in as many sections as it takes**, with the argument's own headings rather than
 prescribed ones, and with code shown as illustration rather than as steps.

@@ -12,6 +12,7 @@ first place a newcomer should be routed.
 - **Governed by**: [readers.md](../../communication-strategy/readers.md) for the reader and the
   comprehension barriers; [vocabulary.md](../../communication-strategy/vocabulary.md) for which words may
   appear when
+- **Reading**: the shared set and [the tutorials' row](README.md#tutorials) of the reading map
 
 ## Tutorials are independent and named for an outcome
 
@@ -25,6 +26,15 @@ from a search result, a forum reply, or an agent's suggestion lands somewhere th
 implementation per context" over "Using `#[cgp_component]`"; "Make your error type abstract" over
 "Abstract types". The construct is what the tutorial teaches; the outcome is why anyone opens it. Naming
 by construct also quietly turns the section into a reference index, which is not what it is for.
+
+**Because every tutorial is an entry point, its opening paragraph names Context-Generic
+Programming** once, beside a plain description and linked to the Introduction, and where the
+tutorial's outcome is a choice of implementation, it relates a short form of the tag line to that
+outcome: "CGP enables pluggable trait implementations in Rust, and this tutorial swaps one per
+context". Its front matter carries a written `description`, and the section's generated index
+carries the name in the `description` of `docs/tutorials/_category_.json`. The
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) owns
+the detail.
 
 Tutorials may overlap deliberately, and several already do: the same `#[cgp_fn]` and `#[implicit]`
 ground is covered by both existing series. That is not duplication to be eliminated. Two tutorials may

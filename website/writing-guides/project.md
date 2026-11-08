@@ -14,6 +14,8 @@ are expanded into short tutorials rather than ported line for line.
   the source of truth
 - **Plans and records** — [../projects/README.md](../projects/README.md) for the section, and one
   document per project beside it
+- **Reading** — the shared set and [the Projects pages' row](README.md#projects-pages) of the
+  reading map
 
 ## What the section is for
 
@@ -130,7 +132,10 @@ The first screen therefore does three things before any code:
   downloads a web page and prints its SHA-256 digest, with every stage of the pipeline written as a
   Rust type."
 - **Place it**: one sentence on what the project is, linking the project index, and one clause on
-  what CGP is, linking the Introduction.
+  what CGP is, linking the Introduction. That clause names Context-Generic Programming in full, and
+  where the program's point is a choice of implementation, it relates a short form of the tag line
+  to the program, per the
+  [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
 - **Offer the prerequisites** in a `:::tip` admonition titled `### New to CGP?`, per the [admonition
   convention](../site-structure.md#conventions-the-port-must-follow). It names the two or three
   pages a reader should know before this one (usually Hello World and the Concepts page for the
@@ -403,8 +408,10 @@ well-meaning trim removes.
 ## Front matter and the provenance note
 
 Every Projects page carries a `description` written from its own summary, as every site page does,
-per [site-structure.md](../site-structure.md#conventions-the-port-must-follow). The `h1` depends on
-the page kind:
+per [site-structure.md](../site-structure.md#conventions-the-port-must-follow), and names
+Context-Generic Programming once in its opening paragraph, as the example page's first screen does.
+A directory whose index is generated, such as a project's `guides/`, carries the name in its
+`_category_.json` description instead. The `h1` depends on the page kind:
 
 - **An example page** is titled for what the program does, as a tutorial is titled for an outcome:
   *Checksum a web page with a native pipeline*. Its `sidebar_label` is the program's name,

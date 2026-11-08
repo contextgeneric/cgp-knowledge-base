@@ -25,7 +25,7 @@ resolving.
 
 ## What every guide here assumes
 
-Three decisions are settled across the whole site and are not re-argued in each guide. They come from
+Four decisions are settled across the whole site and are not re-argued in each guide. They come from
 [communication-strategy/](../../communication-strategy/README.md), and a guide that contradicts them is
 a defect in the guide.
 
@@ -39,8 +39,18 @@ in the author's own voice and must stay that way. The full model is
 
 **CGP enhances Rust's trait system rather than replacing it.** Every page reinforces that frame, from
 the tag line down to a feature title, which is why "a superset of ordinary traits", "a library on stable
-Rust", and a sympathetic account of what the trait system already does are load-bearing rather than
+Rust", and a sympathetic account of what the trait system already does are essential rather than
 defensive. See [identity.md](../../communication-strategy/identity.md).
+
+**Every page names Context-Generic Programming, and echoes the tag line rather than repeating it.**
+A page names the project in full once, in its opening paragraph, beside a plain description, and
+relates a short form of the tag line to what it explains, such as "CGP enables pluggable trait
+implementations in Rust", or leaves the line out where it does not fit. Only a page that presents the
+project states the line whole, and a generated category index carries the name in its
+`_category_.json` description. The skill pages and the published blog posts are exempt. The rule and
+its short forms belong to
+[identity.md](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page); each
+guide says only where its kind of page carries them.
 
 **Detailed explanation lives on its own page.** The site's long-standing habit is for an explanation to
 outgrow whatever container it starts in. The rule is to plan for that rather than fight it: when a

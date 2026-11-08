@@ -12,6 +12,9 @@ works.
   surface is for and where a reader goes next;
   [formats.md](../../communication-strategy/formats.md#the-conversion-ladder) for matching the next
   step to the reader
+- **Reading**: the shared set and
+  [the orientation pages' row](README.md#orientation-pages-the-introduction-the-quickstart-and-resources)
+  of the reading map
 
 ## What separates orientation from every other page type
 
@@ -41,10 +44,15 @@ These pages are read cold and left within a screen, so each owes its reader an o
 line and an obvious way onward.
 
 **Orient a cold reader in the first paragraph.** Any of these pages may be someone's first contact
-with CGP, per [information-architecture.md](../information-architecture.md#most-readers-do-not-arrive-at-the-homepage),
-so each opens by saying what CGP is in a sentence, using the settled descriptor from
-[identity.md](../../communication-strategy/identity.md#the-tag-line), with a link onward. This is
-one sentence, not a summary of the front page.
+with CGP, per
+[information-architecture.md](../information-architecture.md#most-readers-do-not-arrive-at-the-homepage),
+so each opens by saying what CGP is in a sentence, naming Context-Generic Programming in full, with
+a link onward. This is one sentence, not a summary of the front page. The Introduction presents the
+project, so it states the settled tag line whole; the Quickstart and Resources relate a short form
+of it to what they do, as in "CGP enables pluggable trait implementations in Rust, and this page
+gets one running", or leave it out. The
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) owns
+the detail.
 
 **End every path somewhere.** An orientation page that leaves the reader with no obvious next click
 has failed at its only job. Where several routes are possible, name them by the question each

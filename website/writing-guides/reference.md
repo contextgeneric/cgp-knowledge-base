@@ -9,7 +9,10 @@ on the site.
 - **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Derived from**: the internal reference at `cgp/reference/`, which stays the source of truth
-- **Scale**: roughly 120 pages, ported rather than written from scratch
+- **Scale**: about 200 pages, ported rather than written from scratch
+- **Reading**: the shared set and
+  [the reference pages' row](README.md#reference-pages-the-glossary-and-the-error-catalog) of the
+  reading map
 
 ## The site reference is canonical
 
@@ -31,7 +34,7 @@ This is a change to the site's shape rather than an addition to it, and
 
 ## Derived from the internal reference, and kept in step with it
 
-The 87 documents under `cgp/reference/` already contain almost all of the *information* these pages
+The 90 documents under `cgp/reference/` already contain almost all of the *information* these pages
 need. They are wrong for a public reader in four specific ways rather than in substance, so **a
 reference page is ported, not rewritten**: take the internal document, apply the four transformations
 below, and the result is most of the page.
@@ -77,7 +80,7 @@ or provider-side mirror of another, and it includes the interlocking members of 
 builder traits get seven pages, not one. A page whose title reads *`X`, `Y` & `Z`* is a defect, however
 closely the three are related.
 
-Two consequences follow and both are load-bearing. **Cross-link instead of repeating**: where two pages
+Two consequences follow and both are essential. **Cross-link instead of repeating**: where two pages
 would say the same thing, one says it and the other links, so the shared explanation has exactly one
 home. And **the mapping to the internal reference is not one to one**: one internal document
 feeds several public pages, which each internal document records so a later synchronization knows where
@@ -159,14 +162,14 @@ doing exactly what the reference is for: looking one thing up by a name they alr
 an error code or a message shape. The **glossary** belongs inside it for the same reason, and is
 specified in [The glossary page](#the-glossary-page) below.
 
-The error catalog is a consolidation of a different kind from the construct consolidations above. The internal
-[errors catalog](../../cgp/errors/README.md) is sixteen class documents, and sixteen
-public pages would be a category no reader scans; one page, organized by the internal catalog's own
-**hidden-versus-surfaced** axis, is what a reader can actually use. It shows the small program behind
-each class, says what the compiler reports, and says what `cargo cgp check` makes of it, the last
-being why it sits beside the tooling section conceptually even though it lives in the reference. Write
-it **before** the bulk of the port, because its existence is what lets every *Common Mistakes* section stay
-construct-specific instead of re-explaining the same failure.
+The error catalog is a consolidation of a different kind from the construct consolidations above.
+The internal [errors catalog](../../cgp/errors/README.md) is twenty-one class documents, and
+twenty-one public pages would be a category no reader scans; one page, organized by the internal
+catalog's own **hidden-versus-surfaced** axis, is what a reader can actually use. It shows the small
+program behind each class, says what the compiler reports, and says what `cargo cgp check` makes of
+it, the last being why it sits beside the tooling section conceptually even though it lives in the
+reference. Write it **before** the bulk of the port, because its existence is what lets every
+*Common Mistakes* section stay construct-specific instead of re-explaining the same failure.
 
 ## The glossary page
 
@@ -347,10 +350,17 @@ shows its own `pub trait` block twice. The macro, attribute, and derive groups h
 section; this variant belongs to `components/` and `traits/` alone.
 
 **Overview**: one or two paragraphs, readable by someone who has finished the first tutorial and
-nothing else. State the problem the construct solves before naming any mechanism, and gloss or link every
-term a newcomer will not have. This is the internal Purpose section rewritten for a reader who does not
-have the `/cgp` skill loaded, and it is the section most often ported badly, because the internal version
-assumes fluency the public reader has not got.
+nothing else. State the problem the construct solves before naming any mechanism, and gloss or link
+every term a newcomer will not have. The first paragraph names Context-Generic Programming once and
+links the Introduction, because a reader who searched for the construct's name may land here first.
+Where the construct concerns choosing an implementation, as a component, a provider, or a wiring
+macro does, relate a short form of the tag line to its job, as in "CGP enables pluggable trait
+implementations in Rust, and `delegate_components!` is where a context picks them"; a type-level
+building block leaves the line out. The
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) owns
+the detail. This is the internal Purpose section rewritten for a reader who does not have the `/cgp`
+skill loaded, and it is the section most often ported badly, because the internal version assumes
+fluency the public reader has not got.
 
 **Usage**: the accepted forms, each argument and option, and what defaults fill an omission. The
 internal Syntax section, largely unchanged.
@@ -415,6 +425,11 @@ reader who hits an unlisted corner case trusts the rest of the page less.
 
 The page then closes with two short lists rather than sections: **Related constructs**, each with a
 phrase saying how it relates, and **Source**, linking the construct's implementation on GitHub.
+
+The front matter keeps the construct's name as the `h1` and adds a `title` written for a search
+result, the name first and then its job, and a written `description`, per
+[the title and description levers](../seo.md#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them)
+and the [port conventions](../site-structure.md#conventions-the-port-must-follow).
 
 ## Say when a construct is machinery the macros generate
 
@@ -523,11 +538,12 @@ learning. It needs a directory with a
 `_category_.json` per group, and the sidebar is autogenerated from the tree; see
 [site-structure.md](../site-structure.md) for the mechanics and the stock-Docusaurus constraint.
 
-The category needs a real **index page**, not an autogenerated list. A hundred and twenty pages is far too many to scan,
-and the index is where the layered-audience promise is kept at the section level: it should open by
-naming the handful of constructs a newcomer actually needs, then group the rest by the job they do, in
-the shape the internal [reference index](../../cgp/reference/README.md) already uses. A reader who does
-not yet know which construct they want should be able to find it from this page.
+The category needs a real **index page**, not an autogenerated list. Two hundred pages is far too
+many to scan, and the index is where the layered-audience promise is kept at the section level: it
+should open by naming the handful of constructs a newcomer actually needs, then group the rest by
+the job they do, in the shape the internal [reference index](../../cgp/reference/README.md) already
+uses. A reader who does not yet know which construct they want should be able to find it from this
+page.
 
 Because the site reference is canonical, **completeness is an obligation**, met when the section first
 publishes rather than approached over time. Every construct the `cgp` crate exports needs a page or a

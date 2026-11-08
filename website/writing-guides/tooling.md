@@ -12,6 +12,8 @@ this guide describes.
 - **Scale**: nine pages, namely an overview, installation, one page per reading command, a page on
   reading the output, a page on editor integration, troubleshooting, and two lookup pages for the
   error codes and the command line
+- **Reading**: the shared set and [the `cargo-cgp` pages' row](README.md#cargo-cgp-pages) of the
+  reading map
 
 ## Writing style
 
@@ -19,7 +21,12 @@ Use **natural-writing** whenever adding or revising a public page under `docs/ca
 that style in the `point-first-writing` skill and apply it throughout the page. Let each sentence
 build on the previous one, connect paragraphs so readers can follow the reasoning, and vary sentence
 length. A reader arrives here to run a command or to understand an error, so the opening names that
-task and why it matters.
+task and why it matters. It also names Context-Generic Programming once, beside a plain description
+of what the tool checks, and links the Introduction. The tool's subject is wiring that selects
+implementations, so the overview can relate a short form of the tag line to it; a lookup page leaves
+the line out. The
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) owns
+the detail.
 
 The form still follows the content. The symptom index, the decision table, the command tables, and
 each code's entry stay tables or short structured entries, since a reader looks items up in them, and
