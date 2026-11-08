@@ -59,7 +59,8 @@ where
 
 The stored field type must implement `AsRef<Value>` and be `'static`. As with `UseField`, `OutTag`,
 the component's marker, is ignored. The `MutFieldGetter` impl requires `HasFieldMut<Tag>` with a
-field type implementing both `AsRef<Value>` and `AsMut<Value>`, and returns `as_mut()`. Unlike
+field type implementing both `AsRef<Value>` and `AsMut<Value>` and being `'static`, and returns
+`as_mut()`. Unlike
 `UseField`, `UseFieldRef` implements no `TypeProvider`.
 
 ## Examples
