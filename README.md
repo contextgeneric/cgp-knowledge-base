@@ -1,3 +1,5 @@
+[![Tests](https://github.com/contextgeneric/cgp-knowledge-base/actions/workflows/tests.yml/badge.svg)](https://github.com/contextgeneric/cgp-knowledge-base/actions/workflows/tests.yml)
+
 # The CGP Knowledge Base
 
 Context-Generic Programming (CGP) is a language extension for Rust, with pluggable trait
@@ -212,6 +214,12 @@ catalog and the guides; explaining CGP to someone means the related-work documen
 background and the communication-strategy guidance for the format. When a task spans projects (a
 diagnostic change that touches both a `cgp` construct and a `cargo-cgp` fixture), read both members'
 documents, because keeping them in step is part of the change.
+
+## Checks
+
+CI runs `python3 scripts/check.py`, which checks that relative links resolve, that every document is
+registered in its section `README.md` and in [summary.md](summary.md), and that no link is split
+across lines.
 
 ## Reading it from outside the project
 
