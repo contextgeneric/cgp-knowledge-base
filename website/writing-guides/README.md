@@ -92,10 +92,11 @@ Register a new guide here in the same change that adds it, and in [../../summary
   external Rust documentation to link for concepts a page assumes, and the two non-construct pages the
   section carries, the error catalog and the glossary.
 - [orientation.md](orientation.md): the pages whose job is routing rather than teaching, covering the
-  Introduction, the Quickstart, and Resources. What separates orientation from the homepage, a
-  tutorial, an explanation and a reference; what each of the three pages is for; the Quickstart's
-  ten-minute activation target and the boundary that keeps it from becoming a second Hello World;
-  and the version pin that ties it to the release.
+  Introduction, the Quickstart, Resources, and the Contribute page. What separates orientation from
+  the homepage, a tutorial, an explanation and a reference; what each of the four pages is for; the
+  Quickstart's ten-minute activation target and the boundary that keeps it from becoming a second
+  Hello World; the version pin that ties it to the release; and the Contribute page's routes, with
+  the sponsorship section and the acknowledgement left in the author's hands.
 - [knowledge-base.md](knowledge-base.md): the pages explaining the public knowledge base, covering
   why they are the second sanctioned exception to the one-way link rule and how far it reaches, the
   four-page shape that keeps the process page apart from the two how-to pages, what a how-to page
@@ -270,11 +271,14 @@ the naming rule exempts them.
 
 ### The Contribute page
 
-- **Guide:** none specifies it; its sponsorship section keeps the author's voice, per
-  [What every guide here assumes](#what-every-guide-here-assumes).
+- **Guide:** [orientation.md](orientation.md#the-contribute-page), whose sponsorship section stays
+  in the author's voice, per [What every guide here assumes](#what-every-guide-here-assumes).
 - **Strategy:**
   [contributions from outside the project](../../communication-strategy/ai-disclosure.md#contributions-from-outside-the-project)
-  and [the contributor directing an agent](../../communication-strategy/readers.md#the-contributor-directing-an-agent).
+  and [the contributor directing an agent](../../communication-strategy/readers.md#the-contributor-directing-an-agent);
+  [the conversion ladder](../../communication-strategy/formats.md#the-conversion-ladder), for the
+  enthusiast; and [the stated preferences](../../communication-strategy/author-personality.md#stated-preferences),
+  for the sponsorship section.
 - **SEO:** [the derived descriptions](../seo.md#derived-descriptions-made-the-worst-snippets).
 
 ### The knowledge-base pages and the AI disclosure page

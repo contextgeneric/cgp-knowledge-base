@@ -5,9 +5,11 @@ It does not teach, and it does not persuade. Its reader has already decided CGP 
 minutes and wants either the shortest route to what they came for or the shortest proof that it
 works.
 
-- **Where they live**: `docs/index.md`, `docs/quickstart.md`, `docs/resources.md`
+- **Where they live**: `docs/index.md`, `docs/quickstart.md`, `docs/resources.md`, and
+  `docs/contribute.md`
 - **Voice**: project voice, per
-  [voice-and-register.md](../../communication-strategy/voice-and-register.md)
+  [voice-and-register.md](../../communication-strategy/voice-and-register.md), except the
+  Contribute page's sponsorship section, which is the author's
 - **Governed by**: [information-architecture.md](../information-architecture.md) for what each
   surface is for and where a reader goes next;
   [formats.md](../../communication-strategy/formats.md#the-conversion-ladder) for matching the next
@@ -152,6 +154,74 @@ Every entry is checked when the page is touched: that the crate exists under the
 the link resolves, and that anything version-specific still holds. This page ages by accumulation,
 and a dead link here costs more than on any other page because its only content is links.
 
+## The Contribute page
+
+**The enthusiast's page, and the top rung of the
+[conversion ladder](../../communication-strategy/formats.md#the-conversion-ladder).** Its reader
+already likes CGP and wants to know how to help, at whatever size of commitment they can offer, so
+the page is a set of routes, one per way of helping, each saying what it asks and where it leads. It
+routes rather than persuades: the reader has already been persuaded, and the page's job is to make
+each way in obvious. Its reading is the shared set and
+[its row of the reading map](README.md#the-contribute-page).
+
+### The opening, and the routes in order
+
+**The opening paragraph says what the page is for**, names Context-Generic Programming in full
+beside a plain description, and links the Introduction, per the
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page). The
+tag line has no job here and is left out. It says that help of every size counts, as a fact about
+the routes below rather than as encouragement.
+
+**Then one section per route, ordered from the smallest commitment to the largest**, so a reader
+stops at the first that fits:
+
+- **Discussion:** the Discord server, GitHub Discussions, and the subreddit, for questions and
+  ideas.
+- **Reporting a problem:** a confusing page, or an error in the knowledge base, which is a
+  contribution in its own right because the base is still being reviewed, per
+  [contributions from outside the project](../../communication-strategy/ai-disclosure.md#contributions-from-outside-the-project).
+  Link the knowledge base's issue tracker and the section on reporting problems in *Contributing to
+  CGP with an Agent*, which [knowledge-base.md](knowledge-base.md#the-section-shape) specifies.
+- **Writing and sharing:** a post, a tutorial, or a talk written independently, and the project's
+  social accounts.
+- **Publishing reusable components:** the project's aim of an ecosystem of published components
+  and providers, so that most users write only the wiring that selects them. State it as an aim, never as a
+  description of an ecosystem that exists, and in the strategy's words rather than with "modular" as
+  the lead, per [identity.md](../../communication-strategy/identity.md#using-modular-as-a-supporting-word).
+- **Changing CGP itself:** one paragraph routing to *Contributing to CGP with an Agent*, the site's
+  only guide to contributing code or documentation, which publishes the contribution policy. Do not
+  restate the policy or add to it, and keep the agent framing to the one line beside the task, per
+  [knowledge-base.md](knowledge-base.md#what-must-not-be-on-one).
+- **Sponsoring the author:** last, because it changes voice, as the next section describes.
+
+The routes may be grouped or renamed as the page reads best, and a route that has nowhere to lead,
+such as a channel the project has closed, is removed rather than kept.
+
+### The sponsorship section and the acknowledgement belong to the author
+
+**The sponsorship section is the author's own first-person account**, candid about what support
+means to him, and it stays in his voice, per
+[author-personality.md](../../communication-strategy/author-personality.md#stated-preferences). The
+switch of voice is visible: it has its own heading, and nothing before it speaks as "I". A revision
+does not rewrite it into project prose or improve its wording; it fixes a broken link, and changes
+anything else only at the author's request.
+
+**The acknowledgement is the author's too.** It records where CGP came from and who supported it,
+which [the website repository's rules](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources)
+leave to the author. Keep its text, but put it under a `##` heading so the page has one `h1`. Its
+link to the Hermes SDK is the only one outside the dated blog posts to that
+[legacy resource](../AGENTS.md#leave-legacy-resources-off-public-pages), so raise it with the
+author rather than editing it.
+
+### The rest of the page
+
+**Project voice everywhere else**: the reader is "you" and the project is "CGP". Never use "we" or
+"our" for a project with one author, per
+[voice-and-register.md](../../communication-strategy/voice-and-register.md#the-layered-voice), and
+never "passionate", "invaluable", or a claim about the size of the community. Its front matter
+carries a written `description` and keeps its `sidebar_position`, and every link is followed when
+the page is touched, because a dead channel is a route that fails.
+
 ## What must never be on an orientation page
 
 **No argument for CGP.** A reader on these pages is past the pitch, and the front page makes it
@@ -190,6 +260,10 @@ four words of vocabulary. Anything else has drifted.
 **Follow every link**, including the external ones, and check the front matter carries a
 `description`.
 
+**For the Contribute page, compare the sponsorship section and the acknowledgement with the
+author's text**, which a revision leaves as he wrote it, and search the rest for "we", "our", and
+"us".
+
 ## Where the current pages stand
 
 **The Introduction** is current and close to this guide. Its one divergence is that it still carries
@@ -211,3 +285,11 @@ branch merges with the release, so the pin is right and the page must not publis
 ten-minute target has not been measured**: the program is compiled in `example-code`, but no one has
 walked the page on a clean machine with a friction log, which is what this guide asks for and the one
 check the page has not had.
+
+**The Contribute page predates this guide** and is to be rewritten against it, which the author has
+allowed in full. Its routes are the right ones, and its code-and-documentation section already
+routes to the contributing how-to and its reporting section. It diverges in five ways: the opening
+and the documentation section speak as a corporate "we" and "us"; the opening never names
+Context-Generic Programming; the components section leads with "modularity"; the front matter has
+no `description`; and the acknowledgement sits under a second `#` heading. The sponsorship section
+and the acknowledgement's text stay as they are.
