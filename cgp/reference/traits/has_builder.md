@@ -11,7 +11,7 @@ the fields are not all known at the same place in the code and the construction 
 checked at compile time. A plain struct literal requires every field to be supplied at once; these
 traits instead start from an empty *partial* value and add fields to it one by one, with each
 addition advancing a type-level record of which fields are present. The payoff is that finalizing an
-incomplete value is a compile error, not a runtime panic, the trait that turns a partial value back
+incomplete value is a compile error, not a runtime panic: the trait that turns a partial value back
 into the concrete struct is implemented only for the fully-present configuration.
 
 The family is built around a single primitive, `UpdateField`, that changes one field's storage from
@@ -75,8 +75,8 @@ marker, as
 
 `BuildField<Tag>` and `TakeField<Tag>` are the two directions of that transition, each defined once
 in the field crate as a blanket impl over `UpdateField`. `BuildField` is the `IsNothing → IsPresent`
-direction, set a currently-absent field, and `TakeField` is the `IsPresent → IsNothing` direction,
-remove a currently-present field:
+direction, which sets a currently-absent field, and `TakeField` is the `IsPresent → IsNothing`
+direction, which removes a currently-present one:
 
 ```rust
 pub trait BuildField<Tag> {
@@ -169,7 +169,7 @@ partial type is the only sign the field is already set. The second is the mirror
 ``the trait bound `__PartialPerson<IsNothing, IsNothing>: UpdateField<Symbol<3, …'a'…'g'…'e'…>, IsPresent>` is not satisfied``,
 followed by a help listing the `UpdateField` impls that do exist, one per declared field.
 
-Finalizing is what makes the tracking load-bearing. The derive provides exactly one `FinalizeBuild`
+Finalizing is what makes the tracking essential. The derive provides exactly one `FinalizeBuild`
 impl, on the all-`IsPresent` configuration of the partial type, so `finalize_build` is in scope only
 when every field is present; calling it on a partial value with any `IsNothing` field fails to
 compile. `PartialData::Target` is implemented for *every* configuration and names the struct being
@@ -334,7 +334,7 @@ before `baz` was set would be a compile error rather than a runtime failure.
 **`CanBuildFrom` bounds its *source* on `HasFields + IntoBuilder`, which is why the source above
 derives [`HasFields`](has_fields.md) as well as the builder.** `build_from` recurses over
 `Source::Fields` to know which fields to copy, so a source deriving only `#[derive(BuildField)]` has
-a builder of its own and still cannot be merged into anything, the failure is an unsatisfied
+a builder of its own and still cannot be merged into anything. The failure is an unsatisfied
 `HasFields` bound on the source type rather than anything about the target:
 ``the trait bound `FooBar: HasFields` is not satisfied``, noted as
 ``required for `__PartialFooBaz<IsNothing, IsNothing>` to implement `CanBuildFrom<FooBar>` ``. The

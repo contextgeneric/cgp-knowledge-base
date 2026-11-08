@@ -37,7 +37,7 @@ pub trait MapType {
 ```
 
 The four standard markers in `cgp-field` cover the states a field passes through. `IsPresent` is the
-identity wrapping, the field holds its value directly. `IsNothing` erases the value to the unit
+identity wrapping: the field holds its value directly. `IsNothing` erases the value to the unit
 type, marking the field as absent. `IsVoid` maps to the uninhabited [`Void`](../types/either.md)
 type, marking a variant that can never be reached. `IsOptional` wraps the value in `Option<T>`,
 marking a field that is optionally present:
@@ -78,7 +78,7 @@ impl MapTypeRef for IsOwned { type Map<'a, T: 'a> = T; }
 
 Two of the three have consumers. `IsRef` and `IsMut` are what `HasExtractorRef` and
 `HasExtractorMut` fix their borrowed extractors to, but **nothing in CGP currently selects
-`IsOwned`**, no derive emits it and no provider resolves against it. It is available for a borrowed
+`IsOwned`**: no derive emits it and no provider resolves against it. It is available for a borrowed
 view that holds its payloads by value, and at present that view exists only if you write it
 yourself. `IsOwned` is also, unlike `IsRef` and `IsMut`, not in the prelude.
 
@@ -112,7 +112,7 @@ pub trait TransformMapFields<Transform, TargetMap> {
 }
 ```
 
-The recursion is the load-bearing part, and it lives in a private helper trait,
+The recursion is the essential part, and it lives in a private helper trait,
 `TransformMapFieldsImpl`, implemented over the target's field list. For each `Field<Tag, Value>` in
 the list, after first recursing into the rest of the list, `TransformMapFields` uses
 [`UpdateField`](has_builder.md) twice: it first takes the field out

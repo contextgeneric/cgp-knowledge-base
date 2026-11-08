@@ -16,11 +16,12 @@ providers consume them as ordinary trait bounds while building a pipeline at com
 
 The split exists because building a monadic pipeline requires three separable decisions. Composing a
 list of handlers under a monad needs to know how to turn a continuation provider into a bind step,
-that is `MonadicBind`. Each bind step needs to know, for a given output type, what the underlying
-value beneath the monad's wrapper is, and how to put a value back into that output type, that is
-`ContainsValue` and `LiftValue`. Stacking one monad on top of another needs to apply a monad as a
-transformer over a base monad, that is `MonadicTrans`. Keeping these as separate traits lets the
-same marker serve all three roles and lets monads stack by composing their implementations.
+which is the job of `MonadicBind`. Each bind step needs to know, for a given output type, what the
+underlying value beneath the monad's wrapper is, and how to put a value back into that output type,
+which are the jobs of `ContainsValue` and `LiftValue`. Stacking one monad on top of another needs to
+apply a monad as a transformer over a base monad, which is the job of `MonadicTrans`. Keeping these
+as separate traits lets the same marker serve all three roles and lets monads stack by composing
+their implementations.
 
 They are imported from `cgp::extra::monad::traits`.
 
@@ -101,9 +102,9 @@ forward without ever short-circuiting. `MonadicTrans<M>` returns `M` unchanged,
 `LiftValue<T, T>` is the identity on `T` for both methods.
 
 `OkMonadic` and `ErrMonadic` implement the traits to branch on a `Result`, in mirror image of each
-other. For `ErrMonadic`, `ContainsValue<Result<T, E>>::Value` is `T`, the `Ok` payload is the value
-threaded forward, and `LiftValue<T, Result<T, E>>::lift_value` is `Ok`, so the continue branch is
-`Ok` and an `Err` short-circuits. For `OkMonadic` the roles are swapped:
+other. For `ErrMonadic`, `ContainsValue<Result<T, E>>::Value` is `T`, so the `Ok` payload is the
+value threaded forward, and `LiftValue<T, Result<T, E>>::lift_value` is `Ok`, so the continue branch
+is `Ok` and an `Err` short-circuits. For `OkMonadic` the roles are swapped:
 `ContainsValue<Result<T, E>>::Value` is `E`, and `lift_value` is `Err`, so the continue branch is
 `Err` and an `Ok` short-circuits. The `MonadicBind` impl of each base monad produces the
 corresponding `BindOk` or `BindErr` step over `IdentMonadic`, and the `MonadicTrans` impl wraps the

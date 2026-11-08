@@ -1,18 +1,19 @@
 # `StaticFormat`, `StaticString`, `ConcatPath`
 
-`StaticFormat`, `StaticString`, and `ConcatPath` turn CGP's type-level strings and paths back into
-runtime data, formatting a [`Chars`](../types/chars.md) chain character by character, decoding a
-[`Symbol!`](../macros/symbol.md) into a `&'static str` constant, and concatenating two type-level
-paths into one.
+`StaticFormat` and `StaticString` turn CGP's type-level strings back into runtime data, formatting a
+[`Chars`](../types/chars.md) chain character by character or decoding a
+[`Symbol!`](../macros/symbol.md) into a `&'static str` constant, and `ConcatPath` concatenates two
+type-level paths into one.
 
 ## Purpose
 
 These traits close the loop between CGP's compile-time names and the runtime world. CGP encodes
-field and variant names as types, a [`Symbol!`](../macros/symbol.md) is a length plus a
-[`Chars`](../types/chars.md) list, one node per character, so that names can drive trait resolution.
-But a program eventually needs those names as ordinary strings: to print a field name in an error
-message, to build a key, or to render a navigation path. `StaticFormat` and `StaticString` are the
-two ways to recover the string, and `ConcatPath` is the corresponding type-level operation on paths.
+field and variant names as types so that names can drive trait resolution: a
+[`Symbol!`](../macros/symbol.md) is a length plus a [`Chars`](../types/chars.md) list, one node per
+character. But a program eventually needs those names as ordinary strings: to print a field name in
+an error message, to build a key, or to render a navigation path. `StaticFormat` and `StaticString`
+are the two ways to recover the string, and `ConcatPath` is the corresponding type-level operation
+on paths.
 
 `StaticFormat` recovers the string lazily, by writing into a formatter; it is what backs the
 `Display` impl on `Symbol` and `Chars`, so a type-level string can be printed with `to_string()` or
@@ -35,8 +36,8 @@ from `cgp::core::base::traits`, the module through which `cgp-core` re-exports `
 [`PathCons`](../types/path_cons.md), and `Symbol`.
 
 `StaticFormat` is a trait with a single associated function that writes the type-level string into a
-`Formatter`. The implementor is the type-level string itself, so the function takes no `self`, there
-is no runtime value, only the type:
+`Formatter`. The implementor is the type-level string itself, so the function takes no `self`,
+because there is no runtime value, only the type:
 
 ```rust
 pub trait StaticFormat {

@@ -16,12 +16,13 @@ The four traits cover the directions that routing can take: enlarging a sum, shr
 growing a record out of smaller records.
 
 Upcast and downcast are the two directions of variant conversion. An *upcast* takes a value of a
-"narrow" enum whose variants are a subset of a "wide" enum's, and lifts it into the wide enum,
-always succeeds, because every variant of the source has a home in the target. A *downcast* goes the
-other way: it tries to narrow a wide enum into a smaller one, succeeding only if the value's current
-variant exists in the target, and otherwise handing back a remainder so the caller can keep trying
-other targets. `CanBuildFrom` is the record counterpart: it assembles a target by copying the fields
-it shares with a source, leaving the rest of the target to be filled in separately.
+"narrow" enum whose variants are a subset of a "wide" enum's, and lifts it into the wide enum. An
+upcast always succeeds, because every variant of the source has a home in the target. A *downcast*
+goes the other way: it tries to narrow a wide enum into a smaller one, succeeding only if the
+value's current variant exists in the target, and otherwise handing back a remainder so the caller
+can keep trying other targets. `CanBuildFrom` is the record counterpart: it assembles a target by
+copying the fields it shares with a source, leaving the rest of the target to be filled in
+separately.
 
 None of the four is in the prelude; all are imported from `cgp::core::field::impls`.
 
@@ -37,8 +38,8 @@ pub trait CanUpcast<Target> {
 ```
 
 `CanDowncast<Target>` is fallible. It returns `Result<Target, Self::Remainder>`, where the
-`Remainder` is the source's extractor with the attempted variants removed, what is left to try if
-this narrowing did not match:
+`Remainder` is the source's extractor with the attempted variants removed, which holds what is left
+to try if this narrowing did not match:
 
 ```rust
 pub trait CanDowncast<Target> {
@@ -88,7 +89,7 @@ target, the walk is total and the remaining extractor is uninhabited, finalized 
 to try pulling that variant out of the source extractor: on success it rebuilds the target with
 `FromVariant` and returns `Ok`; on failure it threads the shrunken remainder into the next variant's
 attempt. If no target variant matches, the terminal `Void` impl returns the whole remainder as
-`Err`. The difference between the two traits is only the starting point, `CanDowncast` first calls
+`Err`. The difference between the two traits is only the starting point: `CanDowncast` first calls
 `to_extractor` on the original enum, while `CanDowncastFields` operates on an extractor it is
 already given, which is exactly the `Remainder` from a prior `downcast`. This is why downcasting
 against several candidate targets in turn chains a `downcast` followed by `downcast_fields` calls on

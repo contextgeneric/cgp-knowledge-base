@@ -218,7 +218,7 @@ it stale.
   optional and defaulted fields.
 - [product_ops.md](cgp/reference/traits/product_ops.md) — the type-level product operations
   `AppendProduct`, `ConcatProduct`, and `MapFields`.
-- [static_format.md](cgp/reference/traits/static_format.md) — recovering type-level strings and paths
+- [static_format.md](cgp/reference/traits/static_format.md) — recovering type-level strings at run time, and joining type-level paths
   back into runtime data.
 
 #### `cgp/reference/types/`

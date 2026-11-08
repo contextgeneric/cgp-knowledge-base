@@ -11,7 +11,7 @@ record can be turned back into its concrete struct only once every field has bee
 [`FinalizeBuild`](has_builder.md) is implemented solely on the all-`IsPresent` configuration of the
 partial type. That strictness is exactly what catches a missing field at compile time, but it is too
 rigid for records where some fields have sensible defaults or are genuinely allowed to be absent.
-The traits in `cgp-field-extra` relax it in two controlled ways, filling unset fields with
+The traits in `cgp-field-extra` relax it in two controlled ways: filling unset fields with
 `Default::default()`, and tracking each field as an `Option` so absence is a runtime condition
 rather than a compile error, while reusing the same `UpdateField`-driven machinery underneath.
 
@@ -263,7 +263,7 @@ where
 ```
 
 Both methods reduce to a single `UpdateField` call that writes `Some(value)` into the `IsOptional`
-slot. The crucial detail is that the field's marker is `IsOptional` both before and after, the
+slot. The crucial detail is that the field's marker is `IsOptional` both before and after: the
 `Mapper = IsOptional, Output = Context` bounds keep the builder's type unchanged, so a field can be
 set repeatedly, and `set_optional` returns the previous `Option` while `set` discards it. This is
 what makes the optional builder freely mutable, in contrast to the core `build_field` that consumes
@@ -278,7 +278,7 @@ the second noting it found `__PartialContext<IsOptional, IsNothing>`.
 
 `FinalizeOptional` finalizes an optional builder into its concrete struct, succeeding only if every
 field holds a value and otherwise returning an error that names a missing field. Unlike
-`CanFinalizeWithDefault`, it does not substitute defaults, absence is a recoverable runtime error
+`CanFinalizeWithDefault`, it does not substitute defaults: absence is a recoverable runtime error
 rather than a silent fill:
 
 ```rust

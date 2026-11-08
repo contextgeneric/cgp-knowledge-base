@@ -208,14 +208,13 @@ construction macros are [`Symbol!`](macros/symbol.md) (a type-level string, for 
 [`Product!`](macros/product.md) and [`Sum!`](macros/sum.md) (type-level record and variant lists),
 and [`Path!`](macros/path.md) (a routing path), with [`Struct!`](macros/struct.md) and
 [`Enum!`](macros/enum.md) as the record and variant forms of a `Product!` or `Sum!` of named fields;
-their expanded lists are
-[`Cons` / `Nil`](types/cons.md) for products, [`Either` / `Void`](types/either.md) for sums,
-[`Chars`](types/chars.md) for the string behind `Symbol`, and [`PathCons`](types/path_cons.md) for
-paths. Two further lifts make non-type things addressable in trait resolution:
-[`Index`](types/index.md) for a tuple-field position and [`Life`](types/life.md) for a lifetime. And
-[`MRef`](types/mref.md) is the owned-or-borrowed getter value. The
-[`StaticFormat` / `StaticString` / `ConcatPath`](traits/static_format.md) traits recover these
-type-level strings and paths back into runtime data.
+their expanded lists are [`Cons` / `Nil`](types/cons.md) for products,
+[`Either` / `Void`](types/either.md) for sums, [`Chars`](types/chars.md) for the string behind
+`Symbol`, and [`PathCons`](types/path_cons.md) for paths. Two further lifts make non-type things
+addressable in trait resolution: [`Index`](types/index.md) for a tuple-field position and
+[`Life`](types/life.md) for a lifetime. And [`MRef`](types/mref.md) is the owned-or-borrowed getter
+value. The [`StaticFormat` / `StaticString` / `ConcatPath`](traits/static_format.md) traits recover
+these type-level strings as runtime data and join type-level paths.
 
 ## Directory layout
 
@@ -445,8 +444,7 @@ but must understand to read generated code.
 - [`CanUpcast`](traits/cast.md): structural casts between records and variants (`CanUpcast`,
   `CanDowncast`, `CanBuildFrom`).
 - [`DefaultNamespace`](traits/default_namespace.md): the namespace/preset default-resolution traits.
-- [`StaticFormat`](traits/static_format.md): runtime formatting of type-level strings and path
-  concatenation.
+- [`StaticFormat`](traits/static_format.md): runtime formatting of type-level strings, and type-level path concatenation.
 - [Monad traits](traits/monad.md): `MonadicTrans`, `MonadicBind`, `LiftValue`, and `ContainsValue`,
   the trait layer behind monadic handler composition.
 - [Optional fields](traits/optional_fields.md): the cgp-field-extra builder traits for optional and
