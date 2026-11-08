@@ -102,6 +102,13 @@ And **a listing of *generated* code can only be shape-checked here**; `cargo cgp
 relevant test target, remains the authority on its text, which is the same rule the reference port
 already follows.
 
+The cgp-serde debugging guide also has complete failing programs under
+`example-code/diagnostics/cgp_serde/` for its missing byte-vector entry, iterator-reference entry,
+and JSON error wiring. The diagnostic capture harness compiles them against the sibling projects
+with cargo-cgp's pinned nightly. They need cgp-serde's dependencies, so they are separate from the
+integration-test crate and are not compiled by `cargo test` or CI. Other Projects examples are
+checked in their project checkouts.
+
 It is filled in **lazily**, and the rule is in
 [AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post): a page gets
 its file when someone writes, revises, or reviews it. A missing file therefore means nobody has been
