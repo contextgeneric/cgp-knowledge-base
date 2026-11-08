@@ -713,7 +713,10 @@ hand-written index as its category link, in the order
 
 **The section is complete**: eighteen pages, one per document under
 [cgp/concepts/](../cgp/concepts/README.md), plus a hand-written index. The file names match the internal
-ones, so the mapping is one to one.
+ones, so the mapping is one to one. Three shared diagrams live in the site's `static/img/`: *Bypassing
+coherence* carries the one showing coherence scoped to each provider, and *Consumer and provider
+traits* carries the split and the wiring table, so the ideas the homepage offloads to reuse one
+drawing rather than describing them twice.
 
 Every page is verified the same way the reference pages are, and the verification now survives the
 session that did it: the code each page shows has a compiled counterpart in the
