@@ -92,10 +92,11 @@ that needs to match this guidance.
 ## The name and the tag line on every page
 
 Name the project in full, as **Context-Generic Programming**, once in the prose of every web page,
-early enough to orient a reader who arrives from a search result, and link the first mention to the
-site's Introduction where the page does not already. Use "CGP" after that. The skill pages, which
-the site publishes from the agent skill, and the published blog posts, which are dated records, are
-exempt; a generated category page carries the name in its `_category_.json` description.
+in its opening paragraph, where it orients a reader who arrives from a search result, and link that
+mention to the site's Introduction where the page does not already. Use "CGP" after that. The skill
+pages, which the site publishes from the agent skill, and the published blog posts, which are dated
+records, are exempt, while a post not yet published carries the name. A generated category page
+carries it in its `_category_.json` description.
 
 Introduce the name beside a plain description, not on its own. The name does not tell an unfamiliar
 reader what the tool does, as the reception summarized in [evidence.md](evidence.md) illustrates, so

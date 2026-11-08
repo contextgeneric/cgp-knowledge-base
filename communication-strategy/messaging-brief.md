@@ -21,11 +21,12 @@ positioning belong to [identity.md](identity.md#the-pitch-that-follows-the-line)
 Show how CGP extends Rust's trait system. Consumer traits support direct impls, and a project can
 adopt a component without converting the rest of its code.
 
-Name **Context-Generic Programming** once in every web page's prose, beside a plain description,
-except the skill pages and the published blog posts. State the tag line whole only where a page
-presents the project; elsewhere relate a short form such as "CGP enables pluggable trait
-implementations in Rust" to the page's content, or leave it out where it does not fit. The rule and
-its short forms belong to [identity.md](identity.md#the-name-and-the-tag-line-on-every-page).
+Name **Context-Generic Programming** once in every web page's opening paragraph, beside a plain
+description, except on the skill pages and the published blog posts. State the tag line whole only
+where a page presents the project; elsewhere relate a short form such as "CGP enables pluggable
+trait implementations in Rust" to the page's content, or leave it out where it does not fit. The
+rule and its short forms belong to
+[identity.md](identity.md#the-name-and-the-tag-line-on-every-page).
 
 ## The five headline features
 

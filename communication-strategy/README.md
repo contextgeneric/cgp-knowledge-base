@@ -72,8 +72,8 @@ provenance. Each subject has one owning document, so a writer finds its reasonin
   canonical examples, diagrams, code samples, and habits to avoid.
 - [Writing styles](writing-styles.md): Direct sentences, clear subjects, alternatives to habitual em
   dashes, and plain English for agent-drafted pages, with before-and-after examples.
-- [Identity](identity.md): Positioning, the settled tag line, the pitch that follows it, and the
-  homepage feature set.
+- [Identity](identity.md): Positioning, the settled tag line, the naming rule for every web page,
+  the pitch that follows the line, and the homepage feature set.
 - [Readers](readers.md): Audience profiles, comprehension barriers, teaching responses, and ways to
   test assumptions through friction logs and reader conversations.
 - [The message](message.md): The pains CGP addresses, its strengths, reader objections, and the

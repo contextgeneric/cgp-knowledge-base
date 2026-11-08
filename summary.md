@@ -640,7 +640,8 @@ it stale.
 - [writing-styles.md](communication-strategy/writing-styles.md) — direct subjects and verbs, meaning-preserving sentence edits, clear punctuation, and plain English for agent-drafted content.
 - [identity.md](communication-strategy/identity.md) — the positioning decided in five steps from
   alternatives to category, the settled tag line analyzed word by word, the enhances-not-replaces frame,
-  the layered pitch that follows the line, and the curated headline feature set for a front page.
+  the rule naming Context-Generic Programming and echoing the tag line on every web page, the
+  layered pitch that follows the line, and the curated headline feature set for a front page.
 - [readers.md](communication-strategy/readers.md) — audience hypotheses by Rust experience, prior model, and task, including the reader who doubts agent-written documentation and the contributor directing an agent; comprehension barriers, teaching responses, and methods for testing the model against reader feedback.
 - [message.md](communication-strategy/message.md) — everything a piece says about CGP: the pains it
   removes, the strengths worth advertising, the objections readers bring, and the boundary where a

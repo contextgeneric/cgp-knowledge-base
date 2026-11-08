@@ -87,6 +87,12 @@ The author's stated preferences govern recurring choices in public writing:
 - **Keep the settled tag line and framing.** CGP is "a language extension for Rust, with pluggable
   trait implementations at compile-time." Show how it enhances Rust's trait system, including
   ordinary direct implementations and gradual adoption. [identity.md](identity.md) owns the wording.
+- **Name the project on every page, and echo the line rather than repeat it.** Each web page names
+  Context-Generic Programming. The tag line appears whole where a page presents the project, and
+  elsewhere in a short form such as "CGP enables pluggable trait implementations in Rust", blended
+  into the page's explanation, never pasted as boilerplate, and left out where it does not fit. The
+  skill pages and published posts are exempt; identity.md's
+  [naming rule](identity.md#the-name-and-the-tag-line-on-every-page) owns the detail.
 - **Give the homepage a clear purpose.** Help readers understand CGP and its benefits, then direct
   them to teaching material. Follow the [homepage guide](../website/writing-guides/homepage.md).
 - **Preserve the background when revising a draft.** Retain his account of earlier challenges,
