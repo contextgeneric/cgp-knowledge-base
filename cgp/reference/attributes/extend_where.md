@@ -55,8 +55,9 @@ empty.
 ## Expansion
 
 `#[extend_where(...)]` adds its predicates to the generated trait's `where` clause, and the same
-predicates also appear on the impl, after the `#[extend]` and `#[uses]` bounds and before the
-implicit-argument bounds. Given a generic `#[cgp_fn]` definition:
+predicates also appear on the impl, after the function's own `where` clause and the `#[extend]` and
+`#[uses]` bounds, before the implicit-argument bounds, and before the bounds `#[use_type]` and
+`#[use_provider]` add. Given a generic `#[cgp_fn]` definition:
 
 ```rust
 #[cgp_fn]

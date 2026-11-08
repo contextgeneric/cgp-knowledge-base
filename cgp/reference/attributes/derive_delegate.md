@@ -96,7 +96,9 @@ is simply used as the key type, so a misspelled parameter surfaces as an unresol
 type in the generated impl. The parenthesized form must be non-empty
 (`expect non-empty tuple list of identifiers in use_delegate_spec`), and a single parameter written
 without parentheses is keyed as the bare type: the expansion wraps the parameter list in parentheses
-either way, and `(Shape)` is the type `Shape` in parentheses rather than a one-element tuple. The
+either way, and `(Shape)` is the type `Shape` in parentheses rather than a one-element tuple. A
+trailing comma makes the one-element tuple, so `(Shape,)` keys on the tuple and its table entries are
+written `(Rectangle,): RectangleArea`. The
 attribute may be repeated, once per dispatcher, as the Syntax section shows.
 
 ## Expansion
