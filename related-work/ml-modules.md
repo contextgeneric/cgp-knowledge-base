@@ -1,7 +1,8 @@
 # ML modules and modular implicits
 
 ML modules compose implementations through signatures, structures, and functors; CGP addresses
-similar assembly problems through traits, providers, and context wiring.
+similar assembly problems through traits, providers, and context wiring. The modular-implicits
+proposal adds type-directed module selection, which CGP replaces with explicit wiring.
 
 ## Purpose
 
