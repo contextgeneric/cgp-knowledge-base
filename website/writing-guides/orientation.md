@@ -85,8 +85,8 @@ on the question the reader has rather than on what the section is called.
 
 Its boundaries are settled, and a revision should not reopen them. It **keeps the vocabulary
 introduction**, which is the one teaching-shaped thing an orientation page does, because every other
-page assumes those four words. It **does not carry the maturity discussion**, which is *Project
-status*'s job: an evaluator needs to reach that from above the fold on the front page, not by
+page assumes those four words. It **does not carry the maturity discussion**, which is the front
+page's cost section's job: an evaluator reaches that from above the fold on the front page, not by
 scrolling the docs root. And it **does not route newcomers to the blog**; the blog is named as a
 record of releases and talks, with the caveat that older posts describe the library as it was.
 
@@ -239,8 +239,8 @@ Quickstart's program.
 
 **No unverified route.** Every link followed and every command run before the page ships.
 
-**No maturity discussion outside *Project status*.** The candour is an asset and is not diluted by
-appearing in three places; it belongs on the page an evaluator is sent to.
+**No maturity discussion.** The front page's cost section carries it, and an evaluator is sent there.
+The candour is an asset and is not diluted by appearing in three places.
 
 ## Checking a draft
 
@@ -266,10 +266,9 @@ author's text**, which a revision leaves as he wrote it, and search the rest for
 
 ## Where the current pages stand
 
-**The Introduction** is current and close to this guide. Its one divergence is that it still carries
-the *Current Status* section, which [E1](../tasks.md) moves to *Project status*; when that lands,
-the Introduction keeps a one-line pointer to it. Its routing list already keys on questions rather
-than section names, and it does not send newcomers to the blog.
+**The Introduction** is current and close to this guide. It carries no maturity section, its routing
+list keys on questions rather than section names, and it does not send newcomers to the blog. Its one
+divergence is front matter without a `description`.
 
 **Resources** is current. It carries `cargo-cgp` with its install path and the full crate list, and
 lists neither the CGP Patterns book nor the Hermes SDK, which are

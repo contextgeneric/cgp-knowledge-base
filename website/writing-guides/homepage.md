@@ -83,8 +83,9 @@ something the language cannot" as fast, and no amount of prose substitutes for t
 are in [The example, and how to sell it](#the-example-and-how-to-sell-it) below, which is the longest
 section of this guide because the block carries more of the page's weight than everything else combined.
 
-**Two links, no more.** The **Quickstart** for the reader ready to try, and the honest
-[project status page](explanation.md#project-status-and-adoption-risk) for the reader deciding on risk.
+**Two links, no more.** The **Quickstart** for the reader ready to try, and a link down to the
+page's own **cost section** for the reader deciding on risk, since that section is where the site
+states the project's maturity.
 Two calls to action are the maximum, matched to the two readers who reach this page in numbers; a third
 dilutes both. Do not add a third for the enthusiast, who will find the blog. The Quickstart is install
 and one working program with no concepts, and it is deliberately smaller than the
@@ -348,6 +349,15 @@ classes it recognizes, and the tool does not yet reshape every class. This secti
 element on the page, and the register to write it in is the author's own: state the cost as part of
 describing the thing accurately, not as a hedge appended to a pitch.
 
+**It is also the one place on the site that states the project's maturity**, so it carries what an
+evaluator reads for. CGP is young: its ecosystem is small and community support is limited, so an
+adopter of a mission-critical project should expect to investigate some problems alone. Learning its
+patterns takes time, and its raw errors can be hard to read; `cargo-cgp`, which helps with them, is
+itself an early release. Code an assistant writes still needs the reader's review. And the way to
+try it is on a small part of a project whose implementation choices already vary. Keep that
+frankness rather than softening it into marketing, because it does more persuasive work for the
+evaluator than any claim on the page.
+
 This is also **the only place on the page where agent support may be mentioned**, and one clause is the
 budget. Three of the costs just named (the learning curve, the diagnostics, and the volume of wiring)
 are mechanical work over a written-down vocabulary, and CGP publishes an agent skill that reduces all
@@ -363,8 +373,8 @@ the wording to avoid in
 **6. Where to start.** The routing section, and the only place on the page with more than two links.
 Match the destination to the reader per the conversion ladder in
 [formats.md](../../communication-strategy/formats.md): the first tutorial for someone ready to try, the
-explanation pages for someone who wants the argument in full, the status page for someone weighing
-adoption, the blog for depth, and the contribute page for the enthusiast.
+explanation pages for someone who wants the argument in full, *Modularity Hierarchy* for someone
+weighing adoption, the blog for depth, and the contribute page for the enthusiast.
 
 The five headline features from
 [identity.md](../../communication-strategy/identity.md#the-headline-feature-set) may appear as a compact
@@ -379,11 +389,11 @@ section keeps one paragraph plus a link. This is the rule that keeps the essay b
 if the destination pages exist, so the redesign must create them rather than discovering the need
 mid-draft.
 
-Five pages are the destinations. Three are pages of the site's **explanation** tier, the Concepts
-section, distinct from the tutorials that teach and the reference that specifies; one is still to be
-lifted out of the Introduction; and the Overview already exists. **[explanation.md](explanation.md) is
-the guide for writing the first four**, and it carries a fuller spec for each than the summaries below,
-together with which Concepts page plays each role.
+Four pages are the destinations. Three are pages of the site's **explanation** tier, the Concepts
+section, distinct from the tutorials that teach and the reference that specifies, and the fourth is
+the Overview. **[explanation.md](explanation.md) is the guide for the first three**, and it carries a
+fuller spec for each than the summaries below, together with which Concepts page plays each role.
+The project's maturity is not offloaded: the cost section states it on the page itself.
 
 - **Why CGP exists**, published as *Bypassing coherence*: the long-form version of sections 1 and 2,
   covering how Rust's trait system resolves dependencies, why coherence is necessary, what the overlap
@@ -404,13 +414,7 @@ together with which Concepts page plays each role.
   [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp) and the
   [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md). It is where the cost section on
   the homepage hands off to.
-- **Project status and adoption risk**, not yet a page of its own: the maturity discussion the
-  evaluator arrives looking for. It exists as the "Current Status" section of the
-  [Introduction page](../site-structure.md) and should become a page of its own so it can be linked
-  directly from above the fold. Its frankness is a genuine asset and must not be softened when it
-  moves; [explanation.md](explanation.md#project-status-and-adoption-risk) says what the move keeps and
-  adds.
-- **Overview**: the fifth destination, and the one that already exists. It is the **feature tour**:
+- **Overview**: the fourth destination, and the one that already exists. It is the **feature tour**:
   every high-level CGP feature walked through in more detail than any other surface carries, which
   makes it the destination for both section 3 and section 4 of the essay. That job resolves the
   site's three disagreeing feature lists rather than merely reconciling them: the front page carries

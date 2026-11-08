@@ -98,8 +98,8 @@ sits second in the tutorial order rather than last. The reasoning is the compreh
 **Agent support answers the cost objection, and appears nowhere else.** Three of CGP's loudest costs
 (the learning curve, the generated-type cascade, and the volume of wiring) are mechanical work over a
 written-down vocabulary, which is what CGP's published agent skill reduces. That belongs in the
-homepage's cost section, in *Modularity Hierarchy*, in *Project status*, and on Resources, stated beside the
-cost and framed as a smaller cost rather than a solved one. It does **not** belong in the tag line, the
+homepage's cost section, in *Modularity Hierarchy*, and on Resources, stated beside the cost and
+framed as a smaller cost rather than a solved one. It does **not** belong in the tag line, the
 feature set, a hook, or a blog post's opening. The wording rules are in
 [message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these) and
 [vocabulary.md](../communication-strategy/vocabulary.md#words-and-framings-to-avoid).
@@ -114,25 +114,17 @@ code has a compiled counterpart in the website repository's
 which every page in this tier is subject to.
 
 The Projects section, which links to these pages instead of re-teaching them, is therefore unblocked.
-One task remains in this group, and it is not a concept page:
-
-- **E1: *Project status and adoption risk*.** Mostly a move: lift the "Current Status" section out
-  of the Introduction so the homepage can link it from above the fold. Its frankness is the asset
-  and must survive the move. The section includes cargo-cgp, gradual adoption, and the agent skill
-  among its mitigations. **This page has no settled home**: it is project meta rather than a CGP
-  idea, so it does not belong under Concepts, and under **Project** beside Contribute is the obvious
-  alternative. Settle that before writing it. *Blocks:* F1's second call to action. *Done when:* the
-  page stands alone, the Introduction links to it.
 
 ## F — The front page
 
 - **F1: rebuild the front page against its guide.** The largest single-page change on the list, and the
   one that most needs its destinations to exist first: the hero and tag line, the reassurance line and
   install command, the settled before/after example and the copy that sells it, the six-section bounded
-  essay including the cost section, and the routing section replacing the "Ready to Get Started?" filler.
+  essay including the cost section, which is the one place the site states the project's maturity, and
+  the routing section replacing the "Ready to Get Started?" filler.
   The hero block's own snippet must be **compiled, not eyeballed**, per the guide. *Lands in:*
   `src/pages/index.tsx` and `src/components/HomepageFeatures/`. *Spec:*
-  [writing-guides/homepage.md](writing-guides/homepage.md). *Blocked by:* E1, and softly by F2; every other
+  [writing-guides/homepage.md](writing-guides/homepage.md). *Blocked by:* F2, softly; every
   destination it routes to (the Quickstart, the concept pages, the reference) is written. *Done when:*
   the guide's five draft checks pass and the author has read it.
 - **F2: align the front page with the settled feature set.** The front page still names six
@@ -459,9 +451,8 @@ the [ordering](#the-ordering) for what to start on.
 
 | Task | Blocked by | Blocks |
 |---|---|---|
-| E1 | nothing | F1 |
 | F2 | nothing | F1 |
-| F1 | E1, F2 | nothing |
+| F1 | F2 | nothing |
 | T4 | nothing | nothing |
 | T3 | nothing | nothing |
 | R1 | the author's read | nothing |
@@ -487,10 +478,9 @@ deferred is a release deferred.
 
 ## The ordering
 
-**Settling where *Project status* lives unblocks more than anything else on this list.** E1 cannot start
-until that decision is taken, F1 waits on E1, and F1 is the largest single-page change here. The one
-link in that chain that can start today is F2, which aligns the front page with the Overview's feature
-tour, so that is what to hand over while the decision is outstanding.
+**The front page is the largest single-page change on this list, and F2 is where it starts.** F1
+waits softly on F2, which aligns the front page with the Overview's feature tour, and every
+destination F1 routes to is written.
 
 **Several things wait on the author rather than on an agent, and they are worth collecting into one
 handover rather than raised one at a time.** R1's reference index, A1's disclosure page, and A2's

@@ -354,9 +354,8 @@ recommendation below is cheaper before the merge than after.
 existing documentation paths (`/docs/overview`, `/docs/contribute`, `/docs/resources`,
 `/docs/tutorials/hello`) are unchanged by the redesign, and
 [information-architecture.md](information-architecture.md#the-target-page-inventory) keeps the
-Overview where it is. The one page that moves is *Project status*, which has never had a URL of its
-own. So the relaunch adds history rather than breaking it, and the only broken history is the
-migration's, which the redirect stubs repair at the merge.
+Overview where it is. No page moves, so the relaunch adds history rather than breaking it, and the
+only broken history is the migration's, which the redirect stubs repair at the merge.
 
 ### The patterns book is the best-performing property, not a competitor
 

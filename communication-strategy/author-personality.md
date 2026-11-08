@@ -54,9 +54,8 @@ where CGP helps.
 
 He discusses costs as part of explaining the technology. The Hypershell post covers learning,
 diagnostics, dynamic loading, and compile times, and distinguishes rough experiments from firm
-findings. The Introduction acknowledges adoption risk, and the
-[new-website post](../website/blog/new-website.md) describes the limits of LLM-produced design.
-Preserve known costs even when omitting them would make the pitch easier.
+findings. The [new-website post](../website/blog/new-website.md) describes the limits of
+LLM-produced design. Preserve known costs even when omitting them would make the pitch easier.
 
 He credits related work and qualifies comparisons. His writing distinguishes CGP from tagless final
 and acknowledges influences including Servant, `unsynn`, Haskell typeclasses, and Kani. Describe an

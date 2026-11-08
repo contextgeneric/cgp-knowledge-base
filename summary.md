@@ -826,7 +826,7 @@ it stale.
   to, and what must never appear on the page.
 - [explanation.md](website/writing-guides/explanation.md) — the understanding-oriented `Concepts`
   tier, one page per idea: what every explanation page owes, what Diátaxis gives the tier and where CGP
-  diverges, how a concept document is rewritten into one, the fixed page shape, specs for the four
+  diverges, how a concept document is rewritten into one, the fixed page shape, specs for the three
   pages the homepage offloads to, and where the section sits in the docs tree.
 - [tutorial.md](website/writing-guides/tutorial.md) — the tutorials: independent outcome-named pages,
   the first-principles and applied registers, the six obligations taken from Diátaxis and the two rules

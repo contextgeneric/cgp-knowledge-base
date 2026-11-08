@@ -223,8 +223,8 @@ as it applies to claims about a macro's expansion.
 ## The page on the website
 
 Use one dedicated disclosure page to explain the levels and help readers assess each part of the
-project. This document specifies that page because it is a single project-information page, like
-Project status, rather than a recurring page type needing a separate writing guide.
+project. This document specifies that page because it is a single project-information page rather
+than a recurring page type needing a separate writing guide.
 
 Open with the organizing principle, then present the levels in this document's order. Begin with
 agent-written documentation and end with the core library, so the page explains substantial AI use

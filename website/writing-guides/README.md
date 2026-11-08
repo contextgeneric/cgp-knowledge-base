@@ -68,7 +68,7 @@ Register a new guide here in the same change that adds it, and in [../../summary
   the routing at the end.
 - [explanation.md](explanation.md): the understanding-oriented Concepts pages, which the homepage
   offloads to, covering what every one owes its reader, how a concept document is rewritten into one, the specs
-  for the four roles the homepage names, and where the pages sit in the docs tree.
+  for the three roles the homepage names, and where the pages sit in the docs tree.
 - [tutorial.md](tutorial.md): the tutorials, covering the two registers a CGP tutorial can be written in, what
   every tutorial owes its reader, which Diátaxis rules to adopt and which to reject, and the teaching
   contract a new tutorial must record.
@@ -113,13 +113,12 @@ The guides above cover every page type the site publishes or plans, and each one
 because [AGENTS.md](../AGENTS.md) requires a guide for a new *kind* of page ahead of the page rather
 than after it.
 
-Two project-meta pages are deliberately specified elsewhere rather than here, and knowing that stops a
-later agent hunting for a missing guide. *Project status*, still unwritten, is specified inside
-[explanation.md](explanation.md#project-status-and-adoption-risk), and the **AI disclosure page** inside
-[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#the-page-on-the-website). Both are
-single project-meta pages rather than kinds the site will publish repeatedly, and in the second case the
-policy and the page are one subject, and splitting them across two documents would guarantee that the page
-and the practice it describes drift apart.
+One project-meta page is deliberately specified elsewhere rather than here, and knowing that stops a
+later agent hunting for a missing guide: the **AI disclosure page**, specified inside
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#the-page-on-the-website). It is a single
+project-meta page rather than a kind the site will publish repeatedly, and the policy and the page are
+one subject, so splitting them across two documents would guarantee that the page and the practice it
+describes drift apart.
 
 ## The reading map
 

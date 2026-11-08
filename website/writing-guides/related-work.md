@@ -277,7 +277,7 @@ carries the argument, and a comparison page that derives the consumer/provider s
 has become a worse copy of *Consumer and provider traits*.
 
 **No mention of agent support.** The cost section names the diagnostics and the wiring as costs and
-stops. The agent skill that reduces them is stated in the four places
+stops. The agent skill that reduces them is stated in the three places
 [tasks.md](../tasks.md#two-threads-that-run-through-several-tasks) fixes, and the cost section links
 the *Modularity Hierarchy* page, which is one of them, rather than repeating the mitigation. Twelve
 pages that each mention AI beside their costs would read, taken together, as the AI-led pitch the

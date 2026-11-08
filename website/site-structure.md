@@ -209,12 +209,11 @@ through an application that sends email and a test application that records mess
 contexts, providers, and wiring, then links to the consumer/provider explanation for the mechanism.
 It contains no Rust listings; the tutorials supply the working examples.
 
-The status section states the learning cost, young ecosystem, and limited support for adoption. It
-names cargo-cgp and the agent skill as help with specific costs, qualifies both, and recommends
-starting with a small part of a project. Getting Started leads with Hello World and area calculation,
-then routes readers to Overview, Concepts, Reference, and Resources, and notes that blog posts are dated
-records. It leaves out the CGP Patterns book, a
-[legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages).
+It carries no maturity section; the project's maturity belongs to the front page's cost section, per
+the [homepage guide](writing-guides/homepage.md#below-the-fold-the-bounded-essay). Getting Started
+leads with Hello World and area calculation, then routes readers to Overview, Concepts, Reference,
+the Glossary, and Resources, and notes that blog posts are dated records. It leaves out the CGP
+Patterns book, a [legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages).
 
 ### How it relates to the knowledge base
 
@@ -227,10 +226,9 @@ lead to the [Hello World](tutorials/hello-world.md) and
 
 ### Maintaining it
 
-Keep the maturity framing frank and the entry short. Define context as the application type in this
-example, preserve the distinction between plain trait implementations and providers, and direct new
-code toward maintained tutorials and reference pages. Describe tooling and agent support beside the
-costs they address, without promising that either eliminates them.
+Keep the entry short, and leave the maturity discussion to the front page. Define context as the
+application type in this example, preserve the distinction between plain trait implementations and
+providers, and direct new code toward maintained tutorials and reference pages.
 
 ## Quickstart
 

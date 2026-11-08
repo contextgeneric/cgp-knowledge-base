@@ -473,7 +473,9 @@ lowest useful level of abstraction. The
 **"Is it mature enough for my codebase?"** State the project's maturity and limits honestly.
 Incremental adoption permits a smaller evaluation, but removing an abstraction still takes work. CGP
 does not require a framework runtime; that fact is not proof of production readiness. Preserve the
-candid maturity guidance recorded in [site-structure.md](../website/site-structure.md).
+candid account of maturity that the
+[homepage guide](../website/writing-guides/homepage.md#below-the-fold-the-bounded-essay) gives the
+front page's cost section.
 
 **"There is a learning curve."** Agree and make the first task small. A function-style operation can
 introduce useful context-generic code before components and wiring. Teach the later machinery when
@@ -487,8 +489,8 @@ write CGP. Readers can try it on their own tasks; do not promise that it elimina
 understand or review the result.
 
 Keep this support beside the costs, outside the tag line, feature panel, and opening. Suitable
-places include a cost section, a boundary discussion, or a maturity page. State what help is
-available without treating readers who work without an assistant as having had their problem solved.
+places include a cost section or a boundary discussion. State what help is available without
+treating readers who work without an assistant as having had their problem solved.
 
 Separate agent support from AI authorship. Help using CGP belongs here; claims about how CGP is
 built follow [ai-disclosure.md](ai-disclosure.md).

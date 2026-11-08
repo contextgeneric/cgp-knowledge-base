@@ -116,14 +116,14 @@ spec is [writing-guides/project.md](writing-guides/project.md), and the blueprin
 [projects/README.md](projects/README.md).
 
 The **reference** explains one construct completely, for a reader who already knows the name of what
-they need. It is by far the largest surface on the site at roughly a hundred and twenty pages, it is derived from the
-knowledge base's internal reference rather than written fresh, and it is canonical rather than a
+they need. It is by far the largest surface on the site at about two hundred pages, it is derived from
+the knowledge base's internal reference rather than written fresh, and it is canonical rather than a
 supplement to rustdoc. Its spec is [writing-guides/reference.md](writing-guides/reference.md).
 
 **Orientation pages** (the Introduction and Resources) route rather than teach. Their readers arrive
 already interested and want to be sent somewhere, not persuaded.
 
-**Project pages** (Contribute, the planned Project status, and the AI disclosure page) speak
+**Project pages** (Contribute and the AI disclosure page) speak
 about the project rather than about CGP. Contribute is the one page carrying the author's own voice on
 the site, in its sponsorship section, and that must stay; the disclosure page carries the second
 permitted instance, for the sentence taking responsibility for what the project publishes, since
@@ -161,13 +161,9 @@ The three explanation pages this document named are not lost, but they are no lo
 artifacts: *Why CGP exists* is **Bypassing coherence**, *How CGP works* is **Consumer and provider
 traits** together with **Impl-side dependencies**, and *When to use CGP, and when not* is **Modularity
 Hierarchy**, the modularity hierarchy rendered as an explanation with a decision-guide tail. The trade is that the tier now
-covers every idea rather than the four a homepage essay offloads to, at the cost of the curation that
-made those four a short reading path, which the section's index page restores.
+covers every idea rather than the three a homepage essay offloads to, at the cost of the curation that
+made those three a short reading path, which the section's index page restores.
 
-- *Project status and adoption risk*: **moved**, out of the Introduction, and now **without a settled
-  home**: it is project meta rather than a CGP idea, so it does not belong among the concepts. Under
-  **Project** beside Contribute is the obvious placement and is not yet decided. The evaluator's page,
-  and it must stay linkable directly from above the fold.
 - *Overview*: present, **repurposed**, and staying where it is. The feature tour: every high-level CGP
   feature walked through in more detail than any other surface carries. This is the page the front
   page's feature beats and its "it goes further than trait implementations" section offload to, which
@@ -229,7 +225,7 @@ each page's two judging sections.
   visible, since every construct is reachable from it, including the ones documented on a shared page.
 - An *error catalog* page: present. The compile errors CGP produces after
   codegen, organized by the internal catalog's hidden-versus-surfaced axis, so a reader who hits a
-  wiring failure has somewhere on the site to look it up. One page rather than seventeen, drawn from
+  wiring failure has somewhere on the site to look it up. One page rather than twenty-one, drawn from
   [cgp/errors/](../cgp/errors/README.md), and the reason every reference page's *Gotchas* section can
   stay construct-specific instead of re-explaining the same failure.
 - A *glossary* page: present. The terms the documentation uses, CGP's own and the Rust and borrowed
@@ -276,8 +272,9 @@ meantime by the Concepts pages and the posts. The page type is specified in
   deliberately smaller than *Hello World*, which teaches an idea; this page only proves the thing
   runs, and its boundary against the tutorial is fixed in
   [writing-guides/orientation.md](writing-guides/orientation.md).
-- *Introduction*: present, narrowed. Keeps the definition and the routing; loses the maturity section
-  to *Project status* and stops sending newcomers to the blog.
+- *Introduction*: present, narrowed to the definition and the routing. It carries no maturity
+  section, since the front page's cost section states the project's maturity, and it does not send
+  newcomers to the blog.
 - *Resources*: present and current. The ecosystem index, now carrying `cargo-cgp` and the full crate
   list; it lists neither the CGP Patterns book nor the Hermes SDK, which are legacy resources.
 
@@ -378,7 +375,7 @@ reference, which is where they live once they are writing code. The checking tut
 load-bearing on this path: it is where a reader either learns to read a CGP error or decides the
 language is not worth it.
 
-The **evaluator** reads for risk. Their path is front page → *Project status* → *Modularity Hierarchy* →
+The **evaluator** reads for risk. Their path is the front page's cost section → *Modularity Hierarchy* →
 Resources → the Projects index and the two library sections' limitations pages, and what persuades them
 is candour plus social proof. The Projects section is that proof, real systems built with CGP that the
 site hosts itself; the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/), the system CGP was

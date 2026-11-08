@@ -37,7 +37,8 @@ command; the feature grid has six entries, two leading with retired words, and d
 Overview's feature tour; the code example does not show the implementation Rust rejects, so the
 reader never sees the contrast, **and it does not compile**, since it writes `#[cgp_impl(HashWithDisplay)]` without `new`
 and never declares the provider struct; the problem cards are generic and unanchored; and **there is no
-cost section at all**, which on a page for this audience is the most consequential omission of the six.
+cost section at all**, which on a page for this audience is the most consequential omission of the six,
+since that section is also the one place the site states the project's maturity.
 The "Ready to Get Started?" block is template filler and should become the routing section. *Website
 repo, `src/pages/index.tsx` and `src/components/HomepageFeatures/`; spec in
 [writing-guides/homepage.md](writing-guides/homepage.md), and the snippet defect recorded in
@@ -63,12 +64,6 @@ and discussion links after submission. *Website repo; the publication requiremen
 ## New pages
 
 Each of these is specified, and all but the Projects section are unwritten.
-
-**Project status and adoption risk**: lifted out of the Introduction so it can be linked from above the
-fold. Its frankness is the asset and must survive the move; what changes is the year-stamp, the absence
-of `cargo-cgp`, and the missing incremental-adoption reassurance. **Its home is unsettled**: it is
-project meta rather than a CGP idea, so it does not belong under Concepts, and under **Project** beside
-Contribute is the obvious alternative.
 
 **An applied-register tutorial**: building something real from an [example](../examples/README.md), for
 the reader who evaluates a technology by seeing a realistic system rather than a rectangle. The site has
@@ -122,6 +117,4 @@ after the relaunch, so does this.
 
 The order to do these in, the dependency graph behind that order, and which of them the v0.8.0 relaunch
 waits for are all in [tasks.md](tasks.md), which is the redesign's plan. Keeping them there rather than
-here is what stops the two documents disagreeing about what to do next. One item on this list waits on a
-decision rather than on work: *Project status and adoption risk* has no settled home, and the front-page
-rebuild cannot finish until it does.
+here is what stops the two documents disagreeing about what to do next.
