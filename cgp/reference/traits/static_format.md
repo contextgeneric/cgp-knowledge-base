@@ -61,6 +61,9 @@ where
 impl StaticFormat for Nil { /* writes nothing */ }
 ```
 
+`Symbol<LEN, Chars>` implements it as well, by delegating to its `Chars` list, and the `Display`
+impls on `Symbol` and `Chars` call `<Self as StaticFormat>::fmt`.
+
 `StaticString` exposes the decoded string as an associated constant rather than a formatting action:
 
 ```rust
