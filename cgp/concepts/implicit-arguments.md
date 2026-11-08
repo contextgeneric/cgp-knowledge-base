@@ -61,15 +61,15 @@ with arguments; what the compiler sees is a provider with injected dependencies.
 The argument type controls how the field is read, following a small set of rules so that the body
 receives a value of exactly the declared type. The default rule is that an owned argument type, such
 as `f64` or `String`, reads the field by reference and appends `.clone()`, so the body gets an owned
-value while the context keeps its field. The one special case worth memorizing is `&str`: an
-argument typed `&str` is backed by a `String` field and read with `.as_str()` rather than
-`.clone()`, letting the body borrow without forcing the context to store a `&str`.
+value while the context keeps its field. A reference argument instead reads a field that satisfies
+its bound: a `&str` argument reads any field that implements `AsRef<str>`, such as `String`, with
+`.as_ref()`, letting the body borrow without forcing the context to store a `&str`.
 
 These same rules govern getter access in
 [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md), so an author who learns them once
 applies them everywhere field values are read. The shared rule of thumb is that the declared type is
 what the body works with, and the macro inserts whatever conversion, a clone for owned values or an
-`.as_str()` for `&str`, bridges it to the stored field. A few further forms exist for references,
+`.as_ref()` for `&str`, bridges it to the stored field. A few further forms exist for references,
 options, and slices, all documented with [`#[implicit]`](../reference/attributes/implicit.md).
 
 ## When to use which
@@ -108,7 +108,7 @@ into [`HasField`](../reference/traits/has_field.md) bounds, which a context supp
 For the narrow cases an implicit argument cannot reach, such as a field on another type, a named
 shared accessor, or a getter with an inferred associated type,
 [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md) is the getter-trait counterpart that
-shares the same `.clone()`/`.as_str()` access rules; everywhere else, a provider reading a field
+shares the same `.clone()` and `.as_ref()` access rules; everywhere else, a provider reading a field
 should prefer an implicit argument. The whole model is value-level
 [impl-side dependencies](impl-side-dependencies.md): an implicit argument is a context dependency
 injected through a `where`-clause `HasField` bound and dressed as a function parameter.
