@@ -212,8 +212,9 @@ can read fields already set:
 
 - **`BuildAndSetField<Tag, Provider>`** computes one field's value with `Provider` and sets it with
   `BuildField<Tag>`.
-- **`BuildAndMerge<Provider>`** computes a whole record with `Provider` and copies every shared
-  field into the builder with `CanBuildFrom` from [`has_builder`](../traits/has_builder.md).
+- **`BuildAndMerge<Provider>`** computes a whole record with `Provider` and copies each of the
+  sub-record's fields into the builder with `CanBuildFrom` from
+  [`has_builder`](../traits/has_builder.md).
   `CanBuildFrom` takes each of the sub-record's fields in turn and sets it with `BuildField`, so
   every field of the sub-record must be a field of the target, of the same type, and still unset;
   merging a field an earlier step set fails with an `E0271` mismatch on
