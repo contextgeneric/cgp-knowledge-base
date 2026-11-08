@@ -396,8 +396,9 @@ that **a `#[default_impl]` must live in the same crate as the namespace it regis
 the component carries a prefix.** The attribute expands to `impl Namespace<_> for PathCons<..>`, and
 for a prefixed component that path is built entirely from the `cgp`-owned `PathCons`/`Symbol` types
 and the component's marker; Rust's orphan rule then accepts the impl only if the crate owns the
-`Namespace` trait. A downstream crate cannot register a default for an upstream prefixed component
-into an upstream namespace, because the whole impl is foreign to it.
+`Namespace` trait, and rejects it with `E0210` otherwise. A downstream crate cannot register a
+default for an upstream prefixed component into an upstream namespace, because the whole impl is
+foreign to it.
 
 The restriction relaxes only when no prefix is involved. For a component without a prefix,
 `#[default_impl(Component in Namespace)]` expands to `impl Namespace<_> for Component`, whose key is
