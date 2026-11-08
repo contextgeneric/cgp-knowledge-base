@@ -1,8 +1,8 @@
 # Handler combinators
 
 The handler combinators are the provider structs of `cgp-handler` that build, sequence, and adapt
-handlers: they compose providers end to end, thread a list of providers through a pipeline, return
-the input unchanged, and lift a provider written for one member of the handler family into another.
+handlers: they compose providers end to end, run a list of providers in sequence, return the input
+unchanged, and lift a provider written for one member of the handler family into another.
 
 ## Purpose
 
@@ -21,7 +21,7 @@ They do three jobs:
 - **Promotion.** `Promote`, `PromoteAsync`, `PromoteRef`, `TryPromote`, and the promotion bundles
   lift a provider from one handler trait to another.
 
-Every combinator is a zero-sized provider whose type parameters are inner providers held in
+Every combinator is a zero-sized type, with any inner providers or dispatch tables held in
 `PhantomData`. The work happens at the type level through delegation, so the combinators nest
 freely.
 
