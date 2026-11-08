@@ -6,8 +6,8 @@ Four rules are checked:
 - Every relative link resolves, except a link into the read-only `external/`
   checkouts, which may be absent on a runner.
 - Every link to a `#fragment` in a Markdown document names a heading in it,
-  using the anchors GitHub derives from heading text, or an explicit `{#id}`
-  or HTML `id` or `name`.
+  by the anchor GitHub derives from the heading text, or an HTML `id` or
+  `name`. GitHub has no `{#id}` heading syntax, so it counts as heading text.
 - Every document is registered in the `README.md` of its section and in
   `summary.md`.
 - A link is never broken across lines, so `](` closes on the same line.
@@ -31,7 +31,7 @@ FENCE = re.compile(r"^\s*>?\s*(`{3,}|~{3,})(.*)$")
 # Link text may hold one level of brackets, as in [`#[cgp_fn]`](cgp_fn.md).
 LINK = re.compile(r"\[(?:[^\[\]]|\[[^\[\]]*\])*\]\(([^)\s]+)\)")
 HEADING = re.compile(r"^ {0,3}#{1,6}[ \t]+(.*?)(?:[ \t]+#+)?[ \t]*$")
-EXPLICIT_ID = re.compile(r"""\{#([^}\s]+)\}|<[^>]*\b(?:id|name)=["']([^"']+)["']""")
+HTML_ID = re.compile(r"""<[^>`]*\b(?:id|name)=["']([^"']+)["']""")
 CODE_SPAN = re.compile(r"(`+)(.+?)\1")
 
 
@@ -61,7 +61,6 @@ def prose_lines(text):
 
 def heading_text(raw):
     """The text GitHub renders for a heading's Markdown source."""
-    raw = re.sub(r"\s*\{#[^}\s]*\}\s*$", "", raw)
     raw = re.sub(r"!?\[((?:[^\[\]]|\[[^\[\]]*\])*)\]\([^)]*\)", r"\1", raw)
     raw = re.sub(r"<[^>]+>", "", raw)
     pieces = []
@@ -95,7 +94,7 @@ def anchors(path):
         found = set()
         seen = {}
         for _, line in prose_lines(path.read_text()):
-            found.update(a or b for a, b in EXPLICIT_ID.findall(line))
+            found.update(HTML_ID.findall(line))
             heading = HEADING.match(line)
             if not heading:
                 continue
