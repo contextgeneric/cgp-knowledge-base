@@ -41,8 +41,12 @@ one is in play and links to it:
 - restoring a `Send` bound for the HTTP server: the
   [recovering `Send` bounds concept](../cgp/concepts/send-bounds.md)
 
-All snippets assume `use cgp::prelude::*;`. The service speaks in terms of a handful of domain types
-kept abstract so the same handlers work whatever concrete types a deployment chooses.
+All snippets assume `use cgp::prelude::*;`. The external names they use come from the service's
+dependencies: `axum` for `StatusCode`, `Router`, and `Json`, `serde` for the `Serialize` derive, and
+`anyhow` for the detail a raised status carries, with `Arc`, `Mutex`, and `BTreeMap` from the
+standard library. `GetMethod` and `PostMethod` are the service's own markers, defined beside its
+route provider. The service speaks in terms of a handful of domain types kept abstract so the same
+handlers work whatever concrete types a deployment chooses.
 
 ## Abstract domain types
 
