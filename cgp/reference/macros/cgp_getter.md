@@ -105,7 +105,7 @@ where
     __Context__: HasField<__Tag__, Value = String>,
 {
     fn name(__context__: &__Context__) -> &str {
-        __context__.get_field(PhantomData::<__Tag__>).as_str()
+        __context__.get_field(PhantomData::<__Tag__>).as_ref()
     }
 }
 ```
@@ -113,7 +113,7 @@ where
 Wiring the component to `UseField<Symbol!("first_name")>` supplies `first_name` as `__Tag__`, and
 the getter reads that field. `#[cgp_auto_getter]`'s blanket impl, by contrast, fixes the tag to
 `Symbol!("name")`. The return-type conversions are the same in both macros, so the `&str` return
-here requires a `String` field and appends `.as_str()`.
+here requires a `String` field and appends `.as_ref()`.
 
 ### `WithProvider`
 
@@ -126,7 +126,7 @@ where
     __Provider__: FieldGetter<__Context__, NameGetterComponent, Value = String>,
 {
     fn name(__context__: &__Context__) -> &str {
-        __Provider__::get_field(__context__, PhantomData::<NameGetterComponent>).as_str()
+        __Provider__::get_field(__context__, PhantomData::<NameGetterComponent>).as_ref()
     }
 }
 ```
@@ -147,7 +147,7 @@ where
     __Context__: HasField<Symbol!("name"), Value = String>,
 {
     fn name(__context__: &__Context__) -> &str {
-        __context__.get_field(PhantomData::<Symbol!("name")>).as_str()
+        __context__.get_field(PhantomData::<Symbol!("name")>).as_ref()
     }
 }
 ```
