@@ -56,4 +56,5 @@ each context is reached through its module path, such as
 
 ## Public material derived from this
 
-The crate's rustdoc, which the source does not carry.
+The crate's rustdoc, which carries a doc for every component, type, getter, and provider, while
+the struct fields carry none.

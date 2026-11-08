@@ -58,4 +58,5 @@ its module path, such as `cgp_example_builder::contexts::full_builder::FullAppBu
 
 ## Public material derived from this
 
-The crate's rustdoc, which the source does not carry.
+The crate's rustdoc, which carries a doc for every component, type, getter, and provider, while
+the struct fields carry none.

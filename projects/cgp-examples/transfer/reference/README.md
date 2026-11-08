@@ -87,5 +87,5 @@ such as `cgp_example_transfer::providers::UseBasicAuth`.
 
 ## Public material derived from this
 
-The crate's rustdoc, which the source does not yet carry beyond a few doc comments, and the item
-descriptions in the crate's own README.
+The crate's rustdoc, which carries a doc for every component, type, getter, and provider, while
+the struct fields carry none, and the item descriptions in the crate's own README.
