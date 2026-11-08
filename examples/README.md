@@ -39,9 +39,8 @@ The distribution is the useful part. **Eight of the nine examples wire an enviro
 which is what almost all real CGP code does, and the ninth is
 [area calculation](area-calculation.md), the one the website's area-calculation tutorial series is
 built from. So the teaching material introduces the least representative shape first, and any
-document that draws on
-both it and one of the others is crossing between shapes without a signature change to mark it. Say
-so when that happens, per [AGENTS.md](AGENTS.md).
+document that draws on both it and one of the others is crossing between shapes without a signature
+change to mark it. Say so when that happens, per [AGENTS.md](AGENTS.md).
 
 ## The catalog
 

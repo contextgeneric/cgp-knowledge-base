@@ -47,7 +47,7 @@ impl AreaCalculator {
 what the reference documents show in their Expansion sections and what you read in generated code.
 Write the raw form yourself only when you need the inside-out shape itself, for instance to state a
 bound the sugar cannot express. Neither a concrete context nor a provider struct that `new` cannot
-declare is a reason on its own: `#[cgp_impl]` reaches a concrete context through its
+express is a reason on its own: `#[cgp_impl]` reaches a concrete context through its
 explicit-context form, and a struct that `new` cannot express is declared by hand and then targeted
 by `#[cgp_impl(ProviderName)]` without `new`.
 

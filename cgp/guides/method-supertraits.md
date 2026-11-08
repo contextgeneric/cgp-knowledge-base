@@ -46,7 +46,8 @@ associated type the signature does name, use [`#[use_type]`](importing-abstract-
 `#[use_type]` adds the supertrait *and* rewrites the bare type, which `#[extend]` does not, so it is
 the recommended form for abstract-type components. In [`#[cgp_fn]`](../reference/macros/cgp_fn.md),
 whose `where` clauses are impl-side dependencies rather than supertraits, `#[extend]` is the only
-way to declare a supertrait at all.
+way to declare a supertrait that contributes no type; a supertrait whose associated type the
+signature names is imported with `#[use_type]`, which adds it to the generated trait.
 
 A component's supertrait binds its callers, not its providers, so each provider still declares it.
 The provider trait carries the supertrait as a `Context: HasName` `where` bound, which a Rust impl
