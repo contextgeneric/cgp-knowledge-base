@@ -125,7 +125,7 @@ This is the most common and most confusing failure, because the driver aborts *b
 runs and the message comes from the operating system's loader:
 
 ```text
-cargo-cgp-driver: error while loading shared libraries: librustc_driver-c29d28819724b6fa.so: cannot open shared object file: No such file or directory
+cargo-cgp-driver: error while loading shared libraries: librustc_driver-a1ed262f84b24882.so: cannot open shared object file: No such file or directory
 ```
 
 The driver links `librustc_driver-<hash>.so` from the pinned nightly, and the `<hash>` is fixed at
@@ -152,7 +152,7 @@ driver's pinned nightly: the driver embeds, say, `nightly-2026-11-05`, but the a
 ```text
 error: process didn't exit successfully: `…/cargo-cgp-driver …/stable/…/rustc -vV` (exit status: 127)
 --- stderr
-…/cargo-cgp-driver: error while loading shared libraries: librustc_driver-c29d28819724b6fa.so: cannot open shared object file
+…/cargo-cgp-driver: error while loading shared libraries: librustc_driver-a1ed262f84b24882.so: cannot open shared object file
 ```
 
 The fix is to run under the pinned nightly. Managed mode forces this for you; in unmanaged mode make
@@ -201,9 +201,9 @@ a *different* nightly than the one now installed), the preflight reports the loa
 driver problem, having already confirmed the toolchain exists, and keeps the loader's message:
 
 ```text
-error: the cargo-cgp-driver at /home/user/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) could not run under toolchain `nightly-2026-11-05` (it was likely built against a different nightly):
+error: the cargo-cgp-driver at /home/you/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) could not run under toolchain `nightly-2026-11-05` (it was likely built against a different nightly):
 
-  /home/user/.cargo/bin/cargo-cgp-driver: error while loading shared libraries: librustc_driver-1a6e695c833ebcd1.so: cannot open shared object file: No such file or directory
+  /home/you/.cargo/bin/cargo-cgp-driver: error while loading shared libraries: librustc_driver-a1ed262f84b24882.so: cannot open shared object file: No such file or directory
 
 help: run `cargo cgp setup`
 ```
@@ -212,13 +212,13 @@ If the driver runs but reports a version or a build identity that does not match
 lockstep: a partial upgrade, or a stale binary earlier on `PATH`:
 
 ```text
-error: the cargo-cgp-driver at /home/user/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) is version 0.1.0, but this cargo-cgp is 0.2.0 (the two are out of lockstep)
+error: the cargo-cgp-driver at /home/you/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) is version 0.0.9, but this cargo-cgp is 0.1.0 (the two are out of lockstep)
 
 help: run `cargo cgp setup`
 ```
 
 ```text
-error: the cargo-cgp-driver at /home/user/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) was built against `rustc 1.99.0-nightly (…)`, but toolchain `nightly-2026-11-05` provides `rustc 1.101.0-nightly (…)`
+error: the cargo-cgp-driver at /home/you/.cargo/bin/cargo-cgp-driver (beside cargo-cgp) was built against `rustc 1.99.0-nightly (0000000 2026-01-01)`, but toolchain `nightly-2026-11-05` provides `rustc 1.101.0-nightly (2d20b42b8 2026-11-04)`
 
 help: run `cargo cgp setup`
 ```
