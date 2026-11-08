@@ -61,7 +61,8 @@ describe :: Show a => a -> String
 describe x = "value: " ++ show x
 ```
 
-The `Show a =>` constraint on `describe` is the crux. Wadler and Blott's translation compiles a
+The import hides the Prelude's `Show` so the snippet can define its own class. The `Show a =>`
+constraint on `describe` is the crux. Wadler and Blott's translation compiles a
 class into a *dictionary*, a record whose fields are the class methods; an instance into a
 dictionary value; and a constrained function into one that takes the dictionary as an extra hidden
 argument. So `describe` elaborates to `describe dict x = "value: " ++ show dict x`, and the compiler

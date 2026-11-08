@@ -2,7 +2,7 @@
 
 ML modules compose implementations through signatures, structures, and functors; CGP addresses
 similar assembly problems through traits, providers, and context wiring. The modular-implicits
-proposal adds type-directed module selection, which CGP replaces with explicit wiring.
+proposal adds type-directed module selection; CGP records the choice in explicit wiring instead.
 
 ## Purpose
 
