@@ -356,7 +356,7 @@ to another project's README or documentation in the meantime.
 
 ## S — Search and agent discoverability
 
-Eleven tasks, and the diagnosis behind every one of them is in [seo.md](seo.md), which is written
+Eight tasks remain, and the diagnosis behind every one of them is in [seo.md](seo.md), which is written
 against a twelve-month Google Search Console export and carries the reasoning, the measured numbers,
 and the rules that constrain the work. Do not restate them here; read that document before starting any
 of these.
@@ -369,34 +369,24 @@ came first and why their remainders are re-scoped rather than dropped. Anything 
 a description should land **before the branch merges**, because the merge is what fixes each new page's
 first impression in the index.
 
-- **S3: a `description` on every page.** **The half that mattered is done, and the remainder is worth
-  re-scoping rather than finishing mechanically.** Every page under `docs/` now renders a usable
-  description except the published skill snapshot, which is not ours to edit: the `macros/`,
-  `attributes/` and `derives/` groups were written by hand, the fourteen `traits/` and `types/` pages
-  whose derived description was a bare phrase or empty were written too, and the three generated
-  category indexes gained one through their `_category_.json`. Fifty-five pages in all.
-
-  What remains is the difference between a **derived** description (the page's own first sentence,
-  which Docusaurus uses when the front matter omits one) and a **written** one chosen to be read in a
-  search result. Roughly 160 reference pages, the 19 Concepts pages, and the blog posts are in that
-  state, minus the blog, whose seventeen posts have since been written because they carry three
-  quarters of the property's impressions and had the worst derived snippets on the site. What is left
-  is serviceable rather than broken, so the return is far below the first slices', and the next agent
-  should ask which pages carry impressions before sweeping the rest. The conventions,
-  including the YAML apostrophe that fails the build, are in
-  [site-structure.md](site-structure.md#conventions-the-port-must-follow). *Lands in:* `docs/`,
-  `blog/`.
-- **S4: a search-facing `title` on the pages whose heading is a construct name.** **Done for
-  `macros/`, `attributes/`, `derives/`, and the fourteen `traits/` and `types/` pages S3 reached**,
-  always alongside S3, which is how the rest should be done: the two are the same edit to the same
-  front matter, and splitting them means reading every page twice. Front-matter `title`
-  sets the metadata and may differ from the `h1`, so a reference page keeps its `#[cgp_component]`
-  heading and carries a title saying what the construct is for. Keep it under roughly 60 characters and
-  put the distinguishing word first. *Lands in:* `docs/reference/`, plus the concept pages whose title
-  does not use the reader's words, **`docs/concepts/coherence` above all**, whose subject is why Rust
-  rejects overlapping blanket implementations and whose title says neither of those words. The words
-  the data gives are *blanket implementation*: that family is 2,019 impressions a year at position 5.8,
-  against 11 for *rust conflicting implementations of trait*. The reasoning is in
+- **S3: a `description` on every page.** **Most of it is done; 27 pages remain.** Every reference,
+  comparison, `cargo-cgp`, project, and AI page and every blog post sets a written description, and the
+  three generated category indexes carry one in their `_category_.json`. The 19 Concepts pages, four
+  of the five tutorials, and the Introduction, Overview, Resources, and Contribute pages still render
+  a derived description: the first source line of the opening paragraph, which ends mid-sentence where
+  the source wraps. Write each in the same edit as the page's revision, before the merge. The
+  conventions, including the YAML apostrophe that fails the build, are in
+  [site-structure.md](site-structure.md#conventions-the-port-must-follow). *Lands in:* `docs/`.
+- **S4: a search-facing `title` on the pages whose heading does not say what the page is for.** **Done
+  for every reference page about a construct**, always alongside S3, which is how the rest should be
+  done: the two are the same edit to the same front matter, and splitting them means reading every
+  page twice. Front-matter `title` sets the metadata and may differ from the `h1`, so a reference page
+  keeps its `#[cgp_component]` heading and carries a title saying what the construct is for. Keep it
+  under roughly 60 characters and put the distinguishing word first. *Lands in:* the concept pages
+  whose title does not use the reader's words, **`docs/concepts/coherence` above all**, whose subject
+  is why Rust rejects overlapping blanket implementations and whose title says neither of those words.
+  The words the data gives are *blanket implementation*: that family is 2,019 impressions a year at
+  position 5.8, against 11 for *rust conflicting implementations of trait*. The reasoning is in
   [seo.md](seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider).
   *Blocked by:* nothing.
 - **S7: the GitHub metadata.** The crate manifests are done: `homepage`, five `keywords`, and the
@@ -406,10 +396,13 @@ first impression in the index.
   retired line, and its topics are three generic ones; the sibling repositories have no description,
   homepage, or topics at all. **Only the author can change these.** The forward links from the patterns
   book are B-1 in [patterns-book.md](patterns-book.md), and they wait on the merge.
-- **S5: the first-paragraph orientation sweep.** Name CGP once in prose, with a link to the
-  Introduction, on every page that does not already. The justification is reader orientation, which
-  [formats.md](../communication-strategy/formats.md#titles-first-lines-and-search) already requires; the
-  search benefit is a by-product, since the name already ranks first. *Lands in:* `docs/`.
+- **S5: the named opening on every page.** Name Context-Generic Programming once in each page's
+  opening paragraph, beside a plain description and linked to the Introduction, with a short form of
+  the tag line where it fits, as the
+  [naming rule](../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) sets
+  out; the skill pages and the published posts are exempt. The justification is reader orientation;
+  the search benefit is a by-product, since the name already ranks first. Land it in the same edit as
+  the page's S3 and S4 front matter. *Lands in:* `docs/`, the front page, and the release post.
 - **S10: the agent surfaces.** Add a `context7.json` to the `cgp` repository and resubmit, so the
   indexed description stops carrying the retired line; optionally publish an `llms.txt` generated from
   the sidebar, on the grounds [seo.md](seo.md#llmstxt-and-why-it-is-worth-a-file-but-not-an-argument)
@@ -511,16 +504,11 @@ a writing task.
 **T3 and T4 are the writing left in the tutorials.** T3 is where a reader finally meets an application
 context, and T4 is cheap enough to fold into any pass over the series.
 
-**S1, S5, and S10 fit anywhere**, and none of them blocks anything: S5 is a prose sweep that reads
-better once a section is otherwise finished, S1 is a half-hour of hand searching on Bing and Kagi, and
-S10 is two small changes in the `cgp` repository.
+**S1 and S10 fit anywhere**, and neither blocks anything: S1 is a half-hour of hand searching on Bing
+and Kagi, and S10 is two small changes in the `cgp` repository. S5 travels with each page's revision.
 
-**What is left of S3 and S4 has dropped down the list rather than off it.** Fifty-five reference pages
-and all seventeen blog posts now carry a written title or description, and those were where the measured
-failure (a 1.09% click-through rate on 81,117 impressions) was concentrated. The roughly 240 pages
-that remain render a derived description that is serviceable, so whoever returns to them should ask
-which pages carry impressions before sweeping, and should still land the edit before the merge, which is
-when each page's first impression in the index is fixed.
+**What is left of S3 and S4 is 27 pages and the Concepts titles**, which land with each page's
+revision and before the merge, which is when each page's first impression in the index is fixed.
 
 **The X tasks fit anywhere, and X2 is worth doing early**: the crate's landing page is working
 against the project every day it stays as it is.
