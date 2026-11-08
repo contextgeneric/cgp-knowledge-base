@@ -161,9 +161,9 @@ unchanged. For two distinct users it raises `ErrBadRequest` if adding to the rec
 (`recipient already has too much money!`), and otherwise writes the sender's new balance, then the
 recipient's.
 
-A probe wired this impl without `NoTransferToSelf`. A self-transfer of 10 left a balance of 100 at
-100, a self-transfer of 1000 was rejected for insufficient balance, and a transfer of 10 to another
-user moved the money.
+A probe wired this impl without `NoTransferToSelf`. A self-transfer of 10 left the balance at 100, a
+self-transfer of 1000 was rejected for insufficient balance, and a transfer of 10 to another user
+moved the money.
 
 It carries no `#[default_impl]`, so `MockNamespace` leaves the transfer path open for `MockApp` to
 wire; a comment on the impl records why.

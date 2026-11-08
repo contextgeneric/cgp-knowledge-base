@@ -69,7 +69,7 @@ below says only where each section's code now lives:
 
 | Post section | Current code |
 |---|---|
-| Feature Highlights: enum upcasting and downcasting, struct building | not in this repository |
+| Feature Highlights: safe enum upcasting and downcasting, and safe struct building | not in this repository |
 | Motivation for Extensible Builders | `contexts/app.rs`: `App::new` and `App::new_with_default` |
 | Modular SQLite Builder | `providers/sqlite.rs` |
 | HTTP Client Builder | `providers/http_client.rs` |

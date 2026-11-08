@@ -1624,7 +1624,7 @@ and `cargo-cgp` now sits at 9, Resources at 10, Contribute at 11, and AI at 12.
 
 - **URL** — <https://contextgeneric.dev/docs/projects/>
 - **Source** — [docs/projects/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/projects)
-- **Status** — Draft: the section index, 21 Hypershell pages, 45 cgp-serde pages, and 14 cgp-examples
+- **Status** — Draft: the section index, 21 Hypershell pages, 49 cgp-serde pages, and 14 cgp-examples
   pages are written on the `v0.8.0` branch; the error backends are planned
 - **How it was made** — ported by an agent from [projects/](../projects/README.md); level one of the
   four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md)

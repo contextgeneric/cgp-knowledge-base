@@ -143,7 +143,7 @@ error[E0119]: [CGP-E011] conflicting wiring: `ProductionApp` wires `@app.core.us
 
 ## Public material derived from this
 
-The "Default implementations" and "Caveats with default implementations" sections of the
-[v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
+The "Sharing default implementations" and "Bind composite providers in the namespace body" sections
+of the [v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
 `web-app/examples/default-impls` page of the
 [cgp-examples project section](../../../website/projects/cgp-examples.md).

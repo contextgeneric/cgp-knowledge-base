@@ -20,17 +20,16 @@ Each crate develops one scenario, and four of the five correspond to a worked ex
 code as it ships; the worked examples are where an agent learns the patterns, per
 [../../AGENTS.md](../../AGENTS.md#project-facts-and-cgp-patterns-have-separate-owners). The table
 records, for each crate, what kind of context it wires, which blog post presents its code, and
-whether it runs. A post that links the repository is marked as linking; the v0.8.0 post shows
-`web-app`'s code without linking it. Every crate uses current CGP idioms, so its code is safe to
-copy for the patterns it shows, apart from `greet`'s hand-written expansion, which is not the
-macro's current output:
+whether it runs. Every post in it links the repository at the crate or directory it shows. Every
+crate uses current CGP idioms, so its code is safe to copy for the patterns it shows, apart from
+`greet`'s hand-written expansion, which is not the macro's current output:
 
 | Subproject | Scenario | Context shape | Worked example | Blog post | Runs |
 |---|---|---|---|---|---|
 | [`transfer`](transfer/README.md) | balance and transfer endpoints served over HTTP | environmental; self-targeted, with one handler dispatched per endpoint | [money-transfer API](../../examples/money-transfer-api.md) | [v0.5.0 release](../../website/blog/v0-5-0-release.md), linking | yes, a server binary |
 | [`expression`](expression/README.md) | an arithmetic interpreter open to new variants and operations | environmental; parameter-targeted | [expression interpreter](../../examples/expression-interpreter.md) | [extensible data types, part 2](../../website/blog/extensible-datatypes-part-2.md), linking | three unit tests |
 | [`builder`](builder/README.md) | an application context assembled from per-subsystem builders | environmental; self-targeted | [application builder](../../examples/application-builder.md) | [extensible data types, part 1](../../website/blog/extensible-datatypes-part-1.md), linking | no entry point |
-| [`web-app`](web-app/README.md) | one social-media backend wired four ways, up to namespace defaults | environmental; self-targeted | [social media app](../../examples/social-media-app.md) | [v0.8.0 release](../../website/blog/v0-8-0-release.md) | compiles only |
+| [`web-app`](web-app/README.md) | one social-media backend wired four ways, up to namespace defaults | environmental; self-targeted | [social media app](../../examples/social-media-app.md) | [v0.8.0 release](../../website/blog/v0-8-0-release.md), linking | compiles only |
 | [`greet`](greet/README.md) | a greeting written as a function, a component, and over an abstract type | value context; self-targeted | none | none | yes, three binaries |
 
 ## Which revision these documents describe
@@ -51,8 +50,9 @@ repository, taught as the [profile picture](../../examples/profile-picture.md) w
 The workspace builds against `cgp` from git: its `[patch.crates-io]` section overrides `cgp`
 and `cgp-error-anyhow` with the `cgp` repository's `main` branch by git URL, and the lockfile pins
 the commit. To test against a local change to `cgp`, switch the same entries to the commented-out
-paths into `../cgp`. It needs stable Rust 1.90 or later and uses the 2024 edition, and the
-repository has no toolchain file. These documents were verified against `cgp` `main` at commit
+paths into `../cgp`. It needs stable Rust 1.90 or later, uses the 2024 edition, and pins 1.90 in
+`rust-toolchain.toml`, the same version as the workspace's `rust-version`. These documents were
+verified against `cgp` `main` at commit
 `adc616c` (2026-09-26), with `rustc` 1.98.1, where `cargo test --workspace` passes. The only tests
 in the workspace are three unit tests in `expression`; the other crates check their wiring at
 compile time with `check_components!` blocks, so a successful build is most of their verification.
@@ -62,10 +62,11 @@ compile time with `check_components!` blocks, so a successful build is most of t
 These gaps belong to the repository as a whole rather than to one crate, so they are recorded here
 rather than in a subproject's `issues.md`:
 
-- **Empty root README**: the repository's `README.md` is empty, so a visitor finds no index of the
-  crates. Only `transfer` has a README of its own.
 - **`main` lags `v0.8.0`**: a reader who clones the default branch gets the `cgp` 0.7.0 versions of
-  four crates and no `web-app`.
+  four crates, no `web-app`, and an empty `README.md`, so the index of the crates exists only on
+  `v0.8.0`.
+- **Only `transfer` has a README of its own**: a reader who opens another crate's directory finds
+  the code alone, with its scenario described only here and on the website.
 
 ## The documents
 
@@ -125,10 +126,10 @@ per [../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section). One document sp
 These documents are the verified source for the repository's own READMEs, above all the `transfer`
 walkthrough, whose drift from the code is recorded in [transfer/issues.md](transfer/issues.md). They
 also feed the [cgp-examples section](../../website/projects/cgp-examples.md) of the website's
-Projects pages, of which the `expression` and `web-app` subsections are written, which writes each
-crate's programs as example pages and whose section index is built from
-[constructs.md](constructs.md), and the unfinished
-[v0.8.0 release post](../../website/blog/v0-8-0-release.md), whose code follows `web-app`.
+Projects pages, which writes each crate's programs as example pages and builds its section index
+from [constructs.md](constructs.md); its `expression` and `web-app` subsections are written. They
+also feed the unfinished [v0.8.0 release post](../../website/blog/v0-8-0-release.md), whose code
+follows `web-app`.
 
 ## How it relates to the rest of the base
 

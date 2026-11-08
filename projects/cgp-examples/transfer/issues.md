@@ -66,8 +66,6 @@ code:
   [adding an endpoint](guides/adding-an-endpoint.md), not "a handler provider and one line", and a
   new backend needs its own namespace, per [swapping the backend](guides/swapping-the-backend.md).
 
-It also uses "capability" for components throughout, as the code comments do.
-
 ## Public material derived from this
 
 The fixes the crate's README needs, listed above.

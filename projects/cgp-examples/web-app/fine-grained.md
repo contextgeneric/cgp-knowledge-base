@@ -144,8 +144,8 @@ The getter and updater checks passed, since their providers need only the databa
 
 ## Public material derived from this
 
-The "Fine grained traits", "Higher-order providers", "Too much wiring with fine grained traits", and
-"The challenges of grouping delegate component keys" sections of the
+The "Split independently reusable operations", "Separate filtering from database access", "Count the
+cost of the separation", and "Why the earlier grouping approaches were insufficient" sections of the
 [v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
 `web-app/examples/fine-grained` page of the
 [cgp-examples project section](../../../website/projects/cgp-examples.md).

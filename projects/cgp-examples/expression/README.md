@@ -78,7 +78,7 @@ each section's code now lives:
 | Wiring To-Lisp Handlers | `contexts/add_mult.rs` |
 | Binary Operator Provider | `providers/to_lisp/binary.rs` and `contexts/add_mult_binary_op.rs` |
 | Code-Based Dispatching | `contexts/add_mult_code.rs` and `dsl.rs` |
-| Extending `MathExpr`, Omitting To-Lisp Implementations | `contexts/add_mult_neg.rs`, with the providers in `providers/eval/` |
+| Extending `MathExpr`, Defining the `MathPlusExpr` Expression Type, Implementing Eval Providers | `contexts/add_mult_neg.rs`, with the providers in `providers/eval/` |
 
 The post's `ComputerRef` component and its variant dispatchers are CGP library items, documented
 under [cgp/](../../../cgp/reference/components/computer.md) rather than here.

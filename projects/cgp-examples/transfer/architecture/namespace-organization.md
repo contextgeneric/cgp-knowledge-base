@@ -32,12 +32,12 @@ paths.
 ## `MockNamespace` binds one configuration
 
 [`MockNamespace`](../reference/wiring.md#mocknamespace) inherits `DefaultNamespace` and binds a
-provider at every path in the tree except two, the transfer and the API handler, from two sides. Its
-body binds the entries no provider can register for itself: the concrete error type, the three auth
-types and two finance types, all through `UseType`, and the HTTP error provider, which is generic
-and so cannot use `#[default_impl]`. The mock backend's three auth and balance implementations
-register themselves with `#[default_impl(@app.… in MockNamespace)]` on their own `#[cgp_impl]`
-blocks, as recorded in [mock backend](../reference/mock-backend.md).
+provider at every path in the tree except two, the transfer and the API handler. It binds them in
+two ways. Its body names the entries no provider can register for itself: the concrete error type,
+the three auth types and two finance types, all through `UseType`, and the HTTP error provider,
+which is generic and so cannot use `#[default_impl]`. The mock backend's three auth and balance
+implementations register themselves with `#[default_impl(@app.… in MockNamespace)]` on their own
+`#[cgp_impl]` blocks, as recorded in [mock backend](../reference/mock-backend.md).
 
 Keeping the prefixes in `DefaultNamespace` and the bindings in `MockNamespace` is what makes the
 bindings a replaceable layer. A second configuration inherits `DefaultNamespace` and binds its own

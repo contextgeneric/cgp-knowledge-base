@@ -49,12 +49,12 @@ and a `for` loop. The request getters import the app's abstract types with `#[us
 The service works as a demonstration and has no automated tests. Its gaps are each confirmed against
 the `v0.8.0` branch and recorded in full in [issues.md](issues.md):
 
-- **Unused items**: `HandleHttpErrorWithAnyhow`, `HandleFromResponse`, `ErrInternal`, and
-  `CanAddApiRoutes` are defined and never wired or called.
+- **Unused items**: `HandleHttpErrorWithAnyhow` and `HandleFromResponse` are never wired,
+  `ErrInternal` is never raised, and `CanAddApiRoutes` is never named.
 - **No request bodies**: the routing layer extracts requests with `FromRequestParts`, so an endpoint
   cannot read a body.
 - **The walkthrough has drifted**: the crate's README describes a per-detail error wiring the code
-  no longer has, and calls components "capabilities" throughout.
+  does not have, and understates both extension paths.
 
 ## The documents
 

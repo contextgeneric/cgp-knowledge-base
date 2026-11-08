@@ -13,7 +13,7 @@ The recommended first project section to write, with `expression` as its pilot.
   crate
 - **Repository** — [`cgp-examples`](https://github.com/contextgeneric/cgp-examples), documented on
   its `v0.8.0` branch; the pages describe it once that branch is the default
-- **Verified against** — `cgp-examples` `v0.8.0` at commit `0c633ad`, with `cgp` `main` at `adc616c`
+- **Verified against** — `cgp-examples` `v0.8.0` at commit `690911a`, with `cgp` `main` at `adc616c`
   through the workspace's patch, and `cargo-cgp` built from its source at commit `b6a6323`
 - **Status** — Draft: 14 pages written, the section index and the `expression` and `web-app`
   subsections, listed in [What is written](#what-is-written); `builder`, `transfer`, and `greet`
@@ -24,7 +24,7 @@ The recommended first project section to write, with `expression` as its pilot.
 ## What is written
 
 **Fourteen pages are written, all the pages that nothing blocks**, and the Projects section index
-gained cgp-examples in its project list, eight rows in its pattern table, and a line in its routes.
+gained cgp-examples in its project list, nine rows in its pattern table, and a line in its routes.
 Resources links the section beside the repository. `yarn build` passes with them. They are:
 
 - **Section** — `cgp-examples/index.md`, with a table of all five crates, linking the two that have
@@ -63,8 +63,10 @@ repository, and match the pages. The pages say the repository has no test for th
   that uncertainty. Wiring the dispatcher directly reports `[CGP-E020]` through the context's
   check, which the [dispatch layers
   record](../../projects/cgp-examples/expression/architecture/dispatch-layers.md) is corrected to.
-- **Source links point at `main`**, per the writing guide, so until the `v0.8.0` branch merges they
-  show the older code, and `web-app` does not exist there.
+- **Source links point at `v0.8.0`**, not at `main` as the writing guide says, because `main`
+  carries the older `cgp` 0.7.0 code and has no `web-app` crate, so a `main` link would show code
+  the page does not describe or fail outright. The links move to `main` when the branch merges and
+  becomes the default.
 - **The writing guide was revised from the pilot**, as this plan asks: a program with no runner gets
   a test to save, a wiring-only crate opens with *Check it*, and neighbouring designs make the same
   *Try a change*; see [the example page](../writing-guides/project.md#then-it-runs-the-program).

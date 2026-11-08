@@ -120,7 +120,7 @@ beside the same change in the [fine-grained stage](fine-grained.md#try-a-change)
 
 ## Public material derived from this
 
-The "An example social media web app" and "Filtering usernames and post messages" sections of the
+The "Start with a manager per domain" and "Add dependencies as the service grows" sections of the
 [v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
 `web-app/examples/coarse-grained` page of the
 [cgp-examples project section](../../../website/projects/cgp-examples.md).

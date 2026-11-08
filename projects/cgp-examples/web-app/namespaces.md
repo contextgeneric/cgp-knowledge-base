@@ -151,7 +151,7 @@ error[E0277]: [CGP-E001] missing wiring for `@app.extra.content_filter.SpamMessa
 
 ## Public material derived from this
 
-The "Introducing CGP namespaces and paths" and "Hierarchical delegation" sections of the
+The "Give component groups a path" and "Group paths hierarchically" sections of the
 [v0.8.0 release post](../../../website/blog/v0-8-0-release.md). It also feeds the
 `web-app/examples/namespaces` page of the
 [cgp-examples project section](../../../website/projects/cgp-examples.md).
