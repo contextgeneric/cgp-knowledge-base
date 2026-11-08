@@ -184,20 +184,10 @@ The derive's output for that `Person` shows every piece. `cargo cgp expand` give
 the entry and exit impls:
 
 ```rust
+///The partial builder for [`Person`].
 pub struct __PartialPerson<__F0__: MapType, __F1__: MapType> {
     pub first_name: <__F0__ as MapType>::Map<String>,
     pub last_name: <__F1__ as MapType>::Map<String>,
-}
-impl<__F0__: MapType, __F1__: MapType> PartialData for __PartialPerson<__F0__, __F1__> {
-    type Target = Person;
-}
-impl FinalizeBuild for __PartialPerson<IsPresent, IsPresent> {
-    fn finalize_build(self) -> Self::Target {
-        Person {
-            first_name: self.first_name,
-            last_name: self.last_name,
-        }
-    }
 }
 impl HasBuilder for Person {
     type Builder = __PartialPerson<IsNothing, IsNothing>;
@@ -212,6 +202,17 @@ impl IntoBuilder for Person {
     type Builder = __PartialPerson<IsPresent, IsPresent>;
     fn into_builder(self) -> Self::Builder {
         __PartialPerson {
+            first_name: self.first_name,
+            last_name: self.last_name,
+        }
+    }
+}
+impl<__F0__: MapType, __F1__: MapType> PartialData for __PartialPerson<__F0__, __F1__> {
+    type Target = Person;
+}
+impl FinalizeBuild for __PartialPerson<IsPresent, IsPresent> {
+    fn finalize_build(self) -> Self::Target {
+        Person {
             first_name: self.first_name,
             last_name: self.last_name,
         }
@@ -248,7 +249,8 @@ impl<
 
 `__M1__` is unconstrained, so the impl applies whatever state the field is in, and `__F1__` passes
 through untouched, which is why fields can be built in any order. The companion drops the struct's
-own attributes, so it has none of the record's derives (`Debug`, `Clone`, and so on); the field
+own attributes and carries only a generated doc line, so it has none of the record's derives
+(`Debug`, `Clone`, and so on); the field
 attributes go too, except each field's documentation, so another derive's helper attribute does
 not reach it ([`#[derive(BuildField)]`](../derives/derive_build_field.md)).
 
