@@ -926,7 +926,7 @@ come for, and it is the first thing a well-meaning trim targets.
 - **Source** — [docs/comparisons/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/comparisons)
 - **Status** — Current: the index and all eleven pages are written, each with its `example-code` mirror.
   A revision pass against the naming rule and the [comparison guide](writing-guides/related-work.md)
-  has reached the index and eight pages so far, and the other three follow.
+  has revised the index and all eleven pages.
 - **How it was made** — ported by an agent from [related-work/](../related-work/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md). The author's read of
   each page's two judging sections, per the
@@ -939,8 +939,9 @@ one page per internal related-work document, eleven in all, plus a hand-written 
 the reader's background. It is a top-level category at `docs/comparisons/`, labelled *Comparisons*, at
 position 6 between Concepts and Reference. The page type is specified in
 [writing-guides/related-work.md](writing-guides/related-work.md), and every page follows its shape: an
-orientation paragraph with the settled descriptor, an *In your terms* table that glosses "context" on
-first use, a compressed refresher of the compared idea, the CGP side beside it, a section on what each
+orientation paragraph that names Context-Generic Programming, links the Introduction, and relates a
+short form of the tag line, an *In your terms* table that glosses "context" on first use, a compressed
+refresher of the compared idea, the CGP side beside it, a section on what each
 approach costs carrying the canonical `cargo cgp check` sentence, a section on where the other tool is
 the better choice, a section on what to expect that differs, onward routing, Sources opening with the
 toolchain sentence, and the provenance note in the comparison variant.
@@ -1004,6 +1005,12 @@ definition from dependent checks at instantiation, acknowledges concepts and pol
 keeps const generics and runtime polymorphism available alongside CGP. Its greeting uses `this->`
 for dependent-base member lookup; all three C++ examples were compiled and run with GCC 15.2.0 in
 C++23 mode during this revision.
+
+The row-polymorphism, Rust-proposals, and type-classes pages use the same style. The row page keeps
+predicate-based rows distinct from a row kind and from row inference. The proposals page separates
+proposal syntax from runnable Rust and names what CGP cannot infer or nest. The type-classes page
+keeps scoped coherence distinct from global uniqueness and names where a canonical instance is the
+simpler choice.
 
 The foreign-language snippets come from the internal documents, whose Sources sections record
 their verification toolchains and any documentation-only checks. The pages preserve those records;
