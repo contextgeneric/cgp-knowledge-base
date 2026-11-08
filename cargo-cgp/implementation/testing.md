@@ -152,7 +152,9 @@ Normalization makes output independent of the machine. The `-q` flag removes car
 The `normalize` module rewrites paths to `$CGP`, `$DIR`, and `$SYSROOT`, replaces a crash report's
 thread id, host triple, and driver version with `$TID`, `$HOST`, and `$VERSION`, and drops cargo's
 `could not compile` summary and the note about a long type's temp file, which only the baseline
-prints, since it lacks `--verbose`. The crash report keeps rustc's own version, so a toolchain bump
+prints, since it lacks `--verbose`. It also drops the `incremental=…` flag from a crash report's
+compiler flags, because whether cargo passes it depends on the caller's `CARGO_INCREMENTAL`, which
+the workspace's CI sets to `0`. The crash report keeps rustc's own version, so a toolchain bump
 still re-blesses it. The baseline alone also collapses each `Chars<…>` spine to `Chars<..>`, because
 plain rustc truncates it at a depth that varies between runs. `--print` shows the raw output.
 
