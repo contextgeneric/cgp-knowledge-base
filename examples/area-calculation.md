@@ -8,8 +8,8 @@ application needs to treat uniformly.
 
 The contexts here are **value contexts** and the component is **self-targeted**: the wired types are
 the shapes themselves, and `CanCalculateArea` is about the shape it is called on. That is the
-simplest arrangement to follow, which is why this example is the one the website's teaching material
-is built from, but it is the least common one in real CGP code:
+simplest arrangement to follow, which is why this example is the one the website's area-calculation
+tutorial series is built from, but it is the least common one in real CGP code:
 [eight of the nine examples](README.md#which-shape-each-example-wires) here wire an **environmental
 context** instead, a type standing for an application. Nothing in a signature marks the difference,
 so a document that draws on this example alongside one of the others has to say when it crosses

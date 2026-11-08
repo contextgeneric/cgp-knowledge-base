@@ -28,8 +28,11 @@ which one is in play and links to it:
 - wiring a context to providers:
   [`delegate_components!`](../cgp/reference/macros/delegate_components.md)
 
-All snippets assume `use cgp::prelude::*;`. The operation works over two domain types, a `UserId`
-newtype and a `User` row that may carry the storage key of a profile picture:
+All snippets assume `use cgp::prelude::*;`, and the external names they use come from their own
+crates: `sqlx` for the pools and its trait bounds, `aws_sdk_s3::Client` and
+`google_cloud_storage::client::Storage` for the two storage backends, and `image::RgbImage` for the
+decoded picture. The operation works over two domain types, a `UserId` newtype and a `User` row that
+may carry the storage key of a profile picture:
 
 ```rust
 pub struct UserId(pub u64);
