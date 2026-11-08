@@ -38,8 +38,11 @@ apart by that supertrait's component being one of the trait's own parameters. Th
 provider class `[CGP-E002]`, and its tree starts at the listed layer
 ([`check_providers_layer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/check_providers_layer.rs),
 [`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)).
-One attribute over several components generates impls whose errors share a caret. Their spans differ
-in syntax context, which the comparison includes, so each error reads its own impl
+One attribute over several components generates impls whose errors share a caret, so the caret alone
+cannot tell them apart: their spans differ only in syntax context, which the compiler may reuse when
+it does not compile incrementally. The anchor instead reads the diagnostic's own message for the
+`IsProviderFor<Component, …>` bound it names and takes that entry's impl, keeping the first entry
+that resolves as the fallback for a caret that carries one
 ([`check_providers_two_components`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_two_components.rs)).
 
 ## The impl anchors
