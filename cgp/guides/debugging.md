@@ -128,7 +128,7 @@ cause or proves it absent:
 | a duplicate key or generated name (`E0119`/`E0428`) | `grep -n 'conflicting implementation\|defined multiple times'` | the two carets are the two entries to reconcile |
 | whether an `E0119` is a specific override or a blanket forwarding overlap | `grep -n 'downstream crates may implement'` | present → a duplicate key or a namespace override on a concrete key; absent on a fully-generic `DelegateComponent<_>` → two namespaces (or a namespace and a bare-key `for` loop) joined |
 | a wiring or namespace-inheritance cycle (`E0275`) | `grep -n 'overflow evaluating'` | the recursing requirement names the loop; ignore the `recursion limit` help, which never applies to a true cycle |
-| an orphan-rule violation (`E0210`/`E0117`) | `grep -n 'must be used as the type parameter'` | a registration into a foreign namespace with no local type |
+| an orphan-rule violation (`E0210`/`E0117`) | `grep -n 'must be used as an argument to some local type\|only traits defined in the current crate'` | a registration into a foreign namespace with no local type |
 | an unconstrained entry generic (`E0207`) | `grep -n 'is not constrained'` | the caret sits on the `<T>` that must reach the key |
 | an ill-formed lowered type (`E0277` `Sized`) | `grep -n 'size for values of type\|Sized'` | an `Option<&T>` shorthand over an unsized type the macro cannot see (e.g. `Option<&Path>`); the `within` help names the type you wrote |
 | a `#[use_type]` imported-name typo (`E0576`) | `grep -n 'cannot find associated type'` | the caret sits on the misspelled name |
