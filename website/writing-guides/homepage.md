@@ -47,9 +47,8 @@ no patience budget.
 ever gets lands here: Nielsen Norman Group's
 [eyetracking research](https://www.nngroup.com/articles/scrolling-and-attention/) puts 57% of viewing
 time above the fold and 74% within the first two screenfuls, so this screen has to deliver the whole
-pitch: the tag line, one
-reassurance line, one piece of code that shows the novelty, and two links. Nothing above the fold may
-depend on anything below it.
+pitch: the project's name and the tag line, one reassurance line, one piece of code that shows the
+novelty, and two links. Nothing above the fold may depend on anything below it.
 
 **Below the fold is a bounded essay** for the reader who kept scrolling, the one who is interested
 enough to want the argument. It runs the idea from the constraint to the payoff to the cost, in a fixed
