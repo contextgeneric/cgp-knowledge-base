@@ -495,11 +495,11 @@ to the Rust Reference, which is the site's standing rule for a Rust concept it d
 
 So the work is to connect what exists, and it is on the list twice. **The book chapter links
 forward**, which is part of [S7](tasks.md#s--search-and-agent-discoverability) and B-1 in
-[patterns-book.md](patterns-book.md#the-work-in-order). And **the coherence page needs a title in the
-reader's words**, which is [S4](tasks.md#s--search-and-agent-discoverability). Those words are
-*blanket implementation*, not `E0119`: the blanket family is 2,019 impressions a year against 11 for
-*rust conflicting implementations of trait*. A page arguing that Rust allows only one blanket
-implementation per trait can say so in its title honestly, because that is what it argues.
+[patterns-book.md](patterns-book.md#the-work-in-order). And **the coherence page carries a title in the
+reader's words**. Those words are *blanket implementation*, not `E0119`: the blanket family is 2,019
+impressions a year against 11 for *rust conflicting implementations of trait*. A page arguing that
+Rust allows only one blanket implementation per trait can say so in its title honestly, because that
+is what it argues.
 
 **A standalone "what is a blanket implementation in Rust" page would re-teach Rust**, which the
 [reference guide](writing-guides/reference.md#linking-three-destinations-and-one-prohibition) rules out
@@ -689,10 +689,10 @@ missing there has landed, since that document removes an entry rather than marki
 section says only why they are ordered as they are.
 
 **The click-through work comes first, because presentation is what the site is losing on.** Most of
-it is in place: every reference, comparison, tooling, project, and AI page and every blog post carries
-a written description, and every reference page for a construct carries a search-facing title. What
-remains of S3 and S4 is the 27 pages that render a derived description and the Concepts titles, above
-all `docs/concepts/coherence`. Each lands in the same edit as the page's
+it is in place: every reference, comparison, tooling, project, AI, and Concepts page and every blog
+post carries a written description, and every reference page for a construct and both concept pages
+that needed one carry a search-facing title. What remains of S3 is the eight pages that render a
+derived description. Each lands in the same edit as the page's
 [named opening](#own-the-name-by-saying-it-where-it-means-something), which is S5, so a page is read
 once, and all of it lands before the merge, which fixes each page's first impression.
 

@@ -356,31 +356,20 @@ of these.
 **The ordering inside this group is set by one measurement.** The property drew 121,685 impressions and
 970 clicks over twelve months (a **1.09% click-through rate** once an anomalous May 2026 is excluded,
 0.80% with it) at an average position between 7 and 17. The site is being shown and not chosen, so
-work that changes a title or a description outranks work that chases a rank, which is why S3 and S4
-came first and why their remainders are re-scoped rather than dropped. Anything that changes a title or
-a description should land **before the branch merges**, because the merge is what fixes each new page's
+work that changes a title or a description outranks work that chases a rank, which is why S3 came
+first and why its remainder is re-scoped rather than dropped. Anything that changes a title or a
+description should land **before the branch merges**, because the merge is what fixes each new page's
 first impression in the index.
 
-- **S3: a `description` on every page.** **Most of it is done; 27 pages remain.** Every reference,
-  comparison, `cargo-cgp`, project, and AI page and every blog post sets a written description, and the
-  three generated category indexes carry one in their `_category_.json`. The 19 Concepts pages, four
-  of the five tutorials, and the Introduction, Overview, Resources, and Contribute pages still render
-  a derived description: the first source line of the opening paragraph, which ends mid-sentence where
-  the source wraps. Write each in the same edit as the page's revision, before the merge. The
-  conventions, including the YAML apostrophe that fails the build, are in
+- **S3: a `description` on every page.** **Most of it is done; eight pages remain.** Every reference,
+  comparison, `cargo-cgp`, project, and AI page, every one of the 19 Concepts pages, and every blog
+  post sets a written description, and the three generated category indexes carry one in their
+  `_category_.json`. The four of the five tutorials that are not the checking page, the Introduction,
+  Overview, Resources, and Contribute still render a derived description: the first source line of the
+  opening paragraph, which ends mid-sentence where the source wraps. Write each in the same edit as
+  the page's revision, before the merge. The conventions, including the YAML apostrophe that fails
+  the build, are in
   [site-structure.md](site-structure.md#conventions-the-port-must-follow). *Lands in:* `docs/`.
-- **S4: a search-facing `title` on the pages whose heading does not say what the page is for.** **Done
-  for every reference page about a construct**, always alongside S3, which is how the rest should be
-  done: the two are the same edit to the same front matter, and splitting them means reading every
-  page twice. Front-matter `title` sets the metadata and may differ from the `h1`, so a reference page
-  keeps its `#[cgp_component]` heading and carries a title saying what the construct is for. Keep it
-  under roughly 60 characters and put the distinguishing word first. *Lands in:* the concept pages
-  whose title does not use the reader's words, **`docs/concepts/coherence` above all**, whose subject
-  is why Rust rejects overlapping blanket implementations and whose title says neither of those words.
-  The words the data gives are *blanket implementation*: that family is 2,019 impressions a year at
-  position 5.8, against 11 for *rust conflicting implementations of trait*. The reasoning is in
-  [seo.md](seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider).
-  *Blocked by:* nothing.
 - **S7: the GitHub metadata.** The crate manifests are done: `homepage`, five `keywords`, and the
   `rust-patterns` and `no-std` categories are set on `[workspace.package]` and inherited by all 28
   publishable crates. What remains needs repository settings rather than a commit: the `cgp` repository's
@@ -395,7 +384,7 @@ first impression in the index.
   [naming rule](../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) sets
   out; the skill pages and the published posts are exempt. The justification is reader orientation;
   the search benefit is a by-product, since the name already ranks first. Land it in the same edit as
-  the page's S3 and S4 front matter. *Lands in:* `docs/`, the front page, and the release post.
+  the page's S3 front matter. *Lands in:* `docs/`, the front page, and the release post.
 - **S10: the agent surfaces.** Add a `context7.json` to the `cgp` repository and resubmit, so the
   indexed description stops carrying the retired line; optionally publish an `llms.txt` generated from
   the sidebar, on the grounds [seo.md](seo.md#llmstxt-and-why-it-is-worth-a-file-but-not-an-argument)
@@ -466,7 +455,7 @@ the [ordering](#the-ordering) for what to start on.
 | V2 | the `cargo-cgp` tag | V1 |
 | A1 | the author's read | every page-adding task's provenance note |
 | A2 | the author's read | nothing |
-| S1, S3, S4, S5, S7, S10 | nothing | nothing; S3 and S4 should precede V1 |
+| S1, S3, S5, S7, S10 | nothing | nothing; S3 should precede V1 |
 | S9, S11 | V1 | nothing |
 | X2, X3 | nothing | nothing |
 
@@ -498,8 +487,8 @@ context, and T4 is cheap enough to fold into any pass over the series.
 **S1 and S10 fit anywhere**, and neither blocks anything: S1 is a half-hour of hand searching on Bing
 and Kagi, and S10 is two small changes in the `cgp` repository. S5 travels with each page's revision.
 
-**What is left of S3 and S4 is 27 pages and the Concepts titles**, which land with each page's
-revision and before the merge, which is when each page's first impression in the index is fixed.
+**What is left of S3 is eight pages**, which land with each page's revision and before the merge,
+which is when each page's first impression in the index is fixed.
 
 **The X tasks fit anywhere, and X2 is worth doing early**: the crate's landing page is working
 against the project every day it stays as it is.
