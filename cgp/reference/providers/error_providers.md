@@ -202,8 +202,9 @@ them.** For a `String` source, `DebugError` formats it and raises the result thr
 ``error[E0275]: overflow evaluating the requirement `DebugError: ErrorRaiser<App, String>` ``. The
 same cycle arises for `@ErrorWrapperComponent.String: DisplayError`, and for either provider on
 either component. The `String` key goes to a provider that finishes the job, such as `RaiseFrom` or
-a backend provider. Because they allocate a `String`, both sit behind the
-crate's `alloc` feature, which is on by default.
+a backend provider. Because they allocate a `String`, both sit behind an `alloc` feature that is off
+by default: enable `features = ["alloc"]` on the `cgp` dependency, or on `cgp-error-extra` when you
+name it directly.
 
 ## Behavior
 
