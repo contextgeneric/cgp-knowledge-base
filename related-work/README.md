@@ -57,7 +57,8 @@ comparisons span all three.
 
 Each document below names an external concept and compares it to CGP. The authoring rules for adding
 one live in [AGENTS.md](AGENTS.md). The first two documents are the ones a Rust reader compares CGP
-to before any other, so they are listed first; the rest are grouped by the tradition they come from.
+to before any other, so they are listed first. The type-theoretic ideas follow, then dependency
+injection, the runtime mechanisms, and the senses of the word "capability".
 
 - [Rust's own proposals](rust-language-proposals.md): specialization (RFC 1210, unstable since 2016
   with a lifetime soundness hole), the dictionary-passing account of traits, Boxy's named and
@@ -69,23 +70,6 @@ to before any other, so they are listed first; the rest are grouped by the tradi
   CRTP, and C++20 concepts compared with providers, higher-order providers, and context wiring. The
   comparison distinguishes constraint satisfaction from generic-body checking, acknowledges aliases
   and defaults, and explains where structural policies and inheritance differ from CGP.
-- [Capabilities](capabilities.md): the five things the word names, namely object capabilities (E,
-  Pony, seL4, WASI, `cap-std`), capability-based security in operating systems and hardware, Pony's
-  reference capabilities and Linux privilege bits (which share only the word), effects as
-  capabilities (Effekt, Scala's `CanThrow` and capture checking), and the Rust community's
-  implicit-value, sandboxing, and ownership-token senses. CGP is capability-like in the effects
-  sense (a provider declares what it requires and the context supplies it, checked at compile time)
-  and is not a capability system in the object-capability sense: it does not remove ambient
-  authority, its requirements are not unforgeable tokens, and dependency checking does not enforce
-  confinement. Wiring is static, while authority-bearing values can vary at runtime.
-- [Dependency injection](dependency-injection.md): the IoC-container and constructor-injection model
-  of Spring, Guice, Dagger, and their kin, and how CGP's impl-side dependencies and per-context
-  wiring inject dependencies without a container, reflection, or runtime graph.
-- [Implicit parameters](implicit-parameters.md): the implicitly passed context arguments of Scala's
-  `given`/`using` and Haskell's `ImplicitParams`, the type-class resolution both build on, and how
-  CGP's implicit arguments and context-threaded wiring supply dependencies through fields and
-  provider selection. Scala scope rules, Haskell global instances, and Rust coherence are kept
-  distinct.
 - [Type classes](type-classes.md): the principled ad-hoc polymorphism of Haskell, Agda, and Lean,
   dictionary passing and coherence, the overlapping and incoherent-instance extensions that strain
   against it, the diamond problem in dependently typed settings, and Dreyer, Harper, and
@@ -97,6 +81,11 @@ to before any other, so they are listed first; the rest are grouped by the tradi
   and Standard ML, plus the modular-implicits proposal. Components, providers, and higher-order
   providers serve related composition roles; sealing, type identity, scoped implicit selection, and
   the limits of the wiring analogy are treated separately.
+- [Implicit parameters](implicit-parameters.md): the implicitly passed context arguments of Scala's
+  `given`/`using` and Haskell's `ImplicitParams`, the type-class resolution both build on, and how
+  CGP's implicit arguments and context-threaded wiring supply dependencies through fields and
+  provider selection. Scala scope rules, Haskell global instances, and Rust coherence are kept
+  distinct.
 - [Algebraic effects and handlers](algebraic-effects.md): the operations-and-handlers model of Koka,
   OCaml, Flix, and Eff, where a handler interprets an effect by capturing the continuation and
   resuming it zero, one, or many times. CGP shares an operation/implementation structure with
@@ -107,6 +96,9 @@ to before any other, so they are listed first; the rest are grouped by the tradi
   Morris and McKinna's "rows by any other name" row-theory account. CGP brings the same extensible
   records and variants to nominal Rust through derived type-level shapes and trait predicates rather
   than a built-in row kind.
+- [Dependency injection](dependency-injection.md): the IoC-container and constructor-injection model
+  of Spring, Guice, Dagger, and their kin, and how CGP's impl-side dependencies and per-context
+  wiring inject dependencies without a container, reflection, or runtime graph.
 - [Dynamic dispatch, dynamic typing, and prototypal inheritance](dynamic-dispatch.md): late binding
   and message passing, the vtables and method dictionaries that implement them, duck typing, and
   prototype-based delegation in Self, JavaScript, and Lua. CGP reproduces their openness (many
@@ -119,3 +111,12 @@ to before any other, so they are listed first; the rest are grouped by the tradi
   encoding a type's shape as type-level lists the trait system resolves against, shown through
   `cgp-serde`'s `SerializeRecordFields`, carrying field types as types so it recurses into them,
   checked when written, and extended to behavior and abstract-type selection.
+- [Capabilities](capabilities.md): the five things the word names, namely object capabilities (E,
+  Pony, seL4, WASI, `cap-std`), capability-based security in operating systems and hardware, Pony's
+  reference capabilities and Linux privilege bits (which share only the word), effects as
+  capabilities (Effekt, Scala's `CanThrow` and capture checking), and the Rust community's
+  implicit-value, sandboxing, and ownership-token senses. CGP is capability-like in the effects
+  sense (a provider declares what it requires and the context supplies it, checked at compile time)
+  and is not a capability system in the object-capability sense: it does not remove ambient
+  authority, its requirements are not unforgeable tokens, and dependency checking does not enforce
+  confinement. Wiring is static, while authority-bearing values can vary at runtime.
