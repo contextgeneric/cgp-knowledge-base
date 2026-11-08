@@ -94,8 +94,8 @@ summary leaves out:
 - **Serde's attributes**: fields cannot be renamed, skipped, flattened, or defaulted when missing.
 - **JSON helpers**: the JSON providers deserialize from any `serde_json` reader, but the only
   convenience method takes a string; there is no counterpart for serializing.
-- **Evidence**: no benchmark has been run, only the record and variant providers have rustdoc, and
-  seven providers are never run by a test.
+- **Evidence**: no benchmark has been run, the rustdoc covers the constructs but no module or
+  field, and seven providers are never run by a test.
 
 ## The documents
 
@@ -194,9 +194,9 @@ They feed three artifacts:
   issues document feeds no page.
 - **The repository README**, which currently summarizes the components in pre-0.8 syntax and defers
   to the announcement post.
-- **Rustdoc for every public item.** Only the record and variant providers carry doc comments, so
-  the crates' docs.rs pages list most items without explanation; the reference entries are written
-  to be condensed into them.
+- **Rustdoc for the constructs.** Every component, getter, and provider carries a one-sentence doc
+  condensed from its reference entry, so the docs.rs pages say what each construct is for. Modules
+  and struct fields carry none.
 
 ## How it relates to the rest of the base
 
