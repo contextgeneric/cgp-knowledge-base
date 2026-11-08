@@ -1,6 +1,6 @@
 # cargo-cgp: the CGP error toolchain
 
-`cargo-cgp` is CGP's first-class toolchain: a cargo subcommand that stands in for `cargo check` and
+`cargo-cgp` is CGP's error toolchain: a cargo subcommand that stands in for `cargo check` and
 rewrites CGP's compiler errors into a compact, root-cause-first form, and that also expands a
 target's macros with CGP's type-level constructs made legible. It is the **recommended way to check CGP
 code and to read a CGP compile error**, and an agent working in this repository should
@@ -146,7 +146,9 @@ cargo cgp expand --lib --item RectangleArea
 ```
 
 ```rust
+///The trait for the `rectangle_area` operation.
 pub trait RectangleArea {
+    ///The `rectangle_area` operation.
     fn rectangle_area(&self) -> f64;
 }
 impl<__Context__> RectangleArea for __Context__
@@ -155,12 +157,12 @@ where
         + HasField<Symbol!("height"), Value = f64>,
 {
     fn rectangle_area(&self) -> f64 {
-        let width: f64 = self
-            .get_field(::core::marker::PhantomData::<Symbol!("width")>)
-            .clone();
-        let height: f64 = self
-            .get_field(::core::marker::PhantomData::<Symbol!("height")>)
-            .clone();
+        let width: f64 = ::core::clone::Clone::clone(
+            HasField::get_field(self, ::core::marker::PhantomData::<Symbol!("width")>),
+        );
+        let height: f64 = ::core::clone::Clone::clone(
+            HasField::get_field(self, ::core::marker::PhantomData::<Symbol!("height")>),
+        );
         width * height
     }
 }
