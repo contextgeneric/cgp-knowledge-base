@@ -64,7 +64,7 @@ what that choice costs and guarantees.
 
 ### Runtime reflection: Bevy
 
-Bevy's [`bevy_reflect`](https://docs.rs/bevy_reflect/latest/bevy_reflect/) (at version 0.19 as of
+Bevy's [`bevy_reflect`](https://docs.rs/bevy_reflect/latest/bevy_reflect/) (at version 0.20 as of
 this writing) is the prominent Rust runtime-reflection system, and it is the runtime counterpart to
 everything CGP does statically: a full facility for inspecting, accessing, and mutating a value's
 structure while the program runs. It exists because a game engine must do things the type system
@@ -293,7 +293,7 @@ The single most important design decision is that this reflection is callable *o
 time*, and the source enforces it. `TypeId::info` is documented "It can only be called at compile
 time", and every query method carries a `#[rustc_comptime]` attribute, a compiler marker that pins
 it to compile-time evaluation. The
-[project goal](https://rust-lang.github.io/rust-project-goals/2026/reflection-and-comptime.html)
+[project goal](https://goals.rust-lang.org/2026/reflection-and-comptime.html)
 states the reason: supporting runtime calls would require "some global table somewhere that maps all
 `TypeId`s to their repr", which it calls "an obvious no-go". By restricting reflection to `const`
 contexts, Rust keeps the zero-cost property. The reflection is evaluated during compilation and
@@ -693,7 +693,7 @@ snippet, whose paths follow the library source; the CGP snippets are taken from 
   (`Type::of`, `TypeId::info`, `TypeKind`, the `variant`/`field` queries, `VariantId`, `FieldId`,
   `TraitImpl`), the `#[rustc_comptime]` compile-time-only restriction, the implemented surface, and
   the open stabilization checklist and design questions.
-- [Rust Project Goals: *Reflection and comptime* (2026)](https://rust-lang.github.io/rust-project-goals/2026/reflection-and-comptime.html):
+- [Rust Project Goals: *Reflection and comptime* (2026)](https://goals.rust-lang.org/2026/reflection-and-comptime.html):
   the plan to make reflection-crate derives no-ops, the explicit rejection of full Zig-style
   `comptime` near-term and of runtime reflection, the 2026 to 2028 timeline, and the champions (Oli
   Scherer, Scott McMurray, Josh Triplett).
