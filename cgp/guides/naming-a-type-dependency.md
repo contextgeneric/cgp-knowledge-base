@@ -210,9 +210,11 @@ with any [error provider](../reference/providers/error_providers.md) the context
 alias in every type position (signatures, `where` predicates, `let` annotations) and as the
 qualifier of an expression path, so `Transaction::begin_from(pool)` resolves. What it deliberately
 leaves alone is a bare, single-segment alias in expression position, because that names a *value*
-and an abstract type can never be one. So an alias that shares its name with a unit struct the body
-constructs will mean the abstract type in the signature and the struct in the body, which compiles
-and is almost never what you want, so name them apart.
+and an abstract type can never be one. So a unit struct that shares its name with the alias is what
+the body constructs while the signature still names the abstract type, and the provider fails with
+`E0308` until it pins the type to that struct with
+`#[use_type(HasTransactionType.{Transaction = Transaction})]`. The pin makes the signature mean the
+struct too, which compiles and is almost never what you want, so name them apart.
 
 ## Related guides
 
