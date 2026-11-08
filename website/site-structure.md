@@ -926,7 +926,7 @@ come for, and it is the first thing a well-meaning trim targets.
 - **Source** — [docs/comparisons/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/comparisons)
 - **Status** — Current: the index and all eleven pages are written, each with its `example-code` mirror.
   A revision pass against the naming rule and the [comparison guide](writing-guides/related-work.md)
-  has reached the index and four pages so far, and the other seven follow.
+  has reached the index and eight pages so far, and the other three follow.
 - **How it was made** — ported by an agent from [related-work/](../related-work/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md). The author's read of
   each page's two judging sections, per the
@@ -995,8 +995,8 @@ dynamic typing separate from runtime polymorphism and explains coexistence with 
 The implicit-parameter page separates Scala's scoped givens, Haskell's named implicit parameters,
 and ordinary global type-class instances; CGP retains Rust's coherence checks.
 
-The ML-modules and policy-based-design pages also use point-first explanations and distinguish
-role correspondences from language-feature equivalence. The ML page separates associated-type
+The ML-modules, policy-based-design, and reflection pages also use point-first explanations and
+distinguish role correspondences from language-feature equivalence. The ML page separates associated-type
 selection from sealing, preserves scoped selection in modular implicits, and limits the Functoria
 analogy to provider assembly. Its `ScaledArea` example requires an explicit inner provider; `new`
 does not introduce a `UseContext` default. The C++ page distinguishes nondependent checks at
