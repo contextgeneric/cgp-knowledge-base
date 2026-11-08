@@ -58,8 +58,8 @@ then reaches `StreamToStdout`, whose input dispatcher has no entry for it. A pro
 program on the same context with `HandlerComponent: (Program, Vec<u8>)`, and `cargo cgp check` reported:
 
 ```text
-error[E0277]: [CGP-E001] missing entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` in provider `HandleToTokioAsyncRead`
-   = note: root cause: [CGP-E114] missing entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` in provider `HandleToTokioAsyncRead`
+error[E0277]: [CGP-E001] missing entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` in provider `hypershell_tokio_components::providers::async_read::HandleToTokioAsyncRead`
+   = note: root cause: [CGP-E114] missing entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` in provider `hypershell_tokio_components::providers::async_read::HandleToTokioAsyncRead`
 ```
 
 See [debugging](../guides/debugging.md#a-stage-cannot-accept-the-previous-stages-output) for this

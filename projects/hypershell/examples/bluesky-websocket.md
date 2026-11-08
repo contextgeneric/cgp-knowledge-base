@@ -85,13 +85,13 @@ probe checked the program with
 builds, and `cargo cgp check` reported:
 
 ```text
-error[E0277]: [CGP-E001] missing wiring for `@cgp.core.error.ErrorRaiserComponent.Error` on `MyApp`
-   = note: root cause: [CGP-E113] missing wiring for `@cgp.core.error.ErrorRaiserComponent.Error` on `MyApp`
+error[E0277]: [CGP-E001] missing wiring for `@cgp.core.error.ErrorRaiserComponent.tokio_tungstenite::tungstenite::Error` on `MyApp`
+   = note: root cause: [CGP-E113] missing wiring for `@cgp.core.error.ErrorRaiserComponent.tokio_tungstenite::tungstenite::Error` on `MyApp`
 ```
 
-The path's last segment is `tungstenite::Error` written by its own name, `Error`, so the message
-names the error type the provider raises rather than the context's `anyhow` error. With the route in
-place, the check passes.
+The path's last segment is the error type the provider raises, written by its full path,
+`tokio_tungstenite::tungstenite::Error`, so the message names that type rather than the context's
+`anyhow` error. With the route in place, the check passes.
 
 ## What it demonstrates
 

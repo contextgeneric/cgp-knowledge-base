@@ -12,7 +12,7 @@ account of what the proof of concept does not do. The project with measured sear
 - **Ports** — [projects/hypershell/](../../projects/hypershell/README.md)
 - **Repository** — [`hypershell`](https://github.com/contextgeneric/hypershell), documented on its
   `v0.8.0` branch, which is the only branch built on `HypershellNamespace`
-- **Verified against** — `hypershell` `v0.8.0` at commit `7f7e943`, and `cargo-cgp` built from its
+- **Verified against** — `hypershell` `v0.8.0` at commit `f55415a`, and `cargo-cgp` built from its
   source at commit `b6a6323`
 - **Status** — Draft: 21 Hypershell pages and the section index written, listed in [What is
   written](#what-is-written); the reference, the comparison, and the pages that quote providers wait
@@ -87,6 +87,12 @@ The writing turned up several facts a later revision must respect:
   and names the requirement that tips the balance. A revision keeps it fair to the alternative.
 - **The `Try a change` results** are recorded in the example records for `hello_name`,
   `http_checksum_native`, and `bluesky_websocket` before the pages quote them.
+- **Every page names Context-Generic Programming in its opening paragraph**, linked to the
+  Introduction, and relates the tag line's idea in the page's own words rather than repeating the
+  line whole. A revision keeps that, per the [naming
+  rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
+- **The pages agree with the branch's current commits**, including the CI workflow, the dated
+  nightly pin, and the doc comments on the constructs.
 
 ## What it covers
 

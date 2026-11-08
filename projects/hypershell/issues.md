@@ -26,8 +26,8 @@ defeats streaming. See
 ### `StreamToLines` is unusable
 
 `StreamToLines` has a provider, `HandleStreamToLines`, but no bundle entry and no route, so
-`StreamingExec<…> | StreamToLines` fails with a `[CGP-E113]` root cause naming
-`@cgp.extra.handler.HandlerComponent.StreamToLines.…`. Routing it would not be enough: the provider
+`StreamingExec<…> | StreamToLines` fails with a `[CGP-E113]` root cause at the missing route.
+Routing it would not be enough: the provider
 returns a `Box<dyn Stream<…>>` without `Unpin`, which does not implement `Stream` itself and carries
 no wrapper type, so no later stage could consume it. See
 [streams and I/O](reference/streams-and-io.md#the-conversion-syntax).
@@ -93,17 +93,15 @@ The macro works for every program in the repository, but four edges were confirm
   elements.
 - **A `->` inside the program is misparsed**, since any `>` closes an angle group.
 
-### No wiring checks and no rustdoc
+### No wiring checks, and rustdoc for the constructs alone
 
 Nothing in the repository uses `check_components!`, so a syntax that has a provider but no route
-goes unnoticed; see [testing.md](testing.md#what-is-not-exercised). The source has no doc comments,
-so the crates' docs.rs pages list items with no explanation.
+goes unnoticed; see [testing.md](testing.md#what-is-not-exercised). Every component and provider
+carries a one-sentence doc comment, but modules and struct fields carry none, so the crates' docs.rs
+pages explain the constructs and not the layout.
 
 ## Housekeeping
 
-- **The repository README is stale.** Its install snippet pins `cgp = "0.4.1"` and
-  `reqwest = "0.11"`, it describes the assembly crate as defining "presets", and it defers to the
-  announcement post, whose wiring code is several breaking releases old.
 - **The branches diverge from the published crate.** The crates.io release, 0.1.0 (tag `v0.1.0`),
   was built against `cgp` 0.4.1, `main` tracks `cgp` 0.7.0, and `v0.8.0` tracks `cgp` 0.8.0.
   All three carry version 0.1.0.

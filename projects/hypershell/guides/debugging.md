@@ -72,7 +72,7 @@ pub type Program = hypershell! {
 ```
 
 ```text
-  = note: root cause: [CGP-E117] the trait bound `TokioAsyncReadStream<ChildOutputStream>: AsRef<[u8]>` is not satisfied
+  = note: root cause: [CGP-E117] the trait bound `…::TokioAsyncReadStream<…::ChildOutputStream>: AsRef<[u8]>` is not satisfied
 ```
 
 **Fix:** insert `StreamToBytes` between the two stages.
@@ -89,7 +89,7 @@ pub type Program = hypershell! {
 ```
 
 ```text
-  = note: root cause: [CGP-E114] missing entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` in provider `HandleToTokioAsyncRead`
+  = note: root cause: [CGP-E114] missing entry for `@HandlerComponent.StreamToStdout.GenericArray<u8, …>` in provider `hypershell_tokio_components::providers::async_read::HandleToTokioAsyncRead`
 ```
 
 The path names the syntax and then the input type, which is exactly what the dispatcher could not
@@ -114,12 +114,13 @@ pub type Program = hypershell! {
 ```
 
 ```text
-error[E0277]: [CGP-E001] missing wiring for `@cgp.extra.handler.HandlerComponent.Checksum<…>` on `HypershellCli`
-  = note: root cause: [CGP-E113] missing wiring for `@cgp.extra.handler.HandlerComponent.Checksum<…>` on `HypershellCli`
+error[E0277]: [CGP-E001] missing wiring for `PathCons<…>` on `HypershellCli`
+  = note: root cause: [CGP-E113] missing wiring for `PathCons<…>` on `HypershellCli`
 ```
 
-`WebSocket` fails the same way on such a context, and `StreamToLines` fails at
-`@cgp.extra.handler.HandlerComponent.StreamToLines.…` on every context. **Fix:** add the route on
+The message names the route as the type-level path the lookup follows, `PathCons<…>`, with the
+`Checksum` segment inside it. `WebSocket` fails the same way on such a context, and `StreamToLines`
+fails at the missing route on every context. **Fix:** add the route on
 the context or on an extension namespace, as `HypershellChecksumNamespace` does for `Checksum`; see
 [extending the language](extending-the-language.md). For `StreamToLines` the route is missing from
 the library itself; see [issues.md](../issues.md#streamtolines-is-unusable).

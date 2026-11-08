@@ -4,8 +4,8 @@ Hypershell's tests live in one place, the `hypershell-examples` crate, and consi
 tests, while the examples themselves give compile-only coverage to most of the rest. This document
 records what each test pins, what the examples add, and what nothing exercises. On the `v0.8.0`
 branch, `cargo test --workspace` passes all four tests. The library crates carry no tests of their
-own, and there are no doc tests, since the source has no doc comments. The repository has no CI
-configuration, so nothing runs the tests automatically.
+own, and there are no doc tests, since the doc comments carry no code blocks. The repository's CI
+workflow runs the workspace's build and the same test command on every push and pull request.
 
 ## What each test pins
 
@@ -28,10 +28,11 @@ only place a context with a lifetime parameter is wired, with
 
 ## What the examples add
 
-Every example builds as part of `cargo check --workspace --all-targets`, so the examples pin that
-their programs type-check against their contexts: HTTP, JSON, files, the checksum and WebSocket
-extensions, and the examples library's `Compare` and `If`. They assert nothing at run time, and most
-need the network. Running them by hand shows that every example with a confirmed run works.
+Every example builds as part of `cargo build --workspace --all-targets`, which CI runs, so the
+examples pin that their programs type-check against their contexts: HTTP, JSON, files, the checksum
+and WebSocket extensions, and the examples library's `Compare` and `If`. They assert nothing at run
+time, and most need the network. Running them by hand shows that every example with a confirmed run
+works.
 `rust_playground` was not run, because it publishes a gist, and `compare_and_branch` has no
 confirmed run; see [the examples catalog](examples/README.md#running-an-example).
 

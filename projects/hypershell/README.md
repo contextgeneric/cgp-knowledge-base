@@ -98,8 +98,8 @@ leaves out:
 - **The macro**: its expansion needs the prelude in scope, and it panics on unbalanced angle
   brackets.
 - **Evidence**: four tests, two of which assert nothing; no wiring checks; rustdoc for the
-  constructs alone, with no module or field docs; no CI; and a workspace that builds against
-  `cgp` from git, on nightly with the new trait solver.
+  constructs alone, with no module or field docs; and a workspace that builds against `cgp` from
+  git, on nightly with the new trait solver, which the repository's CI workflow builds and tests.
 
 ## The documents
 
@@ -166,8 +166,8 @@ They feed three artifacts:
   written from this README and the architecture, with one sentence from the testing document; the
   issues document feeds no page. A comparison with shell scripts, which that plan also calls for,
   has no document here yet.
-- **The repository README**, which pins `cgp` 0.4.1 in its install snippet, still speaks of presets,
-  and defers to the announcement post for everything else.
+- **The repository README**, which names the crates, the `cgp` 0.8.0 dependency and the git patch,
+  the build and test commands CI runs, and the examples.
 - **Rustdoc for the constructs.** Every component, provider, and provider struct carries a
   one-sentence doc condensed from its reference entry, so the docs.rs pages explain what each
   construct is for. Modules and struct fields carry none, and the tables and namespaces that
