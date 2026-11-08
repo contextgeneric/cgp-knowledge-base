@@ -286,7 +286,7 @@ bound alone. A wrapper over `ReferenceGetter<'a, Context, T>` therefore derives
 `IsProviderFor<ReferenceGetterComponent, Context, (Life<'a>, T)>` with a `where` clause carrying only
 `Inner: ReferenceGetter<'a, Context, T>`, and no `Inner: IsProviderFor<…>` beside it. The consequence
 is a weaker diagnostic rather than broken code: the stack still compiles and still works, but a
-dependency unmet inside the inner provider no longer propagates outward, so
+dependency unmet inside the inner provider does not propagate outward, so
 [`#[check_providers(...)]`](check_components.md) cannot localize which layer of such a stack is at
 fault. The correct behavior would be to skip the leading lifetime arguments when locating the
 context, exactly as the impl's own `IsProviderFor` path already does.

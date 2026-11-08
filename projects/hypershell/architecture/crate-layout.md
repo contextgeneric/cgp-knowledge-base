@@ -81,7 +81,7 @@ cause of the difference was not investigated further.
 Several example files and the test crate set `#![recursion_limit = "256"]` or `"512"`. Under the
 pinned toolchain they are not needed: the examples check and build without them.
 
-**The workspace builds against unreleased `cgp` from git.** The root `Cargo.toml` overrides `cgp`
+**The workspace builds against `cgp` from git.** The root `Cargo.toml` overrides `cgp`
 and `cgp-error-anyhow` in `[patch.crates-io]` with the `cgp` repository's `main` branch by git URL,
 and the lockfile pins the commit, so a fresh clone builds on its own and its first build fetches
 that repository. Commented-out entries with paths into `../cgp` replace them when testing against a

@@ -125,7 +125,7 @@ fails, and the visitor pushes no counterpart at all.
 The failure is silent by construction rather than by accident: `new_bounds` is left empty, and the
 function only replaces the bound list when it is non-empty, so the original bound is copied through
 unchanged and nothing is emitted that fails to compile. What is lost is the propagation: a
-dependency unmet inside the inner provider no longer surfaces at the outer one, so
+dependency unmet inside the inner provider does not surface at the outer one, so
 `#[check_providers(...)]` cannot localize which layer of such a stack is at fault. The correct
 behavior is to skip leading lifetime arguments when locating the context, exactly as
 `from_generic_args` already does, and to lift them into `Life<'a>` when rebuilding the counterpart's

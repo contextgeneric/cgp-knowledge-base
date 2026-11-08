@@ -99,7 +99,7 @@ leaves out:
   brackets.
 - **Evidence**: four tests, two of which assert nothing; no wiring checks; rustdoc for the
   constructs alone, with no module or field docs; no CI; and a workspace that builds against
-  unreleased `cgp` from git, on nightly with the new trait solver.
+  `cgp` from git, on nightly with the new trait solver.
 
 ## The documents
 

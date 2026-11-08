@@ -269,7 +269,7 @@ Error-code reference, in [error_codes/](error_codes/):
 ## Relationship to the rest of the knowledge base
 
 This catalog is one of the views of CGP's truth and is bound by the
-[synchronization rule](../AGENTS.md): a class whose diagnostic the code no longer produces is a bug
+[synchronization rule](../AGENTS.md): a class whose diagnostic the code does not produce is a bug
 in the change that made it stale. It leans on the other sections rather than restating them. It
 links to the [reference](../reference/README.md) for the traits and macros a class involves, to the
 [check-traits concept](../concepts/check-traits.md) for why wiring is lazy, and above all to the

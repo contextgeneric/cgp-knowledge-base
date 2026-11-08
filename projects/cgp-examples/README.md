@@ -48,7 +48,7 @@ repository, taught as the [profile picture](../../examples/profile-picture.md) w
 
 ## Building
 
-The workspace builds against unreleased `cgp` code: its `[patch.crates-io]` section overrides `cgp`
+The workspace builds against `cgp` from git: its `[patch.crates-io]` section overrides `cgp`
 and `cgp-error-anyhow` with the `cgp` repository's `main` branch by git URL, and the lockfile pins
 the commit. To test against a local change to `cgp`, switch the same entries to the commented-out
 paths into `../cgp`. It needs stable Rust 1.90 or later and uses the 2024 edition, and the

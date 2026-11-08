@@ -108,7 +108,7 @@ describes.
 
 The two forms do not combine for the same component. When a context joins a namespace in which a
 component carries a prefix, that component's lookups are already routed under the prefix path, so
-`open`-ing it, which would root the route at the bare component name, no longer reaches those
+`open`-ing it, which would root the route at the bare component name, does not reach those
 entries. The per-value entries must instead be written with the full prefixed path,
 `@prefix.SomeComponent.Key: Provider`, exactly as the entries shown later do. So `open` is the
 convenience for a component wired directly on a context; once a component lives behind a namespace
