@@ -56,8 +56,8 @@ that must exist as a *named* trait other code depends on through `#[uses(HasName
 and a getter whose associated type is inferred from the field
 (`type Name; fn name(&self) -> &Self::Name;`) so the type stays abstract for callers. Both idioms
 desugar to the same `HasField` bounds and share the same access rules (`.clone()` for an owned
-value, `.as_str()` for a `&str`, a plain `&T` by reference), so the choice is only about whether an
-implicit argument can reach the value.
+value, `AsRef::as_ref` for a `&str` or a slice, a plain `&T` by reference), so the choice is only
+about whether an implicit argument can reach the value.
 
 Avoid [`#[cgp_getter]`](../reference/macros/cgp_getter.md) in ordinary code. It builds a full
 wireable component so the source field name can be chosen at wiring time through a
