@@ -103,8 +103,9 @@ entry point readers actually search for**, which supports leading with that idea
 audience and is independent evidence for the hand-rolled-workaround finding below. And **the
 project's own name has almost no search demand**: *context generic programming* and *cgp rust*
 together drew 112 impressions in a year, at average positions of 1.1 and 1.3. That is measured
-support for [identity.md](identity.md#why-each-word-of-the-line-is-there)'s rule that the name
-always travels with a plain descriptor. The bare acronym drew 736 impressions and no clicks at all.
+support for [identity.md](identity.md#the-name-and-the-tag-line-on-every-page)'s rule that the
+name always travels with a plain description. The bare acronym drew 736 impressions and no clicks
+at all.
 
 These are Google figures for one property over one year. They describe what reached this site, not
 what the Rust community wants, and the query table is capped at 1,000 rows, so roughly nine
@@ -156,7 +157,7 @@ These objections recur and suggest specific responses:
 - **Similarity to prior work:** Readers compare CGP with aspect-oriented programming, COM, or ML
   modules. Use [related-work](../related-work/README.md) to explain both the resemblance and the
   limits of the comparison.
-- **An uninformative name:** "Context-generic programming" does not explain its benefit to an
+- **An uninformative name:** "Context-Generic Programming" does not explain its benefit to an
   unfamiliar reader. Pair the name with a plain description. Structural-typing analogies can help,
   provided the piece explains that CGP remains nominal and wired.
 - **An inferred single-item restriction:** Teaching feedback records readers interpreting

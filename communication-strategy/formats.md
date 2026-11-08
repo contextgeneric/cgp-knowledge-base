@@ -132,9 +132,9 @@ construct to the result the reader wants:
 Reference pages are the exception: use the construct name readers are looking up, then explain its
 purpose in the overview's first sentence.
 
-Orient unfamiliar readers in the first paragraph. Give a short description of CGP linked to an
-introduction, then state what this page covers. Use the settled descriptor where it fits, without
-repeating a long introduction on every page.
+Orient unfamiliar readers in the first paragraph. Name the project and relate the tag line's idea
+to the page, as [the naming rule](identity.md#the-name-and-the-tag-line-on-every-page) sets out,
+then state what this page covers, without repeating a long introduction on every page.
 
 Use established problem names naturally where they apply. Terms such as "orphan rule", "conflicting
 implementations", and `E0119` connect the page to the question it answers. Do not repeat them for

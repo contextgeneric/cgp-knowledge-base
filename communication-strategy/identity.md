@@ -43,9 +43,10 @@ Use the settled descriptor at first contact:
 
 > A language extension for Rust, with pluggable trait implementations at compile-time.
 
-Put it beneath the project name on the homepage and README, and use or echo it in talks and posts.
-Keep the wording consistent. If readers repeatedly misinterpret it, use that reception to reassess
-the shared guidance rather than inventing a new descriptor for each piece. Follow
+Put it beneath the project name on the homepage and README, and use or echo it in talks and posts;
+other pages use the short forms in [the naming rule](#the-name-and-the-tag-line-on-every-page). Keep
+the wording consistent. If readers repeatedly misinterpret it, use that reception to reassess the
+shared guidance rather than inventing a new descriptor for each piece. Follow
 [evidence.md](evidence.md) when interpreting those reactions.
 
 ## The frame the whole identity serves: enhances, not replaces
@@ -77,10 +78,6 @@ Each phrase answers a different first-contact question:
 - **"At compile-time"** explains when selection happens. It prevents "pluggable" from implying a
   runtime container, dynamically loaded plugin, or vtable lookup.
 
-Introduce the name *context-generic programming* after giving it a concrete meaning. The name alone
-does not tell an unfamiliar reader what the tool does, as the reception summarized in
-[evidence.md](evidence.md) illustrates.
-
 Use the pitch to explain the breadth the tag line omits. Abstract types, extensible data, and
 handlers matter, but listing them all in the descriptor would obscure its central benefit.
 
@@ -91,6 +88,34 @@ problem CGP solves, and some readers associate it with runtime dependency-inject
 it helps later in a piece, qualify the meaning: explicit wiring resolved at compile time, without
 runtime dispatch overhead. The [redesign queue](../website/redesign-queue.md) tracks site wording
 that needs to match this guidance.
+
+## The name and the tag line on every page
+
+Name the project in full, as **Context-Generic Programming**, once in the prose of every web page,
+early enough to orient a reader who arrives from a search result, and link the first mention to the
+site's Introduction where the page does not already. Use "CGP" after that. The skill pages, which
+the site publishes from the agent skill, and the published blog posts, which are dated records, are
+exempt; a generated category page carries the name in its `_category_.json` description.
+
+Introduce the name beside a plain description, not on its own. The name does not tell an unfamiliar
+reader what the tool does, as the reception summarized in [evidence.md](evidence.md) illustrates, so
+the same sentence or the one before it gives it a concrete meaning.
+
+State the settled tag line whole only where a page presents the project, as the homepage and README
+do. Elsewhere, relate the line's idea to what the page explains, in a short form that keeps its
+words:
+
+- "CGP enables pluggable trait implementations in Rust", followed by what this page's construct does
+  with that choice.
+- "CGP extends Rust with pluggable trait implementations", or with the feature the page covers, as
+  in "Context-Generic Programming (CGP) extends Rust with pluggable trait implementations, and
+  namespaces keep the table that selects them short."
+
+Write the short form into the page's own explanation rather than pasting one sentence onto every
+page, and leave it out where the page's subject has nothing to do with choosing an implementation.
+Where "pluggable" could suggest runtime plugins, say nearby that the choice is made at compile time,
+which is the job of the line's last words. One mention of the name and one of the line's idea are
+enough; neither is a keyword to repeat.
 
 ## The pitch that follows the line
 
@@ -122,9 +147,8 @@ newtype wrappers, and a growing trait are candidate openings in
 longer pieces can develop the broader description.
 
 State the relevant cost before asking the reader to act. CGP adds declarations, wiring, and concepts
-to learn; a plain trait is usually clearer for a single implementation. Introduce the paradigm name
-beside its plain descriptor, then offer the next step appropriate to the reader, following
-[formats.md](formats.md#the-conversion-ladder).
+to learn; a plain trait is usually clearer for a single implementation. Then offer the next step
+appropriate to the reader, following [formats.md](formats.md#the-conversion-ladder).
 
 ## The headline feature set
 

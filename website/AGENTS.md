@@ -51,6 +51,10 @@ Read [README.md](README.md) for the section and the base-wide [../AGENTS.md](../
   headline feature set.
 - Read [message.md](../communication-strategy/message.md) whenever a page makes a claim about what CGP
   is good for, and satisfy its pain, strength, objection, and boundary.
+- Name Context-Generic Programming in each page's prose and relate a short form of the tag line to its
+  content, following the
+  [naming rule](../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page); the
+  skill pages and the published blog posts are exempt.
 - Never publish an invented benchmark, adoption figure, or quotation.
 - Never disparage another crate or language to elevate CGP.
 - Concede a genuine cost beside the benefit wherever the audience will look for it.
@@ -75,6 +79,7 @@ Read [README.md](README.md) for the section and the base-wide [../AGENTS.md](../
 - A concept page may cut a project's scenario down to what the concept needs; the code still compiles
   and need not match the project.
 - Put a page's code in the website repository's `example-code/` crate, one module per heading.
+- Run the `example-code` tests after changing a page's code.
 - Fill an elided body with a comment saying so, write a rejected snippet as a `compile_fail` doctest,
   and prefer duplication between files over a shared helper neither page shows.
 - Treat a missing `example-code` file as an unvisited page, not an unverified one; it does not replace
