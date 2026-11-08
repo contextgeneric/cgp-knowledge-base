@@ -125,6 +125,12 @@ Every row starts from the same reading:
 
 - **The strategy in brief:** [messaging-brief.md](../../communication-strategy/messaging-brief.md),
   whole.
+- **The reader:** [naming the reader](../../communication-strategy/readers.md#naming-the-reader-is-the-first-decision-in-a-piece),
+  the first decision for any page.
+- **The words:**
+  [the terms](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
+  including the canonical `cargo-cgp` qualification and the names of the knowledge base and the agent
+  skill, and [the words to avoid](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid).
 - **The voice:** [author-personality.md](../../communication-strategy/author-personality.md),
   [voice-and-register.md](../../communication-strategy/voice-and-register.md), and
   [writing-styles.md](../../communication-strategy/writing-styles.md), whole.
@@ -168,12 +174,9 @@ the naming rule exempts them.
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring);
   [readers by Rust experience](../../communication-strategy/readers.md#readers-by-rust-experience) and
   [the comprehension barriers](../../communication-strategy/readers.md#the-comprehension-barriers);
-  [vocabulary.md](../../communication-strategy/vocabulary.md)'s
-  [terms](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
-  [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target),
-  [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer-and-how-to-reveal-them),
-  and [words to avoid](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid); and
-  [reader-simulation.md](../../communication-strategy/reader-simulation.md), whole.
+  [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and
+  [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer-and-how-to-reveal-them);
+  and [reader-simulation.md](../../communication-strategy/reader-simulation.md), whole.
 - **SEO:** [adding a page](../seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider),
   for the coherence page's title, and
   [the internal linking](../seo.md#the-internal-linking-is-already-right-and-it-is-doing-more-work-than-usual-here).
@@ -185,8 +188,7 @@ the naming rule exempts them.
   [readers by Rust experience](../../communication-strategy/readers.md#readers-by-rust-experience),
   [the comprehension barriers](../../communication-strategy/readers.md#the-comprehension-barriers),
   and [the teaching discipline](../../communication-strategy/readers.md#the-teaching-discipline-this-points-to);
-  [terms](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
-  [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target), and
+  [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and
   [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer-and-how-to-reveal-them);
   [lead with the pain](../../communication-strategy/message.md#lead-with-the-pain-not-the-paradigm);
   [the conversion ladder](../../communication-strategy/formats.md#the-conversion-ladder);
@@ -198,12 +200,9 @@ the naming rule exempts them.
 ### Reference pages, the glossary, and the error catalog
 
 - **Guide:** [reference.md](reference.md).
-- **Strategy:** [vocabulary.md](../../communication-strategy/vocabulary.md)'s
-  [terms](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
-  [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target),
+- **Strategy:** [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target),
   [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer-and-how-to-reveal-them),
-  [words to avoid](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid), and, for
-  the glossary, [the public page it feeds](../../communication-strategy/vocabulary.md#the-public-page-this-feeds);
+  and, for the glossary, [the public page it feeds](../../communication-strategy/vocabulary.md#the-public-page-this-feeds);
   [the comprehension barriers](../../communication-strategy/readers.md#the-comprehension-barriers);
   and [when not to reach for CGP](../../communication-strategy/message.md#when-not-to-reach-for-cgp).
 - **SEO:** [adding a page](../seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider),
@@ -213,9 +212,7 @@ the naming rule exempts them.
 ### `cargo-cgp` pages
 
 - **Guide:** [tooling.md](tooling.md), in natural style.
-- **Strategy:** [terms](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
-  for the tool's description and its canonical qualification;
-  [reading the error messages](../../communication-strategy/readers.md#reading-the-error-messages);
+- **Strategy:** [reading the error messages](../../communication-strategy/readers.md#reading-the-error-messages);
   [the compile-error problem](../../communication-strategy/message.md#read-a-cgp-compile-error-without-decoding-a-wall-of-generated-types),
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring), and
   [the agent skill's placement](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these).
@@ -230,7 +227,6 @@ the naming rule exempts them.
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring), and
   [when not to reach for CGP](../../communication-strategy/message.md#when-not-to-reach-for-cgp);
   [readers by prior mental model](../../communication-strategy/readers.md#readers-by-prior-mental-model);
-  [words to avoid](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid) and
   [the bridge terms](../../communication-strategy/vocabulary.md#the-name-and-the-communitys-bridge-terms);
   and [CGP's reception](../../communication-strategy/evidence.md#cgps-own-reception-and-the-lessons-in-it).
 - **SEO:** [the comparisons](../seo.md#comparisons-are-the-most-valuable-unproven-pages-on-the-site).
@@ -277,9 +273,7 @@ the naming rule exempts them.
   [its specification](../../communication-strategy/ai-disclosure.md#the-page-on-the-website).
 - **Strategy:** [ai-disclosure.md](../../communication-strategy/ai-disclosure.md), whole;
   [the reader who doubts agent-written documentation](../../communication-strategy/readers.md#the-reader-who-doubts-agent-written-documentation)
-  and [the contributor directing an agent](../../communication-strategy/readers.md#the-contributor-directing-an-agent);
-  and [terms](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each), for
-  naming the knowledge base and the agent skill.
+  and [the contributor directing an agent](../../communication-strategy/readers.md#the-contributor-directing-an-agent).
 - **SEO:** [coding agents](../seo.md#coding-agents-are-the-second-audience).
 
 ### The release post

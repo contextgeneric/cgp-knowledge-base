@@ -393,8 +393,9 @@ first impression in the index.
   `rust-patterns` and `no-std` categories are set on `[workspace.package]` and inherited by all 28
   publishable crates. What remains needs repository settings rather than a commit: the `cgp` repository's
   description still reads "Context-Generic Programming: modular programming paradigm for Rust", the
-  retired line, and its topics are three generic ones; the sibling repositories have no description,
-  homepage, or topics at all. **Only the author can change these.** The forward links from the patterns
+  retired line, and its topics are three generic ones; the member repositories lack topics, three
+  lack a description, and none links its Projects pages, as
+  [seo.md](seo.md#the-off-site-metadata-is-under-set) lists. **Only the author can change these.** The forward links from the patterns
   book are B-1 in [patterns-book.md](patterns-book.md), and they wait on the merge.
 - **S5: the named opening on every page.** Name Context-Generic Programming once in each page's
   opening paragraph, beside a plain description and linked to the Introduction, with a short form of

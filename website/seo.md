@@ -151,8 +151,8 @@ longest belong to the posts with the worst click-through rates above:
 
 A search result shows roughly the first 60 characters, so a reader sees *"Programming Extensible Data
 Types in Rust with CGP - Part 1: Modular…"* and has to judge from a fragment that is mostly setup.
-These are published posts, so their titles are [not rewritten](AGENTS.md#do-not-rewrite-history). Every
-new page avoids the problem through a front-matter `title`, which can differ from the page's heading,
+These are published posts, so their titles are [not rewritten](AGENTS.md#do-not-rewrite-history). A
+new page can avoid the problem through a front-matter `title`, which can differ from the page's heading,
 as [the title rules](#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them)
 describe.
 
@@ -248,15 +248,20 @@ for search.
 five keywords and the `rust-patterns` and `no-std` categories place the crates in the
 browse-and-recommend surfaces. Every publishable crate inherits them from `[workspace.package]`.
 
-**What remains needs repository settings rather than a commit**, and only the author can change it:
+**What remains needs repository settings rather than a commit**, and only the author can change it.
+Read on GitHub on 2026-11-08:
 
 - **The `cgp` repository's description reads "Context-Generic Programming: modular programming
   paradigm for Rust"**, the framing
   [identity.md](../communication-strategy/identity.md#using-modular-as-a-supporting-word) retires, on
-  the project's most-linked property. Its topics are `functional-programming`,
-  `modular-programming`, and `rust`.
-- **Every other repository in the organization has no description, no homepage, and no topics**,
-  including `cargo-cgp`, `cgp-skills`, `cgp-knowledge-base`, and `contextgeneric.dev`.
+  the project's most-linked property. Its homepage is the site, and its topics are
+  `functional-programming`, `modular-programming`, and `rust`.
+- **`cargo-cgp`, `cgp-examples`, and `contextgeneric.dev` have no description.** `cgp-skills`
+  describes itself as "Prompts and instructions for LLM-assisted coding for CGP" rather than as CGP's
+  agent skill, the name [vocabulary.md](../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
+  gives it.
+- **No member repository other than `cgp` has topics**, and of the others only `cgp-serde` sets a
+  homepage: its release post, rather than its Projects pages.
 
 **The front page is the one page that names the project first**, at the author's decision. Its title
 is *Context-Generic Programming (CGP) - Pluggable trait implementations for Rust*, with no site-name
@@ -557,9 +562,9 @@ and needs to write correct code. These surfaces serve it:
   checked on 2026-09-21, reporting half the crate documented. The release fixes that: every
   publishable `cgp` library crate warns on a missing doc comment and CI fails on warnings, each
   construct's rustdoc links its website page, and the crate README routes readers to the site.
-- **Context7** carries CGP as `/contextgeneric/cgp` with 528 indexed snippets, drawn from the
-  repository rather than from the website, and its description repeats the retired "modular
-  programming paradigm" line. A `context7.json` in the repository controls which folders are indexed,
+- **Context7** carried CGP as `/contextgeneric/cgp` with 528 indexed snippets on 2026-09-21, drawn
+  from the repository rather than from the website, and its description repeated the retired
+  "modular programming paradigm" line. A `context7.json` in the repository controls which folders are indexed,
   and the entry can be resubmitted so the description and the indexed material match the library.
 - **The published agent skill** needs no work. It teaches an assistant CGP's vocabulary, idioms, and
   diagnostics, and [cgp-skills](https://github.com/contextgeneric/cgp-skills) is published on the
@@ -692,9 +697,9 @@ all `docs/concepts/coherence`. Each lands in the same edit as the page's
 [named opening](#own-the-name-by-saying-it-where-it-means-something), which is S5, so a page is read
 once, and all of it lands before the merge, which fixes each page's first impression.
 
-**The metadata repairs are done except what only the author can change.** The redirect stubs,
-`robots.txt`, the crate manifests, and the site and front-page titles are in place; the GitHub
-repository settings are S7.
+**The metadata repairs are done except what only the author can change.** The crate manifests are
+set, and the redirect stubs, `robots.txt`, and the site and front-page titles are on the `v0.8.0`
+branch, reaching readers at the merge; the GitHub repository settings are S7.
 
 **The agent surfaces and the hand check follow.** S10 is the agent surfaces and S1 the hand check on
 Bing and Kagi. Neither blocks anything.
