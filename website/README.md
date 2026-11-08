@@ -112,9 +112,12 @@ record drift.
   [homepage](writing-guides/homepage.md), the [explanation pages](writing-guides/explanation.md) it
   offloads to, the [tutorials](writing-guides/tutorial.md), the
   [release announcement](writing-guides/release-announcement.md), the
-  [Projects section](writing-guides/project.md), the
-  [reference page](writing-guides/reference.md), and the
-  [comparison page](writing-guides/related-work.md).
+  [Projects section](writing-guides/project.md), the [tooling pages](writing-guides/tooling.md), the
+  [reference page](writing-guides/reference.md), the [orientation pages](writing-guides/orientation.md),
+  the [knowledge-base pages](writing-guides/knowledge-base.md), and the
+  [comparison page](writing-guides/related-work.md). Its README holds the
+  [reading map](writing-guides/README.md#the-reading-map): the communication-strategy and SEO
+  sections to read before revising each kind of page.
 - [patterns-book.md](patterns-book.md): the record of and plan for the
   [CGP Patterns book](https://patterns.contextgeneric.dev/), a legacy resource the site's pages leave
   out and the project's second public documentation property: the seven chapters that are still current against the twelve that are not, the three

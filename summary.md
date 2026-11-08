@@ -818,7 +818,8 @@ it stale.
 ### `website/writing-guides/`: how new pages should be written
 
 - [README.md](website/writing-guides/README.md) — what a writing guide is, how it differs from a
-  per-page document, the three decisions every guide assumes, and the catalog.
+  per-page document, the three decisions every guide assumes, the catalog, and the reading map
+  that names the communication-strategy and SEO sections each kind of page draws on.
 - [homepage.md](website/writing-guides/homepage.md) — the landing page: its two-tier structure, the
   settled before/after example with the copy that sells it and the six properties a replacement must
   keep, the six-section bounded essay, the offload rule and the dedicated explanation pages it offloads
