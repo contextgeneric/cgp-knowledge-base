@@ -37,7 +37,8 @@ provider:
 - **The provider needs a field or an abstract type.** The assertion fails and blames the bundle:
   `the trait bound 'GeometryComponents: CanUseComponent<AreaCalculatorComponent>' is not satisfied`,
   with a note that `RectangleAreaCalculator` must implement
-  `IsProviderFor<AreaCalculatorComponent, GeometryComponents>`.
+  `IsProviderFor<AreaCalculatorComponent, GeometryComponents>` and a help line that the bundle lacks
+  the `HasField` impl the provider reads.
 
 Neither result says the target was never meant to be a context. Wire an aggregate provider with
 plain `delegate_components!`, and verify it through a real context that delegates to it, or directly
@@ -149,7 +150,8 @@ provider written for particular values fails it, with an `E0277` on
 Only a help line hints at the cause, noting that the marker is implemented for `Rectangle` but not
 for `()`. The error catalog records both shapes as a
 [check that names no parameters](../../errors/checks/check-trait-failure.md#when-a-check-names-no-parameters),
-which `cargo-cgp` reports with the `#[check_params(...)]` to write.
+which `cargo-cgp` reports with the `#[check_params(...)]` to write, when the context passes the
+check at any.
 
 ### Which forms are checked
 

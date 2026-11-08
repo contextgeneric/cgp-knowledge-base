@@ -84,7 +84,7 @@ vacuously, and a provider written for particular values fails with
 notes that the marker is implemented for `Rectangle` but not for `()`. The error catalog records it
 as a
 [check that names no parameters](../../errors/checks/check-trait-failure.md#when-a-check-names-no-parameters),
-which `cargo-cgp` reports with the parameters to list. Listing the same check twice, directly or
+which `cargo-cgp` reports with the parameters to list, when the context passes the check at any. Listing the same check twice, directly or
 through a bracketed list, emits two identical impls and fails with `E0119`.
 
 ### Attributes
