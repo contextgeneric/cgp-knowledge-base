@@ -179,10 +179,10 @@ Extensible variants and records are the classic answer to the **expression probl
 Wadler's name for the challenge of adding both new cases to a datatype *and* new operations over it
 "without recompiling existing code, and while retaining static type safety"
 ([Wadler 1998](https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt)). Wadler's
-own framing is a table: "cases as rows and functions as columns". Functional languages fix the rows
-and add columns easily, object-oriented languages fix the columns and add rows easily, and
-extensible data types let you add both. That table is why row-typed records and variants matter
-beyond convenience, and it is the problem CGP's
+own framing is a table of "rows and functions as columns": cases are the rows and functions are the
+columns. Functional languages fix the rows and add columns easily, object-oriented languages fix the
+columns and add rows easily, and extensible data types let you add both. That table is why row-typed
+records and variants matter beyond convenience, and it is the problem CGP's
 [extensible variants](../cgp/concepts/extensible-variants.md) set out to solve.
 
 Haskell realizes the constraint-based route for the sum side in Wouter Swierstra's *Data types à la
@@ -256,9 +256,11 @@ Two languages that once had prominent row systems removed them, and the reasons 
 CGP's positioning. PureScript's original effect monad, `Eff`, tracked side effects in a *row* of
 effect types. Version 0.12 replaced it with a monomorphic `Effect` that drops the effect row,
 because "getting the effect rows to line up was sometimes quite tricky, without providing a great
-deal of benefit", the rows "were not sufficiently useful in terms of actually guaranteeing what
-effects were run", and they "led to many problems with users not knowing how to solve type errors
-with unification of effect rows"
+deal of benefit"
+([the `purescript-eff` README](https://github.com/purescript-deprecated/purescript-eff#readme)),
+the rows "were not sufficiently useful in terms of actually guaranteeing what effects were run", and
+they "led to many problems with users not knowing how to solve type errors with unification of
+effect rows"
 ([PureScript-Resources, "Why did PureScript go from Eff to Effect?"](https://purescript-resources.readthedocs.io/en/latest/eff-to-effect.html)).
 PureScript kept row-typed *records* but retreated from row-typed *effects*.
 
@@ -399,7 +401,7 @@ proves it covered every case, so the projection that à la carte leaves partial 
 CGP lines up with the *theory* more than with any implementing language on one point: Morris and
 McKinna's insight that a row predicate's evidence "has computational content". In CGP that evidence
 is concrete and visible. The `HasField` impl a derive generates *is* the projection code, the
-`CanBuildFrom` recursion *is* the concatenation code, and a wired provider *is* the runtime witness
+`CanBuildFrom` recursion *is* the concatenation code, and a wired provider *is* the type-level witness
 that a context can perform an operation. Where a row-typed language elaborates the evidence
 invisibly during compilation, CGP surfaces it as ordinary traits and impls a programmer can read.
 That is the same trade the rest of CGP makes, [bypassing coherence](../cgp/concepts/coherence.md) by
@@ -593,8 +595,10 @@ snippets are drawn from the knowledge base's
   [Elm: Records](https://elm-lang.org/docs/records), and
   [Andreas, "Structural vs Nominal Typing in Rust"](https://felixandreas.me/blog/nominal-vs-structural-types/):
   the wider structural-typing landscape and Rust's nominal baseline.
-- [PureScript-Resources, "Why did PureScript go from Eff to Effect?"](https://purescript-resources.readthedocs.io/en/latest/eff-to-effect.html):
-  the removal of row-typed effects and the role of row-unification errors.
+- [PureScript-Resources, "Why did PureScript go from Eff to Effect?"](https://purescript-resources.readthedocs.io/en/latest/eff-to-effect.html)
+  and [the `purescript-eff` README](https://github.com/purescript-deprecated/purescript-eff#readme):
+  the removal of row-typed effects, the difficulty of lining up effect rows, and the role of
+  row-unification errors.
 - [Gleam v0.4 release notes](https://gleam.run/news/gleam-v0.4-released/),
   [GitHub discussion #3223](https://github.com/gleam-lang/gleam/discussions/3223), and
   [welltypedwitch, "Nominal for storing, structural for manipulating"](https://welltypedwitch.bearblog.dev/nominal-for-storing-structural-for-manipulating/):
