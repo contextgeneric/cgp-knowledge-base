@@ -2,8 +2,8 @@
 
 Implicit parameters are function arguments the compiler supplies from the surrounding context
 instead of the caller passing them by hand. Scala's `given`/`using` and Haskell's `ImplicitParams`
-are the direct forms, and the type-class resolution both languages build on is the same idea
-generalized. CGP shares the goal of threading context through code without explicit plumbing, but it
+are the direct forms; the type classes both languages also provide are the same idea generalized.
+CGP shares the goal of threading context through code without explicit plumbing, but it
 supplies the values from a context's fields and wiring rather than from a compiler-driven search.
 That trade gives up automatic resolution and gains the freedom to have many overlapping
 implementations.
@@ -63,9 +63,9 @@ renderWebsite("/home")     // the given Config is supplied automatically
 
 The mechanism generalizes to type classes, which is its most common use. A `given` can be defined
 *for a type*, and a method with a `using` parameter of that type resolves the right instance from
-the types at the call site. Scala 3.6 changed the syntax for a given with a body from
-`given Comparator[Int] with` to a colon form; the older form is still accepted but is to be phased
-out
+the types at the call site. Parts of the given syntax changed in Scala 3.6, including the colon form
+for a given with a body; the original `given Comparator[Int] with` form remains accepted for now and
+will be phased out
 ([Scala 3 Reference, *Given Instances*](https://docs.scala-lang.org/scala3/reference/contextual/givens.html)):
 
 ```scala
