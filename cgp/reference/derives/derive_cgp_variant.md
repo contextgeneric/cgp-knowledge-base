@@ -175,6 +175,10 @@ the `MapType` markers `IsPresent`/`IsVoid`.
 
 ## Known issues
 
+**The companion enums do not inherit the original type's attributes.** A `Debug` or `PartialEq`
+derive on the enum does not apply to the extraction remainder, so a `Result<Value, Remainder>` cannot
+be printed or compared as a whole; inspect it with `ok()`, `is_ok()`, or a `match`.
+
 **A `no_std` crate needs `Box` in scope to derive over a variant with no fields.** The mutable
 extractor builds that variant's `&mut Nil` with `Box::leak(Box::new(Nil))`, and writes `Box` bare,
 resolved where the derive is used, since `cgp` links no `alloc`. A `std` crate has `Box` in its
