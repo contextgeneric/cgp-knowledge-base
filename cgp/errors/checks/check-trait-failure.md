@@ -241,8 +241,11 @@ A `help` names the fix: `` add the field `name: String` to `Person` `` when the 
 `HasField` for its other fields, or `` add `#[derive(HasField)]` to `Person` ``. The
 [cargo-cgp error-code catalog](../../../cargo-cgp/error-code.md) defines each code.
 
-A check on a generic context, `<T> App<T>`, is the exception: the resolver declines it, so rustc's
-headline stays over the renamed notes and the `missing field` help
+A check on a generic context, `<T> App<T>`, is classified from the provider's trait rather than the
+consumer's: the consumer-trait walk declines it, because the solver cannot prove a lookup that names
+the check's own `T`, so the block leads with
+`` [CGP-E002] the provider trait `Greeter` with context `App<T>` is not implemented for provider `GreetName` ``
+over the renamed notes, and its `help` lists the unsatisfied requirements
 ([`generic_check_context`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_check_context.rs)).
 Checking or calling one instantiation resolves as usual.
 

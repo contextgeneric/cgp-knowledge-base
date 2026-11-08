@@ -205,7 +205,7 @@ stays in rustc's own form, as the [error-code scheme](../../error-code.md) settl
 ## Boundaries
 
 The resolver reports only what it can trust and declines the rest, so a change should not widen it by
-guessing. It gives up in these cases, each keeping rustc's headline:
+guessing. It declines the consumer-trait walk in these cases:
 
 - **A check that carries a generic parameter.** The walk solves under an empty parameter environment,
   where the solver does not prove a wiring lookup that names the check's own `T`, so a walk would
@@ -215,7 +215,8 @@ guessing. It gives up in these cases, each keeping rustc's headline:
   ([`generic_wrapper_impl`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_wrapper_impl.rs)),
   or an overflow
   ([`generic_check_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/generic_check_cycle.rs)).
-  Checking or calling one instantiation resolves as usual
+  The check and the wrapper impl still lead with `[CGP-E002]`, because the failing bound names the
+  provider's trait; the overflow keeps rustc's `E0275`. Checking or calling one instantiation resolves as usual
   ([`generic_context_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/generic/generic_context_call.rs)).
 - **A call whose receiver only typeck could type,** such as a method's result or a field access. The
   call-site anchor reads types syntactically, because the emitter cannot force `tcx.typeck`. A plain
@@ -231,9 +232,9 @@ guessing. It gives up in these cases, each keeping rustc's headline:
   cause depend on it. The emitter strips the method-probe advice so the unmet bound leads
   ([`generic_consumer_unwritten_arg`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/use-site/generic_consumer_unwritten_arg.rs)).
 - **A method's own `where` bound.** The bound-call anchor reads a path call's function, not a
-  method's bound, so a failure there keeps rustc's report, whether it is an unmet bound
+  method's bound. An unmet bound still leads with `[CGP-E002]` from the provider's trait
   ([`method_own_bound_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/method_own_bound_call.rs))
-  or an `E0271` on its associated type
+  while an `E0271` on its associated type keeps rustc's report
   ([`method_own_bound_output_mismatch`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/method_own_bound_output_mismatch.rs)).
 - **A written type beyond the call-site anchor's small hand lowering,** and a generic component's
   trait definition, which no anchor reads.

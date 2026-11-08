@@ -114,10 +114,12 @@ same mistake does. Beyond the leaves that class lists, these shapes are specific
 - **A consumer method on an unbounded type parameter,** which is a missing bound rather than missing wiring:
   ``[CGP-E129] the type parameter `Context` of `run` is not bounded by `CanGreet` ``.
 
-Two call shapes stay as rustc wrote them, because no anchor reads them: a method's own `where` bound
-([`method_own_bound_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/method_own_bound_call.rs)),
-and a generic consumer called on a field access
+One call shape stays as rustc wrote it, because no anchor reads it: a generic consumer called on a
+field access
 ([`generic_consumer_field_access_receiver`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/generic_consumer_field_access_receiver.rs)).
+A method's own `where` bound classifies from the provider's trait instead, leading with
+`` [CGP-E002] the provider trait `Loader<u32>` with context `App` is not implemented for provider `LoadName` ``
+([`method_own_bound_call`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/method_own_bound_call.rs)).
 
 ## Resolving it
 
