@@ -15,7 +15,7 @@ points a secondary label or a note at any code the failure passed through.
 
 ## The check anchors
 
-**A `check_components!` entry is matched by span, so its text is never read.** The entry expands to
+**A `check_components!` entry is matched by span, so its own text is never read.** The entry expands to
 `impl __CheckRectangle<AreaCalculatorComponent, ()> for Rectangle {}`, and the macro re-spans the
 impl's `Self` type onto the entry the user wrote. So `resolve_check_failure` picks the check impl
 whose `Self` span equals the caret. It reads the impl's `CanUseComponent<Marker, Params>` assertion
@@ -39,10 +39,10 @@ provider class `[CGP-E002]`, and its tree starts at the listed layer
 ([`check_providers_layer`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/higher-order-provider-layer/check_providers_layer.rs),
 [`check_providers_unwired_provider`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_unwired_provider.rs)).
 One attribute over several components generates impls whose errors share a caret, so the caret alone
-cannot tell them apart: their spans differ only in syntax context, which the compiler may reuse when
-it does not compile incrementally. The anchor instead reads the diagnostic's own message for the
-`IsProviderFor<Component, …>` bound it names and takes that entry's impl, keeping the first entry
-that resolves as the fallback for a caret that carries one
+cannot tell them apart: their spans differ only in syntax context, which the compiler reuses when it
+does not compile incrementally. The anchor therefore reads the diagnostic's own message for the
+`IsProviderFor<Component, …>` bound it names and takes that entry's impl; a caret that carries one
+entry falls back to the first entry that resolves
 ([`check_providers_two_components`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/providers/check_providers_two_components.rs)).
 
 ## The impl anchors
