@@ -104,10 +104,16 @@ already follows.
 
 The cgp-serde debugging guide also has complete failing programs under
 `example-code/diagnostics/cgp_serde/` for its missing byte-vector entry, iterator-reference entry,
-and JSON error wiring. The diagnostic capture harness compiles them against the sibling projects
-with cargo-cgp's pinned nightly. They need cgp-serde's dependencies, so they are separate from the
-integration-test crate and are not compiled by `cargo test` or CI. Other Projects examples are
+JSON error wiring, and fixed-size array key rejected by the macro parser. The diagnostic capture
+harness compiles them against the sibling projects with cargo-cgp's pinned nightly. They need
+cgp-serde's dependencies, so they are separate from the integration-test crate and are not compiled
+by `cargo test` or CI. Other Projects examples are
 checked in their project checkouts.
+
+`example-code/diagnostics/reference/shared_missing_name.rs` reproduces the compile-errors page's
+merged failure: three checked components need the same missing field. The capture harness requires
+all three check entries and both secondary labels in the diagnostic. This capture-only program is
+also outside the integration-test suite and CI.
 
 It is filled in **lazily**, and the rule is in
 [AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post): a page gets
