@@ -97,8 +97,9 @@ leaves out:
   namespace.
 - **The macro**: its expansion needs the prelude in scope, and it panics on unbalanced angle
   brackets.
-- **Evidence**: four tests, two of which assert nothing; no wiring checks; no rustdoc; no CI; and a
-  workspace that builds against unreleased `cgp` from git, on nightly with the new trait solver.
+- **Evidence**: four tests, two of which assert nothing; no wiring checks; rustdoc for the
+  constructs alone, with no module or field docs; no CI; and a workspace that builds against
+  unreleased `cgp` from git, on nightly with the new trait solver.
 
 ## The documents
 
@@ -167,8 +168,11 @@ They feed three artifacts:
   has no document here yet.
 - **The repository README**, which pins `cgp` 0.4.1 in its install snippet, still speaks of presets,
   and defers to the announcement post for everything else.
-- **Rustdoc for every public item.** The source carries no doc comments, so the crates' docs.rs
-  pages list items without explanation; the reference entries are written to be condensed into them.
+- **Rustdoc for the constructs.** Every component, provider, and provider struct carries a
+  one-sentence doc condensed from its reference entry, so the docs.rs pages explain what each
+  construct is for. Modules and struct fields carry none, and the tables and namespaces that
+  `delegate_components!` and `cgp_namespace!` declare stay bare until the crates build against a
+  `cgp` whose macros document them, which the pinned revision does not.
 
 ## How it relates to the rest of the base
 
