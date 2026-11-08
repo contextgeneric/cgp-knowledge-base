@@ -171,7 +171,8 @@ concurrency schedulers the feature was built for
 
 In **Flix**, an effect is declared with `eff`, appears in a function type after a backslash, and is
 handled with `run ... with handler`. A handler clause for an operation receives the continuation as
-its last parameter:
+its last parameter, and Flix's handlers support multiple resumptions, which its documentation states
+beside their dynamic scope and deep-handler behavior:
 
 ```flix
 eff Ask {
@@ -484,7 +485,7 @@ run with Flix 0.76.0. The CGP snippets are drawn from the knowledge base's
   [*Effects and Handlers*](https://doc.flix.dev/effects-and-handlers.html), with
   [Madsen et al., *Programming with Purity Reflection* (ECOOP 2023)](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ECOOP.2023.18):
   Flix's set-based effect system, its `eff` and `run ... with handler` syntax, the `Unit \ IO` type
-  of `main`, and purity reflection.
+  of `main`, its dynamic scope, deep handlers, and multiple resumptions, and purity reflection.
 - [Kammar, Lindley & Oury, *Handlers in Action* (ICFP 2013)](https://denotational.co.uk/publications/kammar-lindley-oury-handlers-in-action.pdf):
   handler composition, the significance of handler order, and the range of effects handlers express.
 - [Petricek, *Coeffects: Context-aware programming languages*](https://tomasp.net/coeffects/): the
