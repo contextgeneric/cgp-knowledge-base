@@ -36,21 +36,16 @@ Read [README.md](README.md) for the section and the base-wide [../AGENTS.md](../
 
 ## Consult communication-strategy before writing public prose
 
-- Read the knowledge base's [communication-strategy](../communication-strategy/README.md) before
-  outlining or drafting a page.
+- Read the shared set and the page kind's row of the [reading map](writing-guides/README.md#the-reading-map)
+  before outlining or drafting a page, and a strategy document whole when the page makes a claim
+  its row does not cover.
 - Read the page's [writing guide](writing-guides/README.md) first, and read
   [information-architecture.md](information-architecture.md) before adding or moving a page.
 - Read the page's own document for what it currently is.
 - Read [author-personality.md](../communication-strategy/author-personality.md) and
-  [voice-and-register.md](../communication-strategy/voice-and-register.md) before any prose.
-- Read [formats.md](../communication-strategy/formats.md) for the artifact's playbook.
-- Read [readers.md](../communication-strategy/readers.md) to name the single reader and the
-  comprehension barriers.
-- Read [vocabulary.md](../communication-strategy/vocabulary.md) for which term to use, and
-  [identity.md](../communication-strategy/identity.md) for a one-sentence description and the
-  headline feature set.
-- Read [message.md](../communication-strategy/message.md) whenever a page makes a claim about what CGP
-  is good for, and satisfy its pain, strength, objection, and boundary.
+  [voice-and-register.md](../communication-strategy/voice-and-register.md) before any prose, and
+  [message.md](../communication-strategy/message.md) whenever a page makes a claim about what CGP
+  is good for, satisfying its pain, strength, objection, and boundary.
 - Name Context-Generic Programming in each page's prose and relate a short form of the tag line to its
   content, following the
   [naming rule](../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page); the
