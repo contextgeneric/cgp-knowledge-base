@@ -410,13 +410,13 @@ first impression in the index.
 - **S1: the hand check on Bing and Kagi.** Search Console covers Google alone. The six queries and the
   recording method are in [seo.md](seo.md#repeating-the-hand-check). *Blocked by:* nothing, and it
   blocks nothing; it exists so the document's only unmeasured half gets measured.
-- **S9: the relaunch-day submission.** On the day the branch merges: confirm `/sitemap.xml` serves all
-  292 URLs, take a Search Console export as the pre-relaunch baseline, and ping IndexNow if it is
-  adopted. *Blocked by:* V1. **This belongs on the release checklist** in
+- **S9: the relaunch-day submission.** On the day the branch merges: confirm the live `/sitemap.xml`
+  lists every URL of the merged build, take a Search Console export as the pre-relaunch baseline, and
+  ping IndexNow if it is adopted. *Blocked by:* V1. **This belongs on the release checklist** in
   [writing-guides/release-announcement.md](writing-guides/release-announcement.md#publishing-and-what-happens-afterwards)
   beside re-pinning the tutorials' `cgp` version, and is listed here so it is not lost between the two.
-- **S11: Algolia DocSearch.** Accepted by the author, for **after the relaunch**: 292 pages with no way
-  to search them is the problem it solves. DocSearch is free for open-source documentation and ships
+- **S11: Algolia DocSearch.** Accepted by the author, for **after the relaunch**: several hundred
+  pages with no way to search them is the problem it solves. DocSearch is free for open-source documentation and ships
   inside `preset-classic`, so it needs a DocSearch application and a `themeConfig.algolia` block rather
   than a new dependency. *Lands in:* `docusaurus.config.ts`. *Blocked by:* V1, since the application is
   submitted against the published site.
