@@ -48,6 +48,8 @@ Underneath, the class is a record of functions passed invisibly. In Haskell a cl
 read as:
 
 ```haskell
+import Prelude hiding (Show, show)
+
 class Show a where
   show :: a -> String
 
@@ -107,6 +109,13 @@ replaced the module-wide `OverlappingInstances` flag in GHC 7.10, so a general i
 special case can coexist. With `FlexibleInstances` enabled and a local `Show` class, this compiles:
 
 ```haskell
+{-# LANGUAGE FlexibleInstances #-}
+import Prelude hiding (Show, show)
+import Data.List (intercalate)
+
+class Show a where
+  show :: a -> String
+
 instance {-# OVERLAPPABLE #-} Show a => Show [a] where   -- lists in general
   show xs = "[" ++ intercalate "," (map show xs) ++ "]"
 
@@ -130,8 +139,8 @@ context where a more specific instance could later apply, so different parts of 
 resolve the same constraint to different dictionaries. GHC documents the danger plainly: "GHC's
 optimiser assumes that type-classes are coherent, and hence it may replace any type-class dictionary
 argument with another dictionary of the same type", which "may cause unexpected results if
-incoherence occurs", and `INCOHERENT` "still leads to indeterministic behavior and thus should be
-used with caution"
+incoherence occurs", and the guide says an incoherent search may return "an arbitrary surviving
+candidate"
 ([GHC User's Guide](https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/instances.html)).
 Incoherent instances are widely regarded as a last resort, because the automation that makes type
 classes pleasant, the compiler silently choosing a dictionary, becomes a hazard once the choice is
