@@ -39,7 +39,7 @@ Read [README.md](README.md) for the section and the base-wide [../AGENTS.md](../
 - Read the shared set and the page kind's row of the [reading map](writing-guides/README.md#the-reading-map)
   before outlining or drafting a page, and a strategy document whole when the page makes a claim
   its row does not cover.
-- Read the page's [writing guide](writing-guides/README.md) first, and read
+- Read the page's [writing guide](writing-guides/README.md), and read
   [information-architecture.md](information-architecture.md) before adding or moving a page.
 - Read the page's own document for what it currently is.
 - Read [author-personality.md](../communication-strategy/author-personality.md) and

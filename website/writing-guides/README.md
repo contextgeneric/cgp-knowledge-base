@@ -123,8 +123,8 @@ describes drift apart.
 ## The reading map
 
 **Before revising a page, read the shared set below and the row for the page's kind.** The rows are
-how a writer meets [../AGENTS.md](../AGENTS.md)'s rule to read the communication strategy before
-drafting: each names the sections of the strategy and of [seo.md](../seo.md) that its kind of page
+how a writer meets [../AGENTS.md](../AGENTS.md)'s rule to read the shared set and the kind's row
+before drafting: each names the sections of the strategy and of [seo.md](../seo.md) that its kind of page
 draws on, so a writer reads those rather than all of it, about 255 KB. A row is the minimum. When a
 page makes a claim the row's sections do not cover, such as a new argument for what CGP is good for,
 read the document that owns the claim in full.
