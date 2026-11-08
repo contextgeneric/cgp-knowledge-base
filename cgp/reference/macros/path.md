@@ -94,7 +94,9 @@ entry `FooProviderComponent => @MyFooComponent` has the `Delegate`
 `#[prefix(@MyBarComponent in MyNamespace)]` on a `Bar` component produces
 `PathCons<MyBarComponent, PathCons<BarProviderComponent, Nil>>`, with the component's own name
 appended. A `delegate_components!` path key differs in one respect: it ends in a wildcard parameter
-rather than `Nil`, as that macro's Expansion explains.
+rather than `Nil`, as that macro's Expansion explains. `cargo cgp expand` resugars a path back to
+`Path!(@…)` form in most positions, but not uniformly: an `open` statement's per-entry key comes
+back as a raw `PathCons` list while its header's redirect target is resugared.
 
 ## Examples
 

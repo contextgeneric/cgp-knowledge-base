@@ -33,6 +33,8 @@ Sum![]   // the empty sum
 ```
 
 Each listed type is one possible alternative, and a value of the sum carries exactly one of them.
+There is no value-level counterpart: unlike `product!`, a sum value is built with `Either`'s own
+constructors, or, for a derived enum, through `FromVariant`.
 
 ## Syntax Grammar
 
