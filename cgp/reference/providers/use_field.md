@@ -38,8 +38,9 @@ pub type WithField<Tag> = WithProvider<UseField<Tag>>;
 
 - **Every single-method [`#[cgp_getter]`](../macros/cgp_getter.md) component.** The macro generates
   an impl of the getter's provider trait for `UseField<__Tag__>`, with the tag left free and the
-  return-type conversion, such as `.as_str()`, applied, and an `IsProviderFor` impl with the same
-  `HasField` bound. This is the impl a direct `UseField` wiring uses. For `fn name(&self) -> &str`:
+  return-type conversion, such as `AsRef::as_ref` for a `&str` return, applied, and an
+  `IsProviderFor` impl with the same `HasField` bound. This is the impl a direct `UseField` wiring
+  uses. For `fn name(&self) -> &str`:
 
 ```rust
 impl<__Context__, __Tag__> NameGetter<__Context__> for UseField<__Tag__>
@@ -47,7 +48,9 @@ where
     __Context__: HasField<__Tag__, Value = String>,
 {
     fn name(__context__: &__Context__) -> &str {
-        __context__.get_field(::core::marker::PhantomData::<__Tag__>).as_str()
+        ::core::convert::AsRef::as_ref(
+            HasField::get_field(__context__, ::core::marker::PhantomData::<__Tag__>),
+        )
     }
 }
 ```

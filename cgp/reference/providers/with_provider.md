@@ -61,7 +61,12 @@ where
     __Provider__: FieldGetter<__Context__, NameGetterComponent, Value = String>,
 {
     fn name(__context__: &__Context__) -> &str {
-        __Provider__::get_field(__context__, PhantomData::<NameGetterComponent>).as_str()
+        ::core::convert::AsRef::as_ref(
+            __Provider__::get_field(
+                __context__,
+                PhantomData::<NameGetterComponent>,
+            ),
+        )
     }
 }
 ```

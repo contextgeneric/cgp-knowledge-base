@@ -13,9 +13,10 @@ getter's signature names the borrowed type `Value` while the context owns anothe
 The common borrowed views do not need it. The getter macros already convert these return types, so a
 plain [`UseField`](use_field.md) works for them:
 
-- `&str` from a `String` field, through `.as_str()`.
-- `&[T]` from any `'static` field implementing `AsRef<[T]>`, through `.as_ref()`.
-- `Option<&T>` from an `Option<T>` field, and `Option<&str>` from an `Option<String>` field.
+- `&str` from a `String` field, through `AsRef::as_ref`.
+- `&[T]` from any `'static` field implementing `AsRef<[T]>`, through `AsRef::as_ref`.
+- `Option<&T>` from an `Option<T>` field, through `Option::as_ref`, and `Option<&str>` from an
+  `Option<String>` field, through `OptionAsRef::option_as_ref`.
 
 `UseFieldRef` is for the remaining case, a getter returning `&T` for a sized `T` that the field is
 not but can borrow as. It cannot serve a `-> &str` getter: `str` is unsized, so

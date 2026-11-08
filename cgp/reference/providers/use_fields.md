@@ -50,14 +50,19 @@ where
     __Context__: HasField<Symbol!("foo"), Value = String>,
 {
     fn foo(__context__: &__Context__) -> &str {
-        __context__.get_field(::core::marker::PhantomData::<Symbol!("foo")>).as_str()
+        ::core::convert::AsRef::as_ref(
+            HasField::get_field(
+                __context__,
+                ::core::marker::PhantomData::<Symbol!("foo")>,
+            ),
+        )
     }
 }
 ```
 
 The getter macros' return-type conversions apply, so a `&str` return reads a `String` field and
-appends `.as_str()`. The impl is paired with an `IsProviderFor` impl carrying the same bounds, so
-the [check traits](../../concepts/check-traits.md) report a missing field by name.
+wraps the read in `AsRef::as_ref`. The impl is paired with an `IsProviderFor` impl carrying the same
+bounds, so the [check traits](../../concepts/check-traits.md) report a missing field by name.
 
 `UseFields` is one of the three providers `#[cgp_getter]` generates impls for. The others,
 [`UseField`](use_field.md) for a wiring-chosen field and [`WithProvider`](with_provider.md) for a
