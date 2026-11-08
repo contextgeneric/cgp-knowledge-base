@@ -43,9 +43,9 @@ build the site and publish it to GitHub Pages, with the custom domain fixed by
 development uses `yarn start`, and `yarn build` produces the static output, as the repository's
 [README](https://github.com/contextgeneric/contextgeneric.dev/blob/main/README.md) records.
 
-One configuration setting deserves an agent's attention: `onBrokenLinks` is set to `throw`. A dangling
-internal link fails the build rather than degrading quietly, so a change that renames or moves a page
-must fix every reference to it in the same change.
+Both `onBrokenLinks` and `onBrokenAnchors` are set to `throw`. A dangling internal link or heading
+anchor fails the build, so a change that renames or moves a page or heading must fix every reference
+to it in the same change.
 
 ## Branches, and what is not on `main`
 
