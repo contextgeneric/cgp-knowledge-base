@@ -163,8 +163,8 @@ question, using [message.md](message.md#the-objections-readers-bring) for detail
 | I have only one application. | Assess present needs such as foreign targets or reusable providers. Do not invent a future second context to justify wiring. |
 | Will every configuration need a context? | Separate only useful type-level distinctions. Keep runtime choices in enums or trait objects inside the context. |
 
-Use the canonical limitation when recommending the checker: `cargo cgp check` leads with the root
-cause for the classes it recognizes, and the tool does not yet reshape every class.
+Use the [canonical qualification](vocabulary.md#terms-to-use-and-how-to-introduce-each) when
+recommending the checker.
 
 ## The conversion ladder
 

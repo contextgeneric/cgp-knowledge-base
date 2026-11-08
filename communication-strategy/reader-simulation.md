@@ -160,9 +160,9 @@ universal limit on what a paragraph can contain.
 
 ## Running the loop against your own fluency
 
-Review from the reader's available knowledge rather than the writer's full understanding. The
-**curse of knowledge** is the difficulty of recognizing what someone without your knowledge needs
-explained. A fluent draft can skip steps precisely because the writer finds them obvious.
+Review from the reader's available knowledge rather than the writer's full understanding. A fluent
+draft can skip steps precisely because the writer finds them obvious, which is the
+[curse of knowledge](vocabulary.md#reaching-people-at-scale-and-sounding-like-one-project).
 
 Run a separate reading pass after drafting. For each CGP term or inference, identify the earlier
 explanation or prerequisite that supports it. If that support is missing, add it or move the

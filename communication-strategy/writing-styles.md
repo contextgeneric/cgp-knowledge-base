@@ -21,10 +21,6 @@ These examples show common ways to make the subject and action clearer:
 | “`#[implicit]` makes a field read look like a parameter.” | “`#[implicit]` reads a context field through a parameter declaration.” |
 | “Whether to split the component is the author's decision.” | “The author decides whether to split the component.” |
 
-Lead each paragraph with its point, then supply the explanation and qualifications. Read the opening
-sentences in sequence: they should give a coherent account without requiring the reader to search
-the supporting details for the conclusion.
-
 Keep qualifications that establish scope or evidence. “Early tests suggest” and “for this context”
 can be necessary parts of a claim. Direct wording must not turn a possibility into a guarantee or an
 observation into a universal rule.

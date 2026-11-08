@@ -1,7 +1,6 @@
 # AGENTS.md: the communication strategy
 
-Read [README.md](README.md), the base-wide [../AGENTS.md](../AGENTS.md) rules, and the section's
-`README.md` before editing.
+Read [README.md](README.md) and the base-wide [../AGENTS.md](../AGENTS.md) rules before editing.
 
 ## Honesty is the strategy
 
@@ -41,9 +40,10 @@ Read [README.md](README.md), the base-wide [../AGENTS.md](../AGENTS.md) rules, a
 - Register a new document in [README.md](README.md) and [../summary.md](../summary.md) in the same
   change.
 - Keep the [messaging brief](messaging-brief.md) to settled decisions with no independent reasoning;
-  correct the brief when it disagrees with a fuller document.
+  update it in the same edit as the fuller document it summarizes, and correct it when the two
+  disagree.
 - Revisit the guidance when CGP features, related-work sentiment, the audience model, or the author's
-  preferences change, and update the brief when a summarized decision changes.
+  preferences change.
 - Check closely related passages in the same edit; a changed strength requires checking its pain,
   objection, and boundary.
 - Copy a recurring concession word for word from [vocabulary.md](vocabulary.md), and keep its

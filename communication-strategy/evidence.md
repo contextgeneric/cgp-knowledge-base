@@ -28,19 +28,18 @@ reports performance as employers' second most common reason for investing in Rus
 correct software. This supports discussing runtime cost, without establishing how any particular CGP
 message will perform.
 
-State compilation and diagnostic costs beside the benefits of abstraction. Pair the diagnostic
-concession with [`cargo-cgp`](../cgp/reference/cargo-cgp.md), using the canonical wording:
-`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool does not yet
-reshape every class.
+State compilation and diagnostic costs beside the benefits of abstraction, and pair the diagnostic
+concession with [`cargo-cgp`](../cgp/reference/cargo-cgp.md) and its
+[canonical qualification](vocabulary.md#terms-to-use-and-how-to-introduce-each).
 
 Show why the added abstraction is useful before introducing it. The concern about complexity
 supports the [enhances-not-replaces framing](identity.md): explain CGP through ordinary Rust,
 gradual adoption, and a concrete problem. This is a strategic inference from the survey, not a
 measured preference for that wording.
 
-Explain runtime cost precisely. CGP resolves wiring at compile time and uses static dispatch; that
-mechanism supports a specific claim about dispatch overhead. Avoid implying that every program using
-CGP is faster.
+Keep the runtime claim to dispatch overhead, as
+[the strengths](message.md#the-strengths-worth-advertising) word it, rather than implying that every
+program using CGP is faster.
 
 ## The conversations that draw attention
 
@@ -82,9 +81,9 @@ measurements:
   [related-work/rust-language-proposals.md](../related-work/rust-language-proposals.md).
 - **AI-assisted development:** Discuss CGP's published
   [agent skill](https://github.com/contextgeneric/cgp-skills) beside the costs of wiring,
-  vocabulary, and diagnostics, as prescribed in
-  [message.md](message.md#the-objections-readers-bring). Readers can try it and judge its help. Its
-  existence does not prove that it removes those costs, and AI support should not lead the pitch.
+  vocabulary, and diagnostics, as
+  [message.md](message.md#the-one-mitigation-that-spans-three-of-these) prescribes. Its existence
+  does not prove that it removes those costs.
 
 The 2025 survey suggests that some learning questions may be moving to LLM tools. Its authors infer
 this from open answers and shifts in community participation. Treat that as context for agent
@@ -164,10 +163,8 @@ These objections recur and suggest specific responses:
   single-method examples as a limit on component traits. Show a working multi-item component before
   discussing grouping, and distinguish macro support from advice about provider reuse.
 - **Overstated ergonomics:** Readers expect compiler errors to require understanding generated code.
-  Teach the desugaring and present `cargo-cgp` as a response to that difficulty, with its limits
-  intact. The canonical concession is: `cargo cgp check` leads with the root cause for the classes
-  it recognizes, and the tool does not yet reshape every class. Reception of
-  the tool is not established here; do not invent community praise.
+  Teach the desugaring and present `cargo-cgp` as a response to that difficulty, with its canonical
+  qualification. Reception of the tool is not established here; do not invent community praise.
 
 Show generated Rust early enough to prepare readers for debugging. The ergonomics objection supports
 the [teaching requirement](readers.md#the-comprehension-barriers) to make the desugaring

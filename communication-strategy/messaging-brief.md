@@ -43,15 +43,15 @@ Choose the problem the intended reader recognizes. The examples and their limits
 
 | Reader | Lead with |
 | --- | --- |
-| Broad audience or type-system reader | Overlapping implementations rejected by Rust |
+| Broad audience or type-system reader | Overlapping impls rejected by Rust |
 | Trait-heavy developer or library author | Behavior for a foreign target without a newtype |
-| Working developer | Test and production implementations |
+| Working developer evaluating testability | Test and production implementations |
 | Reader unsure why contexts differ | Existing build-time variation or a test harness |
-| Systems or ML-module reader | A context-selected error or runtime type |
+| Systems or ML-module reader | A configurable error or runtime type |
 | Deep call-graph maintainer | Repeated dependency parameters |
-| Evaluator or framework author | Decomposing a trait with unrelated responsibilities |
-| Structural-framework author | Generic operations on opted-in fields and variants |
-| Reader concerned about errors | A real failure explained by the toolchain |
+| Evaluator or framework author | A trait whose implementation responsibilities have grown |
+| Structural-framework author | Generic operations over opted-in fields and variants |
+| Reader concerned about diagnostics | A real wiring failure explained by the toolchain |
 
 ## The objections, and the one-line answers
 
@@ -102,7 +102,7 @@ Match the next step to the reader, following [formats.md](formats.md#the-convers
 
 - **First contact:** A quickstart or runnable example.
 - **Working developer:** A tutorial addressing their problem.
-- **Evaluator:** Maturity, trade-offs, incremental adoption, and a real system using CGP.
+- **Evaluator:** Maturity, costs, incremental adoption, and a real system using CGP.
 - **Enthusiast:** The Concepts pages, the comparisons, and contribution guidance.
 
 ## Words
@@ -140,10 +140,10 @@ Apply these rules across formats:
 Read the draft in this order, following
 [voice-and-register.md](voice-and-register.md#checking-a-draft):
 
-1. Does it sound like the author or project, with specific claims instead of generic praise?
+1. Does it sound like the author or project, with concrete claims instead of generic praise?
 2. Are the relevant costs stated where readers need them?
-3. Can intensifiers be removed without changing the meaning?
-4. Does the voice match the page, without an accidental corporate "we"?
+3. Can intensifiers be removed without losing meaning, evidence, or uncertainty?
+4. Does the voice match the page, including its documented exceptions?
 
 ## Where the rest is
 

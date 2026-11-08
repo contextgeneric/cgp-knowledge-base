@@ -17,11 +17,9 @@ Use the modern idioms taught by the `/cgp` skill and [guides](../cgp/guides/READ
 use `#[cgp_impl]`, context fields use `#[implicit]`, and wiring uses `delegate_components!` with
 explicit checks. Label incomplete examples and say what they omit.
 
-Identify the context and target when showing code. A value context holds the data being operated on;
-an environmental context supplies an application's choices and dependencies. A self-targeted
-component acts on the context, while a parameter-targeted component acts on a separate type. Narrate
-any change between these arrangements, following
-[vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target).
+Identify the context and target when showing code, and narrate any change between those
+arrangements, using the
+[qualifiers in vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target).
 
 ## The problems CGP removes
 
@@ -281,8 +279,8 @@ Explain the repair rather than only praising the shorter output. The check force
 The [toolchain reference](../cgp/reference/cargo-cgp.md) explains how the driver recovers and
 presents the cause. Recheck the fixture before publishing its output.
 
-Keep the canonical limitation beside the tool claim: `cargo cgp check` leads with the root cause for
-the classes it recognizes, and the tool does not yet reshape every class.
+Keep the [canonical cargo-cgp qualification](vocabulary.md#terms-to-use-and-how-to-introduce-each)
+beside the tool claim.
 
 ### Choosing which problem to lead with
 
@@ -335,9 +333,8 @@ functions can still access other in-scope APIs, and a broadly bounded dependency
 many operations.
 
 **Dedicated tooling helps explain wiring failures.** Demonstrate `cargo cgp check` with a real
-fixture and retain the canonical qualification: `cargo cgp check` leads with the root cause for the
-classes it recognizes, and the tool does not yet reshape every class. Do not
-describe the error problem as solved.
+fixture, keep the canonical qualification beside it, and do not describe the error problem as
+solved.
 
 **Gradual adoption preserves ordinary Rust choices.** A consumer trait supports direct impls,
 providers use familiar impl syntax, and implicit arguments resemble parameters. Start with one
@@ -463,8 +460,7 @@ runtime cost. The [Hypershell account](../website/blog/hypershell-release.md) mo
 observations from rough experiments.
 
 **"The errors are a wall of generated types."** Concede the raw diagnostic cost and show checks and
-tooling on the actual failure. Use the canonical sentence: `cargo cgp check` leads with the root
-cause for the classes it recognizes, and the tool does not yet reshape every class.
+tooling on the actual failure, with the canonical cargo-cgp qualification.
 
 **"Rust does not need a DI framework."** Agree that ordinary traits and generics often suffice. Show
 the particular limitation at issue, such as overlapping impls or repeated dependency parameters,

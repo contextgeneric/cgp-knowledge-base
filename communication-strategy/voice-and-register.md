@@ -141,10 +141,9 @@ records and follow the separate restrictions in
 [website/AGENTS.md](../website/AGENTS.md#do-not-rewrite-history). Record drift in their internal
 documents rather than silently updating historical code or claims.
 
-Preserve passages that deliberately carry the author's personal voice. The sponsorship section and
-personal statements about maturity or capacity are not generic copy to standardize. Follow the
-page's provenance record and [AI disclosure policy](ai-disclosure.md) when distinguishing revision
-from authorship.
+Preserve passages that deliberately carry the author's personal voice, such as the sponsorship
+section above and personal statements about maturity or capacity. Follow the page's provenance
+record and [AI disclosure policy](ai-disclosure.md) when distinguishing revision from authorship.
 
 ## Checking a draft
 

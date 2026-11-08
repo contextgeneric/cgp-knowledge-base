@@ -303,16 +303,14 @@ Prepare readers for verbose errors involving generated types and transitive depe
 `check_components!` checks selected components near their wiring, which helps locate failures. It
 does not guarantee that every diagnostic becomes short or identifies the cause equally well.
 
-Introduce cargo-cgp when demonstrating a wiring failure. Use the canonical qualification:
-`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool does not yet
-reshape every class. Teach readers to inspect the reported cause and
-use the [error catalog](../cgp/errors/README.md) or [tool reference](../cgp/reference/cargo-cgp.md)
-for unfamiliar cases. Check actual output rather than promising a particular rewrite.
+Introduce cargo-cgp when demonstrating a wiring failure, with the
+[canonical qualification](vocabulary.md#terms-to-use-and-how-to-introduce-each). Teach readers to
+inspect the reported cause and use the [error catalog](../cgp/errors/README.md) or
+[tool reference](../cgp/reference/cargo-cgp.md) for unfamiliar cases. Check actual output rather
+than promising a particular rewrite.
 
-Mention the agent skill beside these costs when relevant. It teaches an assistant the CGP vocabulary
-and can help it trace wiring and interpret diagnostics. The reader still needs to review the result.
-[Message.md](message.md#the-one-mitigation-that-spans-three-of-these) owns the limits and placement
-of that claim.
+Mention the agent skill beside these costs when relevant, within the placement and limits
+[message.md](message.md#the-one-mitigation-that-spans-three-of-these) sets.
 
 ### Knowing where to start, and why it is worth it
 

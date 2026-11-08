@@ -144,9 +144,9 @@ Use "per application" where it makes a first-contact example concrete. A context
 an entire application; explain its actual role when introducing the code, following
 [vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target).
 
-Keep the verification claim precise. A delegation entry alone does not check its provider's
-dependencies. Show `check_components!` or an appropriate combined wiring check to verify the
-selection explicitly; use also forces type checking. See
+Keep the Type-Safe Wiring claim precise: a delegation entry alone does not check its provider's
+dependencies, as [the checked-dependencies strength](message.md#the-strengths-worth-advertising)
+explains, so pair the feature with `check_components!` or a use of the component. See
 [check traits](../cgp/concepts/check-traits.md).
 
 ### What the set deliberately leaves out

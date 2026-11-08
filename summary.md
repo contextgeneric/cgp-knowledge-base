@@ -637,7 +637,7 @@ it stale.
   writer, the habits his published work evidences, and the preferences he has stated; the document every
   other one here is downstream of.
 - [voice-and-register.md](communication-strategy/voice-and-register.md) — project and author voices, specific claims and tradeoffs, teaching order, canonical examples, diagrams, code verification, and revision boundaries.
-- [writing-styles.md](communication-strategy/writing-styles.md) — direct subjects and verbs, point-first openings, meaning-preserving sentence edits, clear punctuation, and plain English for agent-drafted content.
+- [writing-styles.md](communication-strategy/writing-styles.md) — direct subjects and verbs, meaning-preserving sentence edits, clear punctuation, and plain English for agent-drafted content.
 - [identity.md](communication-strategy/identity.md) — the positioning decided in five steps from
   alternatives to category, the settled tag line analyzed word by word, the enhances-not-replaces frame,
   the layered pitch that follows the line, and the curated headline feature set for a front page.
