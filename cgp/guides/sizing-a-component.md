@@ -1,8 +1,8 @@
 # Sizing a component
 
-What belongs in one component is the set of items a single provider choice should decide *together*
-(often one method, sometimes a method and the type it returns, and rarely a whole entity's surface),
-and this guide is about making that grouping deliberately, then splitting a trait that has already
+What belongs in one component is the set of items a single provider choice should decide *together*:
+often one method, sometimes a method and the type it returns, and rarely a whole entity's surface.
+This guide is about making that grouping deliberately, then splitting a trait that has already
 grouped too much.
 
 **Nothing in CGP limits how many items a trait may declare.** A component's trait is an ordinary
@@ -220,7 +220,7 @@ area-only context ignore both entirely.
 
 **A trait grouping every operation of an entity is the natural design for anyone with an
 object-oriented background, and it is worth being honest that the recommendation here cuts against a
-habit most developers hold for good reasons.** `Shape` with `area`, `perimeter`, `scale`, and
+habit most developers hold for good reasons.** `Shape` with `area`, `perimeter`, `describe`, and
 `rotate` describes a coherent thing, gives a team one word to talk about, and matches how most
 people were taught to model a domain. A behavior-named component like `AreaCalculator` feels thinner
 and less principled by comparison, so the entity trait is what an author writes unless something

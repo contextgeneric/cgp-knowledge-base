@@ -1,9 +1,8 @@
 # Choosing a component's shape
 
-When you define a component you decide two things about it before you write a line of its body (what
-goes in the `Self` position, and whether its operation acts on `Self` or on a type parameter), and
-this guide is about making that choice deliberately rather than by copying whichever example you
-read last.
+Defining a component settles two things before you write its body: what goes in the `Self` position,
+and whether the operation acts on `Self` or on a type parameter. This guide is about making that
+choice deliberately rather than by copying whichever example you read last.
 
 The decision matters because it fixes how many independent choices the wiring can ever express, and
 because it cannot be revised later without a breaking change to the trait. It is also the decision
