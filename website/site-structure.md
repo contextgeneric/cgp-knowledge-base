@@ -924,7 +924,9 @@ come for, and it is the first thing a well-meaning trim targets.
 
 - **URL** — <https://contextgeneric.dev/docs/comparisons/>
 - **Source** — [docs/comparisons/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/comparisons)
-- **Status** — Current: the index and all eleven pages are written, each with its `example-code` mirror
+- **Status** — Current: the index and all eleven pages are written, each with its `example-code` mirror.
+  A revision pass against the naming rule and the [comparison guide](writing-guides/related-work.md)
+  has reached the index and four pages so far, and the other seven follow.
 - **How it was made** — ported by an agent from [related-work/](../related-work/README.md); level one
   of the four in [ai-disclosure.md](../communication-strategy/ai-disclosure.md). The author's read of
   each page's two judging sections, per the
