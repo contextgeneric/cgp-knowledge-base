@@ -36,6 +36,13 @@ its `AGENTS.md` — do not become pages. Nothing else on the site depends on any
 uses MDX-only syntax, so `detect` changes no existing rendering. Both deploy workflows check out with
 `submodules: recursive`, without which the build fails on missing files.
 
+**The theme is the other departure, and it stays inside the policy.** The site's colours, fonts, and
+code colours come from tokens in `src/css/custom.css`, two Prism themes in `src/prism/themes.ts`, and
+configuration options: `headTags` for the SVG favicon, the heading font's preload, and the
+`theme-color` tags, the logo's `srcDark`, the announcement bar's colours, and
+`prism.additionalLanguages`. It adds no plugin and swizzles no component.
+[visual-design.md](visual-design.md) records the palette, the fonts, and the contrast check.
+
 Deployment runs from GitHub Actions. The workflows in
 [.github/workflows/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/.github/workflows)
 build the site and publish it to GitHub Pages, with the custom domain fixed by

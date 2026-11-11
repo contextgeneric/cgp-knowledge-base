@@ -442,7 +442,8 @@ document, on new pages only and never as a retroactive sweep.
 
 Visual design, the feature illustrations, and the theme are outside its scope; the project's
 [stated policy](blog/new-website.md) is to keep the Docusaurus installation stock and spend the time on
-Markdown instead. It also does not decide the *content* of any page, which belongs to the writing guides
+Markdown instead, and [visual-design.md](visual-design.md) records the theme the site carries within
+that policy. It also does not decide the *content* of any page, which belongs to the writing guides
 and to [communication-strategy/](../communication-strategy/README.md). What it decides is which pages
 exist, what each is for, and where a reader goes next.
 

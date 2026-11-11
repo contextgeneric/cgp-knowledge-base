@@ -805,15 +805,21 @@ it stale.
   done-condition (including the AI disclosure page, the knowledge-base pages, the `cargo-cgp`
   release the tool's pages are written against, and the post-release Projects pages with the code
   changes they need), which of them the release waits for, and the ordering; deleted when empty.
+- [website/visual-design.md](website/visual-design.md) — the site's theme: the palette built around
+  the logo's `#8f1f1d` with warm neutrals and a lighter tint for text in the dark theme, the tokens
+  and the literal Infima colours they replace, underlined prose links, two Prism themes and the seven
+  added languages, the server-rendered light code as a known limitation, Space Grotesk and JetBrains
+  Mono with their subsets and fallbacks, framed images in the dark theme, the logo, favicon,
+  announcement bar, footer, and blog colours, and the contrast check with the screenshot practice.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation,
   announcement bar, deployment, the release branch that carries both `cgp` v0.8.0 and `cargo-cgp`
   v0.1.0, the three settings that depart from stock Docusaurus to publish the agent skill from its
-  own repository, and the `example-code/` crate that holds the compiled counterparts of the code the
-  site shows, plus one entry each for the front page, Introduction, the Quickstart, Overview,
-  Resources, Contribute, the `cargo-cgp` tooling section, the AI skills section and its `cgp-skills`
-  submodule, the Concepts section, the Comparisons section, the Reference section including its
-  compile-errors and glossary pages, the Projects section, the AI section's overview and
-  knowledge-base pages, and the AI disclaimer.
+  own repository, the theme as the other departure, and the `example-code/` crate that holds the
+  compiled counterparts of the code the site shows, plus one entry each for the front page,
+  Introduction, the Quickstart, Overview, Resources, Contribute, the `cargo-cgp` tooling section,
+  the AI skills section and its `cgp-skills` submodule, the Concepts section, the Comparisons
+  section, the Reference section including its compile-errors and glossary pages, the Projects
+  section, the AI section's overview and knowledge-base pages, and the AI disclaimer.
 
 ### `website/writing-guides/`: how new pages should be written
 
