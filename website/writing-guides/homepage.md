@@ -65,9 +65,9 @@ in the logo image, and the tag line beneath it is the plain description the
 [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) asks
 the name to stand beside: *"A language extension for Rust, with pluggable trait implementations at
 compile-time."* The front page presents the project, so it states the line whole, and the line is
-not paraphrased, reworded for the hero, or replaced by something snappier. The current hero headline
-(*"Build modular Rust applications with zero-cost abstractions"*) leads with the word
-[identity.md](../../communication-strategy/identity.md) retires and must go.
+not paraphrased, reworded for the hero, or replaced by something snappier. A headline in its place,
+such as one that leads with "modular", uses the word
+[identity.md](../../communication-strategy/identity.md) retires.
 
 **The reassurance line.** One sentence that heads off the two misreadings the tag line invites: that
 "language extension" means a new language to learn, and that "pluggable" means a runtime framework.
@@ -91,8 +91,18 @@ dilutes both. Do not add a third for the enthusiast, who will find the blog. The
 and one working program with no concepts, and it is deliberately smaller than the
 [Hello World tutorial](../tutorials/hello-world.md), which teaches an idea.
 
-The current page's GitHub star widget may stay; it is social proof rather than a call to action and does
-not compete for the click.
+The GitHub star widget may stay; it is social proof rather than a call to action and does not compete
+for the click.
+
+**The layout puts the code in the first screen.** The hero copy (the name, the tag line, the
+reassurance line, the install line, and the two links) sits on the left, with the hero illustration
+on the right at about 280 px and modest vertical padding. The two code blocks follow directly in a
+band of their own, side by side, so a reader compares them line by line. The target is the whole
+first screen at 1920×1080 and the tops of both blocks at 1440×900, which is enough to see the
+contrast; measure both with a screenshot rather than estimating. On a phone the blocks stack and only
+the hero copy fits the first screen, which is acceptable because the copy stands alone. Do not shrink
+the hero art to a small logo to save height, and do not put the blocks in tabs, which hide the
+comparison they exist to show.
 
 ## The example, and how to sell it
 
@@ -282,9 +292,13 @@ the reader can name without being told**. The **trait's shape is identical** acr
 **bodies are identical** across the pair, and short enough to show. The wiring shows **at least two
 providers with at least one of them used twice**. And the **real error code** appears verbatim.
 
-A replacement must be compiled before it ships, not eyeballed; the current one was, together with a
-`check_components!` assertion per wired type, which is how the wiring is confirmed to resolve rather than
-merely parse.
+A replacement must be compiled before it ships, not eyeballed. The website's `example-code` crate
+compiles the block in `tests/front_page.rs`, with a `check_components!` assertion per wired type, which
+is how the wiring is confirmed to resolve rather than merely parse, and holds the rejected block as a
+compile-fail fixture whose snapshot shows the `E0119`. The page's code lives as strings in
+`src/pages/index.tsx`, which no compiler reads, so the same test file reads `index.tsx`, takes each
+block from between its marker comments, and fails when it differs from the compiled text. Change the
+page and the test in the same commit.
 
 ## Below the fold: the bounded essay
 
@@ -317,6 +331,23 @@ should be introduced there rather than earlier, because this is the point at whi
 reader can check. The two transitions and the reasoning behind them are specified in
 [vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and the
 [comprehension barrier](../../communication-strategy/readers.md).
+
+**Show the application shape in two lines of wiring.** The sentence names the move; the email swap
+shows it, using the [canonical example](../../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs)
+the Concepts pages already use:
+
+```rust
+delegate_components! { App     { EmailSenderComponent: SendViaSmtp  } }
+delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
+```
+
+One sentence says that `App` sends real mail while `TestApp` records messages for a test, and that
+the code calling `send_email` is the same in both. Put the site's wiring-table diagram
+(`static/img/wiring-table.svg`), which draws this table, beside it. This is the one exception to the
+offload rule below: the most common CGP shape would otherwise never appear on the page in code, and
+two wiring lines show "choose per application" faster than a paragraph. The section gets no further
+code; the providers and the consumer trait stay on
+[*Consumer and provider traits*](explanation.md#how-cgp-works).
 
 **3. What that buys you.** Here the strengths appear, as prose beats rather than cards, each two or
 three sentences: many implementations chosen per application; no runtime cost, because a wired call
@@ -372,20 +403,36 @@ the wording to avoid in
 
 **6. Where to start.** The routing section, and the only place on the page with more than two links.
 Match the destination to the reader per the conversion ladder in
-[formats.md](../../communication-strategy/formats.md): the first tutorial for someone ready to try, the
-explanation pages for someone who wants the argument in full, *Modularity Hierarchy* for someone
-weighing adoption, the blog for depth, and the contribute page for the enthusiast.
+[formats.md](../../communication-strategy/formats.md): the Quickstart and then the first tutorial for
+someone ready to try, the explanation pages for someone who wants the argument in full,
+*Modularity Hierarchy* and the Projects pages for someone weighing adoption, since an evaluator looks
+for a real system using CGP, the Overview, the comparisons, and the blog for depth, and the contribute
+page for the enthusiast.
 
-The five headline features from
-[identity.md](../../communication-strategy/identity.md#the-headline-feature-set) may appear as a compact
-strip somewhere between sections 3 and 4, if the visual design wants one. They are a scannable summary of
-section 3 rather than a replacement for it, and if both exist the feature strip is the shorter of the two.
+**The five headline features from
+[identity.md](../../communication-strategy/identity.md#the-headline-feature-set) appear as a row of
+cards between sections 3 and 4.** Each card has the feature's title, one line, and an illustration,
+and its title links to the page that answers it. The cards are a scannable summary of section 3 rather
+than a replacement for it, so each line stays shorter than its beat there. The links follow the
+feature-to-page table in [seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words),
+except that *Still Ordinary Rust* links the Quickstart, which shows its claim in one program:
+
+| Feature | Links to | Illustration |
+| --- | --- | --- |
+| One Interface, Many Implementations | *Bypassing coherence* | `one-interface-many-implementations` |
+| Zero-Cost Abstraction | the dynamic-dispatch comparison | `zero-cost-abstraction` |
+| Type-Safe Wiring | the dependency-injection comparison | `type-safe-wiring` |
+| Abstract Over Every Dependency | *Modular error handling* | `abstract-over-every-dependency` |
+| Still Ordinary Rust | the Quickstart | `still-ordinary-rust` |
+
+The illustrations are covered in [Images, metadata, and the page's foot](#images-metadata-and-the-pages-foot) below.
 
 ## The offload rule, and the pages it offloads to
 
 **A section that wants a second code block, a second example, or a paragraph of mechanism has outgrown
 the homepage.** When that happens, the material moves to a dedicated documentation page and the homepage
-section keeps one paragraph plus a link. This is the rule that keeps the essay bounded, and it only works
+section keeps one paragraph plus a link. Section 2's two wiring lines are the one exception, for the
+reason given there. This is the rule that keeps the essay bounded, and it only works
 if the destination pages exist, so the redesign must create them rather than discovering the need
 mid-draft.
 
@@ -427,6 +474,32 @@ The project's maturity is not offloaded: the cost section states it on the page 
   and may state the tag line whole, per the
   [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
 
+## Images, metadata, and the page's foot
+
+**The page keeps its art and keeps it light.** The hero illustration and the feature illustrations
+were made with image models, as the [new-website post](../blog/new-website.md) records, and their
+quality is above what an agent can draw in code, so a revision reuses them rather than redrawing
+them. A new illustration matches the set: flat geometric vector shapes in the site's four reds (deep
+maroon `#7a1614`, crimson `#b8312c`, coral `#e8837a`, pale pink `#f6d3cd`), soft drop shadows, a plain
+white background, and no text. Until it exists, a placeholder drawn to the same brief stands in, and
+the release checklist carries its replacement. Every image ships as WebP at twice its display size,
+and the page's images stay under about 150 KB together.
+
+**Every image reads in both themes.** The feature illustrations have white backgrounds, so each sits
+in a rounded frame that reads as a tile on the dark theme. They are decorative beside their titles,
+so their alt text is empty; the hero illustration's alt text names the project.
+
+**A shared link carries the name and the tag line.** The site's `themeConfig.image` is a 1200×630
+social card made from the hero illustration with the name, the tag line, and the site address beside
+it. Its generator lives in the website's `scripts/`, because the card must change whenever the tag
+line does.
+
+**The page ends with its provenance line.** An agent wrote the page from this guide, so its foot
+carries the one-line note that
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page) requires
+of a substantially rewritten page, linking the matching section of the disclosure page, and the
+page's record in [site-structure.md](../site-structure.md) states the level.
+
 ## What must not be on the homepage
 
 Five things are excluded by the page's job rather than by taste, and each is a temptation with an obvious
@@ -447,38 +520,13 @@ does not tell an unfamiliar reader what CGP does, and the tag line and the code 
 `E0119` and wants to know why the rule exists. Opening on it, before the code that motivates it, loses
 the pragmatist immediately.
 
-**No feature the strategy retires.** In particular, "Modular Component System" and "Highly Expressive
-Macros", both currently on the page, lead with words that cost more attention than they win, and
-"modular" as a lead word is
-[specifically retired](../../communication-strategy/identity.md).
-
-## Where the current page stands
-
-The current homepage is a stock Docusaurus landing page and diverges from this guide in six concrete
-ways, listed here so a redesign has a checklist rather than an impression. The **hero headline** leads
-with "modular" and does not use the tag line. There is **no reassurance line and no install command**.
-The **feature grid has six entries**, two of which lead with retired words, and it disagrees with the
-Overview page. The **code example is the `std::Hash` illustration**, a good provocation, but it does not
-show the rejected impl, so the reader never sees what Rust refuses, and it elides so much that the wiring
-line carries no weight. The **problem cards are generic** ("No More Monolithic Traits", "Decouple
-Dependencies") and are not anchored to anything the reader has seen. And there is **no cost section at
-all**, which on a page for this audience is the most consequential omission of the six.
-
-One further defect is a factual error rather than a framing one, and it outranks all six: **the code
-example does not compile.** It writes `#[cgp_impl(HashWithDisplay)]` without the `new` keyword and never
-declares `struct HashWithDisplay;`, so it wires a provider that does not exist. This is the most-seen
-CGP code the project publishes, which is the worst possible place for it. The replacement block above is
-correct, and the rule that follows is in [Replacing it](#replacing-it): compile the hero snippet, never
-eyeball it.
-
-Two smaller notes. The closing "Ready to Get Started?" block is template filler and should become the
-routing section described above. And the feature illustrations under `static/img/features/` are
-LLM-generated placeholders per the [new-website post](../blog/new-website.md); they may stay, but their
-captions are copy and are governed by this guide.
+**No feature the strategy retires.** In particular, titles such as "Modular Component System" and
+"Highly Expressive Macros" lead with words that cost more attention than they win, and "modular" as a
+lead word is [specifically retired](../../communication-strategy/identity.md).
 
 ## Checking a draft
 
-Run five checks, in this order.
+Run six checks, in this order.
 
 **Read only above the fold and ask whether it stands alone**: the name and the tag line,
 reassurance, the contrast, two links. If a reader stopping there could not say what CGP does, the
@@ -493,6 +541,10 @@ has the frame backwards.
 
 **Count the sections and the links.** Six sections below the fold, two links above it. A seventh section
 means something needs offloading; a third hero link means one of them is not needed.
+
+**Look at the rendered page.** Take screenshots at 1920×1080, 1440×900, and 390×844 in both themes.
+The first screen meets the layout's targets, every image reads in both themes, the images total under
+about 150 KB, and the provenance line sits at the foot.
 
 **Verify every snippet** against the source and the `/cgp` skill, preferring code already verified in
 [examples/](../../examples/README.md). For the hero block specifically, compile it rather than reading it:
