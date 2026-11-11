@@ -115,8 +115,8 @@ the pre-emption of the first objection on its own.
 
 ### The code
 
-Two blocks in sequence, the first labelled as what Rust refuses and the second as the same program under
-CGP. This is the verified form: the first block fails with exactly the error it claims, and the second
+Two blocks side by side, the first labelled as what Rust refuses and the second as the same program
+under CGP. This is the verified form: the first block fails with exactly the error it claims, and the second
 compiles and runs against `cgp` `0.8.0` once the two imports (`core::fmt::Display` and
 `cgp::prelude::*`) are added back.
 
@@ -154,7 +154,7 @@ impl Encoder {
     fn encode(&self) -> Vec<u8> { self.as_ref().to_vec() }
 }
 
-// Both compile. Each type names the implementation it uses:
+// Each type names the implementation it uses:
 delegate_components! { u64     { EncoderComponent: EncodeAsText } }
 delegate_components! { String  { EncoderComponent: EncodeAsText } }
 delegate_components! { Vec<u8> { EncoderComponent: EncodeAsBytes } }
@@ -482,8 +482,8 @@ quality is above what an agent can draw in code, so a revision reuses them rathe
 them. A new illustration matches the set: flat geometric vector shapes in the site's four reds (deep
 maroon `#7a1614`, crimson `#b8312c`, coral `#e8837a`, pale pink `#f6d3cd`), soft drop shadows, a plain
 white background, and no text. Until it exists, a placeholder drawn to the same brief stands in, and
-the release checklist carries its replacement. Every image ships as WebP at twice its display size,
-and the page's images stay under about 150 KB together.
+the release checklist carries its replacement. Every raster image ships as WebP at twice its display
+size, and the page's images stay under about 150 KB together.
 
 **Every image reads in both themes.** The feature illustrations have white backgrounds, so each sits
 in a rounded frame that reads as a tile on the dark theme. They are decorative beside their titles,
