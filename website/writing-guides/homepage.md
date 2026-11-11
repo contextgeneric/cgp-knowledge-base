@@ -425,7 +425,7 @@ except that *Still Ordinary Rust* links the Quickstart, which shows its claim in
 | Abstract Over Every Dependency | *Modular error handling* | `abstract-over-every-dependency` |
 | Still Ordinary Rust | the Quickstart | `still-ordinary-rust` |
 
-The illustrations are covered in [Images, metadata, and the page's foot](#images-metadata-and-the-pages-foot) below.
+The illustrations are covered in [Images, metadata, and provenance](#images-metadata-and-provenance) below.
 
 ## The offload rule, and the pages it offloads to
 
@@ -474,7 +474,7 @@ The project's maturity is not offloaded: the cost section states it on the page 
   and may state the tag line whole, per the
   [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
 
-## Images, metadata, and the page's foot
+## Images, metadata, and provenance
 
 **The page keeps its art and keeps it light.** The hero illustration and the feature illustrations
 were made with image models, as the [new-website post](../blog/new-website.md) records, and their
@@ -494,11 +494,11 @@ social card made from the hero illustration with the name, the tag line, and the
 it. Its generator lives in the website's `scripts/`, because the card must change whenever the tag
 line does.
 
-**The page ends with its provenance line.** An agent wrote the page from this guide, so its foot
-carries the one-line note that
-[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page) requires
-of a substantially rewritten page, linking the matching section of the disclosure page, and the
-page's record in [site-structure.md](../site-structure.md) states the level.
+**The page carries no provenance line.** It is the one exception to the
+[provenance rule](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page): the front
+page presents the project, and the disclosure page, which the site's AI section links, names the
+exception and describes how the page was made. The page's record in
+[site-structure.md](../site-structure.md) still states how it was made.
 
 ## What must not be on the homepage
 
@@ -544,7 +544,7 @@ means something needs offloading; a third hero link means one of them is not nee
 
 **Look at the rendered page.** Take screenshots at 1920×1080, 1440×900, and 390×844 in both themes.
 The first screen meets the layout's targets, every image reads in both themes, the images total under
-about 150 KB, and the provenance line sits at the foot.
+about 150 KB, and the page ends at its routing section, with no provenance line.
 
 **Verify every snippet** against the source and the `/cgp` skill, preferring code already verified in
 [examples/](../../examples/README.md). For the hero block specifically, compile it rather than reading it:

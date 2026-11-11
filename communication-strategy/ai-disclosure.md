@@ -256,6 +256,9 @@ requirements:
   before labeling it. A site-wide sweep would risk presenting guesses as disclosures.
 - **Record the level in the page's internal document.** Preserve the authorship arrangement where
   the website's page records are maintained.
+- **Leave the front page without a note.** The front page presents the project, and the author
+  exempted it; the disclosure page names the exception, and its own account covers how the page was
+  made.
 - **Limit this work to the website.** Disclosure for other repositories, including `cargo-cgp`, is
   separate work after the website redesign is published. Do not add notes to their READMEs or
   documentation in the meantime.

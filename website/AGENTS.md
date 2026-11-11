@@ -129,6 +129,8 @@ Read [README.md](README.md) for the section and the base-wide [../AGENTS.md](../
 
 - Add one provenance line at the foot of a page written or substantially rewritten from now on,
   linking the specific section of the AI disclosure that matches how it was made.
+- Leave the front page without a provenance line; it is the one exception, and the disclosure page
+  names it.
 - Do not add a note to an existing page unless the author asks, and do not sweep retroactively.
 - Record which level applies in the page's internal document.
 - Do not add a note to a scaffolded stub; add it when the page is written.
