@@ -37,6 +37,8 @@ The tokens fall into four groups:
   and muted text, and headings. Infima's own grey scale takes the same warm values.
 - **Roles:** links and their hover colour, the focus ring, code and inline-code backgrounds, the
   highlighted-line tint, the selection, the image frame, the announcement bar, and the footer.
+  `--cgp-hero-art-bg` holds the hero art's own background colour, which the front page uses for the
+  circle behind the art in the dark theme.
 - **Admonitions:** `note`, `tip`, `info`, and `warning` use a warm grey, a green, a blue-grey, and an
   amber, each with its own tint for inline code inside it. `danger`, which no page uses, keeps a red
   distinct from the brand's.
