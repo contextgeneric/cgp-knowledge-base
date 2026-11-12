@@ -38,10 +38,17 @@ The tokens fall into four groups:
 - **Roles:** links and their hover colour, the focus ring, code and inline-code backgrounds, the
   highlighted-line tint, the selection, the image frame, the announcement bar, and the footer.
   `--cgp-hero-art-bg` holds the hero art's own background colour, which the front page uses for the
-  circle behind the art in the dark theme.
+  circle behind the art in the dark theme. `--cgp-diff-removed` and `--cgp-diff-added` tint the front
+  page's diff lines, the line Rust rejects and the lines CGP adds, and `--cgp-diff-removed-mark` and
+  `--cgp-diff-added-mark` colour each one's gutter mark and verdict badge. The added green is strong
+  enough to read as green on the beige code background in both themes.
 - **Admonitions:** `note`, `tip`, `info`, and `warning` use a warm grey, a green, a blue-grey, and an
   amber, each with its own tint for inline code inside it. `danger`, which no page uses, keeps a red
   distinct from the brand's.
+
+Red marks what a reader can act on: links, the primary button, and, on the front page, the rejection
+mark. Display text such as the front page's tag line and pull quote, and the titles of cards and
+tiles, take the heading colour, and a linked card's title turns red only on hover.
 
 Infima sets some colours as literals rather than from its scales: the two content colours that the
 table of contents and other secondary text read, its grey scale, its primary alert colours, and the
@@ -61,8 +68,8 @@ underlined too. Every link, button, and control shows a focus ring in the brand 
 
 The code colours are two Prism themes written for the palette, one per site theme. No token uses the
 brand red, so code never reads as a link or an error, and each token colour keeps 4.5:1 against the
-code background and against a highlighted line's amber tint. The code background differs from the page
-in both themes.
+code background, against a highlighted line's amber tint, and against the front page's two diff
+tints. The code background differs from the page in both themes.
 
 Prism's default bundle lacks several languages the site's pages use, so the config adds `toml`,
 `bash`, `ebnf`, `haskell`, `ocaml`, `java`, and `scala` from the `prismjs` package Docusaurus already
@@ -135,8 +142,10 @@ python3 scripts/theme/contrast.py
 ```
 
 It reads the tokens from `custom.css` for both themes, resolves their references, and checks each pair
-the site uses: text at 4.5:1, and focus rings, admonition borders, and the two navbar logos at 3:1. It
-also checks every Prism token on the code background and on a highlighted line. It exits non-zero on a
+the site uses: text at 4.5:1, including the first line of the front page's quoted diagnostic, and focus
+rings, admonition borders, the two navbar logos, and the front page's diff marks and verdict badges at
+3:1. It also checks every Prism token on the code background, on a highlighted line, and on each diff
+tint. It exits non-zero on a
 failing pair.
 
 The check does not see the rendered page, so a theme change also needs screenshots of one page of each
