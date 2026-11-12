@@ -246,8 +246,8 @@ representativeness, and it costs two transitions that the essay below must then 
 **The site pays that cost back by teaching the application shape second.** Because the hero is a value
 context and so is the Hello World tutorial, a reader's first two contacts both show the shape least CGP
 code is in, so the surfaces immediately downstream are where the common shape has to arrive. On the
-explanation path that is essay section 2 and [*How CGP works*](explanation.md#how-cgp-works), where
-the `App`/`TestApp` example is environmental; on the teaching path it is the applied tutorial,
+explanation path that is the end of essay section 1, which introduces a context in prose, and
+[*How CGP works*](explanation.md#how-cgp-works), where the `App`/`TestApp` example shows one in code; on the teaching path it is the applied tutorial,
 which is placed second in the tutorial order for this reason and is naturally environmental. Keeping
 the hero as it is depends on those two doing their job, so a change to either is a change to this
 trade.
@@ -278,7 +278,7 @@ in a crate owning either the trait or the type. CGP dissolves that too, by movin
 and that is one sentence in the essay rather than a second code block.
 
 **Everything past trait implementations.** No abstract types, no extensible data, no handlers, no
-dependency injection. Section 4 of the essay repays the tag line's breadth debt in one sentence each; the
+dependency injection. Section 3 of the essay repays the tag line's breadth debt in one sentence each; the
 block stays on the one thing it can prove in twenty lines.
 
 ### Replacing it
@@ -304,56 +304,48 @@ page and the test in the same commit.
 
 ## Below the fold: the bounded essay
 
-Six sections, in this order, each answering one question and stopping. The section titles below are jobs
-rather than required headings, but the order is not negotiable, because it is the order in which the
-questions occur to a reader.
+Five sections, in this order, each answering one question and stopping. The section titles below are
+jobs rather than required headings, but the order is not negotiable, because it is the order in which
+the questions occur to a reader.
 
-**1. Why Rust only lets you do this once.** Explain, sympathetically and correctly, that Rust's trait
-system doubles as a dependency-injection mechanism (a generic impl can require `where T: Display`
-without the caller naming it, and the compiler resolves that and everything beneath it), and that this
-only works if every lookup finds the same implementation. Coherence is therefore *correct*, and the
-overlap and orphan rules are what buy it. This section is where the enhances-not-replaces frame is
-earned: a reader who believes the page respects Rust will follow the rest.
+**1. Why Rust only lets you do this once, and what CGP changes.** Explain, sympathetically and
+correctly, that Rust's trait system doubles as a dependency-injection mechanism (a generic impl can
+require `where T: Display` without the caller naming it, and the compiler resolves that and everything
+beneath it), and that this only works if every lookup finds the same implementation. Coherence is
+therefore *correct*, and the overlap and orphan rules are what buy it. This section is where the
+enhances-not-replaces frame is earned: a reader who believes the page respects Rust will follow the
+rest. Name the workaround a reader reaches for without CGP, a newtype per case or a marker struct and a
+helper trait, and link *Bypassing coherence*.
 
-**2. What CGP changes.** The move, in one idea: the implementation's `Self` becomes something the
+The section then states the move, in one idea: the implementation's `Self` becomes something the
 implementing crate always owns, so a provider implements *its own* named type rather than a foreign
-trait, and neither rule bites. Then the other half, which matters just as much: **coherence is restored
-locally**, because each wired type names exactly one provider, so a call site is as unambiguous as it ever
-was. State it as "coherence is not repealed; it is scoped", because that sentence pre-empts the informed
-objection in eight words.
+trait, and neither rule bites. Then the other half, which matters just as much: **coherence is
+restored locally**, because each wired type names exactly one provider, so a call site is as
+unambiguous as it ever was. The code band's caption already states this as "coherence is not
+repealed; it is scoped", so the section explains the sentence rather than repeating it.
 
-**This section is also where the page crosses from the retrofit shape to the application shape, and it
-must say so.** Everything above it wires the *data*; every other page on the site wires an *application*,
-and nothing in a signature marks the change: no parameter appears, so a reader simply notices at some
-point that they no longer know what is being wired. One sentence closes it: *"so far the wired type has
-been the data, which gets one choice for the whole program; the move that makes the choice yours is to
-wire a type you define to stand for your application, and because it is yours, you can define as many as
-you like."* That sentence is also the first legitimate use of the word **context** on the page, and it
-should be introduced there rather than earlier, because this is the point at which it means something the
-reader can check. The two transitions and the reasoning behind them are specified in
+**The section ends where the page crosses from the retrofit shape to the application shape, and it
+must say so.** Everything above it wires the *data*; every other page on the site wires an
+*application*, and nothing in a signature marks the change: no parameter appears, so a reader simply
+notices at some point that they no longer know what is being wired. One sentence closes it: *"so far
+the wired type has been the data, which gets one choice for the whole program; the move that makes the
+choice yours is to wire a type you define to stand for your application, and because it is yours, you
+can define as many as you like."* That sentence is also the first legitimate use of the word
+**context** on the page, and it should be introduced there rather than earlier, because this is the
+point at which it means something the reader can check. The two transitions and the reasoning behind
+them are specified in
 [vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and the
 [comprehension barrier](../../communication-strategy/readers.md).
 
-**Show the application shape in two lines of wiring.** The sentence names the move; the email swap
-shows it, using the [canonical example](../../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs)
-the Concepts pages already use:
+**The page names a context without showing one in code.** [readers.md](../../communication-strategy/readers.md)
+asks a writer to explain an application context by showing what it selects and stores, and the front
+page departs from that on purpose: the section's last sentence links
+[*Consumer and provider traits*](explanation.md#how-cgp-works), which shows an application and its test
+wiring different providers, and the page keeps the hero's block as its only code. A second example
+would add a domain the reader must learn, and a realistic one does not fit the two lines the page could
+spare. Weigh both before putting a second example on the page.
 
-```rust
-delegate_components! { App     { EmailSenderComponent: SendViaSmtp  } }
-delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
-```
-
-One sentence says that `App` sends real mail while `TestApp` records messages for a test, and that
-the code calling `send_email` is the same in both. Put the site's wiring-table diagram
-(`static/img/wiring-table.svg`), which draws this table, beside it, drawn inline from that file so it
-follows the theme switch, as [visual-design.md](../visual-design.md#images-read-in-both-themes)
-describes. This is the one exception to the
-offload rule below: the most common CGP shape would otherwise never appear on the page in code, and
-two wiring lines show "choose per application" faster than a paragraph. The section gets no further
-code; the providers and the consumer trait stay on
-[*Consumer and provider traits*](explanation.md#how-cgp-works).
-
-**3. What that buys you.** Here the strengths appear as the first four headline features, one illustrated
+**2. What that buys you.** Here the strengths appear as the first four headline features, one illustrated
 card each, so the page states them once rather than as prose beats followed by a row of cards that
 repeats them. Each card has the feature's title, one or two sentences anchored to something the
 reader has now seen, and its illustration, and the whole card links to the page that answers it; a
@@ -361,14 +353,14 @@ line under the cards links the Overview, the section's destination. The cards si
 illustration beside its text, so two sentences stay readable at the page's width and the four cards
 make an even grid. Prefer "per application" to "per context" throughout this
 section: it is concrete, it needs no vocabulary, and it is true of the shape
-section 2 has just introduced. Draw the wording from
+section 1 has just introduced. Draw the wording from
 [message.md](../../communication-strategy/message.md#the-strengths-worth-advertising), and keep three
 of its rules: Type-Safe Wiring names `check_components!` or a use of the component, because a wiring
 entry alone does not check a provider's needs; Abstract Over Every Dependency carries portability,
-while section 4's abstract-types sentence keeps the signature payoff; and the feature titles stay
+while section 3's abstract-types sentence keeps the signature payoff; and the feature titles stay
 verbatim.
 
-**4. It goes further than trait implementations.** One short section repaying the tag line's known debt,
+**3. It goes further than trait implementations.** One short section repaying the tag line's known debt,
 that "trait implementations" undersells the reach. One sentence each for abstract types a context chooses
 for itself, extensible records and variants, and the composable handler family. Resist elaborating; each
 of the three is a linked page's worth of material and none of it belongs here.
@@ -383,7 +375,7 @@ enough: the [Overview](../site-structure.md) is where the argument is made in fu
 it is an entry in [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) for a
 piece that has room to show a before and after.
 
-**5. What it costs.** The cost section is not optional and is not softened. It is more machinery than a
+**4. What it costs.** The cost section is not optional and is not softened. It is more machinery than a
 plain trait; for a trait with one implementation a plain trait is the right tool; the compile-time
 work is real; the raw diagnostics are verbose, `cargo cgp check` leads with the root cause for the
 classes it recognizes, and the tool does not yet reshape every class. This section is the single highest-trust
@@ -417,7 +409,7 @@ rule is in
 the wording to avoid in
 [vocabulary.md](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid).
 
-**6. Where to start.** The routing section, and the only place on the page with more than two links.
+**5. Where to start.** The routing section, and the only place on the page with more than two links.
 Match the destination to the reader per the conversion ladder in
 [formats.md](../../communication-strategy/formats.md): the Quickstart and then the first tutorial for
 someone ready to try, the explanation pages for someone who wants the argument in full,
@@ -426,7 +418,7 @@ for a real system using CGP, the Overview, the comparisons, and the blog for dep
 page for the enthusiast.
 
 **The first four headline features from
-[identity.md](../../communication-strategy/identity.md#the-headline-feature-set) are section 3's
+[identity.md](../../communication-strategy/identity.md#the-headline-feature-set) are section 2's
 cards**, in identity.md's order. The fifth, *Still Ordinary Rust*, gets no card, because the
 reassurance line above the fold states it verbatim and a card would repeat it. The links follow the
 feature-to-page table in
@@ -445,8 +437,7 @@ The illustrations are covered in [Images, metadata, and provenance](#images-meta
 
 **A section that wants a second code block, a second example, or a paragraph of mechanism has outgrown
 the homepage.** When that happens, the material moves to a dedicated documentation page and the homepage
-section keeps one paragraph plus a link. Section 2's two wiring lines are the one exception, for the
-reason given there. This is the rule that keeps the essay bounded, and it only works
+section keeps one paragraph plus a link. This is the rule that keeps the essay bounded, and it only works
 if the destination pages exist, so the redesign must create them rather than discovering the need
 mid-draft.
 
@@ -477,7 +468,7 @@ The project's maturity is not offloaded: the cost section states it on the page 
   the homepage hands off to.
 - **Overview**: the fourth destination, and the one that already exists. It is the **feature tour**:
   every high-level CGP feature walked through in more detail than any other surface carries, which
-  makes it the destination for both section 3 and section 4 of the essay. That job resolves the
+  makes it the destination for both section 2 and section 3 of the essay. That job resolves the
   site's three disagreeing feature lists rather than merely reconciling them: the front page carries
   the curated five from
   [identity.md](../../communication-strategy/identity.md#the-headline-feature-set), four as
@@ -555,13 +546,13 @@ it.
 improving on it? A draft that opens by describing coherence as a limitation rather than as a guarantee
 has the frame backwards.
 
-**Count the sections and the links.** Six sections below the fold, two links above it. A seventh section
+**Count the sections and the links.** Five sections below the fold, two links above it. A sixth section
 means something needs offloading; a third hero link means one of them is not needed.
 
 **Read the copy aloud in natural style, and count its words.** Run natural-writing's checks, the
 [voice document's four checks](../../communication-strategy/voice-and-register.md#checking-a-draft),
 and the [messaging brief's words to avoid](../../communication-strategy/messaging-brief.md#words).
-The page's prose outside its code blocks and diagram stays at or below 861 words, counted from the
+The page's prose outside its code blocks stays at or below 861 words, counted from the
 built page's `<main>` after `npm run build`; a section that grows takes its words from another.
 
 **Look at the rendered page.** Take screenshots at 1920×1080, 1440×900, and 390×844 in both themes.

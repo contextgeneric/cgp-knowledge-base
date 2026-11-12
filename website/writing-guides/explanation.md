@@ -190,7 +190,7 @@ each one as the spec for the concept page that plays its role.
 
 **The page the homepage links to most**, published as *Bypassing coherence*. Its organizing
 question is *why can't Rust do this already?*, and it is the long-form version of the homepage's first
-two essay sections.
+essay section.
 
 The argument runs in five movements. Establish that **Rust's trait system doubles as a
 dependency-injection mechanism**: a generic impl can require `where T: Display` without any caller

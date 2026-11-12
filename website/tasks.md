@@ -88,7 +88,7 @@ here so that a page written without them has to be revisited.
 **The application shape is taught second.** A reader's first contact is the front page's hero block,
 which is a value context and stays that way: it earns its place by showing a real `E0119` with nothing
 but the annotations changed. Everything after it should reach the shape most CGP code is actually in.
-On the explanation path that is already handled: the homepage essay's section 2 marks the transition and
+On the explanation path that is already handled: the end of the homepage essay's first section marks the transition and
 *Bypassing coherence* builds the application-context idea out of plain Rust. On the teaching path it is not,
 because both existing tutorials wire a value context and the checking tutorial continues that family. The
 answer is **T3**, the applied tutorial, which is naturally environmental, so it is release-blocking and
