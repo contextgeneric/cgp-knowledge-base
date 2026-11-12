@@ -96,7 +96,9 @@ for the click.
 
 **The layout puts the code in the first screen.** The hero copy (the name, the tag line, the
 reassurance line, the install line, and the two links) sits on the left, with the hero illustration
-on the right at about 280 px and modest vertical padding. The two code blocks follow directly in a
+on the right at about 280 px and modest vertical padding. Between the phone layout and 1240 px, where
+the code blocks stack, the art shrinks to about 200 px and the title steps down, so the title keeps
+one line and the first block still starts high on the screen. The two code blocks follow directly in a
 band of their own, side by side, so a reader compares them line by line. The target is the whole
 first screen at 1920×1080 and the tops of both blocks at 1440×900, which is enough to see the
 contrast; measure both with a screenshot rather than estimating. On a phone the blocks stack and only
@@ -343,7 +345,9 @@ delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
 
 One sentence says that `App` sends real mail while `TestApp` records messages for a test, and that
 the code calling `send_email` is the same in both. Put the site's wiring-table diagram
-(`static/img/wiring-table.svg`), which draws this table, beside it. This is the one exception to the
+(`static/img/wiring-table.svg`), which draws this table, beside it, drawn inline from that file so it
+follows the theme switch, as [visual-design.md](../visual-design.md#images-read-in-both-themes)
+describes. This is the one exception to the
 offload rule below: the most common CGP shape would otherwise never appear on the page in code, and
 two wiring lines show "choose per application" faster than a paragraph. The section gets no further
 code; the providers and the consumer trait stay on
@@ -486,7 +490,8 @@ the release checklist carries its replacement. Every raster image ships as WebP 
 size, and the page's images stay under about 150 KB together.
 
 **Every image reads in both themes.** The feature illustrations have white backgrounds, so each sits
-in a rounded frame that reads as a tile on the dark theme. They are decorative beside their titles,
+in a rounded frame that reads as a tile on the dark theme, and the dark theme dims them and the hero
+art a little, so their white backgrounds do not glare. They are decorative beside their titles,
 so their alt text is empty; the hero illustration's alt text names the project.
 
 **A shared link carries the name and the tag line.** The site's `themeConfig.image` is a 1200×630

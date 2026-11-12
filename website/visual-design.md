@@ -121,6 +121,19 @@ optional. The front page's own art keeps its colours; its record is in
 the [homepage guide](writing-guides/homepage.md#images-metadata-and-provenance), which is separate from
 this interface palette.
 
+`wiring-table.svg` also follows the theme switch on the front page, without a second copy. Each of its
+colours and its font is a `style` attribute that reads a token with the light theme's value as its
+fallback, such as `fill: var(--cgp-text, #261d1b)`. The front page imports the file as a component
+through Docusaurus's stock SVGR support and draws it inline, where the tokens apply; the Concepts pages
+load it as an image, where the tokens are undefined and the fallbacks draw it unchanged. The loader runs
+svgo, which keeps the `var()` values and renames the arrow marker's id together with its reference, but
+drops the file's `role`. The page therefore passes `role="img"` and a `title`, which becomes the
+diagram's accessible name, and the inline copy sits on the raised surface rather than in an image frame.
+
+The front page's other art cannot follow the switch, and the white of its own background is the
+brightest thing on the dark page. The dark theme therefore dims the hero art with its circle, and each
+feature illustration with its frame, by `filter: brightness(0.9)`.
+
 The social card, `static/img/social-card.jpg`, uses the palette and the heading font, and its generator
 must run again whenever the tag line, the hero art, or these colours change.
 
@@ -167,7 +180,8 @@ python3 scripts/theme/contrast.py
 ```
 
 It reads the tokens from `custom.css` for both themes, resolves their references, and checks each pair
-the site uses: text at 4.5:1, including the first line of the front page's quoted diagnostic, and focus
+the site uses: text at 4.5:1, including the first line of the front page's quoted diagnostic and the
+text of its inline wiring diagram, and focus
 rings, admonition borders, the two navbar logos, and the front page's diff marks and verdict badges at
 3:1. It also checks every Prism token on the code background, on a highlighted line, and on each diff
 tint. It exits non-zero on a
