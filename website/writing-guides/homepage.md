@@ -38,6 +38,11 @@ feature grid is that **each strength is tied to what the reader has just seen**:
 what CGP does, so "provider selection resolves at compile time into a direct call" lands as an answer
 to a question they now have rather than as a claim they have no way to evaluate.
 
+The essay starts with the ambiguity for `String`, then explains why trait lookup needs coherence.
+It introduces providers through the encoder names readers have just seen before explaining how each
+application selects one. Its routing cards use complete action sentences so readers can follow the
+path from trying CGP to understanding it or evaluating adoption.
+
 ## The two tiers
 
 The page is built in two tiers with a hard boundary between them, because it serves two readers who share
@@ -554,11 +559,9 @@ has the frame backwards.
 **Count the sections and the links.** Five sections below the fold, two links above it. A sixth section
 means something needs offloading; a third hero link means one of them is not needed.
 
-**Read the copy aloud in natural style, and count its words.** Run natural-writing's checks, the
+**Read the copy aloud in natural style.** Run natural-writing's checks, the
 [voice document's four checks](../../communication-strategy/voice-and-register.md#checking-a-draft),
 and the [messaging brief's words to avoid](../../communication-strategy/messaging-brief.md#words).
-The page's prose outside its code blocks stays at or below 861 words, counted from the
-built page's `<main>` after `npm run build`; a section that grows takes its words from another.
 
 **Look at the rendered page.** Take screenshots at 1920×1080, 1440×900, and 390×844 in both themes.
 The first screen meets the layout's targets, every image reads in both themes, the images total under
