@@ -92,7 +92,8 @@ their licences, as WOFF2 subsets that total about 80 KB:
   every character the site's prose sets.
 - **JetBrains Mono:** weights 400 to 700, upright only, Latin plus Greek, superscripts and
   subscripts, and box drawing, which the code blocks and quoted diagnostics use, without its ligature
-  feature. The code themes set comments upright, so no browser synthesizes a slant.
+  feature. Code sets at weight 500, because the regular weight looked thin beside Inter. The code
+  themes set comments upright, so no browser synthesizes a slant.
 
 Each font has a fallback face sized to its metrics, so text does not shift when the font arrives, and
 the upright Inter face is preloaded. The `@font-face` rules sit in a style tag in the config, not in
