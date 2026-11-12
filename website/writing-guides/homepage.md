@@ -10,8 +10,7 @@ it from becoming any of those.
   and [src/components/HomepageFeatures/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/src/components/HomepageFeatures)
 - **Voice**: project voice throughout, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md), in natural-writing's
-  natural style: each sentence picks up from the last, and the essay reads as one argument from the
-  rejected implementation to the routes
+  natural style: each sentence picks up from the last, and the essay reads as one argument
 - **Governed by**: [identity.md](../../communication-strategy/identity.md) for the line, the frame, and
   the features; [message.md](../../communication-strategy/message.md) for the pains and strengths;
   [readers.md](../../communication-strategy/readers.md) for who is reading
@@ -359,9 +358,9 @@ card each, so the page states them once rather than as prose beats followed by a
 repeats them. Each card has the feature's title, one or two sentences anchored to something the
 reader has now seen, and its illustration, and the whole card links to the page that answers it; a
 line under the cards links the Overview, the section's destination. The cards sit two to a row, each
-illustration beside its text, so two sentences stay readable at the page's width, where five columns would make
-each card narrow and tall. Prefer "per application" to "per
-context" throughout this section: it is concrete, it needs no vocabulary, and it is true of the shape
+illustration beside its text, so two sentences stay readable at the page's width, where five columns
+would make each card narrow and tall. Prefer "per application" to "per context" throughout this
+section: it is concrete, it needs no vocabulary, and it is true of the shape
 section 2 has just introduced. Draw the wording from
 [message.md](../../communication-strategy/message.md#the-strengths-worth-advertising), and keep three
 of its rules: Type-Safe Wiring names `check_components!` or a use of the component, because a wiring
@@ -542,7 +541,7 @@ lead word is [specifically retired](../../communication-strategy/identity.md).
 
 ## Checking a draft
 
-Run six checks, in this order.
+Run seven checks, in this order.
 
 **Read only above the fold and ask whether it stands alone**: the name and the tag line,
 reassurance, the contrast, two links. If a reader stopping there could not say what CGP does, the
