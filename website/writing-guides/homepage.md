@@ -384,11 +384,13 @@ classes it recognizes, and the tool does not yet reshape every class. This secti
 element on the page, and the register to write it in is the author's own: state the cost as part of
 describing the thing accurately, not as a hedge appended to a pitch.
 
-**Set the costs as labelled statements.** An evaluator scans this section, so each cost is a bold
-label and one sentence, after one sentence that says a plain trait is the right tool for a single
-implementation: more declarations, compile-time work, verbose raw errors with the `cargo cgp check`
-qualification word for word, a young ecosystem, and learning time with the agent skill beside it.
-The advice to try CGP on a small part of a project follows the list.
+**Set the costs as labelled statements in two columns.** An evaluator scans this section, so each
+cost is a short label in a column of its own beside one sentence, with a rule between rows, after one
+sentence that says a plain trait is the right tool for a single implementation: more declarations,
+compile-time work, verbose raw errors with the `cargo cgp check` qualification word for word, a young
+ecosystem, and learning time with the agent skill beside it. The rows form a description list rather
+than a table, because each pairs one label with one statement, and on a phone each label sits above
+its sentence. The advice to try CGP on a small part of a project follows the list.
 
 **It is also the one place on the site that states the project's maturity**, so it carries what an
 evaluator reads for. CGP is young: its ecosystem is small and community support is limited, so an
