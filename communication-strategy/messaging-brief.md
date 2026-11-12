@@ -31,7 +31,8 @@ rule and its short forms belong to
 ## The five headline features
 
 Use this panel for a full feature summary, in the order fixed by
-[identity.md](identity.md#the-headline-feature-set). Put code early in a README rather than
+[identity.md](identity.md#the-headline-feature-set); the front page shows the first four, because
+its reassurance line carries the fifth. Put code early in a README rather than
 requiring readers to pass the full panel first.
 
 | Feature | Public wording |

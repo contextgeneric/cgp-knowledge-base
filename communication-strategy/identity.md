@@ -156,6 +156,8 @@ appropriate to the reader, following [formats.md](formats.md#the-conversion-ladd
 Use these features in this order on a full feature panel. Each gets a title and one or two
 sentences. Keep the panel within four to six features; use the longer
 [message document](message.md#the-strengths-worth-advertising) for domain-specific explanations.
+The front page shows the first four, because its reassurance line already states Still Ordinary
+Rust above the fold; a panel without that line, such as the Overview's, shows all five.
 
 | Feature | Public wording |
 | --- | --- |

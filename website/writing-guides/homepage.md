@@ -353,13 +353,13 @@ two wiring lines show "choose per application" faster than a paragraph. The sect
 code; the providers and the consumer trait stay on
 [*Consumer and provider traits*](explanation.md#how-cgp-works).
 
-**3. What that buys you.** Here the strengths appear as the five headline features, one illustrated
+**3. What that buys you.** Here the strengths appear as the first four headline features, one illustrated
 card each, so the page states them once rather than as prose beats followed by a row of cards that
 repeats them. Each card has the feature's title, one or two sentences anchored to something the
 reader has now seen, and its illustration, and the whole card links to the page that answers it; a
 line under the cards links the Overview, the section's destination. The cards sit two to a row, each
-illustration beside its text, so two sentences stay readable at the page's width, where five columns
-would make each card narrow and tall. Prefer "per application" to "per context" throughout this
+illustration beside its text, so two sentences stay readable at the page's width and the four cards
+make an even grid. Prefer "per application" to "per context" throughout this
 section: it is concrete, it needs no vocabulary, and it is true of the shape
 section 2 has just introduced. Draw the wording from
 [message.md](../../communication-strategy/message.md#the-strengths-worth-advertising), and keep three
@@ -425,11 +425,12 @@ someone ready to try, the explanation pages for someone who wants the argument i
 for a real system using CGP, the Overview, the comparisons, and the blog for depth, and the contribute
 page for the enthusiast.
 
-**The five headline features from
+**The first four headline features from
 [identity.md](../../communication-strategy/identity.md#the-headline-feature-set) are section 3's
-cards**, in identity.md's order. Their links follow the feature-to-page table in
-[seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words),
-except that *Still Ordinary Rust* links the Quickstart, which shows its claim in one program:
+cards**, in identity.md's order. The fifth, *Still Ordinary Rust*, gets no card, because the
+reassurance line above the fold states it verbatim and a card would repeat it. The links follow the
+feature-to-page table in
+[seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words):
 
 | Feature | Links to | Illustration |
 | --- | --- | --- |
@@ -437,7 +438,6 @@ except that *Still Ordinary Rust* links the Quickstart, which shows its claim in
 | Zero-Cost Abstraction | the dynamic-dispatch comparison | `zero-cost-abstraction` |
 | Type-Safe Wiring | the dependency-injection comparison | `type-safe-wiring` |
 | Abstract Over Every Dependency | *Modular error handling* | `abstract-over-every-dependency` |
-| Still Ordinary Rust | the Quickstart | `still-ordinary-rust` |
 
 The illustrations are covered in [Images, metadata, and provenance](#images-metadata-and-provenance) below.
 
@@ -480,7 +480,8 @@ The project's maturity is not offloaded: the cost section states it on the page 
   makes it the destination for both section 3 and section 4 of the essay. That job resolves the
   site's three disagreeing feature lists rather than merely reconciling them: the front page carries
   the curated five from
-  [identity.md](../../communication-strategy/identity.md#the-headline-feature-set) as illustrated cards,
+  [identity.md](../../communication-strategy/identity.md#the-headline-feature-set), four as
+  illustrated cards and the fifth in its reassurance line,
   and the Overview expands each one and adds the breadth features the tag line only gestures at, so
   it is not competing with the front page's list and is not capped at five. Its problems half stays
   anchored to [message.md](../../communication-strategy/message.md#the-problems-cgp-removes). It is
