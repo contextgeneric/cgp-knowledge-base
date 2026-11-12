@@ -130,7 +130,8 @@ record drift.
 - [visual-design.md](visual-design.md): the site's theme: the palette built around the logo's red,
   the tokens and the Infima variables they feed, the underlined prose links, the two code themes and
   the added languages, the two self-hosted fonts, how images read in both themes, the frame of the
-  site, and the contrast check and screenshots that keep a change readable.
+  site, two layout constraints of Docusaurus, and the contrast check and screenshots that keep a
+  change readable.
 - [blog/](blog/README.md): one internal document per blog post, each recording what the post covers,
   which knowledge-base documents own its material, and how its code and claims diverge from CGP v0.8.0.
   The index carries the chronological catalog and a drift summary, and it covers substantial **drafts**

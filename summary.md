@@ -810,7 +810,8 @@ it stale.
   and the literal Infima colours they replace, underlined prose links, two Prism themes and the seven
   added languages, the server-rendered light code as a known limitation, Inter and JetBrains Mono
   with their subsets and fallbacks, framed images in the dark theme, the logo, favicon,
-  announcement bar, footer, and blog colours, and the contrast check with the screenshot practice.
+  announcement bar, footer, and blog colours, the two layout constraints (`data-theme` below
+  `<html>`, heading-only anchors), and the contrast check with the screenshot practice.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation,
   announcement bar, deployment, the release branch that carries both `cgp` v0.8.0 and `cargo-cgp`
   v0.1.0, the three settings that depart from stock Docusaurus to publish the agent skill from its
