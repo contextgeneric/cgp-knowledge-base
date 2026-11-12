@@ -390,7 +390,8 @@ sentence that says a plain trait is the right tool for a single implementation: 
 compile-time work, verbose raw errors with the `cargo cgp check` qualification word for word, a young
 ecosystem, and learning time with the agent skill beside it. The rows form a description list rather
 than a table, because each pairs one label with one statement, and on a phone each label sits above
-its sentence. The advice to try CGP on a small part of a project follows the list.
+its sentence. The section's heading and its lead sit in a column beside the rows and stay in view
+while a reader scrolls through them, as section 1's title does beside its longer prose. The advice to try CGP on a small part of a project follows the list.
 
 **It is also the one place on the site that states the project's maturity**, so it carries what an
 evaluator reads for. CGP is young: its ecosystem is small and community support is limited, so an
