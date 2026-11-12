@@ -38,8 +38,8 @@ uses MDX-only syntax, so `detect` changes no existing rendering. Both deploy wor
 
 **The theme is the other departure, and it stays inside the policy.** The site's colours, fonts, and
 code colours come from tokens in `src/css/custom.css`, two Prism themes in `src/prism/themes.ts`, and
-configuration options: `headTags` for the SVG favicon, the heading font's preload, and the
-`theme-color` tags, the logo's `srcDark`, the announcement bar's colours, and
+configuration options: `headTags` for the SVG favicon, the fonts' `@font-face` rules and the body
+font's preload, and the `theme-color` tags, the logo's `srcDark`, the announcement bar's colours, and
 `prism.additionalLanguages`. It adds no plugin and swizzles no component.
 [visual-design.md](visual-design.md) records the palette, the fonts, and the contrast check.
 

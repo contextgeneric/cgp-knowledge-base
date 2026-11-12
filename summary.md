@@ -808,8 +808,8 @@ it stale.
 - [website/visual-design.md](website/visual-design.md) — the site's theme: the palette built around
   the logo's `#8f1f1d` with warm neutrals and a lighter tint for text in the dark theme, the tokens
   and the literal Infima colours they replace, underlined prose links, two Prism themes and the seven
-  added languages, the server-rendered light code as a known limitation, Space Grotesk and JetBrains
-  Mono with their subsets and fallbacks, framed images in the dark theme, the logo, favicon,
+  added languages, the server-rendered light code as a known limitation, Inter and JetBrains Mono
+  with their subsets and fallbacks, framed images in the dark theme, the logo, favicon,
   announcement bar, footer, and blog colours, and the contrast check with the screenshot practice.
 - [website/site-structure.md](website/site-structure.md) — the site's build, navigation,
   announcement bar, deployment, the release branch that carries both `cgp` v0.8.0 and `cargo-cgp`

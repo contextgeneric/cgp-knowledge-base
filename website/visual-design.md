@@ -82,18 +82,23 @@ theme introduces.
 
 ## Two self-hosted fonts
 
-Headings and the navbar's title use Space Grotesk, and code uses JetBrains Mono. Body text stays on the
-system font stack, which reads well at length and costs nothing to load. Both fonts are under the SIL
-Open Font License and are committed under `static/fonts/` with their licences, as WOFF2 subsets that
-total about 38 KB:
+Body text, headings, and the navbar's title use Inter, with headings at weight 600, and code uses
+JetBrains Mono. The author chose the pair from six candidates tried on the built site, because the
+earlier display face for headings looked too fancy and a system body font differs by operating
+system. Both fonts are under the SIL Open Font License and are committed under `static/fonts/` with
+their licences, as WOFF2 subsets that total about 80 KB:
 
-- **Space Grotesk:** weights 500 to 700, Latin, which covers every heading on the site.
-- **JetBrains Mono:** weights 400 to 700, Latin plus Greek, superscripts and subscripts, and box
-  drawing, which the code blocks and quoted diagnostics use, without its ligature feature.
+- **Inter:** weights 400 to 700, upright and italic, at the text optical size, Latin, which covers
+  every character the site's prose sets.
+- **JetBrains Mono:** weights 400 to 700, upright only, Latin plus Greek, superscripts and
+  subscripts, and box drawing, which the code blocks and quoted diagnostics use, without its ligature
+  feature. The code themes set comments upright, so no browser synthesizes a slant.
 
 Each font has a fallback face sized to its metrics, so text does not shift when the font arrives, and
-the heading font is preloaded. Code turns ligatures off, so `->`, `=>`, and `!=` show the characters a
-reader types. The website's
+the upright Inter face is preloaded. The `@font-face` rules sit in a style tag in the config, not in
+`custom.css`, because a `url()` in the stylesheet is copied to a hashed file name that the preload
+cannot name. Code turns ligatures off, so `->`, `=>`, and `!=` show the characters a reader types. The
+website's
 [scripts/fonts/README.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/scripts/fonts/README.md)
 gives the commands that cut the subsets; a character outside them renders in the fallback face, so a
 page that starts using a new script or symbol block needs the subset recut.

@@ -544,7 +544,9 @@ means something needs offloading; a third hero link means one of them is not nee
 
 **Look at the rendered page.** Take screenshots at 1920×1080, 1440×900, and 390×844 in both themes.
 The first screen meets the layout's targets, every image reads in both themes, the images total under
-about 150 KB, and the page ends at its routing section, with no provenance line.
+about 150 KB, and the page ends at its routing section, with no provenance line. The site's font files
+stay within about 100 KB together, and every character the page sets is in their subsets, so none is
+drawn from a fallback face.
 
 **Verify every snippet** against the source and the `/cgp` skill, preferring code already verified in
 [examples/](../../examples/README.md). For the hero block specifically, compile it rather than reading it:
