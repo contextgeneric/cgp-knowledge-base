@@ -1,7 +1,7 @@
 # The site's visual design
 
 This document records the website's theme: its colour palette, the fonts, the code colours, how
-images read in both themes, two layout constraints of Docusaurus, and the check that keeps every
+images read in both themes, Docusaurus's constraints on page layout, and the check that keeps every
 colour readable. It is a record of what the site ships on the `v0.8.0` branch, and an agent changing
 a colour, a font, or an image's treatment starts here.
 
@@ -141,9 +141,9 @@ The shell carries the palette in both themes:
 - **Blog:** the archive's header takes the warm surface, and the blog list's post titles take the
   heading colour and turn red on hover, so a page of posts does not read as a wall of red.
 
-## Two layout constraints of Docusaurus
+## Docusaurus constraints on page layout
 
-A page written as its own markup, such as the front page, meets two behaviours of Docusaurus that its
+A page written as its own markup, such as the front page, meets behaviours of Docusaurus that its
 styles and links must work around.
 
 **A `data-theme` attribute recolours nothing below `<html>`.** The theme's tokens are defined on
@@ -151,11 +151,12 @@ styles and links must work around.
 them, and the section keeps the page's theme. A section that must look the same in both themes sets
 its own colours from the tokens, under `html[data-theme='dark']` rules where they differ.
 
-**The broken-anchor check counts only a few kinds of id.** The build sets `onBrokenAnchors` to
-`throw`, and Docusaurus records an anchor only from an `id` on the theme's `Heading` component (not
-on an `h1`, whose `id` it drops), on a `Link`, or on a Markdown footnote. An in-page link to an `id`
-on a plain element such as a `<section>` or `<div>` therefore fails the build, so the target goes on
-the section's heading, as the front page's `#costs` link does.
+**The broken-anchor check counts only the ids of a few components.** The build sets
+`onBrokenAnchors` to `throw`, and Docusaurus records an anchor only from an `id` on the theme's
+`Heading` component (not on an `h1`, whose `id` it drops), a `Link`, a Markdown list item, which is
+how footnotes get theirs, or a `Details` block. An in-page link to an `id` on a plain element such as
+a `<section>` or `<div>` therefore fails the build, so the target goes on the section's heading, as
+the front page's `#costs` link does.
 
 ## Checking a change
 
