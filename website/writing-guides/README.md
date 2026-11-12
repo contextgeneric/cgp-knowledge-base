@@ -161,6 +161,7 @@ the naming rule exempts them.
 
 - **Guide:** [homepage.md](homepage.md), including
   [the offload rule](homepage.md#the-offload-rule-and-the-pages-it-offloads-to) for the Overview.
+- **Style:** natural style for the front page; the Overview keeps its own style.
 - **Strategy:** [identity.md](../../communication-strategy/identity.md), whole;
   [message.md](../../communication-strategy/message.md)'s
   [lead with the pain](../../communication-strategy/message.md#lead-with-the-pain-not-the-paradigm),

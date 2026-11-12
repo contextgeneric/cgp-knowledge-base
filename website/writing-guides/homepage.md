@@ -9,7 +9,9 @@ it from becoming any of those.
 - **Source**: [src/pages/index.tsx](https://github.com/contextgeneric/contextgeneric.dev/blob/main/src/pages/index.tsx)
   and [src/components/HomepageFeatures/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/src/components/HomepageFeatures)
 - **Voice**: project voice throughout, per
-  [voice-and-register.md](../../communication-strategy/voice-and-register.md)
+  [voice-and-register.md](../../communication-strategy/voice-and-register.md), in natural-writing's
+  natural style: each sentence picks up from the last, and the essay reads as one argument from the
+  rejected implementation to the routes
 - **Governed by**: [identity.md](../../communication-strategy/identity.md) for the line, the frame, and
   the features; [message.md](../../communication-strategy/message.md) for the pains and strengths;
   [readers.md](../../communication-strategy/readers.md) for who is reading
@@ -33,10 +35,9 @@ why", while teaching answers "how do I do it", and the moment the page starts te
 type, it has crossed over.
 
 The page also carries the selling points, so comprehension is not its only output. The difference from a
-feature grid is that **each strength appears as a beat in the argument rather than as a card in a
-list**: the reader has just seen what CGP does, so "everything resolves at compile time and compiles to a
-direct call" lands as an answer to a question they now have rather than as a claim they have no way to
-evaluate.
+feature grid is that **each strength is tied to what the reader has just seen**: the reader has seen
+what CGP does, so "provider selection resolves at compile time into a direct call" lands as an answer
+to a question they now have rather than as a claim they have no way to evaluate.
 
 ## The two tiers
 
@@ -353,14 +354,20 @@ two wiring lines show "choose per application" faster than a paragraph. The sect
 code; the providers and the consumer trait stay on
 [*Consumer and provider traits*](explanation.md#how-cgp-works).
 
-**3. What that buys you.** Here the strengths appear, as prose beats rather than cards, each two or
-three sentences: many implementations chosen per application; no runtime cost, because a wired call
-monomorphizes to a direct call; dependencies that are explicit and compiler-checked; and still ordinary
-Rust, adopted incrementally. Prefer "per application" to "per context" throughout this section: it is
-concrete, it needs no vocabulary, and it is true of the shape section 2 has just introduced. Draw the
-wording from
-[message.md](../../communication-strategy/message.md#the-strengths-worth-advertising) and keep each
-beat anchored to something the reader has now seen.
+**3. What that buys you.** Here the strengths appear as the five headline features, one illustrated
+card each, so the page states them once rather than as prose beats followed by a row of cards that
+repeats them. Each card has the feature's title, one or two sentences anchored to something the
+reader has now seen, and its illustration, and the whole card links to the page that answers it; a
+line under the cards links the Overview, the section's destination. The cards sit two to a row, each
+illustration beside its text, so two sentences stay readable at the page's width, where five columns would make
+each card narrow and tall. Prefer "per application" to "per
+context" throughout this section: it is concrete, it needs no vocabulary, and it is true of the shape
+section 2 has just introduced. Draw the wording from
+[message.md](../../communication-strategy/message.md#the-strengths-worth-advertising), and keep three
+of its rules: Type-Safe Wiring names `check_components!` or a use of the component, because a wiring
+entry alone does not check a provider's needs; Abstract Over Every Dependency carries portability,
+while section 4's abstract-types sentence keeps the signature payoff; and the feature titles stay
+verbatim.
 
 **4. It goes further than trait implementations.** One short section repaying the tag line's known debt,
 that "trait implementations" undersells the reach. One sentence each for abstract types a context chooses
@@ -384,6 +391,12 @@ classes it recognizes, and the tool does not yet reshape every class. This secti
 element on the page, and the register to write it in is the author's own: state the cost as part of
 describing the thing accurately, not as a hedge appended to a pitch.
 
+**Set the costs as labelled statements.** An evaluator scans this section, so each cost is a bold
+label and one sentence, after one sentence that says a plain trait is the right tool for a single
+implementation: more declarations, compile-time work, verbose raw errors with the `cargo cgp check`
+qualification word for word, a young ecosystem, and learning time with the agent skill beside it.
+The advice to try CGP on a small part of a project follows the list.
+
 **It is also the one place on the site that states the project's maturity**, so it carries what an
 evaluator reads for. CGP is young: its ecosystem is small and community support is limited, so an
 adopter of a mission-critical project should expect to investigate some problems alone. Learning its
@@ -398,7 +411,7 @@ budget. Three of the costs just named (the learning curve, the diagnostics, and 
 are mechanical work over a written-down vocabulary, and CGP publishes an agent skill that reduces all
 three for a reader who works with an assistant. Say it as a smaller cost rather than a solved one, in
 the same breath as the cost itself, and link the skill rather than elaborating. It must not appear in
-the hero, the reassurance line, the strength beats, or a feature title: a landing page that leads on
+the hero, the reassurance line, the feature cards, or a feature title: a landing page that leads on
 AI in 2026 is read as chasing attention by exactly the audience this page is written for. The full
 rule is in
 [message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these) and
@@ -414,11 +427,9 @@ for a real system using CGP, the Overview, the comparisons, and the blog for dep
 page for the enthusiast.
 
 **The five headline features from
-[identity.md](../../communication-strategy/identity.md#the-headline-feature-set) appear as a row of
-cards between sections 3 and 4.** Each card has the feature's title, one line, and an illustration,
-and its title links to the page that answers it. The cards are a scannable summary of section 3 rather
-than a replacement for it, so each line stays shorter than its beat there. The links follow the
-feature-to-page table in [seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words),
+[identity.md](../../communication-strategy/identity.md#the-headline-feature-set) are section 3's
+cards**, in identity.md's order. Their links follow the feature-to-page table in
+[seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words),
 except that *Still Ordinary Rust* links the Quickstart, which shows its claim in one program:
 
 | Feature | Links to | Illustration |
@@ -470,7 +481,7 @@ The project's maturity is not offloaded: the cost section states it on the page 
   makes it the destination for both section 3 and section 4 of the essay. That job resolves the
   site's three disagreeing feature lists rather than merely reconciling them: the front page carries
   the curated five from
-  [identity.md](../../communication-strategy/identity.md#the-headline-feature-set) as prose beats,
+  [identity.md](../../communication-strategy/identity.md#the-headline-feature-set) as illustrated cards,
   and the Overview expands each one and adds the breadth features the tag line only gestures at, so
   it is not competing with the front page's list and is not capped at five. Its problems half stays
   anchored to [message.md](../../communication-strategy/message.md#the-problems-cgp-removes). It is
@@ -546,6 +557,12 @@ has the frame backwards.
 
 **Count the sections and the links.** Six sections below the fold, two links above it. A seventh section
 means something needs offloading; a third hero link means one of them is not needed.
+
+**Read the copy aloud in natural style, and count its words.** Run natural-writing's checks, the
+[voice document's four checks](../../communication-strategy/voice-and-register.md#checking-a-draft),
+and the [messaging brief's words to avoid](../../communication-strategy/messaging-brief.md#words).
+The page's prose outside its code blocks and diagram stays at or below 861 words, counted from the
+built page's `<main>` after `npm run build`; a section that grows takes its words from another.
 
 **Look at the rendered page.** Take screenshots at 1920×1080, 1440×900, and 390×844 in both themes.
 The first screen meets the layout's targets, every image reads in both themes, the images total under
