@@ -248,10 +248,10 @@ representativeness, and it costs two transitions that the essay below must then 
 context and so is the Hello World tutorial, a reader's first two contacts both show the shape least CGP
 code is in, so the surfaces immediately downstream are where the common shape has to arrive. On the
 explanation path that is the end of essay section 1, which introduces a context in prose, and
-[*How CGP works*](explanation.md#how-cgp-works), where the `App`/`TestApp` example shows one in code; on the teaching path it is the applied tutorial,
-which is placed second in the tutorial order for this reason and is naturally environmental. Keeping
-the hero as it is depends on those two doing their job, so a change to either is a change to this
-trade.
+[*How CGP works*](explanation.md#how-cgp-works), where the `App`/`TestApp` example shows one in code;
+on the teaching path it is the applied tutorial, which is placed second in the tutorial order for this
+reason and is naturally environmental. Keeping the hero as it is depends on those two doing their
+job, so a change to either is a change to this trade.
 
 **Do not use the word "context" anywhere in the hero**, apart from the project's name above the tag
 line, which is a name rather than the term. At the retrofit shape the context and the target are the
@@ -354,7 +354,8 @@ line under the cards links the Overview, the section's destination. The cards si
 illustration beside its text, so two sentences stay readable at the page's width and the four cards
 make an even grid. Prefer "per application" to "per context" throughout this
 section: it is concrete, it needs no vocabulary, and it is true of the shape
-section 1 has just introduced. Draw the wording from
+section 1 has just introduced. A card that points back at the hero's block says "each type", because
+the hero wires types rather than applications. Draw the wording from
 [message.md](../../communication-strategy/message.md#the-strengths-worth-advertising), and keep three
 of its rules: Type-Safe Wiring names `check_components!` or a use of the component, because a wiring
 entry alone does not check a provider's needs; Abstract Over Every Dependency carries portability,
