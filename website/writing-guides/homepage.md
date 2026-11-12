@@ -99,8 +99,9 @@ reassurance line, the install line, and the two links) sits on the left, with th
 on the right at about 280 px and modest vertical padding. Between the phone layout and 1240 px, where
 the code blocks stack, the art shrinks to about 200 px and the title steps down, so the title keeps
 one line and the first block still starts high on the screen. The two code blocks follow directly in a
-band of their own, side by side, so a reader compares them line by line. The target is the whole
-first screen at 1920×1080 and the tops of both blocks at 1440×900, which is enough to see the
+band of their own, side by side, so a reader compares them line by line, with the caption under
+them. The target is the whole first screen at 1920×1080, the caption's quote included, so that screen
+ends on the page's conclusion, and the tops of both blocks at 1440×900, which is enough to see the
 contrast; measure both with a screenshot rather than estimating. On a phone the blocks stack and only
 the hero copy fits the first screen, which is acceptable because the copy stands alone. Do not shrink
 the hero art to a small logo to save height, and do not put the blocks in tabs, which hide the
