@@ -525,9 +525,9 @@ card reads one connected explanation of that feature.
 
 The page has these parts, in this order:
 
-- **Opening:** the name and the tag line, what the tour covers, that the examples are fragments of
-  compiled programs, a pointer for a newcomer to *Still Ordinary Rust*, the simplest form, and a
-  link to the Quickstart for a reader who wants to run one.
+- **Opening:** the problem the tour answers, the name and the tag line, what the tour covers, that
+  the examples are fragments of compiled programs, a pointer for a newcomer to *Still Ordinary
+  Rust*, the simplest form, and a link to the Quickstart for a reader who wants to run one.
 - **The five headline features**, under the heading *Key features*, with identity.md's titles word
   for word and in its order, so a reader who follows a front-page card finds its section under the
   same name.
@@ -542,10 +542,10 @@ The page has these parts, in this order:
   author's path in
   [information-architecture.md](../information-architecture.md#how-each-reader-moves-through-the-site)
   starts from.
-- **When a plain trait is enough:** the costs in one paragraph, pointing to *Type-Safe Wiring* for
-  the raw errors rather than repeating the `cargo-cgp` qualification stated there, and the agent
-  skill beside the learning time; a link to the front page's cost section for the project's
-  maturity, which the Overview does not restate; and *Modularity Hierarchy*.
+- **When a plain trait is enough:** the costs in two short paragraphs, pointing to *Type-Safe
+  Wiring* for the raw errors rather than repeating the `cargo-cgp` qualification stated there, and
+  the agent skill beside the learning time; a link to the front page's cost section for the
+  project's maturity, which the Overview does not restate; and *Modularity Hierarchy*.
 - **Where to go next:** the Quickstart and Hello World, the Concepts pages, the comparisons, and the
   reference.
 

@@ -266,12 +266,12 @@ The Introduction orients readers and directs them to maintained learning materia
 
 ### What it covers
 
-The page opens with the tag line whole, an application and its tests reading files from different
-places as a one-clause example of choosing an implementation, and the reassurance. A short list
-glosses context, component, provider, and wiring, each linked to its glossary entry, and the
-definition ends there, with the mechanism left to the routes below. It contains no Rust listings.
-Its front matter sets a title without "CGP", the sidebar label "Introduction", and a written
-description.
+The page opens with an application and its tests reading files from different places, a one-sentence
+example of choosing an implementation, then the name with the tag line whole, and the reassurance. A
+short list glosses context, component, provider, and wiring, each linked to its glossary entry, and
+the definition ends there, with the mechanism left to the routes below. It contains no Rust
+listings. Its front matter sets a title without "CGP", the sidebar label "Introduction", and a
+written description.
 
 *Start here* lists the Quickstart, Hello World, and the area-calculation series in that order. *Find
 what you need* gives one line per question, each with the page that answers it: the Overview,
@@ -386,19 +386,19 @@ features answer.
 
 The page follows
 [the homepage guide's specification](writing-guides/homepage.md#the-overview-the-feature-tour). It
-opens with the name and the tag line whole, and says the examples are fragments of compiled
-programs. *Key features* walks the five features under identity.md's titles, through the
-profile-picture scenario: `App`, `GCloudApp`, and `TestApp` wiring `FetchS3Object`,
-`FetchGCloudObject`, and `FetchLocalObject` for one storage component; the forwarding implementation
-that `App`'s wiring amounts to; `App` without `bucket_id` rejected by `check_components!`, with the
-`cargo cgp check` output quoted; the error type made abstract with `#[use_type]` and a provider's
-`#[uses]` dependency; and `get_user` as a `#[cgp_fn]` with an implicit `database`. *Beyond choosing
-implementations* names abstract types, extensible records and variants, composable handlers,
-namespaces, and higher-order providers in a list, one or two sentences each with its Concepts page
-and no code, so a first-time reader meets only the constructs the five features need. A table maps
-each problem in [message.md](../communication-strategy/message.md#the-problems-cgp-removes) to the
-Concepts page that answers it, and the page ends with when a plain trait is enough and where to go
-next.
+opens with the problem it answers, the name and the tag line whole, a pointer for newcomers, and the
+note that the examples are fragments of compiled programs. *Key features* walks the five features
+under identity.md's titles, through the profile-picture scenario: `App`, `GCloudApp`, and `TestApp`
+wiring `FetchS3Object`, `FetchGCloudObject`, and `FetchLocalObject` for one storage component; the
+forwarding implementation that `App`'s wiring amounts to; `App` without `bucket_id` rejected by
+`check_components!`, with the `cargo cgp check` output quoted; the error type made abstract with
+`#[use_type]` and a provider's `#[uses]` dependency; and `get_user` as a `#[cgp_fn]` with an
+implicit `database`. *Beyond choosing implementations* names abstract types, extensible records and
+variants, composable handlers, namespaces, and higher-order providers in a list, one or two
+sentences each with its Concepts page and no code, so a first-time reader meets only the constructs
+the five features need. A table maps each problem in
+[message.md](../communication-strategy/message.md#the-problems-cgp-removes) to the Concepts page
+that answers it, and the page ends with when a plain trait is enough and where to go next.
 
 Each section keeps its condition: wiring checks nothing until a component is used or checked,
 portability depends on the selected providers, and the raw errors stay long without `cargo-cgp`.
