@@ -372,8 +372,9 @@ page. Run it then, before the branch merges if the crate is published first.
 
 ## Overview
 
-The Overview is the feature tour: each feature with a compiled example, its limit, and the page that
-explains it, followed by the problems the features answer.
+The Overview is the feature tour: each headline feature with a compiled example, its limit, and the
+page that explains it, then the breadth features in a linked list, followed by the problems the
+features answer.
 
 - **URL** — <https://contextgeneric.dev/docs/overview>
 - **Source** — [docs/overview.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/overview.md)
@@ -394,17 +395,15 @@ profile-picture scenario: `App`, `GCloudApp`, and `TestApp` wiring `FetchS3Objec
 that `App`'s wiring amounts to; `App` without `bucket_id` rejected by `check_components!`, with the
 `cargo cgp check` output quoted; the error type made abstract with `#[use_type]` and a provider's
 `#[uses]` dependency; and `get_user` as a `#[cgp_fn]` with an implicit `database`. *Beyond choosing
-implementations* covers abstract types with a before-and-after of two traits' error types, extensible
-records with a builder and variants with `#[cgp_auto_dispatch]`, handlers with a two-step pipeline, namespaces with the greeter components,
-and higher-order providers with `ScaledArea`. A table maps each problem in
+implementations* names abstract types, extensible records and variants, composable handlers,
+namespaces, and higher-order providers in a list, one or two sentences each with its Concepts page
+and no code, so a first-time reader meets only the constructs the five features need. A table maps each problem in
 [message.md](../communication-strategy/message.md#the-problems-cgp-removes) to its section and
 Concepts page, or to the Concepts page alone for the foreign-type and grown-trait problems the page
 does not show, and the page ends with when a plain trait is enough and where to go next.
 
 Each section keeps its condition: wiring checks nothing until a component is used or checked,
-portability depends on the selected providers, associated types guarantee only the bounds declared,
-extensible data needs a derive, and a namespace binding cannot be overridden by a context that joins
-it.
+portability depends on the selected providers, and the raw errors stay long without `cargo-cgp`.
 
 ### How it relates to the knowledge base
 
@@ -412,8 +411,7 @@ it.
 their titles, [the message](../communication-strategy/message.md) the problems and their limits, and
 [seo.md](seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) the page each
 feature links. The scenario comes from the [profile-picture example](../examples/profile-picture.md),
-under the names the `cgp` README uses, and the breadth sections cut their code from the Concepts
-pages.
+under the names the `cgp` README uses.
 
 The page's code is compiled in the website repository's [`example-code` crate](#the-example-code-crate)
 at `tests/overview.rs`, a standalone test binary with stand-ins for the storage clients and the pool,

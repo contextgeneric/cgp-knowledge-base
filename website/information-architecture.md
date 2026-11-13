@@ -165,14 +165,13 @@ Hierarchy**, the modularity hierarchy rendered as an explanation with a decision
 covers every idea rather than the three a homepage essay offloads to, at the cost of the curation that
 made those three a short reading path, which the section's index page restores.
 
-- *Overview*: present, **repurposed**, and staying where it is. The feature tour: every high-level CGP
-  feature walked through in more detail than any other surface carries, each with a compiled example,
-  and a table from the problems readers bring to the sections that answer them. This is the page the front
-  page's feature cards and its "it goes further than trait implementations" section offload to, which
-  is the job that keeps it from overlapping its neighbours: the concepts explain one idea each, and the
-  Overview covers the breadth. It is no longer capped at five features, since the curated five, of which the
-  front page shows four as cards, are the *front page's* constraint and this page is where they are expanded and the breadth features added.
-  It is no longer moved into a new category, which also retires the `slug: /overview` requirement the
+- *Overview*: present, **repurposed**, and staying where it is. The feature tour: the five headline
+  features, each with a compiled example, the breadth features in a list that links their Concepts
+  pages, and a table from the problems readers bring to the sections that answer them. This is the
+  page the front page's feature cards and its "it goes further than trait implementations" section
+  offload to, which is the job that keeps it from overlapping its neighbours: the concepts explain one
+  idea each, and the Overview shows the five and names the rest. The breadth features get no code
+  there, because a first-time reader meets too many constructs otherwise. It is no longer moved into a new category, which also retires the `slug: /overview` requirement the
   move would have carried.
 
 **Tutorials**, in the order a reader meets them rather than the order they were written

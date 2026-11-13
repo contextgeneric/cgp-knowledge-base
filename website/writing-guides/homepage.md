@@ -402,7 +402,8 @@ type the application chooses means an error type or a runtime *stops being a par
 carry*. "A context chooses it for itself" describes the construct and lands on a reader who already wants
 a type swappable; the parameter clause names what it removes and lands on a reader whose signatures have
 filled up, which is the larger group and the one this section is otherwise silent for. One clause is
-enough: the [Overview](../site-structure.md) is where the argument is made in full, and the pain behind
+enough: the [Overview](../site-structure.md) repeats it in its breadth list, the *Abstract types*
+Concepts page explains the mechanism, and the pain behind
 it is an entry in [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) for a
 piece that has room to show a before and after.
 
@@ -500,9 +501,9 @@ The project's maturity is not offloaded: the cost section states it on the page 
   [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp) and the
   [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md). It is where the cost section on
   the homepage hands off to.
-- **Overview**: the fourth destination, and the **feature tour**: every high-level CGP feature
-  walked through in more detail than any other surface carries, which makes it the destination for
-  both section 2 and section 3 of the essay. [The section below](#the-overview-the-feature-tour)
+- **Overview**: the fourth destination, and the **feature tour**: the five headline features walked
+  through with a compiled example each, then the breadth features named with a link each, which
+  makes it the destination for both section 2 and section 3 of the essay. [The section below](#the-overview-the-feature-tour)
   specifies it.
 
 ### The Overview, the feature tour
@@ -511,9 +512,11 @@ The project's maturity is not offloaded: the cost section states it on the page 
 that explains it.** Its job resolves the site's three disagreeing feature lists rather than merely
 reconciling them: the front page carries the curated five from
 [identity.md](../../communication-strategy/identity.md#the-headline-feature-set), four as illustrated
-cards and the fifth in its reassurance line, and the Overview expands each one and adds the breadth
-features the tag line only gestures at, so it is not competing with the front page's list and is not
-capped at five. It is a docs page that presents the project, so its opening paragraph names
+cards and the fifth in its reassurance line, and the Overview expands each of the five with an
+example, then names the breadth features the tag line only gestures at, one line each with a link to
+its Concepts page. The breadth features get no examples, because a first-time reader shown
+namespaces, handlers, and extensible data in code beside the five meets more constructs than the
+tour can explain. It is a docs page that presents the project, so its opening paragraph names
 Context-Generic Programming and states the tag line whole, per the
 [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page). It
 is written in natural style, like every page on the site: each section starts from a problem the
@@ -526,10 +529,10 @@ The page has these parts, in this order:
   compiled programs, and a link to the Quickstart for a reader who wants to run one.
 - **The five headline features**, under identity.md's titles word for word and in its order, so a
   reader who follows a front-page card finds its section under the same name.
-- **Beyond choosing implementations:** abstract types, extensible records and variants, composable
-  handlers, namespaces, and higher-order providers. The abstract-types section shows the
-  before-and-after that section 3's one clause defers here: two traits whose associated error types
-  every function using both must equate, then one error type the context chooses for all of them.
+- **Beyond choosing implementations:** a list of abstract types, extensible records and variants,
+  composable handlers, namespaces, and higher-order providers, each in one or two sentences with its
+  Concepts page and without code. The abstract-types item carries the payoff that section 3's clause
+  names: the error type stops being a parameter that every layer carries.
 - **The problems it solves:** a table from each problem in
   [message.md](../../communication-strategy/message.md#the-problems-cgp-removes), in the reader's
   words, to the section and the Concepts page that answer it. This table is the page's problems half,
@@ -543,10 +546,9 @@ The page has these parts, in this order:
 - **Where to go next:** the Quickstart and Hello World, the Concepts pages, the comparisons, and the
   reference.
 
-**Each feature section opens with the problem, shows one compiled example, states the limit, and
-links onward.** The example stays within about fifteen lines; the abstract-types section shows a
-plain-Rust half and a CGP half, and the extensible-data section one example for records and one for
-variants, so each covers what its heading names. The opening says once that every
+**Each headline feature section opens with the problem, shows one compiled example, states the
+limit, and links onward.** The example stays within about fifteen lines. The opening says once that
+every
 example leaves out the imports, the definitions it does not need to show, and each context's check,
 and the Type-Safe Wiring section names `delegate_and_check_components!` as the one-step form. The limit is the condition
 the strategy pairs with the strength, such as wiring that checks nothing until a component is used
@@ -560,8 +562,7 @@ explains it.
 **The headline features run one scenario.** They use the profile-picture scenario under the names the
 `cgp` README uses, listed among the
 [canonical examples](../../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs),
-so the reader follows one realistic application through all five; the breadth sections use the
-area-calculation, greeter, and handler examples their Concepts pages compile. The code is compiled
+so the reader follows one realistic application through all five. The code is compiled
 in the website's `example-code` crate at `tests/overview.rs`, and a quoted diagnostic is bound for recapture like every other quote on the
 site.
 
@@ -570,8 +571,8 @@ already explains, and the project's maturity, which the front page's cost sectio
 
 **Checking a draft.** Read the page from start to finish and run natural-writing's checks: each
 section should lead from its problem to its example and limit, and each sentence pick up from the
-last. Check that each feature title matches identity.md, that each feature section has its
-problem, example, limit, and link, that the table covers every problem in message.md, that every
+last. Check that each feature title matches identity.md, that each headline feature section has its
+problem, example, limit, and link, that the breadth list shows no code, that the table covers every problem in message.md, that every
 snippet matches `tests/overview.rs`, and that the page passes the naming check. Then look at the
 rendered page at phone width in both themes, where long signatures scroll inside their block.
 
