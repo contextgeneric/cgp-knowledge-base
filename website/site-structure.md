@@ -315,8 +315,8 @@ expect from `cargo run`, and one link to the Hello World tutorial. The install n
 floor `cgp` declares, because on Rust 1.88 `cargo add cgp` selects `cgp` 0.4.2 and the program then
 fails with "cannot find attribute `cgp_fn`"; it creates the project with `cargo new` before
 `cargo add cgp`, and shows the version that writes. It opens by naming Context-Generic Programming with a short
-form of the tag line, because it may be a reader's first contact, and it states plainly that it
-explains nothing.
+form of the tag line, because it may be a reader's first contact, and it says the reader can follow
+it without learning the concepts, which the Hello World tutorial explains afterward.
 
 The program is a `#[cgp_fn]` function with an `#[implicit]` argument reading a field from a
 `#[derive(HasField)]` struct — the gentlest entry CGP has, per the
