@@ -86,6 +86,12 @@ before introducing another domain:
   environmental contexts with a self-targeted component.
 - **Area calculation:** `Rectangle`, `Circle`, area providers, and a scaling wrapper introduce
   provider reuse and higher-order composition.
+- **Object storage:** `App` fetches stored files from Amazon S3 through `FetchS3Object`, and
+  `GCloudApp` from Google Cloud Storage through `FetchGCloudObject`, behind one
+  `CanFetchStorageObject` component; a test context can wire a provider that reads a local folder.
+  These are environmental contexts with a self-targeted component, and the methods are async and
+  return `anyhow` errors. The [profile-picture example](../examples/profile-picture.md) holds the
+  full scenario, which the `cgp` README and the website's Overview use.
 
 Use the verified code in [examples/](../examples/README.md) and the website's `example-code` crate.
 When a different example is necessary, record why in the page's internal document and add it to this

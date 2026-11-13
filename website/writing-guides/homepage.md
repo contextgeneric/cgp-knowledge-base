@@ -500,19 +500,72 @@ The project's maturity is not offloaded: the cost section states it on the page 
   [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp) and the
   [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md). It is where the cost section on
   the homepage hands off to.
-- **Overview**: the fourth destination, and the one that already exists. It is the **feature tour**:
-  every high-level CGP feature walked through in more detail than any other surface carries, which
-  makes it the destination for both section 2 and section 3 of the essay. That job resolves the
-  site's three disagreeing feature lists rather than merely reconciling them: the front page carries
-  the curated five from
-  [identity.md](../../communication-strategy/identity.md#the-headline-feature-set), four as
-  illustrated cards and the fifth in its reassurance line,
-  and the Overview expands each one and adds the breadth features the tag line only gestures at, so
-  it is not competing with the front page's list and is not capped at five. Its problems half stays
-  anchored to [message.md](../../communication-strategy/message.md#the-problems-cgp-removes). It is
-  a docs page that presents the project, so its opening paragraph names Context-Generic Programming
-  and may state the tag line whole, per the
-  [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
+- **Overview**: the fourth destination, and the **feature tour**: every high-level CGP feature
+  walked through in more detail than any other surface carries, which makes it the destination for
+  both section 2 and section 3 of the essay. [The section below](#the-overview-the-feature-tour)
+  specifies it.
+
+### The Overview, the feature tour
+
+**The Overview shows each feature working, states where it stops, and sends the reader to the page
+that explains it.** Its job resolves the site's three disagreeing feature lists rather than merely
+reconciling them: the front page carries the curated five from
+[identity.md](../../communication-strategy/identity.md#the-headline-feature-set), four as illustrated
+cards and the fifth in its reassurance line, and the Overview expands each one and adds the breadth
+features the tag line only gestures at, so it is not competing with the front page's list and is not
+capped at five. It is a docs page that presents the project, so its opening paragraph names
+Context-Generic Programming and states the tag line whole, per the
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page). It
+is written in point-first style, because readers scan it for the feature they followed from the
+front page.
+
+The page has these parts, in this order:
+
+- **Opening:** the name and the tag line, what the tour covers, that every example compiles, and a
+  link to the Quickstart for a reader who wants to run one.
+- **The five headline features**, under identity.md's titles word for word and in its order, so a
+  reader who follows a front-page card finds its section under the same name.
+- **Beyond choosing implementations:** abstract types, extensible records and variants, composable
+  handlers, namespaces, and higher-order providers. The abstract-types section shows the
+  before-and-after that section 3's one clause defers here: an error type passed as a parameter
+  through every layer, then chosen by the context.
+- **The problems it solves:** a table from each problem in
+  [message.md](../../communication-strategy/message.md#the-problems-cgp-removes), in the reader's
+  words, to the section and the Concepts page that answer it. This table is the page's problems half,
+  which the framework author's path in
+  [information-architecture.md](../information-architecture.md#how-each-reader-moves-through-the-site)
+  starts from.
+- **When a plain trait is enough:** the costs in one paragraph, with the canonical `cargo-cgp`
+  qualification where the tool is named and the agent skill beside the learning time; a link to the
+  front page's cost section for the project's maturity, which the Overview does not restate; and
+  *Modularity Hierarchy*.
+- **Where to go next:** the Quickstart and Hello World, the Concepts pages, the comparisons, and the
+  reference.
+
+**Each feature section opens with the problem, shows one compiled example, states the limit, and
+links onward.** The example stays within about fifteen lines and is labelled as a fragment where it
+leaves definitions out. The limit is the condition the strategy pairs with the strength, such as
+wiring that checks nothing until a component is used or checked. The link goes to the page
+[seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) names as
+the owner of the feature's questions, because the Overview introduces a subject and the owner
+explains it.
+
+**The headline features run one scenario.** They use the profile-picture scenario under the names the
+`cgp` README uses, listed among the
+[canonical examples](../../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs),
+so the reader follows one realistic application through all five; the breadth sections use area
+calculation and the handler examples. The code is compiled in the website's `example-code` crate at
+`tests/overview.rs`, and a quoted diagnostic is bound for recapture like every other quote on the
+site.
+
+**What stays off the page:** a construct reference, a second explanation of what a Concepts page
+already explains, and the project's maturity, which the front page's cost section states.
+
+**Checking a draft.** Read the section openings alone and check that each names its feature's
+benefit. Check that each feature title matches identity.md, that each feature section has its
+problem, example, limit, and link, that the table covers every problem in message.md, that every
+snippet matches `tests/overview.rs`, and that the page passes the naming check. Then look at the
+rendered page at phone width in both themes, where long signatures scroll inside their block.
 
 ## Images, metadata, and provenance
 

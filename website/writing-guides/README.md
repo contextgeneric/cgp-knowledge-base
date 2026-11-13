@@ -64,8 +64,8 @@ Register a new guide here in the same change that adds it, and in [../../summary
 
 - [homepage.md](homepage.md): the landing page, covering its two-tier structure, the settled before/after
   example that carries the hook together with the copy that sells it and the properties a replacement
-  must keep, the bounded essay beneath it, the dedicated documentation pages the essay offloads to, and
-  the routing at the end.
+  must keep, the bounded essay beneath it, the dedicated documentation pages the essay offloads to, the
+  Overview's specification as the feature tour, and the routing at the end.
 - [explanation.md](explanation.md): the understanding-oriented Concepts pages, which the homepage
   offloads to, covering what every one owes its reader, how a concept document is rewritten into one, the specs
   for the three roles the homepage names, and where the pages sit in the docs tree.
@@ -161,7 +161,7 @@ the naming rule exempts them.
 
 - **Guide:** [homepage.md](homepage.md), including
   [the offload rule](homepage.md#the-offload-rule-and-the-pages-it-offloads-to) for the Overview.
-- **Style:** natural style for the front page; the Overview keeps its own style.
+- **Style:** natural style for the front page, and point-first style for the Overview.
 - **Strategy:** [identity.md](../../communication-strategy/identity.md), whole;
   [message.md](../../communication-strategy/message.md)'s
   [lead with the pain](../../communication-strategy/message.md#lead-with-the-pain-not-the-paradigm),

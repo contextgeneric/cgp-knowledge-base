@@ -139,8 +139,8 @@ Apply these rules across formats:
 - **Protect readers' identities.** Summarize reactions to CGP without linking threads or quoting
   identifiable commenters.
 - **Explain example shapes.** Identify the context and target, especially when they change.
-- **Reuse established examples.** Prefer the encoder pair, greeter, email swap, or area calculation
-  before introducing another domain.
+- **Reuse established examples.** Prefer the encoder pair, greeter, email swap, area calculation, or
+  object storage before introducing another domain.
 
 ## The four checks before publishing
 
