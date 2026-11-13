@@ -521,8 +521,8 @@ front page.
 
 The page has these parts, in this order:
 
-- **Opening:** the name and the tag line, what the tour covers, that every example compiles, and a
-  link to the Quickstart for a reader who wants to run one.
+- **Opening:** the name and the tag line, what the tour covers, that the examples are fragments of
+  compiled programs, and a link to the Quickstart for a reader who wants to run one.
 - **The five headline features**, under identity.md's titles word for word and in its order, so a
   reader who follows a front-page card finds its section under the same name.
 - **Beyond choosing implementations:** abstract types, extensible records and variants, composable
@@ -543,9 +543,12 @@ The page has these parts, in this order:
   reference.
 
 **Each feature section opens with the problem, shows one compiled example, states the limit, and
-links onward.** The example stays within about fifteen lines and is labelled as a fragment where it
-leaves definitions out. The limit is the condition the strategy pairs with the strength, such as
-wiring that checks nothing until a component is used or checked. The link goes to the page
+links onward.** The example stays within about fifteen lines, and the opening says once that every
+example leaves out the imports and definitions it does not need to show. The limit is the condition
+the strategy pairs with the strength, such as wiring that checks nothing until a component is used
+or checked. The problem is stated fairly: where plain Rust already handles a case, such as an
+application type implementing a trait directly, the section says so before showing what CGP adds.
+The link goes to the page
 [seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) names as
 the owner of the feature's questions, because the Overview introduces a subject and the owner
 explains it.

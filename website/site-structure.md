@@ -385,19 +385,21 @@ explains it, followed by the problems the features answer.
 
 ### What it covers
 
-The page follows [the homepage guide's specification](writing-guides/homepage.md#the-overview-the-feature-tour).
-It opens with the name and the tag line whole, and says every example compiles. *The headline
-features* walks the five features under identity.md's titles, through the profile-picture scenario:
-`App`, `GCloudApp`, and `TestApp` wiring `FetchS3Object`, `FetchGCloudObject`, and
-`FetchLocalObject` for one storage component; the forwarding implementation that `App`'s wiring
-amounts to; `App` without `bucket_id` rejected by `check_components!`, with the `cargo cgp check`
-output quoted; the error type made abstract with `#[use_type]` and a provider's `#[uses]`
-dependency; and `get_user` as a `#[cgp_fn]` with an implicit `database`. *Beyond choosing
+The page follows
+[the homepage guide's specification](writing-guides/homepage.md#the-overview-the-feature-tour). It
+opens with the name and the tag line whole, and says the examples are fragments of compiled
+programs. *The headline features* walks the five features under identity.md's titles, through the
+profile-picture scenario: `App`, `GCloudApp`, and `TestApp` wiring `FetchS3Object`,
+`FetchGCloudObject`, and `FetchLocalObject` for one storage component; the forwarding implementation
+that `App`'s wiring amounts to; `App` without `bucket_id` rejected by `check_components!`, with the
+`cargo cgp check` output quoted; the error type made abstract with `#[use_type]` and a provider's
+`#[uses]` dependency; and `get_user` as a `#[cgp_fn]` with an implicit `database`. *Beyond choosing
 implementations* covers abstract types with a before-and-after of an error parameter, extensible
 records with a builder, handlers with a two-step pipeline, namespaces with the greeter components,
 and higher-order providers with `ScaledArea`. A table maps each problem in
 [message.md](../communication-strategy/message.md#the-problems-cgp-removes) to its section and
-Concepts page, and the page ends with when a plain trait is enough and where to go next.
+Concepts page, or to the Concepts page alone for the foreign-type and grown-trait problems the page
+does not show, and the page ends with when a plain trait is enough and where to go next.
 
 Each section keeps its condition: wiring checks nothing until a component is used or checked,
 portability depends on the selected providers, associated types guarantee only the bounds declared,
