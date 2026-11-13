@@ -830,7 +830,7 @@ it stale.
   that names the communication-strategy and SEO sections each kind of page draws on.
 - [homepage.md](website/writing-guides/homepage.md) — the landing page: its two-tier structure, the
   settled before/after example with the copy that sells it and the six properties a replacement must
-  keep, the six-section bounded essay, the offload rule and the dedicated explanation pages it offloads
+  keep, the five-section bounded essay and its layout, the offload rule and the dedicated explanation pages it offloads
   to, and what must never appear on the page.
 - [explanation.md](website/writing-guides/explanation.md) — the understanding-oriented `Concepts`
   tier, one page per idea: what every explanation page owes, what Diátaxis gives the tier and where CGP

@@ -27,8 +27,7 @@ publishes incrementally, every page is written as though v0.8.0 has already ship
 around that (including never committing redesign work to `main`, which deploys on push) are in
 [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
 
-**What sets the release date is the front page.** Everything except the Projects section and the two
-blog posts is release-blocking. The reference, which is
+**Everything except the Projects section and the two blog posts is release-blocking.** The reference, which is
 [canonical](writing-guides/reference.md) and so must be complete on day one rather than
 deferred, has a page for every construct. That obligation still binds: a page added from here
 is added with its index entry in the same change, because a construct with no page is a hole a reader
@@ -114,24 +113,6 @@ code has a compiled counterpart in the website repository's
 which every page in this tier is subject to.
 
 The Projects section, which links to these pages instead of re-teaching them, is therefore unblocked.
-
-## F — The front page
-
-- **F1: rebuild the front page against its guide.** The largest single-page change on the list, and the
-  one that most needs its destinations to exist first: the hero and tag line, the reassurance line and
-  install command, the settled before/after example and the copy that sells it, the six-section bounded
-  essay including the cost section, which is the one place the site states the project's maturity, and
-  the routing section replacing the "Ready to Get Started?" filler.
-  The hero block's own snippet must be **compiled, not eyeballed**, per the guide. *Lands in:*
-  `src/pages/index.tsx` and `src/components/HomepageFeatures/`. *Spec:*
-  [writing-guides/homepage.md](writing-guides/homepage.md). *Blocked by:* F2, softly; every
-  destination it routes to (the Quickstart, the concept pages, the reference) is written. *Done when:*
-  the guide's five draft checks pass and the author has read it.
-- **F2: align the front page with the settled feature set.** The front page still names six
-  features. It needs the five curated in
-  [identity.md](../communication-strategy/identity.md#the-headline-feature-set), developed as prose
-  beats that link to the Overview for depth. The Overview supplies the broader tour, including
-  abstract types, extensible data, and handlers. *Lands in:* the front page.
 
 ## T — Teaching
 
@@ -440,8 +421,6 @@ the [ordering](#the-ordering) for what to start on.
 
 | Task | Blocked by | Blocks |
 |---|---|---|
-| F2 | nothing | F1 |
-| F1 | F2 | nothing |
 | T4 | nothing | nothing |
 | T3 | nothing | nothing |
 | R1 | the author's read | nothing |
@@ -467,13 +446,9 @@ deferred is a release deferred.
 
 ## The ordering
 
-**The front page is the largest single-page change on this list, and F2 is where it starts.** F1
-waits softly on F2, which aligns the front page with the Overview's feature tour, and every
-destination F1 routes to is written.
-
 **Several things wait on the author rather than on an agent, and they are worth collecting into one
-handover rather than raised one at a time.** R1's reference index, A1's disclosure page, and A2's
-documentation-process page are written and need a read. The two judging sections on each of the
+handover rather than raised one at a time.** The front page, R1's reference index, A1's disclosure
+page, and A2's documentation-process page are written and need a read. The two judging sections on each of the
 eleven comparison pages need the same read, against the standard in
 [writing-guides/related-work.md](writing-guides/related-work.md). What S7 has left needs repository
 settings no commit can change. And the Quickstart's ten-minute target has never been measured; it

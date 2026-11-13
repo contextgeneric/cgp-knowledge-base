@@ -62,7 +62,8 @@ length is capped by structure rather than by willpower, which is what the offloa
 
 ## Above the fold
 
-Four elements, in this order, and nothing else.
+Four elements, in this order, and nothing else. The compiler's error quoted under the rejected block
+belongs to the code element rather than adding a fifth.
 
 **The project's name, then the tag line, verbatim.** The hero names the project in text as
 **Context-Generic Programming**, so a reader and a search engine can read it rather than only see it
@@ -111,6 +112,16 @@ contrast; measure both with a screenshot rather than estimating. On a phone the 
 the hero copy fits the first screen, which is acceptable because the copy stands alone. Do not shrink
 the hero art to a small logo to save height, and do not put the blocks in tabs, which hide the
 comparison they exist to show.
+
+**Each block is set as an editor window that states its verdict.** The title bar carries a cross or a
+tick beside the label ("Rust accepts only one of these", "With CGP, both compile"), and the changed
+lines read like a diff, with a tint and a gutter mark in the window's own red or green, so the two
+windows differ for a reader who cannot tell red from green. The rejected window numbers its lines
+and quotes rustc's `E0119` beneath the block, without the location line, so the error names lines 7
+and 11 as the page numbers them. The windows' lines run to about 70 characters, so side by side they
+need about 1240 px: below 1360 px the code sets a little smaller, and below 1240 px the windows
+stack, so neither scrolls sideways. Check those widths in Firefox, which shows the scrollbars that
+Chrome's headless captures hide.
 
 ## The example, and how to sell it
 
@@ -305,14 +316,27 @@ compiles the block in `tests/front_page.rs`, with a `check_components!` assertio
 is how the wiring is confirmed to resolve rather than merely parse, and holds the rejected block as a
 compile-fail fixture whose snapshot shows the `E0119`. The page's code lives as strings in
 `src/pages/index.tsx`, which no compiler reads, so the same test file reads `index.tsx`, takes each
-block from between its marker comments, and fails when it differs from the compiled text. Change the
-page and the test in the same commit.
+block from between its marker comments, and fails when it differs from the compiled text. The
+rejected block starts at its fixture's first line, so the quoted `E0119` names the lines the page
+numbers, and another test compares the quote with the fixture's snapshot, without its location
+line; a re-blessed snapshot therefore changes the quote too. Change the page and the test in the
+same commit.
 
 ## Below the fold: the bounded essay
 
 Five sections, in this order, each answering one question and stopping. The section titles below are
 jobs rather than required headings, but the order is not negotiable, because it is the order in which
 the questions occur to a reader.
+
+**Each section takes the layout that fits its content, and the bands alternate between the page and
+a tint.** The hero is tinted and the code band is not; then sections 1, 3, and 5 take the tint and
+sections 2 and 4 the page, so every section meets a change of background and no gap needs a rule.
+Section 1 sets its title in a narrow column beside its prose, section 2 sets the feature cards two
+to a row, section 3 sets three linked tiles, section 4 sets the costs in a framed panel, and
+section 5 sets one card per reader, the whole card linking its main page beside a reason. Above 996 px, section 1's
+title and section 4's heading and lead stay in view beside their longer columns while a reader
+scrolls; on a phone they stack above them. The gaps come from a spacing scale in the page's
+stylesheet, so a later change keeps the rhythm.
 
 **1. Why Rust only lets you do this once, and what CGP changes.** Explain, sympathetically and
 correctly, that Rust's trait system doubles as a dependency-injection mechanism (a generic impl can
@@ -563,8 +587,9 @@ means something needs offloading; a third hero link means one of them is not nee
 [voice document's four checks](../../communication-strategy/voice-and-register.md#checking-a-draft),
 and the [messaging brief's words to avoid](../../communication-strategy/messaging-brief.md#words).
 
-**Look at the rendered page.** Take screenshots at 1920×1080, 1440×900, and 390×844 in both themes.
-The first screen meets the layout's targets, every image reads in both themes, the images total under
+**Look at the rendered page.** Take screenshots at 1920×1080, 1440×900, and 390×844 in both themes,
+and at laptop 1280 and tablet 1024 widths in Firefox, which shows scrollbars, so a code window that
+scrolls sideways is visible. The first screen meets the layout's targets, every image reads in both themes, the images total under
 about 150 KB, and the page ends at its routing section, with no provenance line. The site's font files
 stay within about 100 KB together, and every character the page sets is in their subsets, so none is
 drawn from a fallback face.

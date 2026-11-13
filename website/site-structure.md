@@ -162,15 +162,57 @@ which reaches the live site when that branch merges.
 
 ## The front page
 
-The landing page is the only substantial React on the site, built from
-[src/pages/index.tsx](https://github.com/contextgeneric/contextgeneric.dev/blob/main/src/pages/index.tsx)
-and the feature grid in
-[src/components/HomepageFeatures/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/src/components/HomepageFeatures).
-Its feature illustrations under `static/img/features/` name six headline features — bypassing
-coherence rules, a modular component system, highly expressive macros, type-safe composition, no-std
-friendliness, and zero-cost abstraction. The [Overview](#overview) gives the broader feature tour,
-including implementation choice, abstract types, extensible data, and handlers. The front page needs
-the curated feature framing from [identity](../communication-strategy/identity.md).
+The front page shows what CGP does in one screen, then argues for it in a five-section essay that
+ends on routes into the rest of the site.
+
+- **URL** — <https://contextgeneric.dev/>
+- **Source** — [src/pages/index.tsx](https://github.com/contextgeneric/contextgeneric.dev/blob/main/src/pages/index.tsx),
+  its stylesheet `index.module.css`, and the feature cards in
+  [src/components/HomepageFeatures/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/src/components/HomepageFeatures)
+- **Status** — Current on the `v0.8.0` branch; the live page on `main` is the stock page it replaces
+- **How it was made** — written by an agent from this base, level one of the four in
+  [ai-disclosure.md](../communication-strategy/ai-disclosure.md), and revised with the author over
+  several reviews; it carries no provenance line by the author's decision, the one exception the
+  disclosure page names; the author's read before publication is outstanding
+
+### What it covers
+
+The page is the only substantial React on the site, written as its own markup on the theme's
+tokens inside the Docusaurus layout. Its first screen holds the hero and the code band:
+
+- **The hero:** the name, Context-Generic Programming, then the tag line and the reassurance line
+  verbatim from [identity.md](../communication-strategy/identity.md); an install line whose button
+  copies `cargo add cgp`; the two links, Quickstart and "Costs and maturity", which jumps to the cost
+  section; the GitHub star widget; and the hero illustration, `static/img/cgp-hero.webp`, which the
+  dark theme sets on a circle of its own background colour.
+- **The code band:** the encoder pair Rust rejects and the same pair under CGP, as two editor
+  windows that state their verdict with a mark and a colour; the rejected window quotes rustc's
+  `E0119` beneath the block; and the caption, which ends on the pull quote "Coherence is not repealed;
+  it is scoped."
+
+The essay below it has five sections:
+
+- **Why Rust allows this only once:** coherence as a guarantee, the workaround without CGP, providers
+  as named implementations, and the context as a type that stands for an application, linking
+  *Bypassing coherence* and *Consumer and provider traits*.
+- **What that gives you:** the first four headline features as illustrated cards linking the pages
+  [seo.md](seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) maps them
+  to, and a line linking the Overview.
+- **More than trait implementations:** three linked tiles for abstract types, extensible records and
+  variants, and handlers.
+- **What it costs:** five labelled costs in a framed panel, with the `cargo cgp check` qualification
+  word for word and the agent skill beside the learning time, then the advice to try CGP on a small
+  part of a project, linking *Modularity Hierarchy*.
+- **Where to go next:** five route cards, one per reader, from trying CGP to helping build it.
+
+Each feature card has its own illustration under `static/img/features/`:
+`one-interface-many-implementations.webp`, `zero-cost-abstraction.webp`, `type-safe-wiring.webp`, and
+`abstract-over-every-dependency.webp`. The fifth headline feature, Still Ordinary Rust, has no card,
+because the reassurance line states it, so it has no image either.
+
+The hero's block is the retrofit shape: a value context, self-targeted, since `u64`, `String`, and
+`Vec<u8>` are the data being encoded. Section 1's last paragraph introduces the application context
+in prose, without code, for the reason the [homepage guide](writing-guides/homepage.md) records.
 
 **The front page sets its own `<title>` rather than letting Docusaurus format one.** Every other page
 renders `{Page} | CGP — Context-Generic Programming`; the front page renders
@@ -180,37 +222,34 @@ with `@docusaurus/Head` in `src/pages/index.tsx`, setting `og:title` alongside s
 matches, and it is the only page on the site that does. Leave the `title` prop off `Layout` there:
 passing both would render two title tags.
 
-**The specification for what this page should become is
-[writing-guides/homepage.md](writing-guides/homepage.md), and it should be read before any change
-here.** That guide fixes the page's two-tier structure, the before/after code that carries the hook,
-the six-section bounded essay beneath it, the four dedicated explanation pages the essay offloads to,
-and a checklist of the ways the current page falls short. This entry records what the page is; the
-guide records what it is for.
+### How it relates to the knowledge base
 
-The front page is the highest-leverage copy on the site and is governed end to end by the
-communication strategy. Its headline feature set should be reconciled against the
-[curated set](../communication-strategy/identity.md#the-headline-feature-set), which is deliberately
-smaller, is chosen for breadth and honesty, and reserves a slot for "Still Ordinary Rust" — the direct
-answer to the community's stated fear of added complexity, per
-[evidence.md](../communication-strategy/evidence.md). The above-the-fold structure is prescribed by
-the [homepage guide](writing-guides/homepage.md), with the README-and-landing-page playbook in
-[formats.md](../communication-strategy/formats.md) as its shorter cousin.
+[writing-guides/homepage.md](writing-guides/homepage.md) specifies the page: the two tiers, the
+settled example and its copy, the five-section essay, the layout, the offload rule, and the draft
+checks. This entry records what the page is; the guide records what it is for. The communication
+strategy governs the copy: [identity.md](../communication-strategy/identity.md) for the name, the
+tag line, the reassurance line, and the curated features, of which the page shows four as cards;
+[message.md](../communication-strategy/message.md) for the strengths and the costs; and
+[vocabulary.md](../communication-strategy/vocabulary.md) for where the word "context" first
+appears. [visual-design.md](visual-design.md) records the theme tokens the page uses, including the
+diff tints and verdict marks of the code windows, and [seo.md](seo.md#the-off-site-metadata-is-under-set)
+the page's title.
 
-**Its code example does not compile, which is the one defect here that is a factual error rather than a
-framing one.** The `Hash` illustration writes `#[cgp_impl(HashWithDisplay)]` without the `new` keyword
-and never declares `struct HashWithDisplay;` anywhere, so the provider it wires does not exist — the
-bare form of [`#[cgp_impl]`](../cgp/reference/macros/cgp_impl.md) implements the provider trait for a
-struct the author is expected to have declared, and `new` is what declares it. The snippet also elides
-its bodies with `{ ... }`, so it is a sketch rather than a program, but the missing declaration would
-be a compile error even in context. It is the most-seen CGP code the project publishes, which makes
-this worth fixing regardless of what replaces the page.
+The page's code is compiled in the website repository's
+[`example-code` crate](#the-example-code-crate) at `tests/front_page.rs`, with the rejected block as
+a compile-fail fixture under `tests/compile_fail/front_page/`. Its tests compare the text between the
+`front-page:` markers in `index.tsx` with the compiled code, and the quoted `E0119` with the
+fixture's snapshot.
 
-Status: **Outdated.** The code example is wrong as above; the feature set predates
-[identity.md](../communication-strategy/identity.md) and does not reflect that curation; and the page
-predates the `cargo-cgp` error tooling, which the
-[communication-strategy README](../communication-strategy/README.md) flags as a positioning shift worth
-leading with. The full divergence list and the page's replacement are in
-[writing-guides/homepage.md](writing-guides/homepage.md).
+### Maintaining it
+
+Read the homepage guide before any change, and run its draft checks after one. Change the page's
+code and `tests/front_page.rs` in the same commit; a re-blessed compile-fail snapshot changes the
+quoted error as well. A change to the page's colours runs `scripts/theme/contrast.py`, which checks
+the diff tints, the marks, and the quoted error's first line, and every visual change is checked in
+screenshots at the guide's sizes in both themes and in Firefox as well as Chrome. The page is on the
+author's [read-in-full list](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes), so a
+substantial change returns to the author before publication.
 
 ## Introduction
 

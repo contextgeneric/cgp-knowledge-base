@@ -145,7 +145,8 @@ commit to. The one exception is the Projects section, which lands afterwards. Th
 [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once) and the sequencing in
 [tasks.md](tasks.md).
 
-**Front page**: the hook and the bounded essay. Present, needs rewriting.
+**Front page**: the hook and the bounded essay. Present and **rewritten**; its record is in
+[site-structure.md](site-structure.md#the-front-page).
 
 **Concepts** (new category, 18 pages plus an index): present and **complete**
 

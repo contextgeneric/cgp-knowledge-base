@@ -273,7 +273,7 @@ roughly the first sixty characters, so the name and the acronym display in full 
 them is cut; on a page that already ranks first for both branded queries, spending the visible
 characters on the name is a judgement about recognition rather than matching. Its description opens
 with the settled tag line verbatim, since the front page presents the project. The page itself is
-[F1](tasks.md#f--the-front-page).
+recorded in [site-structure.md](site-structure.md#the-front-page).
 
 ### The pages that would answer the high-intent queries are not published yet
 

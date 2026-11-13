@@ -31,24 +31,6 @@ which depend on which, is in [tasks.md](tasks.md) rather than here.
 
 ## Rewrites: pages whose shape or framing is wrong
 
-**The front page needs rebuilding against its guide.** It diverges in six concrete ways: the hero
-headline leads with "modular" and does not use the tag line; there is no reassurance line and no install
-command; the feature grid has six entries, two leading with retired words, and disagrees with the
-Overview's feature tour; the code example does not show the implementation Rust rejects, so the
-reader never sees the contrast, **and it does not compile**, since it writes `#[cgp_impl(HashWithDisplay)]` without `new`
-and never declares the provider struct; the problem cards are generic and unanchored; and **there is no
-cost section at all**, which on a page for this audience is the most consequential omission of the six,
-since that section is also the one place the site states the project's maturity.
-The "Ready to Get Started?" block is template filler and should become the routing section. *Website
-repo, `src/pages/index.tsx` and `src/components/HomepageFeatures/`; spec in
-[writing-guides/homepage.md](writing-guides/homepage.md), and the snippet defect recorded in
-[site-structure.md](site-structure.md).*
-
-**The front page's feature list needs the settled framing.** Its six-feature list should become the
-five curated features in [identity.md](../communication-strategy/identity.md#the-headline-feature-set),
-with links to the Overview for the broader tour. The Overview expands those features and covers
-abstract types, extensible data, and handlers. *Website repo, front page.*
-
 **The area-calculation series shows the non-idiomatic provider form first.** Presenting
 `impl<Context> AreaCalculator for Context` before simplifying to `impl AreaCalculator` is pedagogically
 deliberate and should stay, but a reader who stops early copies the wrong form, so the page must say
