@@ -33,8 +33,10 @@ The tokens fall into four groups:
 - **The red and its tints:** `--cgp-red` and `--cgp-red-50` to `--cgp-red-900`. The dark theme
   redefines the tints it uses, so a tint keeps its role in both themes: `--cgp-red-50`, for example,
   is the faint surface behind the active sidebar item and breadcrumb.
-- **Warm neutrals:** the page background (`#fdfaf7` light, `#161110` dark), surfaces, borders, body
-  and muted text, and headings. Infima's own grey scale takes the same warm values.
+- **Warm neutrals:** the page background (`#fdfaf7` light, `#0e0c0c` dark), surfaces, borders, body
+  and muted text, and headings. Infima's own grey scale takes the same warm values. The dark
+  neutrals carry only a trace of the red's hue, and the front page's hero glow stays faint in the dark
+  theme, so the dark page reads as near-black rather than red; the footer is the one red band.
 - **Roles:** links and their hover colour, the focus ring, code and inline-code backgrounds, the
   highlighted-line tint, the selection, the image frame, the announcement bar, and the footer.
   `--cgp-hero-art-bg` holds the hero art's own background colour, which the front page uses for the
