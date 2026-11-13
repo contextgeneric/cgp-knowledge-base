@@ -77,7 +77,8 @@ the navigation bar and wants to know what CGP is and which part of the documenta
 question.
 
 It carries a definition, a first step, and a routing list. **A definition**, two or three paragraphs: the settled
-descriptor, one concrete example of the same interface with two implementations, and the vocabulary
+descriptor, a concrete example of the same interface with two implementations in one clause rather
+than a paragraph of its own, because the rest of the page never returns to it, and the vocabulary
 a reader needs to read any other page (*context*, *provider*, *wiring*, *component*), each glossed
 in a clause rather than explained. **A first step**, naming the tutorials, because a reader who wants
 to write code should not have to find them. And **a routing list**, one line per destination, keyed

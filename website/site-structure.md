@@ -266,10 +266,8 @@ The Introduction orients readers and directs them to maintained learning materia
 
 ### What it covers
 
-The page opens with the tag line whole and the reassurance, then explains compile-time
-implementation choice through the profile-picture scenario in prose: one application fetches stored
-files from Amazon S3, a second deployment from Google Cloud Storage, and its tests from a local
-folder. A short list glosses context, component, provider, and wiring, each linked to its glossary
+The page opens with the tag line whole, an application and its tests reading files from different
+places as a one-clause example of choosing an implementation, and the reassurance. A short list glosses context, component, provider, and wiring, each linked to its glossary
 entry, and the page links the consumer/provider explanation for the mechanism. It contains no Rust
 listings. Its front matter sets a title without "CGP", the sidebar label "Introduction", and a
 written description.
@@ -285,8 +283,7 @@ CGP Patterns book, a [legacy resource](AGENTS.md#leave-legacy-resources-off-publ
 
 ### How it relates to the knowledge base
 
-[Identity](../communication-strategy/identity.md) governs the opening, the
-[profile-picture example](../examples/profile-picture.md) supplies the scenario, and
+[Identity](../communication-strategy/identity.md) governs the opening, and
 [the message](../communication-strategy/message.md) supplies the adoption boundaries. The terminology comes from [vocabulary](../communication-strategy/vocabulary.md) and
 [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md). The learning paths
 lead to the [Hello World](tutorials/hello-world.md) and
