@@ -342,11 +342,11 @@ first and why its remainder is re-scoped rather than dropped. Anything that chan
 description should land **before the branch merges**, because the merge is what fixes each new page's
 first impression in the index.
 
-- **S3: a `description` on every page.** **Most of it is done; eight pages remain.** Every reference,
+- **S3: a `description` on every page.** **Most of it is done; six pages remain.** Every reference,
   comparison, `cargo-cgp`, project, and AI page, every one of the 19 Concepts pages, and every blog
   post sets a written description, and the three generated category indexes carry one in their
-  `_category_.json`. The four of the five tutorials that are not the checking page, the Introduction,
-  Overview, Resources, and Contribute still render a derived description: the first source line of the
+  `_category_.json`. The four of the five tutorials that are not the checking page, Resources, and
+  Contribute still render a derived description: the first source line of the
   opening paragraph, which ends mid-sentence where the source wraps. Write each in the same edit as
   the page's revision, before the merge. The conventions, including the YAML apostrophe that fails
   the build, are in
@@ -462,7 +462,7 @@ context, and T4 is cheap enough to fold into any pass over the series.
 **S1 and S10 fit anywhere**, and neither blocks anything: S1 is a half-hour of hand searching on Bing
 and Kagi, and S10 is two small changes in the `cgp` repository. S5 travels with each page's revision.
 
-**What is left of S3 is eight pages**, which land with each page's revision and before the merge,
+**What is left of S3 is six pages**, which land with each page's revision and before the merge,
 which is when each page's first impression in the index is fixed.
 
 **The X tasks fit anywhere, and X2 is worth doing early**: the crate's landing page is working

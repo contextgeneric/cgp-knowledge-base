@@ -276,16 +276,16 @@ written `description`.
 lists neither the CGP Patterns book nor the Hermes SDK, which are
 [legacy resources](../AGENTS.md#leave-legacy-resources-off-public-pages).
 
-**The Quickstart is written**, at `/docs/quickstart`. It is the destination the front page's first
-call to action is specified to take, though the current front page still sends that button to the
-Introduction and its second to Hello World, and repointing it is part of the front-page rebuild rather
-than something done ahead of it. The page holds the contract above: install, one program, the exact output, a route onward,
-no second example, and nothing explained. Two things are worth knowing before revising it. Its
-`cgp = "0.8.0"` pin names a version crates.io does not yet carry, which is correct only because the
-branch merges with the release, so the pin is right and the page must not publish before it. And **the
-ten-minute target has not been measured**: the program is compiled in `example-code`, but no one has
-walked the page on a clean machine with a friction log, which is what this guide asks for and the one
-check the page has not had.
+**The Quickstart is current**, at `/docs/quickstart`, and the front page's first call to action
+leads there. The page holds the contract above: the Rust 1.89 floor, `cargo new` and `cargo add cgp`,
+one program, the exact output, a route onward, no second example, and nothing explained. A test in
+`example-code` compares its program with the compiled one. Two things are worth knowing before
+revising it. Its `cgp = "0.8.0"` pin names a version crates.io does not yet carry, which is correct
+only because the branch merges with the release, so the page must not publish before it. And **the
+ten-minute target has not been measured**: an agent's walk from a fresh project with a path
+dependency built and ran the program in a few seconds, but no cold reader has walked the page on a
+clean machine with a friction log, which is what this guide asks for and the one check the page has
+not had.
 
 **The Contribute page predates this guide** and is to be rewritten against it, which the author has
 allowed in full. Its routes are the right ones, and its code-and-documentation section already

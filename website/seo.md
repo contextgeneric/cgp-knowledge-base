@@ -133,7 +133,8 @@ renders the first source line of its opening paragraph, which ends mid-sentence 
 wraps, as in *"Rust's coherence rules keep trait lookup consistent across a program. For a given
 trait, its"*, so each still needs a written one. The published skill pages are not the site's to
 edit. The conventions, including the YAML apostrophe that fails the build, are in
-[site-structure.md](site-structure.md#conventions-the-port-must-follow).
+[site-structure.md](site-structure.md#conventions-the-port-must-follow). On 2026-11-13, six remain: four of
+the five tutorials, Resources, and Contribute.
 
 A post's description is metadata rather than a claim, so writing one does not reach the
 [dated-artifact rule](AGENTS.md#do-not-rewrite-history); the wording rules that keep it from implying
