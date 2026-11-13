@@ -333,10 +333,10 @@ a tint.** The hero is tinted and the code band is not; then sections 1, 3, and 5
 sections 2 and 4 the page, so every section meets a change of background and no gap needs a rule.
 Section 1 sets its title in a narrow column beside its prose, section 2 sets the feature cards two
 to a row, section 3 sets three linked tiles, section 4 sets the costs in a framed panel, and
-section 5 sets one card per reader, the whole card linking its main page beside a reason. Above 996 px, section 1's
-title and section 4's heading and lead stay in view beside their longer columns while a reader
-scrolls; on a phone they stack above them. The gaps come from a spacing scale in the page's
-stylesheet, so a later change keeps the rhythm.
+section 5 sets one card per reader, the whole card linking its main page beside a reason. Above
+996 px, section 1's title and section 4's heading and lead stay in view beside their longer columns
+while a reader scrolls; on a phone they stack above them. The gaps come from a spacing scale in the
+page's stylesheet, so a later change keeps the rhythm.
 
 **1. Why Rust only lets you do this once, and what CGP changes.** Explain, sympathetically and
 correctly, that Rust's trait system doubles as a dependency-injection mechanism (a generic impl can
@@ -419,8 +419,8 @@ sentence that says a plain trait is the right tool for a single implementation: 
 compile-time work, verbose raw errors with the `cargo cgp check` qualification word for word, a young
 ecosystem, and learning time with the agent skill beside it. The rows form a description list rather
 than a table, because each pairs one label with one statement, and on a phone each label sits above
-its sentence. The section's heading and its lead sit in a column beside the rows and stay in view
-while a reader scrolls through them, as section 1's title does beside its longer prose. The advice to try CGP on a small part of a project follows the list.
+its sentence. The section's heading and its lead sit in a column beside the rows, and the advice to
+try CGP on a small part of a project follows the list.
 
 **It is also the one place on the site that states the project's maturity**, so it carries what an
 evaluator reads for. CGP is young: its ecosystem is small and community support is limited, so an
@@ -589,7 +589,8 @@ and the [messaging brief's words to avoid](../../communication-strategy/messagin
 
 **Look at the rendered page.** Take screenshots at 1920×1080, 1440×900, and 390×844 in both themes,
 and at laptop 1280 and tablet 1024 widths in Firefox, which shows scrollbars, so a code window that
-scrolls sideways is visible. The first screen meets the layout's targets, every image reads in both themes, the images total under
+scrolls sideways is visible. The first screen meets the layout's targets, every image reads in both
+themes, the images total under
 about 150 KB, and the page ends at its routing section, with no provenance line. The site's font files
 stay within about 100 KB together, and every character the page sets is in their subsets, so none is
 drawn from a fallback face.

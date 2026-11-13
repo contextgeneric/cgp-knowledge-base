@@ -169,10 +169,12 @@ ends on routes into the rest of the site.
 - **Source** — [src/pages/index.tsx](https://github.com/contextgeneric/contextgeneric.dev/blob/main/src/pages/index.tsx),
   its stylesheet `index.module.css`, and the feature cards in
   [src/components/HomepageFeatures/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/src/components/HomepageFeatures)
-- **Status** — Current on the `v0.8.0` branch; the live page on `main` is the stock page it replaces
+- **Status** — Current on the `v0.8.0` branch; the live page on `main` is the earlier landing page
+  it replaces
 - **How it was made** — written by an agent from this base, level one of the four in
   [ai-disclosure.md](../communication-strategy/ai-disclosure.md), and revised with the author over
-  several reviews; it carries no provenance line by the author's decision, the one exception the
+  several reviews, including one pass of the copy by another assistant that the agent reviewed; it
+  carries no provenance line by the author's decision, the one exception the
   disclosure page names; the author's read before publication is outstanding
 
 ### What it covers
@@ -245,8 +247,8 @@ fixture's snapshot.
 
 Read the homepage guide before any change, and run its draft checks after one. Change the page's
 code and `tests/front_page.rs` in the same commit; a re-blessed compile-fail snapshot changes the
-quoted error as well. A change to the page's colours runs `scripts/theme/contrast.py`, which checks
-the diff tints, the marks, and the quoted error's first line, and every visual change is checked in
+quoted error as well. After a change to the page's colours, run `scripts/theme/contrast.py`, which
+checks the diff tints, the marks, and the quoted error's first line, and check every visual change in
 screenshots at the guide's sizes in both themes and in Firefox as well as Chrome. The page is on the
 author's [read-in-full list](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes), so a
 substantial change returns to the author before publication.

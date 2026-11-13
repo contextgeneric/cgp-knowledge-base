@@ -27,9 +27,9 @@ publishes incrementally, every page is written as though v0.8.0 has already ship
 around that (including never committing redesign work to `main`, which deploys on push) are in
 [AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
 
-**Everything except the Projects section and the two blog posts is release-blocking.** The reference, which is
-[canonical](writing-guides/reference.md) and so must be complete on day one rather than
-deferred, has a page for every construct. That obligation still binds: a page added from here
+**Everything except the Projects section and the two blog posts is release-blocking.** The
+reference, which is [canonical](writing-guides/reference.md) and so must be complete on day one
+rather than deferred, has a page for every construct. That obligation still binds: a page added from here
 is added with its index entry in the same change, because a construct with no page is a hole a reader
 falls into.
 
@@ -448,8 +448,8 @@ deferred is a release deferred.
 
 **Several things wait on the author rather than on an agent, and they are worth collecting into one
 handover rather than raised one at a time.** The front page, R1's reference index, A1's disclosure
-page, and A2's documentation-process page are written and need a read. The two judging sections on each of the
-eleven comparison pages need the same read, against the standard in
+page, and A2's documentation-process page are written and need a read. The two judging sections on
+each of the eleven comparison pages need the same read, against the standard in
 [writing-guides/related-work.md](writing-guides/related-work.md). What S7 has left needs repository
 settings no commit can change. And the Quickstart's ten-minute target has never been measured; it
 wants a friction log on a clean machine, per
