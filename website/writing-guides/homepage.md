@@ -544,7 +544,9 @@ The page has these parts, in this order:
   reference.
 
 **Each feature section opens with the problem, shows one compiled example, states the limit, and
-links onward.** The example stays within about fifteen lines, and the opening says once that every
+links onward.** The example stays within about fifteen lines; the abstract-types section shows a
+plain-Rust half and a CGP half, and the extensible-data section one example for records and one for
+variants, so each covers what its heading names. The opening says once that every
 example leaves out the imports and definitions it does not need to show. The limit is the condition
 the strategy pairs with the strength, such as wiring that checks nothing until a component is used
 or checked. The problem is stated fairly: where plain Rust already handles a case, such as an
