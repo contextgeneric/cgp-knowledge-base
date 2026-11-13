@@ -77,7 +77,7 @@ the navigation bar and wants to know what CGP is and which part of the documenta
 question.
 
 It carries a definition, a first step, and a routing list. **A definition**, two or three
-paragraphs: the settled descriptor followed by one plain sentence on what it lets a reader do,
+paragraphs: the settled descriptor followed by a plain sentence or two on what it lets a reader do,
 without a scenario of its own, because the rest of the page never returns to one, and the vocabulary
 a reader needs to read any other page (*context*, *provider*, *wiring*, *component*), each glossed
 in a clause rather than explained. **A first step**, naming the tutorials, because a reader who
