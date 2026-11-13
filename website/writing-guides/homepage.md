@@ -528,8 +528,8 @@ The page has these parts, in this order:
   reader who follows a front-page card finds its section under the same name.
 - **Beyond choosing implementations:** abstract types, extensible records and variants, composable
   handlers, namespaces, and higher-order providers. The abstract-types section shows the
-  before-and-after that section 3's one clause defers here: an error type passed as a parameter
-  through every layer, then chosen by the context.
+  before-and-after that section 3's one clause defers here: two traits whose associated error types
+  every function using both must equate, then one error type the context chooses for all of them.
 - **The problems it solves:** a table from each problem in
   [message.md](../../communication-strategy/message.md#the-problems-cgp-removes), in the reader's
   words, to the section and the Concepts page that answer it. This table is the page's problems half,

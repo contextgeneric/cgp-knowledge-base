@@ -394,8 +394,8 @@ profile-picture scenario: `App`, `GCloudApp`, and `TestApp` wiring `FetchS3Objec
 that `App`'s wiring amounts to; `App` without `bucket_id` rejected by `check_components!`, with the
 `cargo cgp check` output quoted; the error type made abstract with `#[use_type]` and a provider's
 `#[uses]` dependency; and `get_user` as a `#[cgp_fn]` with an implicit `database`. *Beyond choosing
-implementations* covers abstract types with a before-and-after of an error parameter, extensible
-records with a builder, handlers with a two-step pipeline, namespaces with the greeter components,
+implementations* covers abstract types with a before-and-after of two traits' error types, extensible
+records with a builder and variants with `#[cgp_auto_dispatch]`, handlers with a two-step pipeline, namespaces with the greeter components,
 and higher-order providers with `ScaledArea`. A table maps each problem in
 [message.md](../communication-strategy/message.md#the-problems-cgp-removes) to its section and
 Concepts page, or to the Concepts page alone for the foreign-type and grown-trait problems the page
