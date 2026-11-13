@@ -268,9 +268,9 @@ author's text**, which a revision leaves as he wrote it, and search the rest for
 
 ## Where the current pages stand
 
-**The Introduction** is current and close to this guide. It carries no maturity section, its routing
-list keys on questions rather than section names, and it does not send newcomers to the blog. Its one
-divergence is front matter without a `description`.
+**The Introduction** is current and follows this guide. It carries no maturity section, starts
+readers at the Quickstart, routes by question, does not send newcomers to the blog, and sets a
+written `description`.
 
 **Resources** is current. It carries `cargo-cgp` with its install path and the full crate list, and
 lists neither the CGP Patterns book nor the Hermes SDK, which are

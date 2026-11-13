@@ -143,7 +143,8 @@ pin on the release checklist.
 ## Navigation and the announcement bar
 
 The navigation bar carries four content entries — Tutorials, Docs, Blog, and AI — plus a GitHub link,
-and the footer repeats the docs entry points alongside the community channels: GitHub Discussions,
+and the footer repeats the docs entry points (the Introduction, the Quickstart, the Overview, and the
+Tutorials) alongside the community channels: GitHub Discussions,
 [Discord](https://discord.gg/Hgk3rCw6pQ), and the [r/cgp subreddit](https://www.reddit.com/r/cgp/).
 The whole site is licensed CC BY-SA 4.0.
 
@@ -265,30 +266,38 @@ The Introduction orients readers and directs them to maintained learning materia
 
 ### What it covers
 
-The page opens with the settled description of CGP and explains compile-time implementation choice
-through an application that sends email and a test application that records messages. It introduces
-contexts, providers, and wiring, then links to the consumer/provider explanation for the mechanism.
-It contains no Rust listings; the tutorials supply the working examples.
+The page opens with the tag line whole and the reassurance, then explains compile-time
+implementation choice through the profile-picture scenario in prose: one application fetches stored
+files from Amazon S3, a second deployment from Google Cloud Storage, and its tests from a local
+folder. A short list glosses context, component, provider, and wiring, each linked to its glossary
+entry, and the page links the consumer/provider explanation for the mechanism. It contains no Rust
+listings. Its front matter sets a title without "CGP", the sidebar label "Introduction", and a
+written description.
 
-It carries no maturity section; the project's maturity belongs to the front page's cost section, per
-the [homepage guide](writing-guides/homepage.md#below-the-fold-the-bounded-essay). Getting Started
-leads with Hello World and area calculation, then routes readers to Overview, Concepts, Reference,
-the Glossary, and Resources, and notes that blog posts are dated records. It leaves out the CGP
-Patterns book, a [legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages).
+*Start here* lists the Quickstart, Hello World, and the area-calculation series in that order. *Find
+what you need* gives one line per question, each with the page that answers it: the Overview,
+Bypassing coherence and Consumer and provider traits, Modularity Hierarchy and the front page's
+costs, the Comparisons, the Reference and the Glossary, `cargo-cgp`, the Projects, the AI section,
+Resources, and Contribute. A closing line names the blog as a dated record. The page carries no
+maturity section, which belongs to the front page's cost section, per the
+[homepage guide](writing-guides/homepage.md#below-the-fold-the-bounded-essay), and it leaves out the
+CGP Patterns book, a [legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages).
 
 ### How it relates to the knowledge base
 
-[Identity](../communication-strategy/identity.md) governs the opening, and
-[the message](../communication-strategy/message.md) supplies the application/test example and adoption
-boundaries. The terminology comes from [vocabulary](../communication-strategy/vocabulary.md) and
+[Identity](../communication-strategy/identity.md) governs the opening, the
+[profile-picture example](../examples/profile-picture.md) supplies the scenario, and
+[the message](../communication-strategy/message.md) supplies the adoption boundaries. The terminology comes from [vocabulary](../communication-strategy/vocabulary.md) and
 [consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md). The learning paths
 lead to the [Hello World](tutorials/hello-world.md) and
 [area-calculation](tutorials/area-calculation.md) teaching contracts.
 
 ### Maintaining it
 
-Keep the entry short, and leave the maturity discussion to the front page. Define context as the
-application type in this example, preserve the distinction between plain trait implementations and
+Keep the entry short, and leave the maturity discussion to the front page. Define context as a type
+that stands for one set of choices, as [vocabulary](../communication-strategy/vocabulary.md) glosses
+an environmental context, keep each route keyed on a question, and check every route when a page
+moves, preserve the distinction between plain trait implementations and
 providers, and direct new code toward maintained tutorials and reference pages.
 
 ## Quickstart
