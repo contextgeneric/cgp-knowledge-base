@@ -516,8 +516,9 @@ features the tag line only gestures at, so it is not competing with the front pa
 capped at five. It is a docs page that presents the project, so its opening paragraph names
 Context-Generic Programming and states the tag line whole, per the
 [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page). It
-is written in point-first style, because readers scan it for the feature they followed from the
-front page.
+is written in natural style, like every page on the site: each section starts from a problem the
+reader may have and leads from it to the example and its limit, so a reader who followed a front-page
+card reads one connected explanation of that feature.
 
 The page has these parts, in this order:
 
@@ -564,8 +565,9 @@ site.
 **What stays off the page:** a construct reference, a second explanation of what a Concepts page
 already explains, and the project's maturity, which the front page's cost section states.
 
-**Checking a draft.** Read the section openings alone and check that each names its feature's
-benefit. Check that each feature title matches identity.md, that each feature section has its
+**Checking a draft.** Read the page from start to finish and run natural-writing's checks: each
+section should lead from its problem to its example and limit, and each sentence pick up from the
+last. Check that each feature title matches identity.md, that each feature section has its
 problem, example, limit, and link, that the table covers every problem in message.md, that every
 snippet matches `tests/overview.rs`, and that the page passes the naming check. Then look at the
 rendered page at phone width in both themes, where long signatures scroll inside their block.

@@ -25,7 +25,7 @@ resolving.
 
 ## What every guide here assumes
 
-Four decisions are settled across the whole site and are not re-argued in each guide. They come from
+Five decisions are settled across the whole site and are not re-argued in each guide. They come from
 [communication-strategy/](../../communication-strategy/README.md), and a guide that contradicts them is
 a defect in the guide.
 
@@ -51,6 +51,12 @@ project states the line whole, and a generated category index carries the name i
 its short forms belong to
 [identity.md](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page); each
 guide says only where its kind of page carries them.
+
+**Every page is written in natural style by default.** Each public page, the front page and every
+docs page alike, follows natural-writing, the style in the `point-first-writing` skill in which each
+sentence picks up from the last and transitions say how the points connect, so the whole site reads
+as one connected explanation. A guide may name another style for its kind of page, and none does.
+The documents in this knowledge base, these guides included, stay in point-first style.
 
 **Detailed explanation lives on its own page.** The site's long-standing habit is for an explanation to
 outgrow whatever container it starts in. The rule is to plan for that rather than fight it: when a
@@ -161,7 +167,7 @@ the naming rule exempts them.
 
 - **Guide:** [homepage.md](homepage.md), including
   [the offload rule](homepage.md#the-offload-rule-and-the-pages-it-offloads-to) for the Overview.
-- **Style:** natural style for the front page, and point-first style for the Overview.
+- **Style:** natural style for both, as for every page.
 - **Strategy:** [identity.md](../../communication-strategy/identity.md), whole;
   [message.md](../../communication-strategy/message.md)'s
   [lead with the pain](../../communication-strategy/message.md#lead-with-the-pain-not-the-paradigm),

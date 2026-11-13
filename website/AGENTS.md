@@ -50,6 +50,8 @@ Read [README.md](README.md) for the section and the base-wide [../AGENTS.md](../
   content, following the
   [naming rule](../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page); the
   skill pages and the published blog posts are exempt.
+- Write every public page in natural-writing's natural style by default; a page kind's writing guide
+  may name another style, and the documents in this base stay in point-first style.
 - Never publish an invented benchmark, adoption figure, or quotation.
 - Never disparage another crate or language to elevate CGP.
 - Concede a genuine cost beside the benefit wherever the audience will look for it.
