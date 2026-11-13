@@ -76,13 +76,13 @@ the routes.
 the navigation bar and wants to know what CGP is and which part of the documentation answers their
 question.
 
-It carries a definition, a first step, and a routing list. **A definition**, two or three paragraphs: the settled
-descriptor, a concrete example of the same interface with two implementations in one sentence rather
-than a paragraph of its own, because the rest of the page never returns to it, and the vocabulary
+It carries a definition, a first step, and a routing list. **A definition**, two or three
+paragraphs: the settled descriptor followed by one plain sentence on what it lets a reader do,
+without a scenario of its own, because the rest of the page never returns to one, and the vocabulary
 a reader needs to read any other page (*context*, *provider*, *wiring*, *component*), each glossed
-in a clause rather than explained. **A first step**, naming the tutorials, because a reader who wants
-to write code should not have to find them. And **a routing list**, one line per destination, keyed
-on the question the reader has rather than on what the section is called.
+in a clause rather than explained. **A first step**, naming the tutorials, because a reader who
+wants to write code should not have to find them. And **a routing list**, one line per destination,
+keyed on the question the reader has rather than on what the section is called.
 
 Its boundaries are settled, and a revision should not reopen them. It **keeps the vocabulary
 introduction**, which is the one teaching-shaped thing an orientation page does, because every other

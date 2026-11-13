@@ -266,12 +266,11 @@ The Introduction orients readers and directs them to maintained learning materia
 
 ### What it covers
 
-The page opens with an application and its tests reading files from different places, a one-sentence
-example of choosing an implementation, then the name with the tag line whole, and the reassurance. A
-short list glosses context, component, provider, and wiring, each linked to its glossary entry, and
-the definition ends there, with the mechanism left to the routes below. It contains no Rust
-listings. Its front matter sets a title without "CGP", the sidebar label "Introduction", and a
-written description.
+The page opens with the name and the tag line whole, one sentence on choosing an implementation per
+application or test setup, and the reassurance. A short list glosses context, component, provider,
+and wiring, each linked to its glossary entry, and the definition ends there, with the mechanism
+left to the routes below. It contains no Rust listings. Its front matter sets a title without "CGP",
+the sidebar label "Introduction", and a written description.
 
 *Start here* lists the Quickstart, Hello World, and the area-calculation series in that order. *Find
 what you need* gives one line per question, each with the page that answers it: the Overview,
