@@ -547,7 +547,8 @@ The page has these parts, in this order:
 links onward.** The example stays within about fifteen lines; the abstract-types section shows a
 plain-Rust half and a CGP half, and the extensible-data section one example for records and one for
 variants, so each covers what its heading names. The opening says once that every
-example leaves out the imports and definitions it does not need to show. The limit is the condition
+example leaves out the imports, the definitions it does not need to show, and each context's check,
+and the Type-Safe Wiring section names `delegate_and_check_components!` as the one-step form. The limit is the condition
 the strategy pairs with the strength, such as wiring that checks nothing until a component is used
 or checked. The problem is stated fairly: where plain Rust already handles a case, such as an
 application type implementing a trait directly, the section says so before showing what CGP adds.
