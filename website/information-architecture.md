@@ -167,7 +167,7 @@ made those three a short reading path, which the section's index page restores.
 
 - *Overview*: present, **repurposed**, and staying where it is. The feature tour: the five headline
   features, each with a compiled example, the breadth features in a list that links their Concepts
-  pages, and a table from the problems readers bring to the sections that answer them. This is the
+  pages, and a table from the problems readers bring to the pages that answer them. This is the
   page the front page's feature cards and its "it goes further than trait implementations" section
   offload to, which is the job that keeps it from overlapping its neighbours: the concepts explain one
   idea each, and the Overview shows the five and names the rest. The breadth features get no code

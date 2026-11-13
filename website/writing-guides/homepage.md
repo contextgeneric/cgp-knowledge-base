@@ -526,8 +526,10 @@ card reads one connected explanation of that feature.
 The page has these parts, in this order:
 
 - **Opening:** the name and the tag line, what the tour covers, that the examples are fragments of
-  compiled programs, and a link to the Quickstart for a reader who wants to run one.
-- **The five headline features**, under identity.md's titles word for word and in its order, so a
+  compiled programs, a pointer for a newcomer to *Still Ordinary Rust*, the simplest form, and a
+  link to the Quickstart for a reader who wants to run one.
+- **The five headline features**, under the heading *Key features*, with identity.md's titles word
+  for word and in its order, so a
   reader who follows a front-page card finds its section under the same name.
 - **Beyond choosing implementations:** a list of abstract types, extensible records and variants,
   composable handlers, namespaces, and higher-order providers, each in one or two sentences with its
@@ -535,12 +537,14 @@ The page has these parts, in this order:
   names: the error type stops being a parameter that every layer carries.
 - **The problems it solves:** a table from each problem in
   [message.md](../../communication-strategy/message.md#the-problems-cgp-removes), in the reader's
-  words, to the section and the Concepts page that answer it. This table is the page's problems half,
+  words, to the Concepts page that answers it, in two columns, since the sections above show the
+  problems that have an example. This table is the page's problems half,
   which the framework author's path in
   [information-architecture.md](../information-architecture.md#how-each-reader-moves-through-the-site)
   starts from.
-- **When a plain trait is enough:** the costs in one paragraph, with the canonical `cargo-cgp`
-  qualification where the tool is named and the agent skill beside the learning time; a link to the
+- **When a plain trait is enough:** the costs in one paragraph, pointing to *Type-Safe Wiring* for
+  the raw errors rather than repeating the `cargo-cgp` qualification stated there, and the agent
+  skill beside the learning time; a link to the
   front page's cost section for the project's maturity, which the Overview does not restate; and
   *Modularity Hierarchy*.
 - **Where to go next:** the Quickstart and Hello World, the Concepts pages, the comparisons, and the
