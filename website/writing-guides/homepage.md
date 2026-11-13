@@ -397,14 +397,14 @@ for itself, extensible records and variants, and the composable handler family. 
 of the three is a linked page's worth of material and none of it belongs here.
 
 The abstract-types sentence should carry the **payoff and not only the mechanism**, matching the
-[breadth line](../../communication-strategy/identity.md#the-pitch-that-follows-the-line) it compresses: a
-type the application chooses means an error type or a runtime *stops being a parameter every layer has to
-carry*. "A context chooses it for itself" describes the construct and lands on a reader who already wants
-a type swappable; the parameter clause names what it removes and lands on a reader whose signatures have
-filled up, which is the larger group and the one this section is otherwise silent for. One clause is
-enough: the [Overview](../site-structure.md) repeats it in its breadth list, the *Abstract types*
-Concepts page explains the mechanism, and the pain behind
-it is an entry in [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) for a
+[breadth line](../../communication-strategy/identity.md#the-pitch-that-follows-the-line) it
+compresses: a type the application chooses means an error type or a runtime *stops being a parameter
+every layer has to carry*. "A context chooses it for itself" describes the construct and lands on a
+reader who already wants a type swappable; the parameter clause names what it removes and lands on a
+reader whose signatures have filled up, which is the larger group and the one this section is
+otherwise silent for. One clause is enough: the [Overview](../site-structure.md) repeats it in its
+breadth list, the *Abstract types* Concepts page explains the mechanism, and the pain behind it is
+an entry in [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) for a
 piece that has room to show a before and after.
 
 **4. What it costs.** The cost section is not optional and is not softened. It is more machinery than a
@@ -503,8 +503,8 @@ The project's maturity is not offloaded: the cost section states it on the page 
   the homepage hands off to.
 - **Overview**: the fourth destination, and the **feature tour**: the five headline features walked
   through with a compiled example each, then the breadth features named with a link each, which
-  makes it the destination for both section 2 and section 3 of the essay. [The section below](#the-overview-the-feature-tour)
-  specifies it.
+  makes it the destination for both section 2 and section 3 of the essay.
+  [The section below](#the-overview-the-feature-tour) specifies it.
 
 ### The Overview, the feature tour
 
@@ -529,8 +529,8 @@ The page has these parts, in this order:
   compiled programs, a pointer for a newcomer to *Still Ordinary Rust*, the simplest form, and a
   link to the Quickstart for a reader who wants to run one.
 - **The five headline features**, under the heading *Key features*, with identity.md's titles word
-  for word and in its order, so a
-  reader who follows a front-page card finds its section under the same name.
+  for word and in its order, so a reader who follows a front-page card finds its section under the
+  same name.
 - **Beyond choosing implementations:** a list of abstract types, extensible records and variants,
   composable handlers, namespaces, and higher-order providers, each in one or two sentences with its
   Concepts page and without code. The abstract-types item carries the payoff that section 3's clause
@@ -538,27 +538,25 @@ The page has these parts, in this order:
 - **The problems it solves:** a table from each problem in
   [message.md](../../communication-strategy/message.md#the-problems-cgp-removes), in the reader's
   words, to the Concepts page that answers it, in two columns, since the sections above show the
-  problems that have an example. This table is the page's problems half,
-  which the framework author's path in
+  problems that have an example. This table is the page's problems half, which the framework
+  author's path in
   [information-architecture.md](../information-architecture.md#how-each-reader-moves-through-the-site)
   starts from.
 - **When a plain trait is enough:** the costs in one paragraph, pointing to *Type-Safe Wiring* for
   the raw errors rather than repeating the `cargo-cgp` qualification stated there, and the agent
-  skill beside the learning time; a link to the
-  front page's cost section for the project's maturity, which the Overview does not restate; and
-  *Modularity Hierarchy*.
+  skill beside the learning time; a link to the front page's cost section for the project's
+  maturity, which the Overview does not restate; and *Modularity Hierarchy*.
 - **Where to go next:** the Quickstart and Hello World, the Concepts pages, the comparisons, and the
   reference.
 
 **Each headline feature section opens with the problem, shows one compiled example, states the
 limit, and links onward.** The example stays within about fifteen lines. The opening says once that
-every
-example leaves out the imports, the definitions it does not need to show, and each context's check,
-and the Type-Safe Wiring section names `delegate_and_check_components!` as the one-step form. The limit is the condition
-the strategy pairs with the strength, such as wiring that checks nothing until a component is used
-or checked. The problem is stated fairly: where plain Rust already handles a case, such as an
-application type implementing a trait directly, the section says so before showing what CGP adds.
-The link goes to the page
+every example leaves out the imports, the definitions it does not need to show, and each context's
+check, and the Type-Safe Wiring section names `delegate_and_check_components!` as the one-step form.
+The limit is the condition the strategy pairs with the strength, such as wiring that checks nothing
+until a component is used or checked. The problem is stated fairly: where plain Rust already handles
+a case, such as an application type implementing a trait directly, the section says so before
+showing what CGP adds. The link goes to the page
 [seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) names as
 the owner of the feature's questions, because the Overview introduces a subject and the owner
 explains it.
@@ -576,9 +574,10 @@ already explains, and the project's maturity, which the front page's cost sectio
 **Checking a draft.** Read the page from start to finish and run natural-writing's checks: each
 section should lead from its problem to its example and limit, and each sentence pick up from the
 last. Check that each feature title matches identity.md, that each headline feature section has its
-problem, example, limit, and link, that the breadth list shows no code, that the table covers every problem in message.md, that every
-snippet matches `tests/overview.rs`, and that the page passes the naming check. Then look at the
-rendered page at phone width in both themes, where long signatures scroll inside their block.
+problem, example, limit, and link, that the breadth list shows no code, that the table covers every
+problem in message.md, that every snippet matches `tests/overview.rs`, and that the page passes the
+naming check. Then look at the rendered page at phone width in both themes, where long signatures
+scroll inside their block.
 
 ## Images, metadata, and provenance
 

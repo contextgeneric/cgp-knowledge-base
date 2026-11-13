@@ -395,9 +395,10 @@ that `App`'s wiring amounts to; `App` without `bucket_id` rejected by `check_com
 `#[uses]` dependency; and `get_user` as a `#[cgp_fn]` with an implicit `database`. *Beyond choosing
 implementations* names abstract types, extensible records and variants, composable handlers,
 namespaces, and higher-order providers in a list, one or two sentences each with its Concepts page
-and no code, so a first-time reader meets only the constructs the five features need. A table maps each problem in
-[message.md](../communication-strategy/message.md#the-problems-cgp-removes) to the Concepts page
-that answers it, and the page ends with when a plain trait is enough and where to go next.
+and no code, so a first-time reader meets only the constructs the five features need. A table maps
+each problem in [message.md](../communication-strategy/message.md#the-problems-cgp-removes) to the
+Concepts page that answers it, and the page ends with when a plain trait is enough and where to go
+next.
 
 Each section keeps its condition: wiring checks nothing until a component is used or checked,
 portability depends on the selected providers, and the raw errors stay long without `cargo-cgp`.
