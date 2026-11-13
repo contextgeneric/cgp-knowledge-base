@@ -553,9 +553,9 @@ explains it.
 **The headline features run one scenario.** They use the profile-picture scenario under the names the
 `cgp` README uses, listed among the
 [canonical examples](../../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs),
-so the reader follows one realistic application through all five; the breadth sections use area
-calculation and the handler examples. The code is compiled in the website's `example-code` crate at
-`tests/overview.rs`, and a quoted diagnostic is bound for recapture like every other quote on the
+so the reader follows one realistic application through all five; the breadth sections use the
+area-calculation, greeter, and handler examples their Concepts pages compile. The code is compiled
+in the website's `example-code` crate at `tests/overview.rs`, and a quoted diagnostic is bound for recapture like every other quote on the
 site.
 
 **What stays off the page:** a construct reference, a second explanation of what a Concepts page

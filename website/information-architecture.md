@@ -166,7 +166,8 @@ covers every idea rather than the three a homepage essay offloads to, at the cos
 made those three a short reading path, which the section's index page restores.
 
 - *Overview*: present, **repurposed**, and staying where it is. The feature tour: every high-level CGP
-  feature walked through in more detail than any other surface carries. This is the page the front
+  feature walked through in more detail than any other surface carries, each with a compiled example,
+  and a table from the problems readers bring to the sections that answer them. This is the page the front
   page's feature cards and its "it goes further than trait implementations" section offload to, which
   is the job that keeps it from overlapping its neighbours: the concepts explain one idea each, and the
   Overview covers the breadth. It is no longer capped at five features, since the curated five, of which the

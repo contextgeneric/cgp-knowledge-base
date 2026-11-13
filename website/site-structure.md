@@ -127,8 +127,8 @@ It is filled in **lazily**, and the rule is in
 its file when someone writes, revises, or reviews it. A missing file therefore means nobody has been
 through that page yet. On the `v0.8.0` branch the crate has one test target per section:
 `tests/concepts/` covers every concept page that shows code, `tests/comparisons/` every comparison
-page, `tests/tutorials/` the ported tutorial parts, `tests/quickstart.rs` the Quickstart, and
-`tests/cargo_cgp/` the `docs/cargo-cgp/` pages. Under `tests/reference/`, the written groups are
+page, `tests/tutorials/` the ported tutorial parts, `tests/quickstart.rs` the Quickstart,
+`tests/overview.rs` the Overview, and `tests/cargo_cgp/` the `docs/cargo-cgp/` pages. Under `tests/reference/`, the written groups are
 mirrored as they are ported: `errors.rs`, `macros/` and `attributes/` (every construct page),
 all of `derives/`, every `traits/` construct
 page, all of `providers/` that shows code, all of `components/` (including the `handler/`
@@ -372,59 +372,57 @@ page. Run it then, before the branch merges if the crate is published first.
 
 ## Overview
 
-The Overview is the detailed feature tour and links each subject to its maintained explanation.
+The Overview is the feature tour: each feature with a compiled example, its limit, and the page that
+explains it, followed by the problems the features answer.
 
 - **URL** — <https://contextgeneric.dev/docs/overview>
 - **Source** — [docs/overview.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/overview.md)
 - **Status** — Current
-- **How it was made** — revised by an agent using this base; the footer records this revision
-  without attributing the original draft
+- **How it was made** — written by an agent from this base, level one of the four in
+  [ai-disclosure.md](../communication-strategy/ai-disclosure.md), replacing an earlier agent revision
+  of the page; its examples are compiled and its quoted diagnostic is captured; flagged for the
+  author's read before publication
 
 ### What it covers
 
-Key Features explains pluggable implementations, zero-cost dispatch, type-safe wiring, dependency
-abstraction, gradual adoption, abstract types, extensible records and variants, and composable
-handlers. It states the conditions behind the benefits: wiring is lazy until used or checked,
-portability depends on selected providers, and associated types do not enforce distinct units when
-the concrete types coincide.
+The page follows [the homepage guide's specification](writing-guides/homepage.md#the-overview-the-feature-tour).
+It opens with the name and the tag line whole, and says every example compiles. *The headline
+features* walks the five features under identity.md's titles, through the profile-picture scenario:
+`App`, `GCloudApp`, and `TestApp` wiring `FetchS3Object`, `FetchGCloudObject`, and
+`FetchLocalObject` for one storage component; the forwarding implementation that `App`'s wiring
+amounts to; `App` without `bucket_id` rejected by `check_components!`, with the `cargo cgp check`
+output quoted; the error type made abstract with `#[use_type]` and a provider's `#[uses]`
+dependency; and `get_user` as a `#[cgp_fn]` with an implicit `database`. *Beyond choosing
+implementations* covers abstract types with a before-and-after of an error parameter, extensible
+records with a builder, handlers with a two-step pipeline, namespaces with the greeter components,
+and higher-order providers with `ScaledArea`. A table maps each problem in
+[message.md](../communication-strategy/message.md#the-problems-cgp-removes) to its section and
+Concepts page, and the page ends with when a plain trait is enough and where to go next.
 
-Problems Solved develops error handling, runtime abstraction, overlapping implementations, static
-composition alongside runtime dispatch, large-trait decomposition, and repeated generic parameters.
-The page preserves the boundary with ordinary Rust tools: unchanged foreign traits still obey the
-orphan rule, runtime choices can use enums or trait objects, and simple cases can use plain traits
-and functions. The page links to Concepts and cargo-cgp rather than using the book for current syntax.
+Each section keeps its condition: wiring checks nothing until a component is used or checked,
+portability depends on the selected providers, associated types guarantee only the bounds declared,
+extensible data needs a derive, and a namespace binding cannot be overridden by a context that joins
+it.
 
 ### How it relates to the knowledge base
 
-[Identity](../communication-strategy/identity.md#the-headline-feature-set) governs the core features,
-and [the message](../communication-strategy/message.md) supplies the problems and their limits. The
-feature tour expands beyond the front page's curated set, as specified by
-[information architecture](information-architecture.md#the-target-page-inventory).
+[Identity](../communication-strategy/identity.md#the-headline-feature-set) fixes the features and
+their titles, [the message](../communication-strategy/message.md) the problems and their limits, and
+[seo.md](seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) the page each
+feature links. The scenario comes from the [profile-picture example](../examples/profile-picture.md),
+under the names the `cgp` README uses, and the breadth sections cut their code from the Concepts
+pages.
 
-The technical explanations come from these subjects:
-
-- [Consumer and provider traits](../cgp/concepts/consumer-and-provider-traits.md) and
-  [coherence](../cgp/concepts/coherence.md): implementation choice within Rust's rules.
-- [Check traits](../cgp/concepts/check-traits.md) and [cargo-cgp](../cargo-cgp/README.md): verification
-  and readable diagnostics.
-- [Abstract types](../cgp/concepts/abstract-types.md) and
-  [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md): dependency abstraction.
-- [Modular error handling](../cgp/concepts/modular-error-handling.md),
-  [HasRuntime](../cgp/reference/components/has_runtime.md), and
-  [Send bounds](../cgp/concepts/send-bounds.md): error and runtime choices.
-- [Extensible records](../cgp/concepts/extensible-records.md),
-  [extensible variants](../cgp/concepts/extensible-variants.md),
-  [dispatching](../cgp/concepts/dispatching.md), and [handlers](../cgp/concepts/handlers.md): generic
-  data handling and computation.
-- [Modularity hierarchy](../cgp/concepts/modularity-hierarchy.md): choosing how far to decompose.
+The page's code is compiled in the website repository's [`example-code` crate](#the-example-code-crate)
+at `tests/overview.rs`, a standalone test binary with stand-ins for the storage clients and the pool,
+and the rejected program is a compile-fail fixture under `tests/compile_fail/overview/`. The quoted
+`cargo cgp check` block is bound to that fixture for recapture.
 
 ### Maintaining it
 
-Keep the feature tour broader than the front page's feature set. Abstract types need both a
-feature explanation and a separate account of the repeated-parameter problem. Preserve the
-qualifications on compile-time checking, portability, runtime choice, and component sizing. Link to
-maintained explanations for depth rather than reproducing their tutorials or directing current-code
-questions to dated posts.
+Read the specification before any change and run its draft checks after one. Keep the feature
+titles verbatim, keep each snippet equal to `tests/overview.rs`, and recapture the quoted diagnostic
+after a `cgp` or `cargo-cgp` change. Link each subject's owning page rather than explaining it here.
 
 ## Resources
 
