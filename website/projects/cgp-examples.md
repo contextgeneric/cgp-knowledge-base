@@ -12,7 +12,8 @@ The recommended first project section to write, with `expression` as its pilot.
 - **Ports** — [projects/cgp-examples/](../../projects/cgp-examples/README.md), one subproject per
   crate
 - **Repository** — [`cgp-examples`](https://github.com/contextgeneric/cgp-examples), documented on
-  its `v0.8.0` branch; the pages describe it once that branch is the default
+  its `v0.8.0` branch, which merges into `main` with the release; the pages describe `main` from
+  then on
 - **Verified against** — `cgp-examples` `v0.8.0` at commit `690911a`, with `cgp` `main` at `adc616c`
   through the workspace's patch, and `cargo-cgp` built from its source at commit `b6a6323`
 - **Status** — Draft: 14 pages written, the section index and the `expression` and `web-app`
@@ -63,10 +64,9 @@ repository, and match the pages. The pages say the repository has no test for th
   that uncertainty. Wiring the dispatcher directly reports `[CGP-E020]` through the context's
   check, which the [dispatch layers
   record](../../projects/cgp-examples/expression/architecture/dispatch-layers.md) is corrected to.
-- **Source links point at `v0.8.0`**, not at `main` as the writing guide says, because `main`
-  carries the older `cgp` 0.7.0 code and has no `web-app` crate, so a `main` link would show code
-  the page does not describe or fail outright. The links move to `main` when the branch merges and
-  becomes the default.
+- **Source links point at `main`**, per the writing guide, so until the `v0.8.0` branch merges with
+  the release they show the older `cgp` 0.7.0 code, and the links into the `web-app` crate, which
+  `main` lacks, fail.
 - **The writing guide was revised from the pilot**, as this plan asks: a program with no runner gets
   a test to save, a wiring-only crate opens with *Check it*, and neighbouring designs make the same
   *Try a change*; see [the example page](../writing-guides/project.md#then-it-runs-the-program).
@@ -253,9 +253,10 @@ recorded in the crate's `issues.md`:
 ### Release conditions
 
 The crates are unpublished, so the pages give no install snippet: they clone the repository and run
-the crate. The one condition is that the `v0.8.0` branch is the repository's default, so that a
-reader who clones it gets the code the pages describe; today `main` lags it and has no `web-app`
-crate, per the [workspace gaps](../../projects/cgp-examples/README.md#workspace-gaps).
+the crate. The one condition is that the `v0.8.0` branch merges into `main` with the release, so
+that a reader who clones the default branch gets the code the pages describe and the source links
+resolve; today `main` lags it and has no `web-app` crate, per the
+[workspace gaps](../../projects/cgp-examples/README.md#workspace-gaps).
 
 ## The source posts
 
