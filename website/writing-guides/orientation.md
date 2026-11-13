@@ -105,9 +105,11 @@ which records it as the site's activation signal, and this guide owns it. A draf
 walked in ten minutes is too long, and the fix is to remove a step rather than to explain it faster.
 
 The page installs the crate, shows one program, states the output to expect, and routes onward.
-**Install**: the `cargo` command and the version, with nothing about
-toolchains, since CGP compiles on stable. **One program**, complete and copyable, that a reader can
-paste into `main.rs` and run. **What to expect**: the exact output, so the reader knows whether it
+**Install**: the minimum Rust version, then the commands that create a project and add the crate, and
+the version they write, with nothing else about toolchains, since CGP compiles on stable. The minimum
+version matters because Cargo's version-aware resolver gives a reader on an older toolchain an old
+`cgp` release, which fails on the program rather than on the toolchain. **One program**, complete
+and copyable, that a reader can paste into `main.rs` and run. **What to expect**: the exact output, so the reader knows whether it
 worked. And **one link onward**, to the Hello World tutorial.
 
 ### What the program is, and where it stops

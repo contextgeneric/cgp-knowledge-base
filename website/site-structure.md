@@ -304,10 +304,13 @@ The Quickstart gets a reader to a running CGP program without teaching them anyt
 
 ### What it covers
 
-Four parts and nothing else: `cargo add cgp` with the version, one complete program for `src/main.rs`,
-the exact output to expect from `cargo run`, and one link to the Hello World tutorial. It opens with a
-single sentence saying what CGP is, because it may be a reader's first contact, and it states plainly
-that it explains nothing.
+Four parts and nothing else: the install, one complete program for `src/main.rs`, the exact output to
+expect from `cargo run`, and one link to the Hello World tutorial. The install names Rust 1.89, the
+floor `cgp` declares, because on Rust 1.88 `cargo add cgp` selects `cgp` 0.4.2 and the program then
+fails with "cannot find attribute `cgp_fn`"; it creates the project with `cargo new` before
+`cargo add cgp`, and shows the version that writes. It opens by naming Context-Generic Programming with a short
+form of the tag line, because it may be a reader's first contact, and it states plainly that it
+explains nothing.
 
 The program is a `#[cgp_fn]` function with an `#[implicit]` argument reading a field from a
 `#[derive(HasField)]` struct — the gentlest entry CGP has, per the
@@ -335,7 +338,8 @@ the [`#[cgp_fn]`](../cgp/reference/macros/cgp_fn.md) and
 Its program is compiled in the website repository's
 [`example-code` crate](#the-example-code-crate) at `tests/quickstart.rs`, which is the crate's one
 standalone test binary rather than a module under a section tree, since the Quickstart is a standalone
-page. The page's `fn main` is a `#[test]` there and nothing else differs.
+page. The page's `fn main` is a `#[test]` there and nothing else differs, which a second test checks
+by comparing the page's `src/main.rs` block with the compiled program.
 
 ### Maintaining it
 
