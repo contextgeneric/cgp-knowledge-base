@@ -92,7 +92,8 @@ A missing feature is behavior the library does not attempt. Each is documented w
 - **Other formats**: no format other than JSON has providers or helpers. See
   [formats](guides/formats.md).
 - **A namespace of defaults**: the library publishes no namespace, so every context spells out its
-  full wiring. The website's plan tracks this as task DC3 in [tasks.md](../../website/tasks.md).
+  full wiring. The website's [cgp-serde plan](../../website/projects/cgp-serde.md#code-prerequisites)
+  recommends one.
 - **Performance evidence**: no benchmark has been run. The likeliest cost is in
   `DeserializeRecordFields`, which allocates each key as a `String` and compares it against each
   field name in turn.
@@ -106,7 +107,7 @@ Housekeeping items affect neither behavior nor features but mislead a reader or 
 - **Legacy dispatch attributes.** `CanSerializeValue`, `CanDeserializeValue`, and `HasArena` carry
   `#[derive_delegate(UseDelegate<…>)]`, which only `UseDelegate` tables need; every context on the
   branch uses `open`. Removing them is breaking for downstream `UseDelegate` users, and the
-  website's task DC3 accepts that.
+  website's cgp-serde plan accepts that.
 - **Repository metadata.** The workspace `Cargo.toml` sets `repository` to
   `https://github.com/contextgeneric/cgp`, so all five published crates point at the CGP repository
   rather than cgp-serde's.

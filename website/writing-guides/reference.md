@@ -94,9 +94,8 @@ The rule's edges:
   belongs to.
 
 **Enumerate each group against the source when you port it,** rather than trusting a stub's title, and
-update the counts in [pages/reference.md](../pages/reference.md),
-[information-architecture.md](../information-architecture.md), and [tasks.md](../tasks.md) in the same
-change.
+update the counts in [pages/reference.md](../pages/reference.md) and
+[information-architecture.md](../information-architecture.md) in the same change.
 
 **Splitting a written page means re-pointing every link into it, the step most easily half-done:**
 
@@ -394,8 +393,8 @@ constructs a newcomer needs, then groups the rest by job, in the shape of the in
 name can find it.
 
 **Completeness is an obligation:** every construct the `cgp` crate exports has a page or a named place
-in a consolidated one, and a construct added to the library gets its page in the same change as its
-internal document.
+in a consolidated one, and a construct added to the library gets its page and its entry in the
+reference index in the same change as its internal document.
 
 ## What must not be on a reference page
 

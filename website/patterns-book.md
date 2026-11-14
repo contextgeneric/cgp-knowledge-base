@@ -214,8 +214,8 @@ clicks), the introduction that renders as the index (27), *Provider Traits* (20)
 carry 290 of the book's 308 annual clicks between them. Add a short "where this
 goes next" line to each, pointing at the site page from the map above. No banner and no apology on
 these four: they are current, and the link is an invitation rather than a warning. **This is the
-cheapest high-value change available to the project**, and it is the one
-[S7](tasks.md#s--search-and-agent-discoverability) refers to.
+cheapest high-value change available to the project**, and it is the
+forward link [seo.md](seo.md#the-off-site-metadata-is-under-set) asks for.
 
 **B-3: add the dated note to the twelve stale chapters.** One short block at the top of each, naming
 the constructs it predates and linking its row in the map above. Hand-written per chapter rather than
@@ -237,7 +237,7 @@ introduction each describe the book's status in their own words, and all three c
 version of "not recently updated". One sentence should be settled and used in all three, and it should
 distinguish the current chapters from the stale ones rather than tarring both. This is a
 [communication-strategy](../communication-strategy/README.md) decision in the project voice, and it
-belongs with whoever writes [S7](tasks.md#s--search-and-agent-discoverability).
+belongs with the author, who sets the repositories' GitHub metadata.
 
 ## What must not happen
 

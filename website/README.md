@@ -74,9 +74,8 @@ and [projects/](projects/README.md) and the records under [pages/](pages/README.
 which knowledge-base documents own its material, how far it has drifted, and what a revision must
 preserve. A specification, meaning [information-architecture.md](information-architecture.md) and everything under
 [writing-guides/](writing-guides/README.md), describes what the site should be and how a *kind* of page
-should be written, whether or not the current pages match. The gap between the two is the redesign:
-[redesign-queue.md](redesign-queue.md) is that gap written out as defects, and [tasks.md](tasks.md) is
-the same gap written out as an ordered, dependency-aware plan.
+should be written, whether or not the current pages match. The gap between the two is the redesign,
+and each page's record states its part of it.
 
 The distinction matters because the site is being redesigned rather than merely maintained. A writing
 guide states the intent, a page document states the present, and during a redesign the two will
@@ -95,18 +94,11 @@ record drift.
   is for, the target page inventory including the pages that do not exist yet, the sidebar and navigation
   design, and the path each reader profile takes through the site. The document the writing guides
   assume.
-- [redesign-queue.md](redesign-queue.md): the consolidated list of what is wrong with or missing from
-  the site today, grouped by cost, with a pointer to the document that owns each item. Emptied as work
-  lands, and deleted when empty.
 - [seo.md](seo.md): the site's **search and agent discoverability** strategy, written against a
   twelve-month Google Search Console export: why the measured problem is a 1.09% click-through rate
   rather than a ranking one, which terms the site can honestly win, why the tag line orients rather
   than ranks while the headline features map onto query families, and how the same material reaches
   coding agents. A specification, like information-architecture.md, rather than a page record.
-- [tasks.md](tasks.md): the redesign's *plan*, where the queue is its *diagnosis*. It records that the
-  whole site relaunches with the v0.8.0 release from a single branch, and lists every remaining task with the repository it
-  lands in, its dependencies, and its done-condition, which of them the release waits for, and the
-  recommended ordering. Emptied as work lands, and deleted when empty.
 - [writing-guides/](writing-guides/README.md): one guide per *kind* of page, saying what that page is
   for, what goes on it in what order, and what must never appear. Prescriptive and forward-looking:
   these describe how pages should be rewritten, not how the current ones happen to read. Currently the

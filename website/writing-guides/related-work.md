@@ -94,7 +94,7 @@ communication-strategy link is dropped. One case needs care: two internal docume
 [record of the unpublished incoherent-Rust draft](../blog/incoherent-rust-today.md), which cannot
 be cited. Attribute those points to the [RustLab transcript](../blog/rustlab-2025-coherence.md)
 where it makes them, state them as the project's own analysis where it does not, and otherwise hold
-them until that post publishes as task B2.
+them until that post publishes.
 
 **Keep the Sources section.** Citations are what let the page survive a skeptic who prefers the
 other tool, and the sentence recording which toolchain compiled each family of snippets stays
@@ -277,9 +277,10 @@ carries the argument, and a comparison page that derives the consumer/provider s
 has become a worse copy of *Consumer and provider traits*.
 
 **No mention of agent support.** The cost section names the diagnostics and the wiring as costs and
-stops. The agent skill that reduces them is stated in the three places
-[tasks.md](../tasks.md#two-threads-that-run-through-several-tasks) fixes, and the cost section links
-the *Modularity Hierarchy* page, which is one of them, rather than repeating the mitigation. Twelve
+stops. The agent skill that reduces them is stated beside the costs in three places, the front
+page's cost section, *Modularity Hierarchy*, and Resources, as
+[message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)
+places it, and the cost section links *Modularity Hierarchy* rather than repeating the mitigation. Twelve
 pages that each mention AI beside their costs would read, taken together, as the AI-led pitch the
 strategy rules out.
 
@@ -301,8 +302,8 @@ reading. What remains against this guide is the author's read of each page's two
 the rule under [Derived from the internal comparison](#derived-from-the-internal-comparison-and-what-changes):
 the Rust proposals page states the Cairo reading, the context-as-dictionary framing, and the
 single-context limits as the project's analysis, and attributes to the RustLab transcript what the
-transcript makes; the algebraic-effects page keeps the coeffects pointer as a pointer. When B2
-publishes the post, both pages gain a citation.
+transcript makes; the algebraic-effects page keeps the coeffects pointer as a pointer. When the
+incoherent-Rust post publishes, both pages gain a citation.
 
 ## Checking a draft
 

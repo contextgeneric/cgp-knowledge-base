@@ -66,7 +66,7 @@ the tag and author listings, and the category indexes.
 
 **Only Google is measured.** Search Console says nothing about Bing, Kagi, or Brave, so every claim
 here is about Google unless it says otherwise, and the [hand check](#repeating-the-hand-check) on the
-other engines is S1.
+other engines has not been made.
 
 **A hand search of one engine is not the web.** Before the export, searches by hand suggested that the
 site failed to rank for its own name, did not rank for blanket implementations, and lost its traffic
@@ -494,8 +494,8 @@ query today. `docs/concepts/coherence` is *about* overlapping blanket implementa
 rejects them, which is the question behind the query. And the glossary defines the term and hands it
 to the Rust Reference, which is the site's standing rule for a Rust concept it does not own.
 
-So the work is to connect what exists, and it is on the list twice. **The book chapter links
-forward**, which is part of [S7](tasks.md#s--search-and-agent-discoverability) and B-1 in
+So the work is to connect what exists, in two changes. **The book chapter links
+forward**, which is B-1 in
 [patterns-book.md](patterns-book.md#the-work-in-order). And **the coherence page carries a title in the
 reader's words**. Those words are *blanket implementation*, not `E0119`: the blanket family is 2,019
 impressions a year against 11 for *rust conflicting implementations of trait*. A page arguing that
@@ -513,8 +513,7 @@ answers the question *behind* it.
 page planned and should have it sooner.** The Hypershell post wins *rust dsl* (771 impressions,
 position 7.0) and converts at 3.2%, and 293 of those impressions are a comparison intent it serves
 badly: *shell scripting vs rust*, *rust vs shell scripting*, and *cargo vs shell scripting* together
-earn zero clicks. The owner is the [Hypershell project section](projects/hypershell.md), which is
-[P2](tasks.md#p--the-projects-section-and-the-code-it-quotes). **This is the strongest evidence
+earn zero clicks. The owner is the [Hypershell project section](projects/hypershell.md). **This is the strongest evidence
 available for writing Hypershell first among the libraries**, and it is why that section plans a
 comparison with shell scripts, the page the post's readers are looking for.
 
@@ -684,30 +683,29 @@ changes the guidance into this document rather than into a log.
 
 ## The work, in order
 
-The tasks carry **S** identifiers in [tasks.md](tasks.md#s--search-and-agent-discoverability), which
-holds the plan: what each lands in, what blocks it, and what done means. An identifier named here and
-missing there has landed, since that document removes an entry rather than marking it done. This
-section says only why they are ordered as they are.
+This section says why the remaining search work is ordered as it is.
 
 **The click-through work comes first, because presentation is what the site is losing on.** Most of
 it is in place: every reference, comparison, tooling, project, AI, and Concepts page and every blog
 post carries a written description, and every reference page for a construct and both concept pages
-that needed one carry a search-facing title. What remains of S3 is the eight pages that render a
-derived description. Each lands in the same edit as the page's
-[named opening](#own-the-name-by-saying-it-where-it-means-something), which is S5, so a page is read
-once, and all of it lands before the merge, which fixes each page's first impression.
+that needed one carry a search-facing title. What remains is the six pages that render a derived
+description: Resources, Contribute, Hello World, and the three area-calculation pages. Each lands in
+the same edit as the page's [named opening](#own-the-name-by-saying-it-where-it-means-something), so
+a page is read once, and all of it lands before the merge, which fixes each page's first impression.
 
 **The metadata repairs are done except what only the author can change.** The crate manifests are
 set, and the redirect stubs, `robots.txt`, and the site and front-page titles are on the `v0.8.0`
-branch, reaching readers at the merge; the GitHub repository settings are S7.
+branch, reaching readers at the merge; the GitHub repository settings remain.
 
-**The agent surfaces and the hand check follow.** S10 is the agent surfaces and S1 the hand check on
-Bing and Kagi. Neither blocks anything.
+**The agent surfaces and the hand check follow.** The agent surfaces are a `context7.json` in the
+`cgp` repository and an optional `llms.txt`, and the hand check runs on Bing and Kagi. Neither blocks
+anything.
 
-**S9 is the only item that cannot be done early**: the relaunch-day submission, which belongs on the
+**The relaunch-day submission is the only item that cannot be done early**: confirming that the live
+sitemap lists every URL and taking a Search Console export as the baseline, which belongs on the
 release checklist in
 [writing-guides/release-announcement.md](writing-guides/release-announcement.md#publishing-and-what-happens-afterwards)
-beside re-pinning the tutorials' `cgp` version. S11 follows the relaunch.
+beside re-pinning the tutorials' `cgp` version. DocSearch follows the relaunch.
 
 ## The decisions this needs
 
@@ -716,7 +714,7 @@ Two decisions are taken, and two remain open:
 - **Algolia DocSearch is accepted, for after the relaunch.** The relaunch publishes several hundred
   pages with no way to search them, and DocSearch is free for open-source documentation and ships
   inside `preset-classic` rather than as an added plugin. It needs a DocSearch application and a
-  configuration block, and it is **S11** in [tasks.md](tasks.md).
+  configuration block.
 - **Search Console is in place.**
 - **Bing Webmaster Tools is open.** It is the same shape of decision as Search Console, with the same
   argument behind it: no script, no visitor data, and the only view of the engines Google's data

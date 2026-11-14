@@ -39,7 +39,9 @@ here: [hypershell](../../projects/hypershell/README.md), [cgp-serde](../../proje
 The live page on `main` omits `cargo-cgp`, names `cgp-error-anyhow` but not `cgp-error-eyre` or
 `cgp-error-std`, lists `cgp-serde` by GitHub URL, and carries a books group with the CGP Patterns
 book and the Hermes SDK among its projects. The `v0.8.0` page's changes reach readers when the branch
-merges.
+merges. Neither version mentions the agent skill, which
+[message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)
+places beside the costs, with the front page and *Modularity Hierarchy* as the other two places.
 
 ## Maintaining it
 

@@ -73,6 +73,9 @@ Read [README.md](README.md) for the section and the base-wide [../AGENTS.md](../
 
 - Invoke the `/cgp` skill and verify every snippet against the `cgp` source or its tests.
 - Prefer the idioms the guides teach, and draw on [examples/](../examples/README.md).
+- Say which of CGP's three context shapes a page's code is in, using the qualifiers in
+  [vocabulary.md](../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target); an
+  introductory page may record the shape in its record instead of on the page.
 - A concept page may cut a project's scenario down to what the concept needs; the code still compiles
   and need not match the project.
 - Put a page's code in the website repository's `example-code/` crate, one module per heading.
@@ -124,8 +127,8 @@ Read [README.md](README.md) for the section and the base-wide [../AGENTS.md](../
   choice*.
 - Ship everything else on the guides plus a spot check.
 - Flag a judgement call for reading rather than deciding alone.
-- Change this list in [tasks.md](tasks.md) and
-  [ai-disclosure.md](../communication-strategy/ai-disclosure.md) in the same edit.
+- Change this list and [ai-disclosure.md](../communication-strategy/ai-disclosure.md), which states
+  it publicly, in the same edit.
 
 ## Disclosing AI use on a page
 
@@ -168,6 +171,5 @@ Read [README.md](README.md) for the section and the base-wide [../AGENTS.md](../
 - Record a ported catalog as one record under [pages/](pages/README.md), not one per page.
 - Record the Projects section one level down, one plan per project.
 - Add a writing guide before adding a page of a kind the site has not published.
-- Update [information-architecture.md](information-architecture.md), [redesign-queue.md](redesign-queue.md),
-  and [tasks.md](tasks.md) as work lands; remove a completed entry rather than marking it done, and
-  delete a document once it is empty.
+- Update [information-architecture.md](information-architecture.md) and the page's record as work
+  lands; remove a completed entry rather than marking it done.

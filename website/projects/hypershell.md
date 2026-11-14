@@ -16,7 +16,7 @@ account of what the proof of concept does not do. The project with measured sear
   source at commit `b6a6323`
 - **Status** — Draft: 21 Hypershell pages and the section index written, listed in [What is
   written](#what-is-written); the reference, the comparison, and the pages that quote providers wait
-  on DC1 or a knowledge-base document
+  on its [code prerequisites](#code-prerequisites) or a knowledge-base document
 - **How it was made** — written by an agent from the project section; level one of the four in
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
 
@@ -43,9 +43,10 @@ written, so no link points at a placeholder:
 
 - `examples/parallel-compare` and `examples/compare-and-branch`, `architecture/interpretation`,
   `architecture/error-handling`, and `guides/extending-the-language` quote providers in the explicit
-  form, and wait on DC1. `compare-and-branch` also needs a confirmed run.
-- The whole `reference/` group waits on DC1. The example pages name each Hypershell construct and
-  link the architecture page that explains it, and gain links to construct pages when those exist.
+  form, and wait on the code prerequisites. `compare-and-branch` also needs a confirmed run.
+- The whole `reference/` group waits on the code prerequisites. The example pages name each
+  Hypershell construct and link the architecture page that explains it, and gain links to construct
+  pages when those exist.
 - `shell-scripts.md` waits on its knowledge-base document.
 
 The writing turned up several facts a later revision must respect:
@@ -176,13 +177,14 @@ a library a reader depends on.
 One page per document in [architecture/](../../projects/hypershell/architecture/README.md), with the
 one-page design as the index: `abstract-syntax`, `interpretation`, `assembly`,
 `streams-and-input-dispatch`, `error-handling`, and `crate-layout`. `interpretation` quotes a
-provider in full and waits on DC1.
+provider in full and waits on the code prerequisites.
 
 ### Guides
 
 `writing-a-program`, `extending-the-language`, and `debugging`, from
 [guides/](../../projects/hypershell/guides/README.md). `extending-the-language` quotes providers and
-waits on DC1. `debugging` quotes `cargo cgp check` output and carries the canonical qualification.
+waits on the code prerequisites. `debugging` quotes `cargo cgp check` output and carries the
+canonical qualification.
 
 ### Reference
 
@@ -241,7 +243,7 @@ and stay there.
 
 ### Code prerequisites
 
-**DC1 in [tasks.md](../tasks.md) must land before the pages that quote providers**, which are the
+**These changes must land before the pages that quote providers**, which are the
 reference, `architecture/interpretation`, `guides/extending-the-language`, and the examples that
 show a provider. The work, recorded in the project's
 [housekeeping](../../projects/hypershell/issues.md#housekeeping):
@@ -260,7 +262,7 @@ show a provider. The work, recorded in the project's
   duplicates CGP's, so the reference does not document two constructs with one name.
 
 The examples that show only a program and a context, such as `hello` through `save-webpage`, do not
-wait on DC1 and can be written first.
+wait on these changes and can be written first.
 
 ### Knowledge-base prerequisites
 

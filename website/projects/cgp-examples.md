@@ -18,7 +18,7 @@ The recommended first project section to write, with `expression` as its pilot.
   through the workspace's patch, and `cargo-cgp` built from its source at commit `b6a6323`
 - **Status** — Draft: 14 pages written, the section index and the `expression` and `web-app`
   subsections, listed in [What is written](#what-is-written); `builder`, `transfer`, and `greet`
-  wait on their records in this base and on DC4
+  wait on their records in this base and on its [code prerequisites](#code-prerequisites)
 - **How it was made** — written by an agent from the project section; level one of the four in
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
 
@@ -37,11 +37,13 @@ Resources links the section beside the repository. `yarn build` passes with them
   `namespaces`, and `default-impls`, under an unlinked `Stages` category rather than an examples
   index, since the crate index already lists the stages.
 
-**The pages not yet written** wait on this base or on DC4, and none is scaffolded as a stub:
+**The pages not yet written** wait on this base or on the code prerequisites, and none is scaffolded
+as a stub:
 
 - `builder`, `transfer`, and `greet` need their per-example records first, per [Knowledge-base
-  prerequisites](#knowledge-base-prerequisites), and `builder` and `greet` also need DC4's entry
-  point and check blocks. `transfer`'s pages quote code whose comments DC4 changes.
+  prerequisites](#knowledge-base-prerequisites), and `builder` and `greet` also need the entry
+  point and check blocks those prerequisites add. `transfer`'s pages quote code whose comments
+  they change.
 
 The writing turned up several facts a later revision must respect:
 
@@ -54,7 +56,7 @@ The writing turned up several facts a later revision must respect:
   `add_mult_code` pages open their *Run it* with an integration test the reader saves under
   `expression/tests/`, and its output; both files were run as integration tests in a copy of the
 repository, and match the pages. The pages say the repository has no test for the context;
-  they do not call it a gap. If DC4 adds the tests, the pages switch to running them.
+  they do not call it a gap. If the repository gains the tests, the pages switch to running them.
 - **`web-app`'s pages check rather than run.** Each says on its first screen that every provider
   body is `todo!()`, and its *Check it* step is `cargo check`. Each *Try a change* removes or adds
   one entry and quotes `cargo cgp check`; the coarse and fine-grained pages make the same change so
@@ -155,7 +157,7 @@ A balance-and-transfer HTTP service in which every domain type, business operati
 cross-cutting concern is a component, and the wiring is organized with prefixes, a namespace, and
 `#[default_impl]`. Environmental, mostly self-targeted, with one handler dispatched per endpoint.
 The crate's scenario is also the [money-transfer API](../../examples/money-transfer-api.md) worked
-example, which the applied tutorial (T3) may draw on; the two must use the same vocabulary.
+example, which the applied tutorial may draw on; the two must use the same vocabulary.
 
 - **Index** — from [transfer/README.md](../../projects/cgp-examples/transfer/README.md), with the
   server command and `example.sh` as the way to run it.
@@ -175,8 +177,8 @@ example, which the applied tutorial (T3) may draw on; the two must use the same 
 - **Guides** — `adding-an-endpoint.md` and `swapping-the-backend.md`, from
   [guides/](../../projects/cgp-examples/transfer/guides/README.md). The second is where a reader
   meets the `[CGP-E011]` override conflict, and it should show the base-namespace design from the
-  crate's [missing features](../../projects/cgp-examples/transfer/issues.md#missing-features) if DC4
-  adopts it.
+  crate's [missing features](../../projects/cgp-examples/transfer/issues.md#missing-features) if the
+  repository adopts it.
 
 ### `web-app` — wiring at four scales
 
@@ -234,7 +236,7 @@ map to them one to one.
 
 ### Code prerequisites
 
-**DC4 in [tasks.md](../tasks.md) collects the changes these pages need in the repository.** Each is
+**These pages need changes in the repository first.** Each is
 recorded in the crate's `issues.md`:
 
 - **Give `builder` an entry point**, a binary per builder or a test that builds each SQLite target

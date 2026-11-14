@@ -786,9 +786,6 @@ it stale.
   twelve stale ones, the one outbound link in nineteen chapters, the 28 unwritten entries the website
   has since written instead, why CI's single `cgp` pin rules out a gradual update, the chapter-to-page
   routing map and its knowledge-base mirror, and the six-change plan.
-- [website/redesign-queue.md](website/redesign-queue.md) — the consolidated list of what is wrong with
-  or missing from the site, grouped into page rewrites and new pages now that the cheap corrections
-  have landed; deleted when empty.
 - [website/seo.md](website/seo.md) — the site's search and agent discoverability strategy, written
   against a twelve-month Google Search Console export: the 1.09% click-through rate that reframes
   the problem as presentation rather than rank, the derived descriptions behind it and the pages that
@@ -799,12 +796,6 @@ it stale.
   never the answer and which three query clusters to consider, the agent surfaces (the knowledge
   base among them) including the evidence on `llms.txt`, what was checked and left alone, and what
   to watch in later exports.
-- [website/tasks.md](website/tasks.md) — the redesign's work plan: that the whole site relaunches
-  with the v0.8.0 release (and `cargo-cgp` v0.1.0) from one branch, the four standing obligations
-  every page-adding task carries, every remaining task with its repository, dependencies, and
-  done-condition (including the AI disclosure page, the knowledge-base pages, the `cargo-cgp`
-  release the tool's pages are written against, and the post-release Projects pages with the code
-  changes they need), which of them the release waits for, and the ordering; deleted when empty.
 - [website/visual-design.md](website/visual-design.md) — the site's theme: the palette built around
   the logo's `#8f1f1d` with warm neutrals and a lighter tint for text in the dark theme, the tokens
   and the literal Infima colours they replace, underlined prose links, two Prism themes and the
@@ -962,15 +953,15 @@ it stale.
 - [cgp-examples.md](website/projects/cgp-examples.md) — the plan and record of the cgp-examples
   section: the 14 pages written for the section index, `expression`, and `web-app`, the revisions
   they were verified against, the per-example records `builder`, `transfer`, and `greet` need first,
-  and the DC4 code changes.
+  and the code changes the repository needs first.
 - [hypershell.md](website/projects/hypershell.md) — the plan and record of the Hypershell section: the
   21 pages written and the revisions they were verified against, what each unwritten page waits on,
   the thirteen examples and about 75 construct pages planned, the comparison with shell scripts, and
   the release the install instructions need.
 - [cgp-serde.md](website/projects/cgp-serde.md) — the plan and record of the cgp-serde section: the
   49 pages written and the revisions they were verified against, the two arena examples and three
-  component pages that wait on DC3, and DC3's attribute removals, arena-test cleanups, and
-  recommended namespace.
+  component pages that wait on the repository's code changes (attribute removals, arena-test
+  cleanups, and a recommended namespace).
 - [error-backends.md](website/projects/error-backends.md) — one walkthrough per crate, the shared design
   and guides, 15 construct pages, no limitations page, the verified wiring the eyre and std records
   still need, and publication gated on the `cgp` release.

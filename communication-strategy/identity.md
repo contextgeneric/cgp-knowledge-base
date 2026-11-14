@@ -86,8 +86,7 @@ handlers matter, but listing them all in the descriptor would obscure its centra
 Keep "modular" out of the lead description. It names a broad design quality without showing the
 problem CGP solves, and some readers associate it with runtime dependency-injection frameworks. When
 it helps later in a piece, qualify the meaning: explicit wiring resolved at compile time, without
-runtime dispatch overhead. The [redesign queue](../website/redesign-queue.md) tracks site wording
-that needs to match this guidance.
+runtime dispatch overhead.
 
 ## The name and the tag line on every page
 
@@ -185,7 +184,7 @@ helpful. Avoid importing assumptions about a runtime container.
 Put domain-specific benefits in the material linked from the panel. Error handling, runtime choice,
 trait decomposition, and alternatives to dynamic dispatch develop the headline features rather than
 competing with them. The [homepage guide](../website/writing-guides/homepage.md) specifies the
-panel's place on the page; the [redesign queue](../website/redesign-queue.md) tracks site changes.
+panel's place on the page.
 
 ### Phrasing rules for feature titles
 

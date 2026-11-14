@@ -311,7 +311,8 @@ its checking-and-debugging part teaches lazy wiring, `check_components!`, and `c
 
 One gap is the section's work queue: there is **no tutorial in the applied register**, so the reader who
 evaluates by seeing a realistic system has nowhere to go on the site, and, per the ordering above, no
-tutorial reader meets an application context either. It is T3 in [tasks.md](../tasks.md).
+tutorial reader meets an application context either. An applied tutorial, second in the section,
+is planned to fill it.
 
 ## Checking a draft
 

@@ -5,7 +5,7 @@ reading its output, and fixing what it reports.
 
 - **URL:** <https://contextgeneric.dev/docs/cargo-cgp/>
 - **Source:** [docs/cargo-cgp/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/cargo-cgp)
-- **Status:** Current, written against `cargo-cgp` v0.1.0 ahead of its release (task V2), in
+- **Status:** Current, written against `cargo-cgp` v0.1.0 ahead of its release, in
   natural-writing style
 - **How it was made:** written by an agent from [cargo-cgp/reference/](../../cargo-cgp/reference/README.md)
   and [cargo-cgp/error-code.md](../../cargo-cgp/error-code.md), with every quoted output produced by
@@ -85,8 +85,9 @@ programs the pages say compile under `tests/cargo_cgp/`.
 - **The quoted output comes from `cargo-cgp`'s `main`, the v0.1.0 release the pages document,**
   captured with the source-built tool on Linux against the sibling `cgp` checkout on the release
   branch; output naming the version is quoted as `0.1.0`, per the base's
-  [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases). Task V2 in
-  [tasks.md](../tasks.md) re-runs every quoted command against the tagged release.
+  [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases). Once
+  v0.1.0 is tagged, every quoted command is re-run against the tagged build, together with every
+  `cargo cgp check` output the site quotes on other pages.
 - **Four front-end behaviors are the pages' newest facts:** `cargo cgp --version` (quoted as
   `cargo-cgp 0.1.0`), `cargo cgp update` installing only official releases, `setup` and `update`
   answering `--help` and refusing other arguments, and `target/cgp` sitting in the project's own
@@ -103,7 +104,8 @@ programs the pages say compile under `tests/cargo_cgp/`.
   command's name from the extension's `package.json`. How VS Code renders the error in its window is
   unverified.
 - **The `example-code` crate patches `cgp` to the sibling checkout,** and its `.stderr` snapshots are
-  blessed against it; task V1 removes the patch.
+  blessed against it; before the branch merges, the patch goes and the snapshots are re-blessed
+  against the release.
 - **The pinned nightly's date appears only where real output contains it.** Commands use
   `nightly-YYYY-MM-DD` and say where to read the real one, so a toolchain bump changes quoted output
   but no instructions.

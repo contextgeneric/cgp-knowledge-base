@@ -102,10 +102,9 @@ changes their roles.
 
 Reuse a diagram when the same idea appears on several pages. Keep labels close to what they
 identify, omit decoration, and ensure the prose remains understandable without the image. The
-[website task plan](../website/tasks.md) tracks the shared diagrams for a wiring table, the
-consumer/provider split, and providers selected independently by contexts. Store these as SVGs among
-the site's static assets. The supporting reading research belongs in
-[evidence.md](evidence.md#sources-for-the-craft-this-section-borrows).
+website draws three shared diagrams once each, as SVGs among its static assets: a wiring table, the
+consumer/provider split, and coherence scoped to each provider. The supporting reading research
+belongs in [evidence.md](evidence.md#sources-for-the-craft-this-section-borrows).
 
 Make before-and-after examples directly comparable. If the claim is that only annotations change,
 show the unchanged bodies and highlight the changed lines using Docusaurus code comments. Do not

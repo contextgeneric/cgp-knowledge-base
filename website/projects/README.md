@@ -53,8 +53,8 @@ guide](../writing-guides/project.md) states each as a rule: a Projects page teac
 and links to the Concepts tier instead of carrying a CGP primer; the candid account of costs
 survives the conversion from the author's voice to the project's; and each post that presents a project
 gets a notice at its top pointing to the section, the one sanctioned edit to a published post. The code prerequisites
-the deep-dive plans found in `hypershell` and `cgp-serde` carry over too, as tasks DC1 and DC3 in
-[tasks.md](../tasks.md), which keep their IDs.
+the deep-dive plans found in `hypershell` and `cgp-serde` carry over too, as the *Code
+prerequisites* of each project's plan.
 
 Each deep-dive page has a home in the new section or in a section the site already publishes:
 
@@ -201,9 +201,9 @@ counts are estimates from the internal catalogs; each plan says how its count wa
   and its patterns are the broadest.
 - [hypershell.md](hypershell.md) — the type-level shell-scripting DSL: 13 example pages, the largest
   reference of the four at about 75 construct pages, and a comparison with shell scripts. Its
-  reference and its extension pages wait on DC1.
+  reference and its extension pages wait on its code prerequisites.
 - [cgp-serde.md](cgp-serde.md) — Serde as components: 4 example pages, about 30 construct pages, and
-  the comparison with Serde. Its component pages wait on DC3.
+  the comparison with Serde. Its component pages wait on its code prerequisites.
 - [error-backends.md](error-backends.md) — `cgp-error-anyhow`, `cgp-error-eyre`, and
   `cgp-error-std`: one walkthrough per crate, 15 construct pages, and the shared guides. The
   smallest, and the only one that ships from the `cgp` repository itself.
@@ -222,7 +222,7 @@ page's source links would show code the page does not describe.
 
 **The code uses current idioms.** A page that exists to teach patterns must not show a form the
 [guides](../../cgp/guides/README.md) tell readers to replace, so where the project still uses one,
-the change lands in the project first. These are DC1 for `hypershell` and DC3 for `cgp-serde`.
+the change lands in the project first; the `hypershell` and `cgp-serde` plans list those changes.
 
 **The install instructions can name a release.** A page telling a reader to add a crate names a
 version built against the `cgp` release the site describes. The Hypershell crates on crates.io are
@@ -237,8 +237,7 @@ from the record, and a *Try a change* result is run and recorded there before it
 **The section lands after the v0.8.0 relaunch rather than with it.** It is the largest discretionary
 body of work left, its readers are served in the meantime by the Concepts pages and the posts, and
 three of its four projects need their own branches merged and, for the libraries, their own
-releases, which follow the `cgp` release rather than precede it. The tasks are P1–P5 in
-[tasks.md](../tasks.md#p--the-projects-section-and-the-code-it-quotes).
+releases, which follow the `cgp` release rather than precede it.
 
 Within the section, the recommended order is:
 
@@ -247,23 +246,24 @@ Within the section, the recommended order is:
    It exercises the example page kind without the reference, so it tests the writing guide cheaply.
 2. **The rest of cgp-examples**, with the section index and its pattern table, since those crates
    show the most patterns for the least reference.
-3. **Hypershell, once DC1 lands.** It is the one project with measured search demand behind it, per
-   [seo.md](../seo.md), so its index and examples come first and its reference follows.
-4. **cgp-serde, once DC3 lands**, examples and comparison first.
+3. **Hypershell, once its code prerequisites land.** It is the one project with measured search
+   demand behind it, per [seo.md](../seo.md), so its index and examples come first and its
+   reference follows.
+4. **cgp-serde, once its code prerequisites land**, examples and comparison first.
 5. **The error backends**, which can move earlier if capacity allows, since nothing blocks them past
    the release.
 
 ## Links into the section from the rest of the site
 
 A section nobody links to is found only from the sidebar, so four kinds of onward link are part of
-the work, and each is a task in [tasks.md](../tasks.md) rather than an afterthought.
+the work rather than an afterthought.
 
 - **Concepts pages** gain an entry labelled *In practice:* in their *Where to go next* list,
   pointing at the example page that shows the idea, in the way fourteen of them already carry a
   *Comparison:* entry.
 - **Reference pages** for the constructs the examples use may add the example page to their
   *Related* list, where it adds something the page's own example does not.
-- **The applied tutorial** (T3) ends by routing to the project example that develops its scenario,
+- **The applied tutorial** ends by routing to the project example that develops its scenario,
   where one does.
 - **Resources** lists each project's section rather than only its repository.
 

@@ -10,7 +10,8 @@ stable Rust today at a stated cost.
   [website repository](https://github.com/contextgeneric/contextgeneric.dev), not on `main`
 - **Date in filename**: 2026-03-30, which is when the draft was written rather than a publication date
 - **Status**: Draft
-- **Task**: B2 in [tasks.md](../tasks.md), held until after the v0.8.0 release
+- **Publication**: held until after the v0.8.0 release, so it does not compete with the
+  announcement
 
 ## Why this post is different from everything else on the blog
 

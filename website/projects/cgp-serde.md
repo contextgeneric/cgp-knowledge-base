@@ -17,16 +17,17 @@ demonstration of the coherence bypass on a trait every Rust developer already kn
   through the workspace's patch, and at `bcc9fcc` for the `SerializeRecordFields` rename and the two
   variant provider pages, and `cargo-cgp` built from its source at commit `b6a6323`
 - **Status** — Draft: 49 of about 54 pages written, listed in [What is written](#what-is-written);
-  the two arena examples and three component pages wait on DC3
+  the two arena examples and three component pages wait on its
+  [code prerequisites](#code-prerequisites)
 - **How it was made** — written by an agent from the project section; level one of the four in
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
 
 ## What is written
 
-**Forty-nine cgp-serde pages are written, all the pages that DC3 does not block**, and the section
-index gained cgp-serde in its project list, five rows in its pattern table, and a line in its
-evaluator route. Resources links the section beside the crate. `yarn build` passes with them, so
-every link and anchor they carry resolves. They are:
+**Forty-nine cgp-serde pages are written, all the pages its code prerequisites do not block**, and
+the section index gained cgp-serde in its project list, five rows in its pattern table, and a line
+in its evaluator route. Resources links the section beside the crate. `yarn build` passes with them,
+so every link and anchor they carry resolves. They are:
 
 - **Project** — `cgp-serde/index.md`.
 - **Examples** — the index, `basic`, `messages`, and `events`.
@@ -40,8 +41,8 @@ every link and anchor they carry resolves. They are:
   under `reference/components/`, which carries no `#[derive_delegate]` and so is not blocked.
 - **The comparison and the limitations** — `serde-comparison.md` and `limitations.md`.
 
-**The pages not yet written** wait on DC3, and none is scaffolded as a stub. Pages that would link
-them describe the idea in place or say the page is still being written:
+**The pages not yet written** wait on the code prerequisites, and none is scaffolded as a stub.
+Pages that would link them describe the idea in place or say the page is still being written:
 
 - `examples/arena-simplified` and `examples/arena` wait on the cleanup of their tests. The
   architecture page `context-services` quotes the arena example's relevant entries with the unused
@@ -209,7 +210,7 @@ gets a page. Enumerate against the source when porting; the groups are:
 
 ### Code prerequisites
 
-**DC3 in [tasks.md](../tasks.md) carries the changes, each recorded in the project's [missing
+**The repository needs these changes, each recorded in the project's [missing
 features](../../projects/cgp-serde/issues.md#missing-features) and
 [housekeeping](../../projects/cgp-serde/issues.md#housekeeping):**
 

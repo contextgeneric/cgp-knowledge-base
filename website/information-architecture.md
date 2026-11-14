@@ -9,8 +9,8 @@ It is deliberately distinct from [site.md](site.md) and the [page records](pages
 pair is easy to confuse. **Those record the site as built**: the Docusaurus configuration, the
 current navigation, the deployment, and one record per page that exists today. **This document states the site as
 intended**, including pages that do not exist yet and jobs that are currently done by the wrong page.
-Where they disagree, that disagreement is the redesign, and the work it implies is listed in
-[redesign-queue.md](redesign-queue.md).
+Where they disagree, that disagreement is the redesign, and each page's record under
+[pages/](pages/README.md) states the work it implies.
 
 ## The site's job, and the properties around it
 
@@ -142,8 +142,7 @@ but under the wrong parent or doing the wrong job.
 branch and publishes when that branch merges alongside the v0.8.0 release, so the site does not pass
 through a state where half of this inventory exists, which is what makes a target this large safe to
 commit to. The one exception is the Projects section, which lands afterwards. The mechanics are in
-[AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once) and the sequencing in
-[tasks.md](tasks.md).
+[AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
 
 **Front page**: the hook and the bounded essay. Present and **rewritten**; its record is in
 [pages/front-page.md](pages/front-page.md).
@@ -255,8 +254,9 @@ in this inventory
   comparison with shell scripts. The type-level DSL: thirteen examples, its design and guides, one
   reference page per construct, the comparison, and its limitations.
 - *cgp-serde*: partly present: 45 of 50 pages, everything but the two arena examples and three
-  component pages, which wait on DC3. Serde as components: four examples, its design and guides, one
-  reference page per construct, the comparison with Serde, and its limitations.
+  component pages, which wait on its code prerequisites. Serde as components: four examples, its
+  design and guides, one reference page per construct, the comparison with Serde, and its
+  limitations.
 - *Error backends*: **new**, about 22 pages. One walkthrough per crate, the shared design and guides, and
   one reference page per provider.
 
@@ -286,10 +286,10 @@ meantime by the Concepts pages and the posts. The page type is specified in
 **Further depth**: links out to the repositories, and never to the legacy book.
 [docs.rs](https://docs.rs/cgp) is linked once from Resources rather than from each reference page.
 
-**Blog**: 16 published posts, plus the unfinished v0.8.0 draft, one draft on a branch, and one planned post; the
-owed writing is B1 and B2 in [tasks.md](tasks.md). The blog is the one surface this inventory does not
-try to specify in advance: a post is a dated statement rather than a page with a job, so posts are listed
-as they are written rather than planned into the target.
+**Blog**: 16 published posts, plus the unfinished v0.8.0 draft, one draft on a branch, and one
+planned post; both wait until after the release. The blog is the one surface this inventory does not
+try to specify in advance: a post is a dated statement rather than a page with a job, so posts are
+listed as they are written rather than planned into the target.
 
 **AI**: the section carries CGP's relationship with coding agents in both directions, and the two
 directions are different subjects that must be named apart rather than blended.
@@ -392,7 +392,7 @@ the site for them.
 
 The **language-design reader** wants a precise contribution to a live design question, and is reached
 only at that level. Their path is the *Rust's own proposals* comparison → the RustLab transcript → the
-incoherent-Rust post once B2 publishes it. The comparison page is this reader's only orientation surface
+incoherent-Rust post once it publishes. The comparison page is this reader's only orientation surface
 on the site.
 
 Readers who arrive from a **dependency-injection, dynamic-language, or C++ background** take the
@@ -455,7 +455,7 @@ This document leads the site rather than following it, so it goes stale in a par
 site changes, but when a page is added, moved, or repurposed **without** the change being reflected here
 first. Revisit it whenever a page's job changes, whenever a new page type appears, and whenever a reader
 path is found not to work; the last of these is evidence from
-[evidence.md](../communication-strategy/evidence.md) rather than a matter of taste. As entries in
-[redesign-queue.md](redesign-queue.md) are completed, the corresponding "new" and "moved" markers above
+[evidence.md](../communication-strategy/evidence.md) rather than a matter of taste. As pages
+land, the corresponding "new" and "moved" markers above
 should disappear, and when the inventory here matches [pages/](pages/README.md) the redesign
 is finished.
