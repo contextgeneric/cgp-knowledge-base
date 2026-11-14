@@ -142,6 +142,17 @@ provider parameter is `__Provider__`, and the `RedirectLookup` impl introduces `
 The marker struct carries a `#[doc]` line naming the consumer trait, so a crate that enables
 `missing_docs` does not report it.
 
+**The provider trait's doc names its component key.** `EvaluatedCgpComponent::to_items` emits the
+trait through `to_documented_provider_trait`, which adds
+``Provider trait for [`CanGreet`]. A provider imports this trait's component key, [`GreeterComponent`], beside it.``
+after the consumer trait's copied doc, separated from it by an empty `#[doc = ""]` line so the
+consumer's summary stays its own paragraph. The link takes the component name's identifier, the one
+`name:` sets, without its parameters, so it resolves for a renamed or parameterized key. The stored
+`provider_trait` lacks the line, because the provider blanket impl and the `UseContext`,
+`RedirectLookup`, and `UseDelegate` impls copy its attributes, and a doc that names a trait does
+not belong on an impl. The line serves the editor: the hover on a provider trait in a `use` line
+shows the trait alone, so the doc is where a reader learns the key to import.
+
 The **marker struct's name span** is the provider identifier's span, not `Span::call_site()`. When
 the component name is not given explicitly, `CgpComponentArgs` derives it as `{Provider}Component`
 and spans that identifier on the provider identifier the user wrote in `#[cgp_component(Provider)]`.

@@ -226,12 +226,20 @@ argument is the `Params` tuple of the component's extra type parameters; for a c
 parameters beyond the context it is the empty `()`:
 
 ```rust
+/// Provider trait for [`CanCalculateArea`]. A provider imports this trait's component key,
+/// [`AreaCalculatorComponent`], beside it.
 pub trait AreaCalculator<Context>:
     IsProviderFor<AreaCalculatorComponent, Context, ()>
 {
     fn area(context: &Context) -> f64;
 }
 ```
+
+**The provider trait's doc names its component key.** The trait keeps any doc the consumer trait
+carries and adds a paragraph of its own that links the consumer trait and the key, the one `name:`
+sets when it renames the key. A reader who hovers the provider trait in a `use` line then sees which
+key a provider imports beside it. Only the trait carries this paragraph, not the impls generated
+from it.
 
 **An associated type or const the trait declares for itself is the one `Self` the rewrite leaves
 alone.** The provider trait keeps the declaration, so a `Self::Output` in the consumer trait stays

@@ -68,6 +68,11 @@ struct) and then the provider impls:
 The first three kinds each come paired with an `IsProviderFor` impl through `ItemProviderImpls`; the
 `#[prefix]` impl implements a namespace trait and has no pair.
 
+`to_items` emits the provider trait through `to_documented_provider_trait`, which adds the doc line
+naming the component key. The stored `provider_trait` field lacks that line, because the provider
+impls copy its attributes; the
+[entrypoint document](../entrypoints/cgp_component.md#behavior-and-corner-cases) gives the line.
+
 ## Tests
 
 - [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs)

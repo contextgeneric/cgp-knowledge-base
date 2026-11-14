@@ -384,14 +384,17 @@ enables `missing_docs` depends on it:
 
 - **`#[cgp_component]` and `#[cgp_type]`** copy the consumer trait's doc onto every item they derive:
   the consumer blanket impl, the provider trait, the provider blanket impl, and the `UseContext` and
-  `RedirectLookup` impls. The marker struct carries a generated line naming the consumer trait.
+  `RedirectLookup` impls. The marker struct carries a generated line naming the consumer trait, and
+  the provider trait alone adds a paragraph after the copied doc that links the consumer trait and
+  the component key.
 - **`#[cgp_impl]` and `#[cgp_new_provider]`** keep the impl's doc on the provider impl, and the
   provider struct carries a generated line naming the provider and its provider trait.
 - **`#[cgp_fn]`** keeps the function's doc on the method, where the function's body lands, and gives
   the trait a generated line naming the operation. A function with no doc leaves the method with a
   generated line too.
 - **`#[cgp_getter]` and `#[cgp_auto_getter]`** keep the trait's and the method's own docs, and add a
-  line only where one is missing.
+  line only where one is missing. `#[cgp_getter]`'s provider trait also carries the key paragraph
+  `#[cgp_component]` gives it.
 - **`#[cgp_computer]`, `#[cgp_producer]`, and `#[cgp_auto_dispatch]`** keep the function's or trait's
   own doc, and the provider struct they declare carries a generated line naming the provider and its
   provider trait.
