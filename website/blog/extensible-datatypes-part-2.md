@@ -41,9 +41,8 @@ The rest, in order:
 
 - **The source to quote:** the [expression interpreter
   example](../../examples/expression-interpreter.md). The code lives on as cgp-examples'
-  `expression` crate; where each section now sits is in the
-[`expression`
-subproject](../../projects/cgp-examples/expression/README.md#where-the-blog-posts-code-lives).
+  `expression` crate; where each section now sits is in the [`expression`
+  subproject](../../projects/cgp-examples/expression/README.md#where-the-blog-posts-code-lives).
 - **Concepts and constructs:** [extensible variants](../../cgp/concepts/extensible-variants.md),
   [dispatching](../../cgp/concepts/dispatching.md), [`Computer` /
   `CanCompute`](../../cgp/reference/components/computer.md) and its by-reference variant, the
