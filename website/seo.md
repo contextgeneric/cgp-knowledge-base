@@ -133,7 +133,7 @@ renders the first source line of its opening paragraph, which ends mid-sentence 
 wraps, as in *"Rust's coherence rules keep trait lookup consistent across a program. For a given
 trait, its"*, so each still needs a written one. The published skill pages are not the site's to
 edit. The conventions, including the YAML apostrophe that fails the build, are in
-[pages/reference.md](pages/reference.md#conventions-the-port-must-follow). On 2026-11-13, six remain: four of
+[pages/reference.md](writing-guides/reference.md#conventions-the-port-must-follow). On 2026-11-13, six remain: four of
 the five tutorials, Resources, and Contribute.
 
 A post's description is metadata rather than a claim, so writing one does not reach the
@@ -464,7 +464,7 @@ documentation on 2026-09-21:
   inserts a title at the top of a document only when the Markdown has no heading of its own, so a
   page that keeps its `#[cgp_component]` heading can carry a `title` written for a search result.
   `sidebar_label` stays separate and is
-  [plain text without backticks](pages/reference.md#conventions-the-port-must-follow).
+  [plain text without backticks](writing-guides/reference.md#conventions-the-port-must-follow).
 - **A page's front-matter `description` sets both `meta name="description"` and `og:description`**,
   and falls back to the first line of content when omitted, which produced the broken snippets above.
 

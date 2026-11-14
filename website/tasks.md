@@ -350,7 +350,7 @@ first impression in the index.
   opening paragraph, which ends mid-sentence where the source wraps. Write each in the same edit as
   the page's revision, before the merge. The conventions, including the YAML apostrophe that fails
   the build, are in
-  [pages/reference.md](pages/reference.md#conventions-the-port-must-follow). *Lands in:* `docs/`.
+  [pages/reference.md](writing-guides/reference.md#conventions-the-port-must-follow). *Lands in:* `docs/`.
 - **S7: the GitHub metadata.** The crate manifests are done: `homepage`, five `keywords`, and the
   `rust-patterns` and `no-std` categories are set on `[workspace.package]` and inherited by all 28
   publishable crates. What remains needs repository settings rather than a commit: the `cgp` repository's

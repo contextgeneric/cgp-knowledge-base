@@ -137,7 +137,7 @@ The first screen therefore does three things before any code:
   to the program, per the
   [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
 - **Offer the prerequisites** in a `:::tip` admonition titled `### New to CGP?`, per the [admonition
-  convention](../pages/reference.md#conventions-the-port-must-follow). It names the two or three
+  convention](reference.md#conventions-the-port-must-follow). It names the two or three
   pages a reader should know before this one (usually Hello World and the Concepts page for the
   pattern the example shows) and says that the page can be read without them. That admonition is the
   "short introduction together with links" every example page owes, and it is what lets a reader who
@@ -371,7 +371,7 @@ from and the CGP reference already explains it. The one exception is a project's
 `hypershell!`, whose page follows the macro variant instead: its rewriting rules are its *Usage*,
 and the desugared type is its *Under the hood*. The front-matter conventions are the reference's:
 the construct name as the `h1`, a search-facing `title`, and a `description`, per
-[pages/reference.md](../pages/reference.md#conventions-the-port-must-follow).
+[pages/reference.md](reference.md#conventions-the-port-must-follow).
 
 **Where a defect shapes how a construct is used, state the behavior and route the reader.** A
 reference page must describe what the construct does, including what it rejects, so a behavior a
@@ -408,7 +408,7 @@ well-meaning trim removes.
 ## Front matter and the provenance note
 
 Every Projects page carries a `description` written from its own summary, as every site page does,
-per [pages/reference.md](../pages/reference.md#conventions-the-port-must-follow), and names
+per [pages/reference.md](reference.md#conventions-the-port-must-follow), and names
 Context-Generic Programming once in its opening paragraph, as the example page's first screen does.
 A directory whose index is generated, such as a project's `guides/`, carries the name in its
 `_category_.json` description instead. The `h1` depends on the page kind:

@@ -17,36 +17,19 @@ glossary answers *environmental context*. It exists because the vocabulary is us
 is defined: *environmental context* appears on some twenty-six pages and *blanket implementation* on
 some fifty-three, so each gets one definition those pages link to.
 
-The page's conventions:
-
-- **Every term is an `###` directly under its section's `##`,** with no thematic grouping, because
-  the MDX setup rejects `{#custom-id}` and Docusaurus anchors `h2` and `h3` only, so a grouped term at
-  `h4` would lose its anchor. `toc_max_heading_level: 2` keeps the table of contents to the sections.
-- **Sections are alphabetical,** since the page is looked up rather than read through.
-- **Each related-concept entry's external link is one the comparison page it routes to already
-  cites,** taken from that page's Sources section.
-
-**The terms are linked from the pages that use them,** first use per page, in page bodies, with the
-inline gloss left beside it: some 440 links across 176 pages. Three rules decided what stays
-unlinked, and they are settled:
-
-- **A page that owns a term does not link it;** *Bypassing coherence* does not link *coherence*.
-- **A compound use is not the general term,** so *consumer blanket impl* and *provider blanket impl*
-  stay unlinked and only the full *blanket implementation* links.
-- **The basic vocabulary is already glossed:** every reference page glosses *context*, and
-  *component*, *provider*, *wiring*, and the two trait names are the section's working words.
-
-Terms already linked to their concept page stay pointed there, which is why *extensible variant* and
-*impl-side dependency* have few glossary links.
+The page has 71 terms in three alphabetical sections, CGP terms, Rust terms, and related concepts,
+each term an `###` with `toc_max_heading_level: 2`. The terms are linked from the pages that use them,
+first use per page in the body: some 440 links across 176 pages. *Extensible variant* and *impl-side
+dependency* have few glossary links because their uses already link their Concepts pages.
 
 ## How it relates to the knowledge base
 
-The specification is in [writing-guides/reference.md](../writing-guides/reference.md#the-glossary-page),
-and the definitions follow [vocabulary.md](../../communication-strategy/vocabulary.md). The page
+[writing-guides/reference.md](../writing-guides/reference.md#the-glossary-page) specifies the page,
+its entries, and the rules for linking a term; the definitions follow [vocabulary.md](../../communication-strategy/vocabulary.md). The page
 shows no code, so it has no `example-code` mirror.
 
 ## Maintaining it
 
 - Four pages route to it, and a move updates all four: the reference index beside the compile-errors
   link, the Concepts and Comparisons indexes, and the Introduction's routing list.
-- Link a new term from the pages that use it under the three rules above.
+- Link a new term from the pages that use it under the guide's linking rules.

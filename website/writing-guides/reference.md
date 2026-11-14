@@ -1,493 +1,289 @@
 # Writing a reference page
 
 A reference page explains **one CGP construct completely**: what it is for, when to reach for it, how
-to write it, what it generates, and where it bites. The reference is the place a reader goes when they
-already know the name of the thing they need, and it is the largest and most mechanical body of writing
-on the site.
+to write it, what it generates, and where it bites. A reader comes here already knowing the name of
+the thing they need.
 
 - **Where they live**: `docs/reference/`, grouped into subdirectories by kind
 - **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Derived from**: the internal reference at `cgp/reference/`, which stays the source of truth
 - **Scale**: about 200 pages, ported rather than written from scratch
+- **Record**: [pages/reference.md](../pages/reference.md), with
+  [compile-errors.md](../pages/compile-errors.md) and [glossary.md](../pages/glossary.md)
 - **Reading**: the shared set and
   [the reference pages' row](README.md#reference-pages-the-glossary-and-the-error-catalog) of the
   reading map
 
 ## The site reference is canonical
 
-CGP's constructs are procedural macros, and a macro documents badly through rustdoc: what a reader needs
-is the trait pair it generates, the wiring it participates in, and the code it desugars to, none of which
-a signature shows. The crate's own [docs.rs](https://docs.rs/cgp) entry has also never been filled in
-(documenting the `cgp` crate has been an open goal since the
-[launch post](../blog/early-preview-announcement.md)), so pretending it carries the load would be a
-fiction.
-
-**So the site reference is the canonical place to look a construct up.** It is written to be complete
-enough that a reader never needs docs.rs, and docs.rs is linked once from Resources rather than from
-every page. Two consequences follow: a reference page may not defer to rustdoc for anything a reader
-actually needs, and the reference carries a real completeness obligation: a construct that exists and
-has no page is a hole a reader will fall into.
-
-This is a change to the site's shape rather than an addition to it, and
-[information-architecture.md](../information-architecture.md) records the new surface.
+**The site reference is the canonical place to look a construct up, complete enough that a reader
+never needs docs.rs.** CGP's constructs are procedural macros, and rustdoc cannot show what a reader
+needs: the trait pair a macro generates, the wiring it joins, and the code it desugars to. The
+crate's [docs.rs](https://docs.rs/cgp) entry has also never been filled in. So docs.rs is linked once,
+from Resources; a page never defers to rustdoc for anything a reader needs; and a construct that
+exists without a page is a defect. [information-architecture.md](../information-architecture.md)
+records the surface.
 
 ## Derived from the internal reference, and kept in step with it
 
-The 90 documents under `cgp/reference/` already contain almost all of the *information* these pages
-need. They are wrong for a public reader in four specific ways rather than in substance, so **a
-reference page is ported, not rewritten**: take the internal document, apply the four transformations
-below, and the result is most of the page.
+**A reference page is ported, not rewritten.** The 90 documents under `cgp/reference/` hold almost
+all the information, and differ from a public page in four ways, which the port changes:
 
-**Re-point every link.** This is the largest edit and the one that cannot be skipped, because the site
-[may never link into the knowledge base](../AGENTS.md#the-one-way-link-rule). Every internal document is
-dense with links to `concepts/`, `guides/`, `examples/`, `errors/`, and `implementation/`; the
-[section below](#where-the-internal-links-go) says what each becomes.
+- **Re-point every link,** because the site
+  [never links into the knowledge base](../AGENTS.md#the-one-way-link-rule);
+  [Where the internal links go](#where-the-internal-links-go) gives each replacement. This is the
+  largest edit.
+- **Restructure into the [layered descent](#the-layered-page),** so a beginner and an expert can use
+  the same page.
+- **Add *When to use it*,** and a plain gloss of every word a newcomer lacks; internal documents
+  assume the `/cgp` skill and use "provider trait" and "impl-side dependency" as known words.
+- **Convert the Source section** from pointers into `cgp-macro-core` and the implementation documents
+  into links to the construct's source on GitHub.
 
-**Restructure into the layered descent**, so a beginner and an expert can use the same page.
-
-**Add the two sections the internal template lacks**: *When to use it* and, where the construct
-has one, a plain-language gloss of any vocabulary a newcomer will not have. Internal documents assume the
-`/cgp` skill and use "provider trait" and "impl-side dependency" as known words.
-
-**Convert the Source section** from pointers into `cgp-macro-core` and the internal implementation
-documents into links to the construct's source on GitHub.
-
-The internal document remains the **source of truth**, and this is the arrangement's real cost: a
-construct now has a public page as well as an internal document, and the base's
-[synchronization rule](../../AGENTS.md#the-synchronization-rule) binds both. A change to a macro updates
-the code, the internal document, *and* the public page, in that order and in the same change. A public
-page that disagrees with its internal document is a defect in the public page.
-
-**The sync runs both ways.** A detail a public page carries and its internal document lacks, such as
-a form, a default, an error message, a corner case, an expansion rule, or a *When to use it*
-judgement drawn from a guide, is added to the internal document in the same change, after it is
-checked against the source. A page may simplify or reorder what its internal document says, but it
-never knows more, because the internal document is the complete record the next port and every
-agent start from. A fact found only on the public page is a fact the base has lost.
+**The internal document stays the source of truth, and the sync runs both ways.** A change to a macro
+updates the code, the internal document, and the public page, in that order and in the same change,
+per the [synchronization rule](../../AGENTS.md#the-synchronization-rule); a page that disagrees with
+its document is the defect. A detail only the page carries (a form, a default, an error message, a
+corner case, an expansion rule, a *When to use it* judgement from a guide) is checked against the
+source and added to the internal document in the same change. A page may simplify or reorder its
+document but never knows more.
 
 ## Granularity: one page per named construct
 
-The reference is organized **one page per construct**, because a reader arrives knowing a name and
-wanting a URL, and because a page per construct is what makes deep links from the tutorials, the project
-pages, and compiler errors possible. The subdirectory layout mirrors what a construct *is* (`macros/`,
-`attributes/`, `derives/`, `components/`, `providers/`, `traits/`, `types/`), the same split the internal
-[reference index](../../cgp/reference/README.md) explains.
+**Every publicly nameable macro, attribute, derive, trait, component, provider, and type gets its own
+page, and no page's title is a list of names.** A reader arrives knowing a name and wanting a URL, and
+one page per construct is what makes deep links from tutorials, project pages, and compiler errors
+possible. The rule covers a trait that only mirrors another (mutable, borrowed, or provider-side) and
+each member of a family: the seven builder traits get seven pages. The subdirectories mirror what a
+construct *is* (`macros/`, `attributes/`, `derives/`, `components/`, `providers/`, `traits/`,
+`types/`), as the internal [reference index](../../cgp/reference/README.md) explains.
 
-**The rule is literal: every publicly nameable macro, attribute, derive, and trait gets its own page**,
-and no page's title is a list of names. That includes a trait that exists only as the mutable, borrowed,
-or provider-side mirror of another, and it includes the interlocking members of a family: the seven
-builder traits get seven pages, not one. A page whose title reads *`X`, `Y` & `Z`* is a defect, however
-closely the three are related.
+Two consequences follow:
 
-Two consequences follow and both are essential. **Cross-link instead of repeating**: where two pages
-would say the same thing, one says it and the other links, so the shared explanation has exactly one
-home. And **the mapping to the internal reference is not one to one**: one internal document
-feeds several public pages, which each internal document records so a later synchronization knows where
-to look.
+- **Cross-link instead of repeating:** where two pages would say the same thing, one says it and the
+  other links.
+- **The mapping to the internal reference is not one to one:** one internal document feeds several
+  pages, and each internal document names them in a note under its Source section.
 
-**Markers are the one thing that stays with its trait.** `IsPresent`, `IsNothing`, `IsVoid`,
-`IsOptional`, `IsRef`, `IsMut`, and `IsOwned` are *types* implementing
-[`MapType`](../../cgp/reference/traits/map_type.md) or `MapTypeRef` rather than constructs of their own,
-so they are documented as their trait's impls. The reference index's *Looking for a name you don't see?*
-table is what routes a reader who arrives holding one of those names.
+The rule's edges:
 
-**One consolidation survives, of things that are not separately nameable constructs: the two low-level
-provider macros** `#[cgp_provider]` and `#[cgp_new_provider]`, which differ only in whether the struct is
-declared and are forms a reader meets rather than writes, so one page covers both. The **type-level
-lists** (`Cons`/`Nil`, `Either`/`Void`, `Chars`, and `PathCons`) get one page each instead, since each
-is a separately nameable construct a reader may look up by name; the `Cons`, `Either`, `Chars`, and
-`PathCons` head cells carry the family explanation the terminators and specializations link to. The sugar
-that builds them, `Symbol!`, `Product!`, `Sum!`, `Path!`, and the `Struct!`/`Enum!` shape macros, keeps
-a page each too.
+- **Components:** a component is one construct even though it generates a consumer trait, a provider
+  trait, and a marker; two components are two pages. A by-reference or async variant is its own
+  component and page, as `computer.md` fed `Computer`, `ComputerRef`, `AsyncComputer`, and
+  `AsyncComputerRef`.
+- **Providers:** each provider in an internal catalogue gets a page, as the error catalogue's
+  `RaiseFrom`, `ReturnError`, `RaiseInfallible`, `DebugError`, `DisplayError`, `DiscardDetail`, and
+  `PanicOnError` did.
+- **Provider aliases get their own page.** An alias such as `WithType` or `WithContext` is a spelling
+  of `WithProvider<Inner>`, and a reader who reaches for it by name needs a page. Each alias page
+  states what it expands to, carries the wiring form and an example, and links `WithProvider` for the
+  adapter and its inner provider for the behavior. Where the inner provider has no directly wireable
+  form (`WithFieldRef`, `WithDelegatedType`), the alias page holds the wiring form and the inner
+  page the mechanism.
+- **Markers stay with their trait.** `IsPresent`, `IsNothing`, `IsVoid`, `IsOptional`, `IsRef`,
+  `IsMut`, and `IsOwned` are types implementing [`MapType`](../../cgp/reference/traits/map_type.md) or
+  `MapTypeRef`, documented as their trait's impls; add a row to the index's *Looking for a name you
+  don't see?* table for each.
+- **One consolidation survives:** `#[cgp_provider]` and `#[cgp_new_provider]`, which differ only in
+  whether the struct is declared, share a page. The type-level lists get a page each (`Cons`, `Nil`,
+  `Either`, `Void`, `Chars`, `PathCons`), with the family explanation on the head cells (`Cons`,
+  `Either`, `Chars`, `PathCons`), and the sugar that builds them (`Symbol!`, `Product!`, `Sum!`,
+  `Path!`, `Struct!`, `Enum!`) keeps a page each too.
+- **A construct documented inside another page moves to its own page** in the directory its kind
+  belongs to.
 
-**The rule reaches every group, including those whose internal documents bundle several constructs.**
-`providers/`, `components/`, and `types/` are ported this way, and these splits are the model for a
-later one:
-
-- **The four provider catalogues** (handler combinators, dispatch combinators, monad providers, error
-  providers) became one page per provider. They were the largest expansion, and the error catalogue
-  alone holds `RaiseFrom`, `ReturnError`, `RaiseInfallible`, `DebugError`, `DisplayError`, `DiscardDetail`, and
-  `PanicOnError`.
-- **`use_field.md`** became three, for `UseField`, `UseFieldRef`, and `UseFields`. The internal guide
-  kept them together because they are chosen together; a reader choosing between them is served by each
-  page's *When to use it* and by the index.
-- **The component docs that bundle more than one component** split by component: `can_raise_error.md`
-  into `CanRaiseError` and `CanWrapError`, `runner.md` into `CanRun` and `CanSendRun`, and
-  `has_runtime.md` into `HasRuntimeType` and `HasRuntime`. A *component* is one construct even though it
-  generates a consumer trait, a provider trait, and a marker; two components are two pages. **A
-  by-reference or async variant is itself a distinct component**, with its own consumer trait, provider
-  trait, and marker, so it gets its own page too: `computer.md` fed `Computer`, `ComputerRef`,
-  `AsyncComputer`, and `AsyncComputerRef`; `try_computer.md` fed `TryComputer` and `TryComputerRef`; and
-  `handler.md` fed `Handler` and `HandlerRef`, all grouped under a `handler/` subsection for the
-  computation family.
-
-Enumerate each group against the source when you port it rather than trusting the stub's title, and
+**Enumerate each group against the source when you port it,** rather than trusting a stub's title, and
 update the counts in [pages/reference.md](../pages/reference.md),
 [information-architecture.md](../information-architecture.md), and [tasks.md](../tasks.md) in the same
 change.
 
-**Splitting a page that already exists means re-pointing every link into it, and that is the step most
-easily half-done.** Pages that are already written link to the stubs (`use_field.md` in particular is
-cited from across `traits/`), so a split leaves dangling links in files you were not editing. Three
-habits make it survivable. Search for the *old* file name across all of `docs/`, not just the group you
-are porting, since the concepts tier links into the reference too. Search for **both link forms** (the
-relative one ending in `.md`, written between reference pages, and the absolute one rooted at
-`/docs/reference/` with no extension, which is what a concepts page uses), because a check that knows
-only the first will pass while the build still fails on the second. And decide per
-link which of the new pages it meant: a link labelled `CanUpcast` and a link labelled `build_from` came
-from one page and belong on two different ones, so a blanket rename is wrong.
+**Splitting a written page means re-pointing every link into it, the step most easily half-done:**
 
-**A marker is documented on its trait's page rather than getting one, because it is not a separately
-nameable *construct*.** A marker is a type implementing a trait, such as `IsPresent` or `IsRef`, and
-belongs with that trait; the index's *Looking for a name you don't see?* table routes a reader who
-arrives holding the name, and adding the row is part of the change.
+- Search for the old file name across all of `docs/`, since the Concepts tier links the reference too.
+- Search for both link forms: the relative one ending in `.md`, used between reference pages, and the
+  absolute one rooted at `/docs/reference/` without an extension, used by a Concepts page.
+- Decide per link which new page it meant: a link labelled `CanUpcast` and one labelled `build_from`
+  came from one page and belong on two.
+- Split the `example-code` mirror with the page, since a mirror file naming a page that no longer
+  exists is worse than none.
 
-**A provider alias, by contrast, gets its own page.** An alias such as `WithType`, `WithField`, or
-`WithContext` is a spelling of `WithProvider<Inner>`, and though it is not a distinct type, a reader who
-reaches for it by name needs a page to land on rather than an index row. Each alias page states what it
-expands to, carries the wiring form and a worked example, and links to `WithProvider` for the adapter
-mechanism and to its inner provider for the underlying behavior, so it repeats neither. The five `With…`
-aliases (`WithContext`, `WithType`, `WithField`, `WithFieldRef`, and `WithDelegatedType`) each have a
-page for this reason, and for the two whose inner provider is foundational and has no directly-wireable
-form (`WithFieldRef`, `WithDelegatedType`), the alias page is where the wiring form and example live
-while the inner provider's page keeps the mechanism.
-
-Three pages are not constructs at all, and the first two go in opposite directions.
-[`cargo-cgp`](../../cgp/reference/cargo-cgp.md) documents the toolchain, and it does not belong under
-`reference/` on the public site, where every other page answers "what does this construct mean", so give
-the tool its own top-level docs section, alongside the reference rather than inside it. The **error
-catalog**, by contrast, belongs *inside* the reference, because a reader who hits a wiring failure is
-doing exactly what the reference is for: looking one thing up by a name they already have, in this case
-an error code or a message shape. The **glossary** belongs inside it for the same reason, and is
-specified in [The glossary page](#the-glossary-page) below.
-
-The error catalog is a consolidation of a different kind from the construct consolidations above.
-The internal [errors catalog](../../cgp/errors/README.md) is twenty-one class documents, and
-twenty-one public pages would be a category no reader scans; one page, organized by the internal
-catalog's own **hidden-versus-surfaced** axis, is what a reader can actually use. It shows the small
-program behind each class, says what the compiler reports, and says what `cargo cgp check` makes of
-it, the last being why it sits beside the tooling section conceptually even though it lives in the
-reference. Write it **before** the bulk of the port, because its existence is what lets every
-*Common Mistakes* section stay construct-specific instead of re-explaining the same failure.
-
-## The glossary page
-
-**The glossary is term lookup, where the index is construct lookup, and the difference is what keeps
-the two from overlapping.** The index's *Looking for a name you don't see?* table routes a reader who
-arrives holding a construct's name (`IsPresent`, `#[cgp_new_provider]`) to the page documenting it.
-The glossary routes a reader who arrives holding a *word* (environmental context, blanket
-implementation, type class) to the page that explains the idea. Both are lookup surfaces, and a
-reader who needs one is not served by the other.
-
-It earns a page because the site's vocabulary is used far more widely than it is defined. A term such
-as **environmental context** is glossed inline on every page that uses it and defined at length on
-exactly one, several sections deep into a concept page a reader reaches last; a term such as **blanket
-implementation** is used on most of the site and linked to Rust's own documentation on a minority of
-it. The per-page gloss is the right local answer and stays, but it leaves no destination, and the
-glossary is that destination.
-
-### Where it sits, and how a term becomes a link target
-
-The page is `docs/reference/glossary.md`, labelled **Glossary**, at `sidebar_position: 91`, beside the
-compile-errors page at 90, since those two are the section's only non-construct pages. The
-[reference index](#placement-navigation-and-completeness) links it in prose the way it already links
-the error catalog, because the index is the section's completeness check and a page it does not reach
-is a page nobody finds. **The six-section layered descent does not apply**: that is the shape of a
-construct page, and this one has no expansion, no grammar, and nothing to descend through.
-
-Living in the reference costs the page its discoverability for exactly the reader who needs it most,
-since a newcomer meeting an unfamiliar word is not browsing the construct reference. **Three further
-pages therefore link it**: the [Concepts index](explanation.md), the Introduction, and the
-[Comparisons index](related-work.md#the-index-page), each pointing a reader who has hit a word rather
-than a construct. That is the trade the placement accepts, and dropping those links reopens it.
-
-**Every term is an `###` heading directly under its section's `##`, and the sections carry no thematic
-sub-grouping.** This is forced rather than chosen. The site's MDX setup rejects the `{#custom-id}`
-syntax and Docusaurus anchors `h2` and `h3` only, so a term written as a table row, a bold list item,
-or an `h4` beneath a thematic sub-heading has no anchor, and a term with no anchor cannot be linked,
-which is the whole point of the page. Grouping terms by theme costs one heading level and therefore
-costs every term its link target, so the sections stay flat.
-
-Flat sections are then **ordered alphabetically**, because the page is looked up rather than read
-through, and a reader scanning for a word needs it where the alphabet says it is rather than where a
-taxonomy would have put it. Set `toc_max_heading_level: 2` in the front matter so the table of contents
-lists the three sections rather than sixty terms; the anchors are unaffected, since that setting
-controls what the table of contents displays rather than what is anchored.
-
-### The entry is a definition and a route, never an explanation
-
-**One or two sentences, then links.** This is the page's governing constraint and the one that decides
-whether it survives contact with the rest of the site. The base prefers one explanation plus a link
-over two explanations that will eventually disagree, and a glossary is structurally a second place
-every term is described, so an entry that explains *why* CGP works a given way has become a worse copy
-of a Concepts page and will drift away from it. Define the term, then send the reader to the page that
-owns the idea.
-
-Each entry is its heading, then the definition, then the links on a line of their own: the page that
-owns the idea, and the construct reference page where a construct embodies it. Two links is the norm
-and three is the ceiling, for the same reason the *The ideas behind it* lists are capped: a longer
-list stops being a route.
-
-### The three sections, and what each owes
-
-**CGP terms** are the section the page exists for, and
-[vocabulary.md](../../communication-strategy/vocabulary.md) is their source of truth: it owns the
-definitions, the context and target qualifiers, and the wording rules, and the glossary is its public
-rendering rather than a second opinion. Where a term has a canonical gloss there, copy it rather than
-paraphrasing. A term's entry links the Concepts page that argues the idea and the reference page for
-the construct that expresses it.
-
-**Rust terms are defined in one sentence and handed straight to Rust's own documentation.** The site
-does not re-teach Rust, and this section is where that rule is most easily broken, because every term
-in it is one an author could happily write three paragraphs about. The entry says what the term means
-in the narrowest useful way and links the destination fixed in
-[the external Rust documentation table](#linking-three-destinations-and-one-prohibition) below:
-the Rust Reference for precision, the Rust Book for teaching. Reuse that table rather than choosing a
-destination per entry, since the whole point of it is that the site links one place per concept. Where
-the term also carries a CGP-specific consequence, that is a clause and a link, not a paragraph.
-
-**Related concepts** define an idea from outside CGP in one or two sentences, in the vocabulary its own
-community uses, and carry **two links: the [comparison page](related-work.md) that places CGP against
-it, and the term's own canonical page**: the language's manual, the framework's documentation, the
-paper or proposal that introduced it. The external link is what makes the definition checkable by
-someone who knows the tool, and the comparison page is where CGP's relationship to it is argued, so
-**that relationship is a clause at most in the entry itself**. Take the external destination from the
-comparison page's own Sources section rather than choosing one, so the glossary and the page it routes
-to cite the same authority.
-
-**A term earns an entry only where a comparison page covers it.** The *In your terms* table on each
-comparison page is the inventory these entries are drawn from, and a word readers do reach for that no
-comparison document treats (aspect-oriented programming, COM) is left out rather than given an entry
-routing nowhere. Every term in this section has a page behind it, and that is what the section is for.
-
-Two rules from that guide reach here unchanged: never let a definition read as disparagement, and
-never call a CGP construct a capability, per
-[vocabulary.md](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid). The second
-binds the guide's own prose rather than changing an entry's job: **`capability` gets an ordinary
-entry** saying what the word means to those who use it and that CGP's arrangement resembles it, then
-routing to the comparison page for how far the resemblance goes. Putting the prohibition on the page
-would answer a question no reader asked.
-
-### What the page does not do
-
-**It does not retire the per-page gloss.** A reference page introduces "context" with its canonical
-gloss on first use because the page is read standalone, and a reader who arrives from a search result
-has not passed through the glossary. The glossary gives that gloss somewhere to link; it does not give
-a page permission to drop it.
-
-**It shows no code**, which is what keeps it a lookup surface rather than a teaching one, and which is
-why it needs no [`example-code`](../site.md#the-example-code-crate) mirror. A term whose
-definition seems to require a snippet is a term whose entry is trying to be an explanation.
-
-**It does not list constructs.** A construct has a page; the glossary names a construct only where a
-term is embodied by one, and then as a link.
-
-### Linking a term to it
-
-**Link the first use on a page, and leave the inline gloss alone.** The gloss serves the reader who
-does not click, the link serves the reader who wants the full account, and removing either to make
-room for the other loses a reader. Subsequent uses on the same page are not linked, which is the same
-convention the reference pages already follow for their own cross-links.
-
-**Keep the links in the body, never in a closing routing list.** A reference page's *Related
-constructs*, a concept page's *Where to go next*, and a comparison's *Sources* are curated routes
-carrying one destination per line, so a glossary link inside a description competes with the route it
-sits beside. Link the term's first use in the body; where a term appears only in a closing list, it
-gets no link at all.
-
-Because `onBrokenLinks` is set to `throw`, the glossary must exist before any link into it lands, so
-the page and the sweep that links to it are one change rather than two.
-
-### Checking a draft
-
-**Read each entry and ask whether it defines or explains.** An entry longer than two sentences, or one
-that answers "why", belongs on the page it should have linked to.
-
-**Check the Rust section against the external documentation table.** Every entry links the destination
-the table fixes, and none of them teaches the concept.
-
-**Read the related-concepts entries as a practitioner of each tool.** A definition its own community
-would not accept as fair is cut or re-sourced, and a sentence about CGP's advantage over the tool
-belongs on the comparison page.
-
-**Check every term is reachable.** A term the site uses without defining is the gap the page exists to
-close, so the inventory is built by reading the pages rather than by transcribing
-[vocabulary.md](../../communication-strategy/vocabulary.md).
+**Three pages are not constructs.** [`cargo-cgp`](../../cgp/reference/cargo-cgp.md) documents the
+toolchain, so it gets its own top-level docs section beside the reference. The **error catalog**
+belongs inside the reference, because a reader with a wiring failure is looking something up by a
+name they have, an error code or a message shape. It consolidates the twenty-one class documents of
+the internal [errors catalog](../../cgp/errors/README.md) into one page, organized by its
+**hidden-versus-surfaced** axis, showing each class's program, what the compiler reports, and what
+`cargo cgp check` makes of it. Write it before the bulk of a port, so every *Common Mistakes* section
+can link a class instead of re-explaining it. The **glossary** belongs inside for the same reason, as
+[The glossary page](#the-glossary-page) specifies.
 
 ## The layered page
 
-Every reference page descends through the same six sections, in the same order, so that a reader learns
-the shape once and can then skim any page by habit. **The descent is by reader level**: a beginner gets
-what they need from *Overview* and *Usage* and stops, a working developer reads to the end of the
-examples and the *When to use it* judgement that follows them, and only an advanced reader
-continues into the machinery. Nobody has to read past their level to find their answer.
+**Every reference page descends through the same six sections, in the same order, by reader level.**
+A beginner stops after *Overview* and *Usage*, a working developer reads to *When to use it*, and only
+an advanced reader continues into the machinery.
 
-**Built-in component pages use a variant of this descent.** A page for one of the components CGP ships
-([`HasErrorType`](../../cgp/reference/components/has_error_type.md), the handler family, the runner and
-runtime pairs, and the rest under `components/`) documents a high-level construct rather than a macro a
-reader invokes, so it replaces *Under the hood* with a **Definition** section placed right after
-*Overview*. Definition shows the component's trait definition and then explains each attribute on it in a
-bullet linking the attribute's own page: `#[cgp_component]`, `#[cgp_type]`, `#[cgp_getter]`,
-`#[async_trait]`, `#[prefix]`, `#[derive_delegate]`, and `#[use_type]`. Two rules keep the bullets
-readable: **the key is the bare attribute name** (`#[prefix]`, not
-`#[prefix(@cgp.core.error in DefaultNamespace)]`), with the argument's meaning carried in the
-explanation, and **an attribute used more than once gets a single grouped bullet** (a component with a
-`UseDelegate<Code>` and a `UseInputDelegate<Input>` derive gets one `#[derive_delegate]` bullet covering
-both). These pages carry **no *Under the hood***, because the generated machinery is the ordinary
-component expansion that the attribute links and the [concepts tier](explanation.md) already explain, and
-re-deriving it per component would only repeat them. The other sections are unchanged.
+- **Overview:** one or two paragraphs readable after the first tutorial. State the problem before
+  naming any mechanism, and gloss or link every term a newcomer lacks. The first paragraph names
+  Context-Generic Programming once and links the Introduction, because a reader who searched for the
+  construct may land here first. Where the construct concerns choosing an implementation (a
+  component, a provider, a wiring macro), relate a short form of the tag line to its job, as in "CGP
+  enables pluggable trait implementations in Rust, and `delegate_components!` is where a context picks
+  them"; a type-level building block leaves it out, per the
+  [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page). This
+  is the internal Purpose section rewritten for a reader without the skill, and the section most often
+  ported badly.
+- **Usage:** every accepted form, each argument and option, and the defaults, from the internal Syntax
+  section. The [coverage rule](../AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material) makes it
+  exhaustive: every form the parser accepts is here, rare, advanced, and legacy ones included.
+  **Enumerate against the parser,** not the internal document; **give the forms a spine,** naming
+  independent axes (an operator, a key form, a value form) and taking them in turn; and **say when the
+  forms combine,** with one example combining them. Order carries the beginner: the common form first,
+  then advanced and legacy forms, each legacy form marked with its replacement. A large grammar stays a
+  long section; judge it by whether a beginner can stop early and an advanced reader can find every
+  form.
+- **Examples:** at least one realistic, self-contained example, more where forms differ meaningfully,
+  preferring code verified in [examples/](../../examples/README.md).
+- **When to use it:** the situations the construct is for, the alternative when it is not, and the
+  neighbour a reader may have wanted. It folds in the internal [guides](../../cgp/guides/README.md),
+  which have no public home. It sits after the examples on purpose, because a reader judges between
+  constructs better having just seen one in use.
+- **Under the hood:** the exact expansion, with before/after blocks, required on a macro, attribute,
+  derive, or trait page, because a Rust programmer will not adopt macros they cannot see through. The
+  heading marks it as internals, so it needs no admonition. Check it with `cargo cgp expand`, since it
+  drifts most. For a macro or attribute with custom syntax, a **`## Formal grammar`** section follows
+  it, in the Rust Reference's [notation](https://doc.rust-lang.org/reference/notation.html), under the
+  internal [conventions](../../cgp/AGENTS.md#syntax-grammar-conventions). The argument-free macros
+  (`#[async_trait]`, `#[cgp_auto_dispatch]`, `#[cgp_auto_getter]`) have no grammar section.
+- **Common Mistakes:** corner cases, surprising behavior, and open bugs, from the internal Known
+  issues, omitted when there are none and never softened.
 
-**Trait-group pages carry a *Definition* section too, but add it rather than substitute it.** Each page
-under `traits/` places a **Definition** section right after *Overview* that shows the trait's own
-`pub trait` (or `pub struct`, associated const, or function) and explains every element: its generic
-parameters, associated types, method receivers, supertraits, default parameters, and any
-attribute the definition carries. Take the signature from the internal reference's Definition
-section so it matches the library. Unlike a built-in component page, a trait page **keeps its *Under the
-hood***: Definition documents the trait itself, while *Under the hood* shows how the macros generate and
-consume it. Move the definition out of *Overview* or *Usage* when it already appears there, so no page
-shows its own `pub trait` block twice. The macro, attribute, and derive groups have no Definition
-section; this variant belongs to `components/` and `traits/` alone.
+The page closes with three short lists: **Related constructs**, each with a phrase saying how it
+relates; **The ideas behind it**, two or three Concepts pages and never more, each with a phrase saying
+what it adds, as a route rather than a substitute for the page's own summary; and **Source**, linking
+the implementation on GitHub.
 
-**Overview**: one or two paragraphs, readable by someone who has finished the first tutorial and
-nothing else. State the problem the construct solves before naming any mechanism, and gloss or link
-every term a newcomer will not have. The first paragraph names Context-Generic Programming once and
-links the Introduction, because a reader who searched for the construct's name may land here first.
-Where the construct concerns choosing an implementation, as a component, a provider, or a wiring
-macro does, relate a short form of the tag line to its job, as in "CGP enables pluggable trait
-implementations in Rust, and `delegate_components!` is where a context picks them"; a type-level
-building block leaves the line out. The
-[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) owns
-the detail. This is the internal Purpose section rewritten for a reader who does not have the `/cgp`
-skill loaded, and it is the section most often ported badly, because the internal version assumes
-fluency the public reader has not got.
+Two groups vary the descent:
 
-**Usage**: the accepted forms, each argument and option, and what defaults fill an omission. The
-internal Syntax section, largely unchanged.
+- **Built-in component pages** (`components/`) replace *Under the hood* with a **Definition** section
+  right after *Overview*, because the generated machinery is the ordinary component expansion the
+  attributes' pages and the [Concepts tier](explanation.md) explain. Definition shows the component's
+  trait and explains each attribute on it (`#[cgp_component]`, `#[cgp_type]`, `#[cgp_getter]`,
+  `#[async_trait]`, `#[prefix]`, `#[derive_delegate]`, `#[use_type]`) in a bullet linking the
+  attribute's page. Key each bullet by the bare attribute name (`#[prefix]`, not its arguments), and
+  group an attribute used twice into one bullet.
+- **Trait pages** (`traits/`) add a **Definition** right after *Overview* and keep *Under the hood*.
+  Definition shows the trait's own item (`pub trait`, `pub struct`, associated const, or function),
+  taken from the internal Definition section, and explains its generic parameters, associated types,
+  receivers, supertraits, defaults, and attributes; move the definition out of *Overview* or *Usage* so
+  it appears once. *Under the hood* shows how the macros generate and consume it. Each trait page
+  states where its traits are imported from, since about half are outside the prelude.
 
-**This section is where the [coverage rule](../AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material)
-bites hardest, and it is exhaustive by obligation rather than by ambition.** Every form the macro's
-parser accepts belongs here, including the ones an author judges rare, advanced, or legacy, because
-the site reference is canonical and a form that is absent reads as a form that does not exist. Three
-habits make that achievable without the section becoming a wall. **Enumerate against the parser**, not
-against the internal document, which may itself cover only the forms someone happened to write about.
-**Give the forms a spine** rather than a flat list: where a grammar has independent axes (an operator,
-a key form, a value form), name the axes and take them in turn, so a reader can find the one they are
-asking about. And **say when the forms combine**, with one example that combines them, since a section
-that treats each form in its own subsection otherwise implies they are alternatives.
+## Conventions the port must follow
 
-Ordering carries the beginner, not selection. Lead with the form nearly everyone writes, put the
-advanced and legacy forms after it, and mark a legacy form as legacy with its replacement named.
+These mechanics are settled; copy them rather than rediscover them.
 
-A construct whose accepted grammar is large (several operators, several key forms, several statements)
-stays a long section even after that ordering, and that length is the coverage rule working as
-intended, not a page to trim. Judge a Usage section by whether a beginner can stop at the common form
-and an advanced reader can still find every other one, not by its word count.
+**Front matter:**
 
-**Examples**: at least one realistic, self-contained example, and more where forms differ meaningfully.
-Prefer code already verified in [examples/](../../examples/README.md) over new snippets.
+- **Every page carries a written `description`;** without one, Docusaurus takes the first line, which
+  on a construct page is mostly punctuation. Write it from the page's own summary line, within about
+  155 characters.
+- **A page whose heading is a construct name also carries a search-facing `title`,** while its `h1`
+  stays the name, such as `` # `#[cgp_component]` ``, and the `sidebar_label` is untouched. Put the
+  construct name first, then its job, under about 45 characters, so the site name truncates first. A
+  page covering two constructs names both and drops the job phrase. A page whose heading is already
+  what a reader searches, as on Concepts and Comparisons, carries only a `description`.
+- **Do not name CGP in a page's own title,** because every page renders as
+  `{Page} | CGP — Context-Generic Programming`; the exception is a page whose subject is CGP, such as
+  the disclosure page or the skill. [seo.md](../seo.md#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them)
+  holds the reasoning.
+- **Escape apostrophes in single-quoted YAML** (`'a context''s wiring table'`); an unescaped one fails
+  the build with an error naming the wrong line.
+- **Sidebar labels carry no backticks,** because a `sidebar_label` is plain text; keep them in the
+  `#` heading.
 
-**When to use it**: the section with no internal counterpart, and often the most
-useful on the page. Name the situations the construct is for, the alternative to prefer when it is not,
-and the neighbouring construct a reader may actually have wanted. Most of this material already exists in
-the internal [guides](../../cgp/guides/README.md), which are prescriptive where the reference is
-descriptive; folding each guide's recommendation into the relevant page's *When* section is how that
-material reaches the public site, since the guides have no public home of their own.
+**Headings and admonitions:**
 
-**It sits after the examples rather than before them, which is a deliberate departure from a
-strict level-by-level descent.** Choosing between two constructs is a judgement, and a reader makes it
-better having just seen what the construct looks like in use than having only been told what it is for,
-so the page shows the thing, then argues about when to reach for it. The descent is otherwise intact: a
-beginner still stops after *Usage* and *Examples*, and everything below *When to use it* is for
-a reader going deeper.
+- **Anchors come from heading text,** because the MDX setup rejects `{#custom-id}`, so a linked heading
+  cannot be reworded freely.
+- **An admonition's title is a heading on its own line:** `:::info`, a blank line, then
+  `### Still being written`. On this installation `:::info Still being written` is not a directive and
+  renders as three plain paragraphs without a build error. The bracket form
+  `:::info[Still being written]` also renders, but the heading form was chosen because it makes the
+  title a link target and a table-of-contents entry.
 
-**Under the hood**: the exact expansion, with before/after blocks. **This section stays** on a macro,
-attribute, derive, or trait page, and is not optional there: CGP's central credibility problem is that
-its constructs are macros, and a Rust programmer will not adopt what they cannot see through. The one
-exception is a built-in component page, which omits it and carries a *Definition* section instead, per
-the [component variant](#the-layered-page) above. It is the same commitment the
-[tutorial guide](tutorial.md) makes for the desugaring appendix and the
-[explanation guide](explanation.md) makes for *How CGP works*. The heading itself marks the section as
-internals a beginner may skip, so it carries no separate admonition note. Keep it faithful to current
-macro output, since this is the part most likely to drift, and `cargo cgp expand` is how to check it
-rather than guess.
+**Glossing "context":** introduce the word with a gloss on first use, on every page, above the
+advanced line, because a reference page is read on its own. Use the canonical clause from
+[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
+"the type the method runs on, which supplies the values it needs as its fields", or a variant it
+permits: "the type the implementation runs against", "the type the code runs against", "the type it
+runs against", or, on abstract-type pages, "the type that implements the trait". Add a new variant to
+vocabulary.md first, and never say "capability", per
+[vocabulary.md](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid). The full
+account is on the Concepts page, reached through the sidebar. This is the convention most easily
+dropped. `Product!`, `Sum!`, `Struct!`, `Enum!`, `Path!`, and `#[async_trait]` are exempt, because they
+never use the word above the advanced line; `Symbol!` is not.
 
-For a macro or attribute with custom syntax, the **formal grammar** is its own `## Formal grammar`
-section, in the Rust Reference's
-[notation](https://doc.rust-lang.org/reference/notation.html), placed after *Under the hood* so a
-beginner never meets EBNF before the examples while an advanced reader or macro author gets the precise
-answer. The rules for what counts as custom syntax and how the grammar is written are unchanged from the
-internal [conventions](../../cgp/AGENTS.md#syntax-grammar-conventions).
+**Provenance note:** every reference page, a written index included, closes with "An AI agent wrote
+this page using the CGP knowledge base. Its content was verified against the library's source. See How
+AI is used in this project.", the last phrase linking the disclosure's documentation section, per
+[AGENTS.md](../AGENTS.md#disclosing-ai-use-on-a-page). Other footers follow its sentence structure:
+"revised" for a revision alone, "wrote and revised" for both; tooling pages keep their claims about
+verification against the tool; a footer never attributes verification to a person or agent the record
+does not name. Pages without a note and the skill snapshot are outside this convention.
 
-**Common Mistakes**: corner cases, surprising behavior, and open bugs. The internal Known issues section,
-kept whenever there is something to record and omitted entirely when there is not. Do not soften these; a
-reader who hits an unlisted corner case trusts the rest of the page less.
+**Verification:**
 
-The page then closes with two short lists rather than sections: **Related constructs**, each with a
-phrase saying how it relates, and **Source**, linking the construct's implementation on GitHub.
-
-The front matter keeps the construct's name as the `h1` and adds a `title` written for a search
-result, the name first and then its job, and a written `description`, per
-[the title and description levers](../seo.md#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them)
-and the [port conventions](../pages/reference.md#conventions-the-port-must-follow).
+- **Compile every snippet** against `cgp` 0.8.0 in the
+  [`example-code` crate](../site.md#the-example-code-crate), with a `check_components!` assertion per
+  wired context, and a rejected snippet as a compile-fail fixture. A page documenting a failure quotes
+  the message the compiler actually produced.
+- **Check every expansion with `cargo cgp expand --lib --item`** on each item the page shows (for a
+  component: the consumer trait, the provider trait, the wired context, and the provider; for a
+  `#[cgp_fn]`: the generated trait), never against the internal document. Treat a remembered path
+  expansion as suspect: an `@`-path key's tail is a generic parameter, not `Nil`, and `expand` resugars
+  unevenly, returning an `open` header's redirect target as `Path!(@Component)` while each entry's key
+  stays a raw `PathCons` list, so a page showing both says so.
 
 ## Say when a construct is machinery the macros generate
 
-**Many of the constructs with a page are ones a user never writes.** The macros generate their impls, the
-library's own recursions consume them, and a reader meets the name in an expansion or an error message
-rather than in code they typed. A page that documents such a construct the same way it documents
-`#[cgp_impl]` misleads by omission: it reads as an instruction, and a reader who takes it as one goes
-looking for where to put something that was never theirs to put anywhere.
+**A page for a construct a user never writes opens with a *Generated machinery* notice.** The macros
+generate such a construct's impls and the library's recursions consume it, so a reader meets the name
+in an expansion or an error, and a page written like `#[cgp_impl]`'s reads as an instruction.
 
-**So a page for a generated construct opens with a notice saying so**, in an `:::info` block headed
-*Generated machinery*, placed after the one-line summary and before *Overview*, the same position
-and shape the *Legacy — read, don't write* notice uses on
-[`#[derive_delegate]`](../../cgp/reference/attributes/derive_delegate.md). The two notices are distinct
-and a page carries at most one: legacy means *superseded, prefer the replacement*, while this one means
-*current and correct, but not yours to write*.
+The notice is an `:::info` block after the one-line summary and before *Overview*, the position and
+shape of the *Legacy — read, don't write* notice on
+[`#[derive_delegate]`](../../cgp/reference/attributes/derive_delegate.md). A page carries at most one:
+legacy means *superseded, prefer the replacement*; this one means *current, but not yours to write*.
+The block says three things:
 
-The block says three things and stops.
+- **That the reader is not expected to use it,** in bold, first.
+- **Which macro or provider produces or consumes it,** linked.
+- **What the page is therefore for:** making an expansion or a diagnostic that names it legible. Name
+  the narrow case where a reader does write it (their own monad, a hand-written getter provider).
 
-**That the reader is not expected to use it**, stated in bold as the first sentence, because that is the
-sentence a scanner needs. **Which macro or provider produces or consumes it**, linked: the derive that
-emits the impls, the wiring macro that emits the table, the provider that bounds on it. And **what the
-page is therefore for**: explaining what that macro produces, so an expansion or a diagnostic naming the
-construct is legible. Where there is a narrow case in which the reader *does* name it (defining a monad
-of their own, writing a getter provider by hand), say so in the same breath rather than overclaiming.
-
-Two failure modes are worth naming. **Do not let the notice contradict the page**: if *Usage* gives an
-import path and a bound, the notice cannot say the construct is unreachable; say instead that it is
-rarely reached, and why. And **do not apply it to a construct whose methods a reader calls**. The test is
-whether the name appears in ordinary application or generic code: `HasBuilder` and `ExtractField` are
-generated too, but a reader calls `builder()` and `extract_field` by name, so they get no notice.
-
-**A section that is entirely generated machinery carries the framing once, in its overview, not on every
-page.** The `types/` section is that case: every page in it documents a type-level building block a
-reader recognizes rather than writes, and the section overview already says so for all of them. Repeating
-a *Generated machinery* notice on each page would only restate that framing, so the type pages omit it.
-The per-page notice stays the right device for a generated construct that sits among constructs a reader
-does write, as in `traits/`.
+**Do not let the notice contradict the page:** if *Usage* gives an import path and a bound, say the
+construct is rarely reached, and why. **Do not apply it to a construct whose methods a reader calls**:
+`HasBuilder` and `ExtractField` are generated, but a reader calls `builder()` and `extract_field`.
+**A section that is entirely machinery says so once, in its overview:** the `types/` pages carry no
+notice, while `traits/`, where generated constructs sit among written ones, uses the per-page notice.
 
 ## Linking: three destinations, and one prohibition
 
-The prohibition first: **a reference page may never link into the knowledge base**. That is the
-[one-way rule](../AGENTS.md#the-one-way-link-rule), and it is the single easiest thing to get wrong when
-porting, because the internal documents are built out of exactly those links.
+**A reference page never links into the knowledge base,** per the
+[one-way rule](../AGENTS.md#the-one-way-link-rule); it is the easiest thing to get wrong in a port.
+Links go to three places instead:
 
-Links go to three places instead.
-
-**Elsewhere on the site**, which is where most re-pointed links land. Link to the
-[tutorial](tutorial.md) that teaches the construct in use, the
-[example page in the Projects section](project.md#the-example-page) that shows it in a real program, the
-[explanation page](explanation.md) that carries the idea behind it, and other reference pages. Prefer a
-tutorial link over an explanation link when a reader would rather see the construct working than
-understand why it exists.
-
-**External Rust documentation**, for any concept a reader may not have. This is what lets the reference
-stay readable by a beginner without re-teaching Rust, and the destinations should be consistent across
-pages rather than chosen per author. Prefer the **Rust Reference** for precision and the **Rust Book**
-for teaching, and note that Book chapter *numbers* shift between editions, so a Book link is worth
-re-checking when a page is revised.
+- **Elsewhere on the site:** the [tutorial](tutorial.md) that teaches the construct, the
+  [Projects example page](project.md#the-example-page) that shows it in a program, the
+  [explanation page](explanation.md) behind it, and other reference pages. Prefer a tutorial when a
+  reader would rather see it working. A mention of `cargo cgp check` links
+  <https://contextgeneric.dev/docs/cargo-cgp/check>, not the tool's repository.
+- **External Rust documentation,** from the table below, so every page links one place per concept:
+  the Rust Reference for precision, the Rust Book for teaching. Book chapter numbers shift between
+  editions, so recheck a Book link when revising.
+- **The source on GitHub,** in the Source list.
 
 | Concept a page may assume | Link to |
 |---|---|
@@ -502,100 +298,128 @@ re-checking when a page is revised.
 | `PhantomData` | [std: `PhantomData`](https://doc.rust-lang.org/std/marker/struct.PhantomData.html) |
 | The grammar notation used in a formal grammar | [Rust Reference: Notation](https://doc.rust-lang.org/reference/notation.html) |
 
-A blanket implementation deserves special mention because CGP rests on it and the Rust Book covers it
-only in passing; the [Hello World tutorial](../tutorials/hello-world.md) already links an external
-explanation for exactly this reason, and a reference page should link the same one rather than pick a
-different source.
-
-**The source on GitHub**, in the Source list, so a reader can drop from the prose into the code.
+For a blanket implementation, which the Rust Book covers only in passing, link the external
+explanation the [Hello World tutorial](../tutorials/hello-world.md) uses.
 
 ### Where the internal links go
 
-Each internal link target has a defined replacement, and knowing them turns the re-pointing edit from a
-judgement call into a mechanical one.
+Each internal link target has a fixed replacement:
 
-A link to a **concept** becomes a link to the [explanation tier](explanation.md) page that covers the
-idea (usually the Concepts page of the same name) or, where no explanation page covers it, the
-material is summarized in a sentence on the reference page itself rather than left dangling.
+- **A concept** becomes the [explanation tier](explanation.md) page that covers it, usually the
+  Concepts page of the same name, or a sentence on the page where none does.
+- **A guide** has no public counterpart; fold its recommendation into *When to use it*.
+- **An example** becomes the tutorial or Projects example page with the same scenario, or the code is
+  inlined.
+- **An error class** becomes the section of the error catalog page covering that class.
+- **An implementation document** is dropped; the GitHub source link replaces it.
 
-A link to a **guide** has no public destination, because the guides have no public counterpart. Fold the
-guide's recommendation into the page's *When to use it* section, which is what that section is for.
+## The glossary page
 
-A link to an **example** becomes a link to the tutorial or Projects example page that carries the same
-scenario, or the example code is inlined.
+**The glossary is term lookup, where the index is construct lookup.** The index's *Looking for a name
+you don't see?* table routes a construct's name (`IsPresent`, `#[cgp_new_provider]`) to its page; the
+glossary routes a word (environmental context, blanket implementation, type class) to the page that
+explains the idea. It exists because the site's vocabulary is glossed inline everywhere but defined
+at length in few places, and the glossary is that destination.
 
-A link to an **error class** becomes a link to the section of the reference's
-[error catalog page](#granularity-one-page-per-named-construct) covering that class, so a *Common Mistakes* section links the class rather than inlining it.
+**Placement:** `docs/reference/glossary.md`, labelled **Glossary**, at `sidebar_position: 91`, beside
+the compile-errors page at 90. The reference index links it in prose as it links the error catalog.
+The Concepts index, the Introduction, and the [Comparisons index](related-work.md#the-index-page) also
+link it, because a newcomer meeting an unfamiliar word is not browsing the reference; dropping those
+links loses the reader who needs it most. The layered descent does not apply.
 
-A link to an **implementation document** is dropped. That material is for people maintaining CGP, and its
-public substitute is the GitHub source link in the Source list.
+**Structure:**
+
+- **Every term is an `###` directly under its section's `##`, with no thematic grouping,** because
+  Docusaurus anchors `h2` and `h3` only and a term without an anchor cannot be linked.
+- **Sections are alphabetical,** because the page is looked up.
+- **`toc_max_heading_level: 2`** keeps the table of contents to the three sections; the anchors are
+  unaffected.
+
+**Each entry is a definition and a route, never an explanation:** its heading, one or two sentences,
+then a line of links, two as the norm and three at most. An entry that explains *why* becomes a worse
+copy of a Concepts page and drifts from it. The three sections owe different things:
+
+- **CGP terms:** [vocabulary.md](../../communication-strategy/vocabulary.md) is the source of truth;
+  copy its canonical gloss rather than paraphrasing. Link the Concepts page that argues the idea and
+  the reference page of the construct that expresses it.
+- **Rust terms:** one sentence, linking the destination the
+  [external documentation table](#linking-three-destinations-and-one-prohibition) fixes. A
+  CGP-specific consequence is a clause and a link, never a paragraph.
+- **Related concepts:** one or two sentences in the term's own community's vocabulary, linking the
+  [comparison page](related-work.md) that places CGP against it and the term's canonical page, taken
+  from that comparison page's Sources section. CGP's relationship to it is a clause at most. A term
+  gets an entry only where a comparison page's *In your terms* table covers it. Never let a definition
+  read as disparagement. `capability` gets an ordinary entry saying what the word means to those who
+  use it, routing to the comparison page; the prohibition on calling CGP constructs capabilities binds
+  the site's prose, not this entry.
+
+**What the page does not do:** it does not retire the per-page gloss, which serves a reader arriving
+from search; it shows no code, so it needs no `example-code` mirror; and it lists no constructs,
+naming one only as a link where a term is embodied by it.
+
+**Linking a term to it:**
+
+- Link the first use on a page, in the body, and leave the inline gloss beside it; later uses stay
+  unlinked.
+- Never link from a closing routing list (*Related constructs*, *Where to go next*, *Sources*); a term
+  that appears only there gets no link.
+- A page that owns a term does not link it: *Bypassing coherence* does not link *coherence*.
+- A compound use is not the general term: *consumer blanket impl* stays unlinked, and only *blanket
+  implementation* links.
+- The basic vocabulary is not linked: *context*, *component*, *provider*, *wiring*, and the two trait
+  names are glossed or are the section's working words.
+- A term already linked to its Concepts page stays pointed there.
+- Because `onBrokenLinks` is `throw`, a new term and the links into it land in one change.
+
+**Checking a glossary draft:**
+
+- An entry longer than two sentences, or one that answers "why", belongs on the page it should link.
+- Every Rust entry links the table's destination and teaches nothing.
+- Read the related-concepts entries as a practitioner of each tool; cut or re-source one its community
+  would not accept, and move any claim of CGP's advantage to the comparison page.
+- Build the inventory by reading the pages, not by transcribing vocabulary.md, so every term the site
+  uses without defining is covered.
 
 ## Placement, navigation, and completeness
 
-The reference is a new top-level category under `docs/`, sitting after Tutorials, Concepts, and
-Comparisons in the sidebar, because a reader reaches for it once they are writing code rather than while
-learning. It needs a directory with a
-`_category_.json` per group, and the sidebar is autogenerated from the tree; see
-[site.md](../site.md#how-the-site-is-built) for the mechanics and the stock-Docusaurus constraint.
+**The reference is a top-level category under `docs/`, after Tutorials, Concepts, and Comparisons,**
+because a reader reaches for it once they write code. Each group needs a `_category_.json`, and the
+sidebar is autogenerated, per [site.md](../site.md#how-the-site-is-built).
 
-The category needs a real **index page**, not an autogenerated list. Two hundred pages is far too
-many to scan, and the index is where the layered-audience promise is kept at the section level: it
-should open by naming the handful of constructs a newcomer actually needs, then group the rest by
-the job they do, in the shape the internal [reference index](../../cgp/reference/README.md) already
-uses. A reader who does not yet know which construct they want should be able to find it from this
-page.
+**The category needs a written index page, not a generated list.** It opens with the handful of
+constructs a newcomer needs, then groups the rest by job, in the shape of the internal
+[reference index](../../cgp/reference/README.md), so a reader who does not yet know the construct's
+name can find it.
 
-Because the site reference is canonical, **completeness is an obligation**, met when the section first
-publishes rather than approached over time. Every construct the `cgp` crate exports needs a page or a
-named place inside a consolidated one, and a construct added to the library gets its public page in the
-same change as its internal document. The release branch meets it, with a page for every construct;
-[tasks.md](../tasks.md) records what the relaunch still waits for.
+**Completeness is an obligation:** every construct the `cgp` crate exports has a page or a named place
+in a consolidated one, and a construct added to the library gets its page in the same change as its
+internal document.
 
 ## What must not be on a reference page
 
-**No knowledge-base links**, per the rule above.
-
-**No teaching sequence.** A reference page is read in fragments by someone who already knows what they
-are looking for. If a page starts walking a reader through building something, that material belongs in a
-[tutorial](tutorial.md).
-
-**No unmarked machinery in the top sections.** `DelegateComponent`, `IsProviderFor`, and the
-`Symbol<…>` list may appear under *Under the hood*, and should not appear above it.
-
-**No internal vocabulary without a gloss.** "Impl-side dependency", "provider trait", and "context" are
-knowledge-base words before they are public ones; introduce each with a plain definition on first use,
-per [vocabulary.md](../../communication-strategy/vocabulary.md).
-
-**No deferral to docs.rs** for anything a reader needs, since the site reference is the canonical place.
-
-**No legacy form presented as current.** Where a construct has been superseded (`#[derive_delegate]` and
-`UseDelegate` by the `open` statement, for instance), the page says so plainly in *When to use it*
-and explains that the older form is what a reader will meet in existing code.
+- **Knowledge-base links,** per the one-way rule.
+- **A teaching sequence;** a walk through building something belongs in a [tutorial](tutorial.md).
+- **Unmarked machinery above *Under the hood*,** such as `DelegateComponent`, `IsProviderFor`, or the
+  `Symbol<…>` list.
+- **Internal vocabulary without a gloss:** "impl-side dependency", "provider trait", and "context" get
+  a plain definition on first use, per [vocabulary.md](../../communication-strategy/vocabulary.md).
+- **Deferral to docs.rs.**
+- **A legacy form presented as current:** where a construct is superseded (`#[derive_delegate]` and
+  `UseDelegate` by the `open` statement), *When to use it* says so and that the old form appears in
+  existing code.
 
 ## Checking a draft
 
-**Read only *Overview* and *Usage* and ask whether a reader who has finished one tutorial
-understands what this is and how to write it.** That is the layered promise, and it is the thing porting
-from an internal document most reliably breaks.
-
-**Count the forms against the parser.** Open the construct's argument or body parser in
-`cgp-macro-core` and check that every branch it takes has a place on the page. A page that covers most
-of a grammar is the normal failure here, and it is invisible from the page itself; see the
-[coverage rule](../AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material).
-
-**Ask whether a reader would ever type this construct's name.** If not, the page needs the
-[*Generated machinery* notice](#say-when-a-construct-is-machinery-the-macros-generate) (unless it is in
-the `types/` section, which carries that framing in its overview instead), and if it has one, check that
-nothing further down contradicts it.
-
-**Grep the page for links into the knowledge base.** One surviving `../../cgp/` link is a broken public
-page.
-
-**Check the expansion against `cargo cgp expand`** rather than against the internal document, which may
-itself have drifted.
-
-**Check the descent is intact**: nothing from *Under the hood* has leaked upward, and nothing a beginner
-needs has sunk below the examples.
-
-**Check the page exists in the index** and that its *Related constructs* list points at real pages, since
-a canonical reference with holes is worse than one that is honestly partial.
+- **Read only *Overview* and *Usage*** and ask whether a reader who has finished one tutorial knows what
+  the construct is and how to write it; porting breaks this most reliably.
+- **Count the forms against the parser** in `cgp-macro-core`: every branch has a place on the page. A
+  page covering most of a grammar is the normal, invisible failure.
+- **Ask whether a reader would ever type the construct's name;** if not, the page needs the
+  *Generated machinery* notice (outside `types/`), and nothing below may contradict it.
+- **Grep for links into the knowledge base;** one surviving `../../cgp/` link breaks a public page.
+- **Check the expansion with `cargo cgp expand`,** not the internal document.
+- **Check the descent:** nothing from *Under the hood* above it, nothing a beginner needs below the
+  examples.
+- **Check the "context" gloss mechanically,** allowing for the phrase wrapping across lines and for
+  its permitted variants, and ignoring `MyContext` inside code blocks.
+- **Check the page is in the index** and that its *Related constructs* point at real pages.
