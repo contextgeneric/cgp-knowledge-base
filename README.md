@@ -125,15 +125,15 @@ but voiceless copy that no human wrote and no reader trusts.
 [website/](website/README.md) is the meta-documentation for <https://contextgeneric.dev>, and it
 exists to bridge a deliberate asymmetry: the website is public and may never link into this internal
 base, so the map from a published page back to the material behind it has to live here. It holds two
-kinds of document. The **records** carry one document per blog post, one per tutorial series, and
-one covering the site's configuration and standalone pages, each recording what the page says, which
-knowledge-base documents own its content, and how far its code has drifted from the current release.
-That last point is why the section matters most: nearly every blog post predates v0.8.0, several
-teach constructs the compiler no longer accepts, and an agent needs to know which is which before
-quoting any of them. The **specifications** are the
-[writing guides](website/writing-guides/README.md), one per kind of page, which say how a page
-*should* be written rather than how it currently reads: forward-looking documents that serve the
-site's redesign.
+kinds of document. The **records** carry one document per standalone page and docs section, per blog
+post, per tutorial series, and per Projects section, with [site.md](website/site.md) for the facts
+every page shares; each records what the page says, which knowledge-base documents own its content,
+and how far its code has drifted from the current release. That last point is why the section matters
+most: nearly every blog post predates v0.8.0, several teach constructs the compiler no longer accepts,
+and an agent needs to know which is which before quoting any of them. The **specifications** say what
+the site should be: the [writing guides](website/writing-guides/README.md), one per kind of page,
+which say how a page *should* be written rather than how it currently reads, beside the information
+architecture, the search strategy, and the visual design.
 
 ### `releases/`: the version history
 

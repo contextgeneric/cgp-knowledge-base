@@ -74,7 +74,7 @@ These rules govern public pages, not this base's documents.
 - Say which of CGP's three context shapes a page's code is in, using the qualifiers in
   [vocabulary.md](../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target); an
   introductory page may record the shape in its record instead.
-- Cut a project's scenario down to what a concept page needs, if that helps; the code must still
+- Let a concept page cut a project's scenario down to what the concept needs; its code must still
   compile, and need not match the project.
 - Put a page's code in the website repository's `example-code/` crate, one module per heading, and run
   its tests after changing a page's code; do not mirror this base's own snippets there.
@@ -136,7 +136,7 @@ These rules govern public pages, not this base's documents.
 ## Records and their status
 
 - Write a page's record to [the document template](README.md#the-document-template), and a writing
-  guide to the guide shape it names.
+  guide to the guide shape the same section gives.
 - Give a record's status as exactly one of the [status words](README.md#status-words).
 
 ## Registering a document
