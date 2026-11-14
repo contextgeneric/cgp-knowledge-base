@@ -113,7 +113,7 @@ lands afterwards.
   code.
 - **Projects**, after the release: the index, cgp-examples, Hypershell, and cgp-serde partly written,
   and the error backends **new**. It replaces three deep dives planned earlier, as
-  [projects/README.md](projects/README.md#what-the-section-replaces) maps.
+  [projects/README.md](projects/README.md#what-the-section-replaces) records.
 - **Orientation:** the *Quickstart*, which only proves CGP runs and stays smaller than Hello World,
   with its boundary in [writing-guides/orientation.md](writing-guides/orientation.md); the
   *Introduction*, narrowed to the definition and the routing, with no maturity section, since the

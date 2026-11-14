@@ -1,13 +1,13 @@
 # Writing the Projects section
 
 The Projects section documents the libraries and demonstration programs built with CGP, one section
-per project, and their main job is to **teach CGP's design patterns through code that runs**. Each
-section is ported from the project's section under [projects/](../../projects/README.md), the way
-the reference is ported from [cgp/reference/](../../cgp/reference/README.md), and its example pages
-are expanded into short tutorials rather than ported line for line.
+per project, and its job is to **teach CGP's design patterns through code that runs**. Each section is
+ported from the project's section under [projects/](../../projects/README.md), as the reference is
+ported from [cgp/reference/](../../cgp/reference/README.md), and its example pages are expanded into
+short tutorials.
 
-- **Where they live** — `docs/projects/<project>/`, one directory per project, under a `Projects`
-  category with a hand-written index
+- **Where they live** — `docs/projects/<project>/`, under a `Projects` category with a hand-written
+  index
 - **Voice** — project voice, with the teaching "we" allowed on example pages, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Derived from** — the project's section under [projects/](../../projects/README.md), which stays
@@ -19,421 +19,317 @@ are expanded into short tutorials rather than ported line for line.
 
 ## What the section is for
 
-The section serves two readers at once, and the page kinds below exist to keep them apart. **The
-pattern learner** wants to see a CGP idea working in a program that does something real: a namespace
-assembling a language, a per-type table choosing a JSON encoding, a builder merging subsystems. The
-Concepts pages explain those ideas with deliberately small code, and the tutorials build them up
-from a rectangle. What neither shows is the idea inside a system someone would actually write, and
-that is what the example pages are for. **The evaluator** wants evidence that CGP holds up beyond a
-toy. For that reader the section is the project's social proof, per
-[evidence.md](../../communication-strategy/evidence.md), and its value depends on the pages being
-candid about what each project is.
+**The section serves two readers.** The pattern learner wants a CGP idea working in a program that
+does something real, which neither the Concepts pages' small code nor the tutorials show; the example
+pages are for that reader. The evaluator wants evidence that CGP holds up beyond a toy; for that
+reader the section is social proof, per [evidence.md](../../communication-strategy/evidence.md), and
+it is only as credible as the pages are candid about what each project is.
 
-So the examples carry the section. A project's reference, architecture, and guide pages exist so
-that an example page can name a construct and link to its full account, and so that a reader who
-adopts the project has somewhere to look things up. **Write and publish a project's example pages
-first**, and give them the most care.
+**The examples carry the section.** The reference, architecture, and guide pages exist so an example
+page can link a construct's full account, and so a reader who adopts the project can look things up.
+Write and publish a project's example pages first, with the most care.
 
 ## Ported, with one expansion
 
-**Every page except an example page is a port.** The internal documents already carry the
-information, verified against the project's source. They are wrong for a public reader in the same
-ways the internal reference is, so the same four transformations apply as in
+**Every page except an example page is a port**, with the four transformations of
 [reference.md](reference.md#derived-from-the-internal-reference-and-kept-in-step-with-it):
 
-- **Re-point every link**, per [Linking](#linking) below. The internal documents link into `cgp/`,
-  `examples/`, and each other, and a public page may link none of those.
-- **Drop the internal records.** The header fields that record the documented branch and local
-  checkout, everything in `issues.md` and `testing.md`, the probes, the "Public material derived
-  from this" line, and every sentence addressed to an agent maintaining the project stay in the
-  knowledge base.
-- **Orient a reader who does not know CGP.** The internal documents assume the `/cgp` skill. A
-  public page glosses "context", "provider", and "wiring" on first use, and links the page that
-  explains each.
-- **Convert source links** to the project's repository on its default branch, since that is where
-  the published code lives.
+- **Re-point every link**, per [Linking](#linking).
+- **Drop the internal records**: the header fields recording the branch and checkout, everything in
+  `issues.md` and `testing.md`, the probes, the "Public material derived from this" line, and every
+  sentence addressed to an agent maintaining the project.
+- **Orient a reader who does not know CGP**: gloss "context", "provider", and "wiring" on first use,
+  and link the page that explains each.
+- **Convert source links** to the project's repository on its default branch.
 
-**An example page is an expansion instead.** The internal example document is a record: it quotes
-the parts of a program that carry its ideas, says what running it produced, and lists its defects.
-The public page keeps the program and what running it produced, leaves the defects in the record,
-and adds what a record leaves out: an introduction for a reader new to CGP, the reason each part is
-written the way it is, the name of the pattern it shows, and a route onward. It is the one page kind
-in the section that is written rather than transformed, which is why it is specified in the most
-detail below.
+**An example page is an expansion.** It keeps the internal record's program and what running it
+produced, leaves the defects in the record, and adds an introduction for a reader new to CGP, the
+reason each part is written as it is, the pattern's name, and a route onward.
 
 ## The page kinds
 
-A project section is built from seven kinds of page. The file paths mirror the internal section
-wherever it has a matching document, so the mapping from a public page to its source is visible from
-the path.
+A project section has seven kinds of page. File paths mirror the internal section, so a public page's
+source is visible from its path, and within a project the sidebar runs examples, architecture, guides,
+reference, and the limitations page last. Example pages are named in kebab case after the program,
+reference pages in snake case after the construct.
 
-- **The project index** (`index.md`) — what the project is, whether it is a library or a
-  demonstration, its status, how to add or run it, and the route into its examples. Ported from the
-  project's `README.md`.
-- **Example pages** (`examples/*.md`) — one page per runnable program or test, each a short
-  tutorial. Expanded from the project's `examples/` documents; where the internal section has no
-  per-example document, one is written there first, per the
-  [blueprint](../projects/README.md#how-a-page-maps-to-its-source). The error backends are the one
-  variation: each crate has a single walkthrough, and it is that crate's `index.md`.
-- **Architecture pages** (`architecture/*.md`) — the project's own design, one idea per page,
-  written as explanation. Ported from `architecture/`.
-- **Guides** (`guides/*.md`) — one job per page: writing a program, adding a provider, debugging the
-  wiring. Ported from `guides/`.
-- **Reference pages** (`reference/**/*.md`) — one page per public construct, for a library a reader
-  depends on. Split from the family documents in `reference/`.
-- **The limitations page** (`limitations.md`) — the high-level limits of the project's design and
-  status, for a library. Written from the project README and the architecture, not from `issues.md`.
-- **A comparison page**, named for what it compares against — for a project that rebuilds a
-  well-known library or practice, such as cgp-serde against Serde. Ported from the project's
-  comparison document.
+| Page kind | Public path | Internal source |
+|---|---|---|
+| **Project index**: what the project is, library or demonstration, its status, how to add or run it, and the route into its examples | `index.md` | the project's or subproject's `README.md` |
+| **Examples index**: the examples in teaching order | `examples/index.md` | `examples/README.md` |
+| **Example page**: one runnable program or test, as a short tutorial | `examples/<program>.md` | `examples/<program>.md` |
+| **Architecture pages**: the project's design, one idea per page, as explanation, with the one-page design as the index | `architecture/index.md`, `architecture/<idea>.md` | `architecture/README.md`, `architecture/<idea>.md` |
+| **Guides**: one job per page | `guides/<job>.md` | `guides/<job>.md` |
+| **Reference pages**: one page per public construct, for a library | `reference/<kind>/<construct>.md` | split from `reference/<family>.md` |
+| **Limitations page**: the high-level limits of the design and status, for a library | `limitations.md` | the README and `architecture/`, never `issues.md` |
+| **Comparison page**, for a project that rebuilds a well-known library or practice | named for what it compares against | the project's comparison document |
 
-Above the projects sits one more page, the **section index** at `docs/projects/index.md`, which
-introduces the projects and routes a reader from a pattern to the example page that shows it. Its
-contents are specified in the [blueprint](../projects/README.md#the-section-index) rather than here,
-since there is only one.
+**An example page needs its internal record first.** Where the internal section has no per-example
+document, one is written in this base before the page, because the record holds the run output and
+probe results the page quotes. The error backends are the one variation: each crate has a single
+walkthrough, which is that crate's `index.md`.
 
-`issues.md` and `testing.md` have no public page, and their contents do not appear on any. A
-project's defects, missing features, and test gaps are records for the people working on it; a
-public reader learning the project needs only the high-level limits, as [The limitations
-page](#the-limitations-page) describes. A sentence saying the project is lightly tested is as far as
-the test record reaches.
+**`issues.md` and `testing.md` have no public page**, and their contents appear on none; a sentence
+saying the project is lightly tested is as far as the test record reaches.
 
-**A demonstration project omits the reference and the limitations page.** Nobody depends on the
-crates in [cgp-examples](../../projects/cgp-examples/README.md), so a reference for their items
-would document names no reader types, and the limits worth stating fit in a sentence on the index.
-Their items are shown and explained where an example page uses them, and a crate's status goes in a
-short section on its index.
+**A demonstration project omits the reference and the limitations page.** Nobody depends on
+[cgp-examples](../../projects/cgp-examples/README.md)'s crates, so their items are explained where an
+example page uses them, and each crate's status is a short section on its index.
+
+The section's own index, `docs/projects/index.md`, is specified in the
+[blueprint](../projects/README.md#the-section-index).
 
 ## The example page
 
-An example page takes one program from the project and walks a reader through it as a short tutorial
-in the **applied register** of [tutorial.md](tutorial.md#the-two-registers): the subject is the
-program, CGP is the material it is built from, and the mechanism is linked rather than derived. A
-reader should finish it in about ten minutes, knowing what the program does, how its wiring produces
-that behavior, and the name of the CGP pattern it shows.
+An example page walks a reader through one program in the **applied register** of
+[tutorial.md](tutorial.md#the-two-registers): the program is the subject, CGP is its material, and
+the mechanism is linked rather than derived. A reader finishes it in about ten minutes, knowing what
+the program does, how its wiring produces that behavior, and the pattern's name.
 
-**An example page is not a tutorial, and the difference decides its shape.** A tutorial builds a
-program from nothing, one step at a time, so the reader types every line. An example page starts
-from a program that already exists and runs, and guides the reader through it in the order its ideas
-make sense. So it borrows the tutorial's obligations that fit a guided reading (destination first, the
-problem before the solution, a result early, one path, the context's shape stated), and it drops the
-ones that assume the reader is building (each construct introduced by the need for it, explicit form
-before sugar). A reader who wants the construction
-goes to the tutorials; the *New to CGP?* admonition below is how the page sends them there.
+**It is a guided reading, not a build.** It keeps the tutorial obligations that fit a reading
+(destination first, the problem before the solution, a result early, one path, the context's shape
+stated) and drops those that assume the reader types every line (each construct introduced by its
+need, explicit form before sugar). The *New to CGP?* admonition sends a reader who wants the
+construction to the tutorials.
 
 ### It is a landing page, so it orients first
 
-**Most readers arrive at an example page from a search result or a link, not from the section
-index**, per
-[information-architecture.md](../information-architecture.md#most-readers-do-not-arrive-at-the-homepage).
-The first screen therefore does three things before any code:
+**Most readers arrive from a search or a link**, per
+[information-architecture.md](../information-architecture.md#most-readers-do-not-arrive-at-the-homepage),
+so the first screen does three things before any code:
 
-- **Say what the program does**, in one or two sentences, as the destination: "This program
-  downloads a web page and prints its SHA-256 digest, with every stage of the pipeline written as a
-  Rust type."
-- **Place it**: one sentence on what the project is, linking the project index, and one clause on
-  what CGP is, linking the Introduction. That clause names Context-Generic Programming in full, and
-  where the program's point is a choice of implementation, it relates a short form of the tag line
-  to the program, per the
+- **Say what the program does**, in one or two sentences, as the destination.
+- **Place it**: one sentence on what the project is, linking the project index, and one clause naming
+  Context-Generic Programming in full and linking the Introduction; where the program's point is a
+  choice of implementation, relate a short form of the tag line to it, per the
   [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
-- **Offer the prerequisites** in a `:::tip` admonition titled `### New to CGP?`, per the [admonition
-  convention](reference.md#conventions-the-port-must-follow). It names the two or three
-  pages a reader should know before this one (usually Hello World and the Concepts page for the
-  pattern the example shows) and says that the page can be read without them. That admonition is the
-  "short introduction together with links" every example page owes, and it is what lets a reader who
-  has never seen CGP know where to look next.
+- **Offer the prerequisites** in a `:::tip` admonition titled `### New to CGP?`, per the
+  [admonition convention](reference.md#conventions-the-port-must-follow): the two or three pages to
+  know first, usually Hello World and the Concepts page for the pattern, and that the page can be read
+  without them.
 
 ### Then it states the problem
 
-**Before any of the program's code, a section titled *The problem* says what the example is trying
-to solve and why that is worth solving.** A reader who arrives from a search result knows what the
-program does from the first screen, but not yet why anyone would write it this way, and a
-walkthrough read without that reason is a tour of machinery. The section answers three questions, in
-a few short paragraphs:
+**A *The problem* section comes before any of the program's code**, so the walkthrough is not a tour
+of machinery. In a few short paragraphs it answers:
 
-- **What is the task?** The job the program does, in the reader's terms: run a pipeline of
-  commands, encode a value for two applications, evaluate an expression.
-- **What makes it hard?** The requirement that turns an easy task into an interesting one: the
-  encoding must differ per application, the language must grow without edits, a check must apply to
-  one operation and not its neighbours.
-- **What does it take without CGP?** Where the example solves something plain Rust makes awkward,
-  how a reader would solve it without CGP, and what that costs: a wrapper type per encoding, a
-  `match` edited for every new variant, a manager trait that drags every dependency along. When the
-  project keeps the plain version, as `expression` keeps its `classic` module, quote it; otherwise
-  describe it in prose, since a sketch shown as code must compile and is one more thing to verify.
-  Omit this part only where there is no plain alternative worth naming.
+- **What is the task?** The program's job in the reader's terms.
+- **What makes it hard?** The requirement that turns an easy task into an interesting one.
+- **What does it take without CGP?** How a reader would solve it otherwise, and what that costs. Quote
+  the plain version where the project keeps one, as `expression` keeps `classic`; otherwise describe
+  it in prose, since a sketch shown as code must compile. Omit this part only where no plain
+  alternative is worth naming.
 
-The section is fair to the alternative. Plain Rust, a shell script, or Serde's derive is often the
-right choice for the task as stated, and the section says so where it is, then names the requirement
-that tips the balance; the page's *The pattern* section states what the CGP version costs in return.
-It never disparages another tool, per
-[message.md](../../communication-strategy/message.md). A program that is deliberately trivial, such
-as a first `echo`, says that the task is trivial and that the problem is the shape of the program,
-not its output.
+**The section is fair to the alternative.** Where plain Rust, a shell script, or Serde's derive is
+the right choice for the task as stated, it says so, then names the requirement that tips the balance;
+*The pattern* states what the CGP version costs. It never disparages another tool, per
+[message.md](../../communication-strategy/message.md). A deliberately trivial program says the task is
+trivial and the problem is the program's shape.
 
 ### Then it runs the program
 
-**Show the result before explaining it.** A *Run it* section gives the command, what the machine
-needs, and the output the program actually produced, quoted from a run rather than remembered. Where
-the internal record says the program was not run, or needs network access or a paid key, the page
-says so plainly instead of implying the output.
+**A *Run it* section shows the result before explaining it**: the command, what the machine needs,
+and the output the program produced, quoted from a run. Where the record says the program was not
+run, or needs network access or a paid key, the page says so instead of implying the output.
 
-Two kinds of program need a different first step, and the `expression` and `web-app` pilots settled
-both:
+Two kinds of program need a different first step:
 
-- **A program the repository has no runner for**, such as a context with no test, gets the smallest
-  test that runs it, given as a file the reader saves, with the output a probe produced from that
-  exact file. The page says the repository has no test for it, as a fact about how to run it, not as
-  a gap.
-- **A crate that only wires**, whose provider bodies are `todo!()`, has nothing to run, so its pages
-  say so on the first screen and open with *Check it* instead: the check command, and what its
-  passing means for the stage on the page.
+- **A program the repository has no runner for** gets the smallest test that runs it, as a file the
+  reader saves, with the output a probe produced from that exact file. The page states that the
+  repository has no test for it as a fact about running it, not as a gap.
+- **A crate that only wires**, whose provider bodies are `todo!()`, says so on the first screen and
+  opens with *Check it* instead: the check command, and what its passing means.
 
 ### Then it walks through the program, one idea per heading
 
-**The body quotes the program in the parts that carry its ideas, each under a heading that names the
-idea** rather than the file: "Every stage is a type", "One table decides the encoding", "The context
-joins the language in one line". This follows the internal convention in
-[projects/AGENTS.md](../../projects/AGENTS.md#the-shape-of-a-project-section), and it is what makes
-the page scannable: the headings in order summarize how the program works.
+**The body quotes the parts that carry the program's ideas, each under a heading that names the
+idea**, not the file, per
+[projects/AGENTS.md](../../projects/AGENTS.md#the-shape-of-a-project-section), so the headings in
+order summarize how the program works. In each part:
 
-Three rules govern each part:
-
-- **Name each construct the first time it appears, with a one-clause gloss and a link.** A CGP
-  construct links its [reference page](reference.md); a project construct links the project's own
-  reference page, or, for a demonstration crate, is explained where it first appears. Do not explain
-  the construct's grammar; that is the reference's job.
-- **Say why the code is written this way**, not only what it does. "The context has no fields,
-  because every choice it makes is in its wiring" teaches the pattern; "`HypershellCli` is an empty
-  struct" only describes the code.
-- **State the context's shape when the program introduces it.** Almost every project program wires
-  an **environmental context**, which is the shape a reader who learned from Hello World has not
-  seen, so the first context on the page is introduced as "a type that stands for this application,
-  which is where its choices live", per
-  [vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target). Say
-  whether a component is self-targeted or parameter-targeted when the difference matters to the code
-  on the page.
+- **Name each construct on first appearance, with a one-clause gloss and a link**: a CGP construct
+  to its [reference page](reference.md), a project construct to the project's reference page or, in
+  a demonstration crate, explained in place. Leave the grammar to the reference.
+- **Say why the code is written this way**, not only what it does.
+- **State the context's shape when the program introduces it.** A project context is almost always
+  environmental, which a reader who learned from Hello World has not seen, so introduce it as "a type
+  that stands for this application, which is where its choices live", per
+  [vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target), and
+  say whether a component is self-targeted or parameter-targeted where it matters.
 
 ### Then it names the pattern
 
-**A section titled *The pattern* says, in a paragraph or two, which CGP design pattern the program
-demonstrates, when a reader would use it, and what it costs.** This section is what turns a
-walkthrough into a tutorial: the reader leaves with a named technique they can apply elsewhere. Link
-the Concepts page that explains the pattern, and state its cost beside its benefit, per
-[message.md](../../communication-strategy/message.md). Where the program uses a pattern past the
-point a smaller program would need it, as a demonstration often does, say so.
+**A *The pattern* section names the CGP design pattern the program shows, when to use it, and what it
+costs**, in a paragraph or two, linking the Concepts page that explains it and stating the cost beside
+the benefit, per [message.md](../../communication-strategy/message.md). Where the program uses a
+pattern past what a smaller program would need, say so.
 
 ### A change to try, when one is verified
 
-**Where a small edit shows the pattern working, give it as a *Try a change* section.** Swapping one
-wiring entry and seeing the output change, or removing one and reading the error `cargo cgp check`
-reports, is the fastest way for a reader to believe the pattern rather than take it on trust. It
-also discharges the tutorial obligation to show a wiring failure before the reader causes one, per
+**Where a small edit shows the pattern working, give it as a *Try a change* section**: swap one wiring
+entry and see the output change, or remove one and read the error `cargo cgp check` reports. It also
+shows a wiring failure before the reader causes one, per
 [tutorial.md](tutorial.md#errors-checking-and-the-tooling).
 
-**Where two pages show neighbouring designs, make the same change on both.** Removing one entry from
-a coarse-grained context and from its fine-grained successor, and quoting both errors, shows what the
-split buys more directly than any sentence can; each page links the other's *Try a change*.
+**Where two pages show neighbouring designs, make the same change on both** and quote both results,
+each page linking the other's *Try a change*.
 
-Every such change must have been made and run, and its output quoted as it was produced. The
-internal record is where that result is recorded first; a change nobody has run is left out rather
-than described. When the page quotes `cargo cgp check`, it carries the canonical qualification from
+**Every change must have been made and run**, its result recorded in the internal record first and
+quoted as produced; a change nobody has run is left out. A page quoting `cargo cgp check` carries the
+canonical qualification from
 [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
 unchanged.
 
 ### It closes with a route
 
-**An example page does not list defects or missing features**, even where the internal record for
-the program has a *Known issues* section. A limit of the design that the program shows, such as a
-program being fixed at compile time, belongs in *The pattern*, as its cost.
+**An example page lists no defects or missing features**, even where its record has a *Known issues*
+section. A limit of the design the program shows belongs in *The pattern*, as its cost.
 
-**A *Where to go next* section** ends every example page with three kinds of link: the next example
-in the project's teaching order, the architecture page or guide that develops what this program
-touched, and the Concepts or tutorial page for the CGP idea behind it. Where a blog post presented
-the program, a fourth link goes to it, at the post's section for this program, per [Voice, costs, and
-the source posts](#voice-costs-and-the-source-posts). A page that ends without
-routing has dropped its reader, per
-[information-architecture.md](../information-architecture.md#most-readers-do-not-arrive-at-the-homepage).
+**A *Where to go next* section ends every example page** with the next example in teaching order, the
+architecture page or guide that develops what the program touched, and the Concepts or tutorial page
+for the CGP idea behind it; where a blog post presented the program, a fourth link goes to the post's
+section for it, per [Voice, costs, and the source posts](#voice-costs-and-the-source-posts).
 
 ### What an example page does not do
 
-**It does not derive CGP from first principles.** No desugaring section, no explanation of what a
-provider trait is, and no coherence argument. Those belong to the tutorials and the Concepts pages,
-and the `New to CGP?` admonition is where the page sends a reader who needs them. This is the rule
-most easily broken, because the blog posts that first presented Hypershell and cgp-serde each
-carried a CGP primer; a Projects page teaches its own program and nothing else.
-
-**It does not document every item the program touches.** It names each construct and links it. A
-reader who needs a provider's every bound follows the link.
-
-**It does not offer alternatives.** One path through one program, per
-[tutorial.md](tutorial.md#what-every-tutorial-owes-its-reader). Where the project has a second
-program showing another way, the *Where to go next* section links it.
+- **It does not derive CGP from first principles**: no desugaring, no explanation of a provider
+  trait, no coherence argument. This is the rule most easily broken, because the Hypershell and
+  cgp-serde posts each carried a CGP primer.
+- **It does not document every item the program touches**; it names and links each one.
+- **It does not offer alternatives**: one path through one program, per
+  [tutorial.md](tutorial.md#what-every-tutorial-owes-its-reader); *Where to go next* links a second
+  program that shows another way.
 
 ## The project index
 
-**The index is a real page that makes the case for reading the section.** It states what the project
-is in two or three sentences, shows its smallest program with the output it produces, and says who
-the project is for. Then it is candid about status: whether the project is a library a reader can
-depend on, a proof of concept, or a set of demonstrations, and which toolchain it needs. Hypershell
-and cgp-serde describe themselves as proofs of concept, and the index must say so on its first
-screen rather than on the limitations page alone.
+**The index makes the case for reading the section.** It states what the project is in two or three
+sentences, shows its smallest program with its output, and says who the project is for. It is candid
+about status on its first screen: a library to depend on, a proof of concept, or a set of
+demonstrations, and the toolchain it needs. Hypershell and cgp-serde call themselves proofs of
+concept, and their indexes say so there, not only on the limitations page.
 
-It then routes. **List the example pages in teaching order with one sentence each, naming the
-pattern each shows**, then the architecture pages, the guides, the reference, and the limitations
-page. It ends with how to add the crates or clone and run the repository, pinned to the version the
-pages describe.
+**It then routes**: the example pages in teaching order with one sentence each naming the pattern,
+then the architecture pages, guides, reference, and limitations page. It ends with how to add the
+crates or clone and run the repository, pinned to the version the pages describe.
 
 ## Architecture pages
 
-**An architecture page explains one idea in the project's design, and follows the explanation shape
-of [explanation.md](explanation.md) at a smaller scale.** Open by naming the question the page
-answers, explain the idea with the project's code shown as illustration, and close with what the
-design costs and where to go next. The architecture `README.md` in the internal section, which
-states the whole design on one page, becomes the architecture index, and it is often the best single
-page in the section for an evaluator.
-
-A paragraph that would be true of any CGP program belongs to the Concepts tier, and the page links
-there instead, per the rule the internal documents already follow in
+**An architecture page explains one idea in the project's design, in the explanation shape of
+[explanation.md](explanation.md) at a smaller scale**: the question first, the project's code as
+illustration, then what the design costs and where to go next. The architecture index states the
+whole design on one page and is often the best page for an evaluator. A paragraph true of any CGP
+program belongs to the Concepts tier, which the page links instead, per
 [projects/AGENTS.md](../../projects/AGENTS.md#leave-cgp-itself-to-cgp).
 
-**An architecture page is the easiest page to leave looking internal, because its source document is
-the most internal of all.** An internal architecture document is written for someone about to change
-the project: it opens with the mechanism, names every item, and records where the design is
-incomplete. Ported as it stands, it reads as a maintainer's notes. Apply the three transformations
-of [explanation.md](explanation.md#turning-a-concept-document-into-an-explanation-page) in full:
+**Its source is the most internal document in a section**, written for someone about to change the
+project, so apply the transformations of
+[explanation.md](explanation.md#turning-a-concept-document-into-an-explanation-page) in full:
 
-- **Open with the question an outside reader would ask**, such as "how does one line give a context
-  the whole language?", and answer it, rather than opening with how the mechanism is built.
-- **Introduce one new term at a time**, in plain words, before using it: a bundle, a namespace, an
-  input dispatcher. Start from what the reader knows, such as a shell pipeline or a generic impl.
+- **Open with the question an outside reader would ask**, rather than with how the mechanism is built.
+- **Introduce one new term at a time**, in plain words, starting from what the reader knows.
 - **Leave the machinery out** unless the page is about it: registration paths, lookup internals,
-  diagnostic codes, and item-by-item inventories belong to the reference and the knowledge base. A
-  table earns its place when a user consults it, as the table of what each stage accepts does.
+  diagnostic codes, and item inventories belong to the reference and the knowledge base. A table earns
+  its place when a user consults it.
 
-**The cost section states trade-offs, not defects.** Say what the design costs a reader, in their
-terms, and when the cost is worth paying, the way the site's Concepts pages do: "the layers make the
-language easy to reuse and harder to trace". A cost section never lists the project's open issues or
-missing features; those stay in the knowledge base.
+**The cost section states trade-offs, not defects**: what the design costs a reader, in their terms,
+and when it is worth paying. It never lists open issues or missing features.
 
 ## Guides
 
 **A guide does one job, in order, and names the mistakes that job invites.** The internal guides are
 already written this way, so the port is mostly re-pointing. A debugging guide keeps each failure's
-program, the error it produces, and the root cause, per the base's [error-message
-rule](../../AGENTS.md#show-the-example-behind-an-error-message), and quotes `cargo cgp check` output
-as it was produced.
+program, error, and root cause, per the base's
+[error-message rule](../../AGENTS.md#show-the-example-behind-an-error-message), with `cargo cgp check`
+output quoted as produced.
 
 ## Reference pages
 
-**A project reference page documents one construct, completely**, which is the rule the site
-reference follows in [reference.md](reference.md#granularity-one-page-per-named-construct). The
-internal reference groups each family into one document, so the port splits it: one internal family
-document feeds several public pages, and the project's plan records which.
+**A project reference page documents one construct, completely**, as
+[reference.md](reference.md#granularity-one-page-per-named-construct) requires; the port splits each
+internal family document, and the project's plan records which pages it feeds. A **construct** is
+anything a reader writes, wires, implements, joins, or calls by name: a syntax type, a component (its
+consumer trait, provider trait, and key as one), a provider, a namespace, a bundle, a context, a
+macro, a public trait, or an adapter type.
 
-A **construct** here is anything a reader writes, wires, implements, joins, or calls by name: a
-syntax type, a component (whose consumer trait, provider trait, and key are one construct), a
-provider, a namespace, a bundle, a context, a macro, a public trait, or an adapter type. Three kinds
-of item do not get a page of their own, and each project's reference index carries a *Looking for a
-name you don't see?* table that routes them:
+**Three kinds of item fold onto another's page**, and each project's reference index routes them in a
+*Looking for a name you don't see?* table:
 
-- **Two items that only mean something together** share the page of the one a reader writes. A
-  Hypershell syntax type and the provider that interprets it are one page, under the syntax type's
-  name, which is the adaptation the internal reference already makes. A `Code` marker and the
-  provider wired for it are one page under the provider's name.
-- **A marker type consumed by one construct**, such as Hypershell's HTTP method markers, is
-  documented on that construct's page, as the site reference documents `IsPresent` with `MapType`.
+- **Two items that only mean something together** share the page of the one a reader writes: a
+  Hypershell syntax type and its interpreting provider, under the syntax type; a `Code` marker and the
+  provider wired for it, under the provider.
+- **A marker type consumed by one construct** is documented on that construct's page.
 - **An error or detail type produced by one provider** is documented on that provider's page.
 
-**Each page follows the variant of the site reference's [layered
-descent](reference.md#the-layered-page) that its component and trait pages use**, with the fields of
-the internal entry template in [projects/AGENTS.md](../../projects/AGENTS.md#reference-entries)
-placed inside it, so that a beginner can stop early and an agent porting a page knows where each
-internal field lands:
+**Each page follows the component and trait variant of the site reference's
+[layered descent](reference.md#the-layered-page)**, with the fields of the internal entry template in
+[projects/AGENTS.md](../../projects/AGENTS.md#reference-entries) placed inside it:
 
 1. **A one-sentence summary**, from the entry's opening sentence.
-2. **Overview** — the problem the construct solves in the project, with the gloss a newcomer needs.
-3. **Definition** — the declaration as the source writes it, bodies elided, with each attribute and
-   bound explained. From the entry's Definition.
-4. **Usage** — the construct in a program or a wiring table, with a short example, and where the
-   project's namespace or bundle already wires it for the reader.
-5. **Behavior** — what it does and how it fails, from the entry's Behavior.
-6. **Context dependencies** — what a context must supply or wire for the construct to work.
-7. **Pairing** — where the project has both directions of an operation, the construct for the other
-   direction, or that there is none.
-8. **When to use it** — which neighbouring construct a reader may have wanted instead, drawn from
-   the project's guides, which have no other public home for that judgement.
-9. **Related constructs**, **The ideas behind it**, linking the CGP reference and Concepts pages the
-   construct rests on, and **Source**.
+2. **Overview**: the problem the construct solves in the project, with the gloss a newcomer needs.
+3. **Definition**: the declaration as the source writes it, bodies elided, each attribute and bound
+   explained.
+4. **Usage**: the construct in a program or wiring table, and where the project's namespace or bundle
+   already wires it.
+5. **Behavior**: what it does and how it fails.
+6. **Context dependencies**: what a context must supply or wire.
+7. **Pairing**: the construct for the other direction of an operation, or that there is none.
+8. **When to use it**: the neighbouring construct a reader may have wanted, from the project's guides.
+9. **Related constructs**, **The ideas behind it**, linking the CGP reference and Concepts pages, and
+   **Source**.
 
-There is no *Under the hood*, since a project construct's machinery is the CGP construct it is built
-from and the CGP reference already explains it. The one exception is a project's own macro, such as
-`hypershell!`, whose page follows the macro variant instead: its rewriting rules are its *Usage*,
-and the desugared type is its *Under the hood*. The front-matter conventions are the reference's:
-the construct name as the `h1`, a search-facing `title`, and a `description`, per
-[pages/reference.md](reference.md#conventions-the-port-must-follow).
+There is no *Under the hood*, since the CGP reference explains a project construct's machinery. A
+project's own macro, such as `hypershell!`, follows the macro variant instead: its rewriting rules are
+its *Usage*, and the desugared type its *Under the hood*. The front matter follows the reference's
+conventions: the construct name as the `h1`, a search-facing `title`, and a `description`.
 
 **Where a defect shapes how a construct is used, state the behavior and route the reader.** A
-reference page must describe what the construct does, including what it rejects, so a behavior a
-reader will meet goes in *Behavior* as a plain fact, and *When to use it* sends the reader to the
-construct that fits their case: a byte provider whose JSON output it cannot read back sends JSON
-users to a text encoding. The page never calls the behavior a bug, lists it as a known issue, or
-predicts a fix; the defect record stays in `issues.md`.
+behavior a reader will meet, including what the construct rejects, goes in *Behavior* as a plain fact,
+and *When to use it* sends the reader to the construct that fits: a byte provider whose JSON output it
+cannot read back sends JSON users to a text encoding. The page never calls it a bug, lists it as a
+known issue, or predicts a fix.
 
-**Enumerate against the source, not against the internal tables.** The internal tables are complete
-as far as the last documenting pass found, and a public reference carries the site reference's
-completeness obligation: an item a reader can name and cannot find is a hole.
+**Enumerate against the source, not the internal tables**; an item a reader can name and cannot find
+is a hole.
 
 ## The limitations page
 
 **The limitations page states the high-level limits a reader learning the project should know, not
-its defects.** Those are the limits that follow from what the project is and how it is designed:
-that it is a proof of concept, what its design rules out, what it needs to build, what its errors
-are like, and what extending it can and cannot do. Write it from the project README and the
+its defects**: that it is a proof of concept, what its design rules out, what it needs to build, what
+its errors are like, and what extending it can and cannot do. Write it from the README and the
 architecture, each limit in a short section named for what it means to the reader, such as "Programs
-are fixed at compile time".
+are fixed at compile time". Close with where a simpler tool is the better choice, from the comparison
+document where there is one.
 
-**Bugs and unimplemented features stay out of every public page**, this one included. They are the
-project's records, kept in `issues.md` for the people fixing them, and they change too often to
-publish: a defect listed publicly is out of date the day it is fixed. A reader who meets one reports
-it, and the page loses nothing by not predicting it.
+**Bugs and unimplemented features stay off every public page**, this one included: they stay in
+`issues.md`, and a defect listed publicly is out of date the day it is fixed.
 
-Close with where a simpler tool is the better choice, drawn from the comparison document where there
-is one, because that is the question an evaluator reading this page is asking.
-
-**The page must not shrink as the project matures except where a limit stops being true.** The
-candid account of costs is what makes the rest of the section credible, and it is the first thing a
-well-meaning trim removes.
+**The page shrinks only where a limit stops being true.** Its candor makes the section credible, and
+it is the first thing a well-meaning trim removes.
 
 ## Front matter and the provenance note
 
-Every Projects page carries a `description` written from its own summary, as every site page does,
-per [pages/reference.md](reference.md#conventions-the-port-must-follow), and names
-Context-Generic Programming once in its opening paragraph, as the example page's first screen does.
-A directory whose index is generated, such as a project's `guides/`, carries the name in its
-`_category_.json` description instead. The `h1` depends on the page kind:
+Every Projects page carries a `description` written from its own summary and names Context-Generic
+Programming once in its opening paragraph; a directory with a generated index, such as `guides/`,
+carries the name in its `_category_.json` description. The `h1` depends on the page kind:
 
-- **An example page** is titled for what the program does, as a tutorial is titled for an outcome:
-  *Checksum a web page with a native pipeline*. Its `sidebar_label` is the program's name,
-  `http_checksum_native`, which is what a reader who has cloned the repository looks for.
-- **A reference page** is titled with the construct's name, and carries a search-facing `title`.
-- **Every other page** is titled with the words a reader would search: *Hypershell*, *Limitations*,
-  *Choosing an error backend*.
+- **An example page** is titled for what the program does, such as *Checksum a web page with a native
+  pipeline*, with the program's name, `http_checksum_native`, as its `sidebar_label`.
+- **A reference page** is titled with the construct's name, with a search-facing `title`.
+- **Every other page** is titled with the words a reader would search: *Hypershell*, *Limitations*.
 
-Sidebar labels carry no backticks, and an apostrophe inside a single-quoted YAML value is doubled,
-per the same conventions.
+Sidebar labels carry no backticks, and an apostrophe inside a single-quoted YAML value is doubled, per
+[the reference's conventions](reference.md#conventions-the-port-must-follow).
 
 **Every written page closes with the provenance note.** Projects pages are agent-written from this
-base, which is the first level in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md),
-so they use the reference's shared sentence and link the same section of the disclosure page. A
-scaffolded stub carries none, per [AGENTS.md](../AGENTS.md#disclosing-ai-use-on-a-page). Each
-project's plan records the level when its pages land.
+base, the first level in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md), so they use
+the reference's shared sentence. A scaffolded stub carries none, per
+[AGENTS.md](../AGENTS.md#disclosing-ai-use-on-a-page). Each project's plan records the level.
 
 ## Linking
 
-**A Projects page may never link into the knowledge base**, per the [one-way
-rule](../AGENTS.md#the-one-way-link-rule), and the internal documents are made of such links. Each
-kind of internal link has a fixed public replacement:
+**A Projects page never links into the knowledge base**, per the
+[one-way rule](../AGENTS.md#the-one-way-link-rule). Each kind of internal link has a fixed
+replacement:
 
 | Internal link target | Public replacement |
 |---|---|
@@ -448,103 +344,84 @@ kind of internal link has a fixed public replacement:
 | `website/blog/…` (a post's record) | the live post |
 | `communication-strategy/…` | dropped |
 
-**A page that is not written yet is not linked, and is not scaffolded as a stub.** A reader arriving
-at a placeholder from inside a tutorial has been sent nowhere, so a written page describes the idea
-in place, or names the page as still being written without linking it, and gains the link when the
-page exists. The section's sidebar then shows only pages a reader can use. This differs from the
-site reference, whose completeness obligation made a stub for every construct worth having.
+**A page that is not written is neither linked nor scaffolded as a stub.** A written page describes
+the idea in place, or names the page as still being written without linking it, and gains the link
+when the page exists, so the sidebar shows only usable pages. This differs from the site reference,
+whose completeness obligation made a stub for every construct.
 
-Links out of the site go to the project's repository on its default branch, to the crate on
-crates.io or docs.rs, and to the documentation of external libraries the project builds on. A
-mention of `cargo cgp check` links the site's page for it, `/docs/cargo-cgp/check`, rather than the
-tool's repository.
+Links out of the site go to the project's repository on its default branch, the crate on crates.io or
+docs.rs, and the documentation of the external libraries it builds on. A mention of `cargo cgp check`
+links `/docs/cargo-cgp/check`, not the tool's repository.
 
 ## Code on a Projects page
 
-**A Projects page quotes the project's own code, taken from its repository at the revision the page
-describes, and never from a blog post.** The project's plan names that revision. Verify each snippet
-by comparing it with the source and by running the program, and quote output and diagnostics as they
-were produced.
+**A Projects page quotes the project's own code, at the revision its plan names, and never a blog
+post's.** Verify each snippet against the source and by running the program, and quote output and
+diagnostics as produced.
 
-**Projects pages are not mirrored in the website's `example-code` crate.** That crate verifies code
-written for the site, and a project's code is already compiled by its own repository; a second copy
-would be one more thing to keep in step. The projects also need what the crate does not carry, such
-as Hypershell's nightly toolchain and its network-bound backends. The rule and its reason are
-recorded in [AGENTS.md](../AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post).
+**Projects pages are not mirrored in the website's `example-code` crate**, because the project's
+repository already compiles its code, and the projects need what the crate lacks, such as
+Hypershell's nightly toolchain and network-bound backends; the rule is in
+[AGENTS.md](../AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post).
 
-**Quote `cargo-cgp` output from the tool built at its current source**, the same output the site's
-compile errors page documents. That source is the release the site documents, so a pre-release on
-crates.io is neither quoted nor compared against, per the base's
-[rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases). Re-check the
-quoted output when the tool releases.
+**Quote `cargo-cgp` output from the tool built at its current source**, which is the release the site
+documents, so a pre-release on crates.io is neither quoted nor compared against, per the base's
+[rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases). Re-check the quoted
+output when the tool releases.
 
-**The code must use current idioms.** Where the project's source still uses a form the
-[guides](../../cgp/guides/README.md) tell readers to replace, the page does not publish it: the
-change is made in the project first, and the plan records it as a prerequisite. Showing a legacy
-form on a page that exists to teach patterns would teach the wrong one.
+**The code uses current idioms.** Where the project's source uses a form the
+[guides](../../cgp/guides/README.md) tell readers to replace, the change is made in the project first
+and the plan records it as a prerequisite. Until then, a page can describe a construct whose
+declaration carries such a form by showing the method signature a reader calls or implements, without
+quoting the declaration.
 
-A page that needs to explain a construct whose declaration still carries such a form can describe
-it without quoting the declaration, by showing the method signature a reader calls or implements,
-until the project change lands and the construct's own page is written.
-
-**Install instructions name a published version.** A page that tells a reader to add a project's
-crates names a release built against the `cgp` version the site describes. Where no such release
-exists, the page gives the git dependency and says why, or the page waits; the project's plan
+**Install instructions name a published version** built against the `cgp` version the site
+describes. Where none exists, the page gives the git dependency and says why, or waits; the plan
 records which.
 
 ## Voice, costs, and the source posts
 
-The pages use the **project voice**. The blog posts that first presented each project are in the
-author's voice, and material taken from them converts by grounding judgement rather than attributing
-it: "the learning curve falls on the people extending the language rather than the people using it"
-keeps a claim and drops the "I think". Uncertainty stays as uncertainty. Personal history, such as
-how a project got its name, stays on the blog and is linked.
+**The pages use the project voice.** Material from the author-voice posts converts by grounding a
+judgement rather than attributing it, keeping its uncertainty; personal history, such as how a
+project got its name, stays on the blog and is linked.
 
-**Every project index states the costs a reader would look for**: the toolchain the project needs,
-how long it takes to compile where that is known, what the diagnostics look like when the wiring is
-wrong, and that the project is a proof of concept where it is one. Never state a benchmark, a
-compile time, or an adoption claim the project has not measured.
+**Every project index states the costs a reader would look for**: the toolchain, the compile time
+where it is known, what the diagnostics look like when the wiring is wrong, and that the project is a
+proof of concept where it is one. Never state a benchmark, compile time, or adoption claim the
+project has not measured.
 
-**When a project section is written, each post that presents the project gets a notice at its top
-pointing to the section, and each example page links the post back.** The notice is the one
-sanctioned edit to a published post, settled in [AGENTS.md](../AGENTS.md#do-not-rewrite-history): it
-adds a link and changes no claim. The project's plan names the posts that get one. The link back sits
-in the example page's *Where to go next*, pointing at the section of the post that presents the
-program where there is one, and saying the post's code predates the current design where it does.
+**Each post that presents a project gets a notice at its top pointing to the section, and each example
+page links the post back.** The notice is the one sanctioned edit to a published post, per
+[AGENTS.md](../AGENTS.md#do-not-rewrite-history): it adds a link and changes no claim. The plan names
+the posts. The link back sits in *Where to go next*, at the post's section for the program where there
+is one, and says the post's code predates the current design where it does.
 
 ## What must not be on a Projects page
 
 - **No link into the knowledge base**, and no internal vocabulary without a gloss.
-- **No CGP primer.** One sentence of orientation and a link; the explanation belongs to the
-  tutorials and Concepts.
-- **No bugs, missing features, or housekeeping.** Defects, unimplemented features, stale metadata,
-  unused items, and missing rustdoc are records for the project's maintainers, kept in `issues.md`.
-- **No dated framing**: no "this release", no "recently", no version number attached to a behavior.
-  The pages describe the project as it is and are corrected in place.
-- **No speculation.** Future work is left out.
+- **No CGP primer**: one sentence of orientation and a link.
+- **No bugs, missing features, or housekeeping**: defects, unimplemented features, stale metadata,
+  unused items, and missing rustdoc stay in `issues.md`.
+- **No dated framing**: no "this release", "recently", or version number attached to a behavior.
+- **No speculation**; future work is left out.
 - **No invented numbers**, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md).
 
 ## Checking a draft
 
-- **Open an example page cold.** Within the first screen, does a reader who has never heard of CGP
-  know what the program does, what the project is, and where to go if they need background?
-- **Read every `New to CGP?` box on its own.** Each must link at least one CGP page, usually the
-  Hello World tutorial and the Concepts page for the pattern, not only the earlier examples it
-  builds on. A box that routes only to other project pages leaves the CGP newcomer where it found
-  them.
-- **Check each example page's closing links**: the next example, a page of the project's own that
-  develops the idea, and a Concepts or tutorial page.
-- **Find the problem.** Every example page has a *The problem* section before its code, saying
-  what the program solves, what makes it hard, and, where there is one, what the plain-Rust or
-  non-CGP solution costs, without disparaging it.
-- **Read only the headings of an example page.** They should summarize how the program works.
-- **Find the pattern and its cost.** Every example page names one pattern, links the page that
-  explains it, and states what it costs.
-- **Run what the page runs.** Every command, output, and *Try a change* result matches a run against
+- **Open an example page cold.** Within the first screen, a reader who has never heard of CGP knows
+  what the program does, what the project is, and where to find background.
+- **Read every `New to CGP?` box on its own.** Each links at least one CGP page, not only earlier
+  project pages.
+- **Check each example page's closing links**: the next example, a project page that develops the
+  idea, and a Concepts or tutorial page.
+- **Find the problem**: a *The problem* section before the code, fair to the alternative.
+- **Read only the headings of an example page**; they summarize how the program works.
+- **Find the pattern and its cost**, with a link to the page that explains it.
+- **Run what the page runs**: every command, output, and *Try a change* result matches a run against
   the revision the plan names.
-- **Search for knowledge-base links and unglossed terms**, including "context" on its first use.
-- **Check the front matter and the foot**: a `description`, the right kind of `h1`, and the
-  provenance note.
+- **Search for knowledge-base links and unglossed terms**, including "context" on first use.
+- **Check the front matter and the foot**: a `description`, the right kind of `h1`, and the provenance
+  note.
 - **Check the reference against the source**, one page per construct, with every folded name in the
   lookup table.

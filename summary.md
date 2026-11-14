@@ -866,11 +866,12 @@ it stale.
   clear lead, the placement of short announcements before a long walkthrough, the announcement's
   parts, the breaking-changes obligation from the removal ledger, and the publication mechanics.
 - [project.md](website/writing-guides/project.md) — the Projects section ported from the internal
-  project sections: the seven page kinds, the example page as a short applied-register tutorial with
-  its *New to CGP?* orientation, the problem it solves and its cost without CGP, walkthrough by idea, named pattern, and verified change to try, one
-  reference page per project construct and what folds onto another's page, a limitations page of
-  high-level limits with no bugs or missing features on any public page, the link map and the rule against placeholder pages, project code verified against its own repository
-  rather than `example-code`, and diagnostics quoted from the source-built `cargo-cgp`.
+  project sections: the seven page kinds and the internal document behind each, the example page as a
+  short applied-register tutorial (*New to CGP?*, the problem and its cost without CGP, a run, a
+  walkthrough by idea, the named pattern, and a verified change to try), one reference page per
+  project construct and what folds onto another's page, a limitations page with no bugs or missing
+  features on any public page, the link map and the rule against placeholder pages, and project code
+  verified against its own repository with diagnostics from the source-built `cargo-cgp`.
 - [tooling.md](website/writing-guides/tooling.md) — the pages documenting a program the reader runs
   rather than a construct they write: why a tool's page fails differently, the nine-page section shape
   with its reading, editor, and lookup pages, quoting real output from the program shown, writing against the
@@ -944,19 +945,17 @@ it stale.
 
 ### `website/projects/`: the blueprint and one plan per project section
 
-- [README.md](website/projects/README.md) — the blueprint for the Projects section, eighty pages of
-  which are written on the website's `v0.8.0` branch: what it is for, why it supersedes the three
-  deep dives and where each deep-dive page's material went, the public tree, the
-  internal-document-to-page mapping, the section index and its pattern-finding table, the four gating
-  conditions, the recommended order with `expression` as pilot, and the inbound links.
+- [README.md](website/projects/README.md) — the blueprint for the Projects section, partly written on
+  the website's `v0.8.0` branch: the deep dives it replaces, the section index, the four gating
+  conditions, the order of the remaining work, the inbound links, and the shape of a plan.
 - [cgp-examples.md](website/projects/cgp-examples.md) — the plan and record of the cgp-examples
-  section: the 14 pages written for the section index, `expression`, and `web-app`, the revisions
-  they were verified against, the per-example records `builder`, `transfer`, and `greet` need first,
-  and the code changes the repository needs first.
+  section: the 14 pages written for the crate index, `expression`, and `web-app` and the revisions
+  they were verified against, the `builder`, `transfer`, and `greet` pages still to write, the
+  per-example records they need first, and the code changes the repository needs first.
 - [hypershell.md](website/projects/hypershell.md) — the plan and record of the Hypershell section: the
-  21 pages written and the revisions they were verified against, what each unwritten page waits on,
-  the thirteen examples and about 75 construct pages planned, the comparison with shell scripts, and
-  the release the install instructions need.
+  21 pages written and the revisions they were verified against, the provider-quoting pages and the
+  reference of about 75 construct pages that wait on code changes, the comparison with shell scripts,
+  and the release the install instructions need.
 - [cgp-serde.md](website/projects/cgp-serde.md) — the plan and record of the cgp-serde section: the
   49 pages written and the revisions they were verified against, the two arena examples and three
   component pages that wait on the repository's code changes (attribute removals, arena-test
