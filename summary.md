@@ -785,7 +785,7 @@ it stale.
   performance and the single chapter carrying 77% of it, the split between seven current chapters and
   twelve stale ones, the one outbound link in nineteen chapters, the 28 unwritten entries the website
   has since written instead, why CI's single `cgp` pin rules out a gradual update, the chapter-to-page
-  routing map and its knowledge-base mirror, and the six-change plan.
+  routing map and its knowledge-base mirror, and the four changes left.
 - [website/seo.md](website/seo.md) — the site's search and agent discoverability strategy, written
   against a twelve-month Google Search Console export: the 1.09% click-through rate that reframes
   the problem as presentation rather than rank, the derived descriptions behind it and the pages that

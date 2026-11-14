@@ -1,9 +1,8 @@
 # The site's visual design
 
-This document records the website's theme: its colour palette, the fonts, the code colours, how
-images read in both themes, Docusaurus's constraints on page layout, and the check that keeps every
-colour readable. It is a record of what the site ships on the `v0.8.0` branch, and an agent changing
-a colour, a font, or an image's treatment starts here.
+This document records the theme the website ships on the `v0.8.0` branch: its palette, fonts, code
+colours, image treatment, layout constraints, and the check that keeps every colour readable. An
+agent changing a colour, a font, or an image's treatment starts here.
 
 - **Source:** [src/css/custom.css](https://github.com/contextgeneric/contextgeneric.dev/blob/main/src/css/custom.css)
   for the tokens and fonts, [src/prism/themes.ts](https://github.com/contextgeneric/contextgeneric.dev/blob/main/src/prism/themes.ts)
@@ -16,17 +15,14 @@ a colour, a font, or an image's treatment starts here.
 
 ## The palette keeps the logo's red and builds around it
 
-The one fixed colour is the CGP logo's red, `#8f1f1d`. Everything else is chosen to sit beside it: a
-tint scale of the same hue, warm neutrals in both themes, and admonition and status colours that stay
-clear of the red. The tokens are CSS custom properties named `--cgp-*`, defined once for the light
-theme and once for the dark theme, and they feed Infima's own variables, so the navbar, sidebar, table
-of contents, breadcrumbs, pagination, tables, admonitions, blog pages, and footer follow the palette
-without restyling any component.
+**The one fixed colour is the CGP logo's red, `#8f1f1d`**, with a tint scale of the same hue, warm
+neutrals, and admonition and status colours that stay clear of it. The tokens are CSS custom
+properties named `--cgp-*`, defined for each theme, and they feed Infima's own variables, so every
+stock component follows the palette without restyling.
 
-The red cannot carry text in the dark theme. Against the dark background it reaches only about 2:1, so
-the dark theme gives links and other red text a lighter tint of the same hue, `#ef8f86`, and keeps
-`--cgp-red` for filled elements with white text, where it reaches 8.8:1. In the light theme the red is
-the link colour itself, at 8.5:1 on the page.
+**The red cannot carry text in the dark theme**, where it reaches about 2:1, so dark-theme links and
+red text use the lighter tint `#ef8f86`, and `--cgp-red` stays for filled elements with white text,
+at 8.8:1. In the light theme the red is the link colour, at 8.5:1.
 
 The tokens fall into four groups:
 
@@ -84,11 +80,10 @@ theme introduces.
 
 ## Two self-hosted fonts
 
-Body text, headings, and the navbar's title use Inter, with headings at weight 600, and code uses
-JetBrains Mono. The author chose the pair from six candidates tried on the built site, because the
-earlier display face for headings looked too fancy and a system body font differs by operating
-system. Both fonts are under the SIL Open Font License and are committed under `static/fonts/` with
-their licences, as WOFF2 subsets that total about 80 KB:
+**Body text, headings, and the navbar's title use Inter, with headings at weight 600, and code uses
+JetBrains Mono**, a pair the author chose on the built site; a system body font would differ by
+operating system. Both are under the SIL Open Font License and are committed under `static/fonts/`
+with their licences, as WOFF2 subsets of about 80 KB together:
 
 - **Inter:** weights 400 to 700, upright and italic, at the text optical size, Latin, which covers
   every character the site's prose sets.
@@ -196,7 +191,7 @@ admonitions, a generated category page, a blog post with images, the blog index 
 
 ## How this relates to the stock-site policy
 
-The theme stays inside the [stated policy](blog/new-website.md) of a stock Docusaurus installation. It
-is CSS, a Prism theme file the config imports, configuration options, and static assets; it adds no
-plugin and swizzles no theme component. The policy's purpose, spending time on content rather than on
-theming, still holds: the theme is a set of tokens to adjust, not a design system to maintain.
+**The theme stays inside the [stated policy](blog/new-website.md) of a stock Docusaurus
+installation**: it is CSS, a Prism theme file, configuration options, and static assets, and it adds
+no plugin and swizzles no component, so it remains a set of tokens to adjust rather than a design
+system to maintain.
