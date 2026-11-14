@@ -6,7 +6,7 @@ shaped so its new pages are found, and how the same material reaches coding agen
 finding is that the site is shown and not chosen, so a page's title and description are the levers,
 not its rank.
 
-It is a **specification**, in the sense [README.md](README.md#two-kinds-of-document-here) draws.
+It is a **specification**, in the sense [README.md](README.md#records-and-specifications) draws.
 [information-architecture.md](information-architecture.md) decides which pages exist and where a
 reader goes next; this document decides how a reader who is not on the site arrives.
 

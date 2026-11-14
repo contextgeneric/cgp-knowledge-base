@@ -18,8 +18,8 @@ post, per [../AGENTS.md](../AGENTS.md#verify-code-against-current-cgp-and-never-
 
 ## The catalog
 
-Publication order, oldest first, which is roughly the order of increasing reliability. Status words
-follow [../AGENTS.md](../AGENTS.md#status-vocabulary).
+Publication order, oldest first, which is roughly the order of increasing reliability. Each entry's
+status is one of the section's [status words](../README.md#status-words).
 
 - [Announcing Context-Generic Programming](early-preview-announcement.md): 2024-12-19, *historical*.
   The launch post: what CGP is, how it grew out of the Hermes relayer, and a plan for 2025 since

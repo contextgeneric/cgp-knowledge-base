@@ -1,155 +1,91 @@
 # The CGP Website
 
-This directory is the knowledge base's **meta-documentation for the public CGP website**, the Docusaurus
-site published at <https://contextgeneric.dev> from the
+This section is the knowledge base's record of the public CGP website, the Docusaurus site at
+<https://contextgeneric.dev> built from the
 [`contextgeneric.dev`](https://github.com/contextgeneric/contextgeneric.dev) repository. It documents
-nothing about CGP itself. Instead it records, for every page the site publishes, what that page says,
-how current it is against the CGP the rest of this base describes, and which knowledge-base documents
-an agent should read before touching it. An agent asked to write or revise a website page starts here,
-finds the internal document for that page, and follows its links outward.
+nothing about CGP itself: for each page the site publishes, it records what the page says, how
+current it is, and which knowledge-base documents an agent reads before touching it. The rules for
+work here are in [AGENTS.md](AGENTS.md).
 
-## Why this section exists
+## Why the section exists
 
-The website and the knowledge base have opposite audiences, and that asymmetry is the whole reason
-for this directory. The website is **public-facing**: it is read by Rust developers evaluating CGP,
-and every link on it must resolve for someone who has never heard of this repository. The knowledge
-base is **internal**: it is written by and for agents, it assumes the `/cgp` skill, and it records
-unfinished work and known defects that no public page should surface. A website page therefore
-**cannot link into the knowledge base**, apart from the few pages that explain the base itself
-within the bounds [AGENTS.md](AGENTS.md#the-one-way-link-rule) sets, and this creates a gap: the
-agent maintaining a page needs the background, provenance, and current-version facts that only the
-base holds.
+The website is public and the knowledge base is internal, so a published page cannot link into the
+base, apart from the pages that explain the base, within the bounds of
+[the one-way link rule](AGENTS.md#the-one-way-link-rule). The agent maintaining a page still needs the
+background and current-version facts only the base holds, so each record here links outward to the
+page and inward to the reference, concepts, examples, and communication-strategy documents the page
+rests on.
 
-These documents close that gap from the other side. Each one is the knowledge base's record *about* a
-website page: it names the page, links to it publicly, and links inward to the reference documents,
-concepts, examples, and communication-strategy guidance that the page's content rests on. The website
-stays self-contained for its readers; the agent gets a map from any page back to the material behind
-it.
+The records also track drift. Almost every blog post predates v0.8.0, and several teach syntax the
+library no longer accepts, such as `#[cgp_context]`, `cgp_preset!`, the `Async` trait, `ProvideType`,
+and `symbol!`. Each blog record names what is stale, so an agent can quote a post's ideas without
+copying its dead code or rewriting the post.
 
-The second job these documents do is **track drift**. Almost every blog post on the site predates the
-v0.8.0 CGP this base describes, and several of them teach syntax the library does not accept:
-`#[cgp_context]`, `cgp_preset!`, the `Async` trait, `ProvideType`, and `symbol!`. A reader can still learn
-the ideas from those posts, but an agent must never mine them for current syntax, and must never
-"fix" a historical post by silently rewriting it. Each blog document therefore carries an explicit
-divergence section naming exactly what is stale, so an agent can quote a post's *ideas* with
-confidence while knowing which of its *code* is dead.
+## Records and specifications
 
-## How the website is organized
+The section holds two kinds of document:
 
-The site is a stock [Docusaurus](https://docusaurus.io/) installation with three content areas plus a
-custom front page, and the navigation bar exposes four of them: Tutorials, Docs, Blog, and AI. The
-build is deliberately unmodified (no plugins, and no custom React beyond the landing page). The
-[new-website post](blog/new-website.md) explains the choice, and it matters here because a
-contributor's work is almost entirely writing Markdown.
+- **Records** describe a page that exists: what it says, which documents own its material, how far it
+  has drifted, and what a revision must keep. Everything under [pages/](pages/README.md),
+  [blog/](blog/README.md), [tutorials/](tutorials/README.md), and [projects/](projects/README.md) is a
+  record, apart from the Projects plans for pages not yet written.
+- **Specifications** describe what the site should be:
+  [information-architecture.md](information-architecture.md), [seo.md](seo.md),
+  [visual-design.md](visual-design.md), and the [writing guides](writing-guides/README.md).
 
-The **`docs/` tree** holds everything that is not a blog post: an Introduction, a feature Overview, a
-Resources list, a Contribute page, the two tutorial series, and an AI section carrying an inlined copy
-of the `/cgp` agent skill beside the disclosure page. It also holds the redesign's two largest
-sections, both mirroring a catalog in this base one page at a time: **Concepts** at `docs/concepts/`,
-the explanation tier drawn from [cgp/concepts/](../cgp/concepts/README.md), and **Reference** at
-`docs/reference/`, the canonical construct reference drawn from
-[cgp/reference/](../cgp/reference/README.md). A third mirrored section, **Comparisons** at
-`docs/comparisons/`, ports the [related-work](../related-work/README.md) documents for readers who
-arrive knowing another paradigm. All three are written in full. A fourth, **Projects** at
-`docs/projects/`, ports the [projects/](../projects/README.md) sections, with each project's example
-programs expanded into short tutorials. Its Hypershell, cgp-serde, and cgp-examples pages are written on
-the site's `v0.8.0` branch, and the error backends are planned. The
-**`blog/` tree** holds every announcement, release note, deep dive, and talk transcript, each with an
-author and a tag drawn from a fixed set (`release`, `deepdive`, `walkthrough`). The **front page and
-static assets** live under `src/` and `static/`.
+A guide and a record may disagree during the redesign: the guide states the intent, and the record
+names the gap. Read the guide for the page's kind first, then the page's record, then the documents
+the record links.
 
-This section mirrors that shape: [site.md](site.md) covers the configuration, the navigation, and
-the `example-code` crate; [pages/](pages/README.md) holds one record per non-blog, non-tutorial page
-and per docs section, including Concepts, Comparisons, and Reference; [blog/](blog/README.md) holds
-one document per blog post; and [tutorials/](tutorials/README.md) holds one document per tutorial
-series. That mirroring describes the site as it stands;
-[information-architecture.md](information-architecture.md) describes the shape it is being rebuilt
-toward, which differs.
+## The document template
 
-## Two kinds of document here
+A page's record follows this shape:
 
-The section holds **records** and **specifications**, and telling them apart decides which one a task
-starts from. A record, which is everything under [blog/](blog/README.md), [tutorials/](tutorials/README.md),
-and [projects/](projects/README.md) and the records under [pages/](pages/README.md), describes a page that exists: what it says,
-which knowledge-base documents own its material, how far it has drifted, and what a revision must
-preserve. A specification, meaning [information-architecture.md](information-architecture.md) and everything under
-[writing-guides/](writing-guides/README.md), describes what the site should be and how a *kind* of page
-should be written, whether or not the current pages match. The gap between the two is the redesign,
-and each page's record states its part of it.
+- A level-one heading and a one-sentence summary of what the page is and where it stands.
+- The identifying facts: live URL, source file, publication date and tags, and status.
+- How the page was made, for a page that carries a provenance line, not for an older page.
+- **What it covers**, **How it relates to the knowledge base**, **Where it diverges from current
+  CGP**, and **Maintaining it**.
 
-The distinction matters because the site is being redesigned rather than merely maintained. A writing
-guide states the intent, a page document states the present, and during a redesign the two will
-disagree; that gap is expected and belongs in the page document rather than being quietly resolved.
-Read the guide for the page type first, then the document for the specific page.
+A tutorial's record replaces the divergence section with its teaching contract. A writing guide does
+not follow the template: it states the job, the structure, what must never appear, how a draft is
+checked, and the gaps.
+
+## Status words
+
+A record gives its page's status as one of these words:
+
+- **Current:** the page describes CGP as it is now, and its code compiles against v0.8.0.
+- **Historical:** the page is a dated record, correct about its own moment, that does not track the
+  library.
+- **Outdated:** the page presents itself as current guidance but is not; raise it with the author.
+- **Draft:** the page is unfinished, either unpublished or published with parts still to write.
+- **Superseded:** a later page has replaced it, and it is kept for the record.
 
 ## The catalog
 
-The entries below are the section's own documents and subdivisions, the latter each with its own index
-that catalogs the documents beneath it. The authoring rules for everything here live in
-[AGENTS.md](AGENTS.md), including the one-way link rule, the obligation to consult
-[communication-strategy](../communication-strategy/README.md) before writing public prose, and how to
-record drift.
-
-- [information-architecture.md](information-architecture.md): the site as *intended*, covering what each surface
-  is for, the target page inventory including the pages that do not exist yet, the sidebar and navigation
-  design, and the path each reader profile takes through the site. The document the writing guides
-  assume.
-- [seo.md](seo.md): the site's **search and agent discoverability** strategy, written against a
-  twelve-month Google Search Console export: why the measured problem is a 1.09% click-through rate
-  rather than a ranking one, which terms the site can honestly win, why the tag line orients rather
-  than ranks while the headline features map onto query families, and how the same material reaches
-  coding agents. A specification, like information-architecture.md, rather than a page record.
-- [writing-guides/](writing-guides/README.md): one guide per *kind* of page, saying what that page is
-  for, what goes on it in what order, and what must never appear. Prescriptive and forward-looking:
-  these describe how pages should be rewritten, not how the current ones happen to read. Currently the
-  [homepage](writing-guides/homepage.md), the [explanation pages](writing-guides/explanation.md) it
-  offloads to, the [tutorials](writing-guides/tutorial.md), the
-  [release announcement](writing-guides/release-announcement.md), the
-  [Projects section](writing-guides/project.md), the [tooling pages](writing-guides/tooling.md), the
-  [reference page](writing-guides/reference.md), the [orientation pages](writing-guides/orientation.md),
-  the [knowledge-base pages](writing-guides/knowledge-base.md), and the
-  [comparison page](writing-guides/related-work.md). Its README holds the
-  [reading map](writing-guides/README.md#the-reading-map): the communication-strategy and SEO
-  sections to read before revising each kind of page.
-- [patterns-book.md](patterns-book.md): the record of and plan for the
-  [CGP Patterns book](https://patterns.contextgeneric.dev/), a legacy resource the site's pages leave
-  out and the project's second public documentation property: the seven chapters that are still current against the twelve that are not, the three
-  outbound links the whole book carries, all in its introduction, why CI's single version pin makes a gradual update impossible,
-  the map from each chapter to the page that now owns its material, and the changes left in the
-  book's repository, starting with the status section that publishes with the release.
-- [site.md](site.md): the facts every page shares: the build and deployment, the release branch, the
-  `example-code` crate, and the navigation.
-- [pages/](pages/README.md): one record per standalone page and per docs section, from the front
-  page to the AI disclaimer.
-- [visual-design.md](visual-design.md): the site's theme: the palette built around the logo's red,
-  the tokens and the Infima variables they feed, the underlined prose links, the two code themes and
-  the added languages, the two self-hosted fonts, how images read in both themes, the frame of the
-  site, Docusaurus's constraints on page layout, and the contrast check and screenshots that keep a
-  change readable.
-- [blog/](blog/README.md): one internal document per blog post, each recording what the post covers,
-  which knowledge-base documents own its material, and how its code and claims diverge from CGP v0.8.0.
-  The index carries the chronological catalog and a drift summary, and it covers substantial **drafts**
-  as well as published posts, including one that lives on a branch rather than on `main`.
-- [tutorials/](tutorials/README.md): one internal document per tutorial series, recording the
-  series' objective, the concepts it introduces in order, the prerequisites it assumes, and the level
-  of explanation it pitches at, so a revision keeps the same teaching contract.
-- [projects/](projects/README.md): the blueprint and page records for the **Projects** section, which ports the
-  [projects/](../projects/README.md) sections of this base to the site with their example programs
-  expanded into short tutorials, and one plan per project: the page list and the internal document
-  behind each page, the code and knowledge-base prerequisites, and the posts that get a pointer. It
-  supersedes the three deep dives planned before the project sections existed. The Hypershell,
-  cgp-serde, and cgp-examples pages are written, so their documents are records; the error-backend
-  pages are still planned.
-
-## Reading a page's document before changing the page
-
-The workflow for any website change runs inward before it runs outward. Read the
-[writing guide](writing-guides/README.md) for the kind of page, if one exists, then find the page's own
-document in one of the catalogs above, because it names the material the page rests on and the
-constraints the page is already under. Follow its links into the [reference](../cgp/reference/README.md)
-and [concepts](../cgp/concepts/README.md) for the semantics the page describes, into
-[examples/](../examples/README.md) for code that is already verified against current CGP, and into
-[communication-strategy/](../communication-strategy/README.md) for how the claim should be framed for
-a public audience. Only then write. When the change alters what the page covers or moves it further
-from current CGP or closer to it, revise the page's document in the same change, per the
-[synchronization rule](../AGENTS.md#the-synchronization-rule).
+- [AGENTS.md](AGENTS.md): the rules for website work.
+- [site.md](site.md): the facts every page shares: the build and deployment, the `v0.8.0` release
+  branch, the `example-code` crate, and the navigation.
+- [information-architecture.md](information-architecture.md): the site as intended: what each surface
+  is for, the target page inventory, the sidebar and navigation, and each reader profile's path.
+- [seo.md](seo.md): the search and agent-discoverability strategy, from a twelve-month Search Console
+  export: the low click-through rate as the measured problem, the terms the site can win, the tag
+  line's job, and how the material reaches coding agents.
+- [visual-design.md](visual-design.md): the theme: the palette, the tokens, the code themes, the
+  fonts, images in both themes, the frame of the site, Docusaurus's layout constraints, and the
+  contrast check and screenshots.
+- [patterns-book.md](patterns-book.md): the CGP Patterns book, a legacy resource the site's pages leave
+  out: which chapters are current, why its CI pin rules out a gradual update, the map from each
+  chapter to the page that now owns its material, and the changes left in its repository.
+- [writing-guides/](writing-guides/README.md): one guide per kind of page, with the
+  [reading map](writing-guides/README.md#the-reading-map) of the strategy and SEO sections each kind
+  draws on.
+- [pages/](pages/README.md): one record per standalone page and per docs section, from the front page
+  to the AI disclaimer.
+- [blog/](blog/README.md): one record per blog post, including drafts on branches, with the catalog
+  and a drift summary.
+- [tutorials/](tutorials/README.md): one record per tutorial series, with its teaching contract.
+- [projects/](projects/README.md): the blueprint for the Projects section and one plan per project;
+  the Hypershell, cgp-serde, and cgp-examples sections are partly written, and the error-backend
+  pages are planned.

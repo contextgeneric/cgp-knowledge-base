@@ -1,9 +1,9 @@
 # Page records
 
 This directory holds one record per standalone website page and per `docs/` section, so a task on a
-page reads that page's record alone. Each record follows the document template in
-[AGENTS.md](../AGENTS.md#the-document-template). The facts every page shares, such as the build, the
-branches, the `example-code` crate, and the navigation, are in [site.md](../site.md).
+page reads that page's record alone. Each record follows the section's
+[document template](../README.md#the-document-template). The facts every page shares, such as the
+build, the branches, the `example-code` crate, and the navigation, are in [site.md](../site.md).
 
 Pages recorded elsewhere:
 

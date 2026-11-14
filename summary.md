@@ -763,20 +763,16 @@ it stale.
 
 ## `website/`: the public website, page by page
 
-- [website/README.md](website/README.md) — what this section documents, the one-way link asymmetry
-  that makes it necessary, how the Docusaurus site is organized, and its catalog.
-- [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule and its exceptions (the
-  disclaimer and the knowledge-base pages, each bounded, and the published skill),
-  the published agent skill as a pinned snapshot that agents never edit, bump, or read from,
-  consulting communication-strategy before writing public prose, covering every supported form by
-  layering the depth rather than omitting the advanced material, never taking current syntax from a
-  blog post, the `example-code` crate and the Projects pages' exception to it, the prohibition on
-  rewriting published history and the settled pointer from a post to the project section it grew
-  into, the release-branch model the redesign lands through (both `cgp` v0.8.0 and `cargo-cgp`
-  v0.1.0, written as shipped), who drafts a page and who reads it before it publishes, disclosing AI
-  use on a page, the document template, the status vocabulary, and how a ported catalog registers as
-  one entry rather than one document per page, with the Projects section recorded one plan per
-  project.
+- [website/README.md](website/README.md) — what this section records and why a public site needs an
+  internal record, records against specifications, the document template, the status words, and the
+  catalog.
+- [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule and its exceptions, legacy
+  resources off public pages, the published skill as a snapshot agents never edit or bump, the
+  communication-strategy reading before public prose, layering the depth rather than omitting the
+  advanced material, verifying code against current CGP in `example-code` and never against a blog
+  post, not rewriting published history, committing the redesign to the `v0.8.0` branch, who drafts a
+  page and who reads it before it publishes, disclosing AI use on a page, records and their status,
+  and registering a document.
 - [website/information-architecture.md](website/information-architecture.md) — the site as intended:
   the four public properties, why most readers never see the homepage and what that requires of every
   page, what each surface is for, the target page inventory and the AI section's two directions, the
