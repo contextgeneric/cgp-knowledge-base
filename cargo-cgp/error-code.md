@@ -483,8 +483,9 @@ for `CGP-E060`.
   value, when exactly one marker of that name exists among the traits the crate can see. Two of one name
   decline. A repeat at one key prints once, and rustc's suggestions are dropped.
 - **Fix (in the `help`):** `` import it with `use <path>;` ``. The path is a `crate::` path for a local
-  component, and otherwise the shortest public path from a direct dependency's root, since the compiler's
-  own printing can name a re-exported crate by a name that does not compile.
+  component, and otherwise the shortest public path from a direct dependency's root that does not go
+  through a `macro_prelude` module, since the compiler's own printing can name a re-exported crate by a
+  name that does not compile.
 - **Class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
 
 ### `CGP-E042`: wiring key names no component
