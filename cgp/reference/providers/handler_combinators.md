@@ -302,6 +302,7 @@ This pipeline of computers reads a factor or an addend from context fields at ea
 
 ```rust
 use core::marker::PhantomData;
+use cgp::extra::handler::{Computer, ComputerComponent};
 use cgp::prelude::*;
 use cgp::extra::handler::{CanCompute, PipeHandlers};
 

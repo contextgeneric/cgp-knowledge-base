@@ -52,9 +52,9 @@ The parts are these:
 `HandlerRef`, with consumer trait `CanHandleRef`, is identical except that `handle_ref` takes
 `input: &Input`.
 
-The prelude exports the provider trait `Handler` and the key `HandlerComponent`. The consumer traits
-`CanHandle` and `CanHandleRef`, the provider trait `HandlerRef`, the key `HandlerRefComponent`, and
-the one-step promotion providers are imported from `cgp::extra::handler`.
+The consumer traits `CanHandle` and `CanHandleRef`, the provider traits `Handler` and `HandlerRef`,
+the keys `HandlerComponent` and `HandlerRefComponent`, and the one-step promotion providers are
+imported from `cgp::extra::handler`.
 
 ## Implementations
 
@@ -102,6 +102,7 @@ A generic function bounded by `CanHandle` accepts any handler the context wires:
 
 ```rust
 use core::marker::PhantomData;
+use cgp::extra::handler::Handler;
 use cgp::prelude::*;
 use cgp::extra::handler::CanHandle;
 
@@ -126,6 +127,7 @@ A context answers that bound with a synchronous computer lifted in two steps:
 
 ```rust
 use core::marker::PhantomData;
+use cgp::extra::handler::{Computer, ComputerComponent, HandlerComponent};
 use cgp::prelude::*;
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::extra::handler::{CanHandle, Promote, PromoteAsync};
@@ -226,9 +228,8 @@ and the note ``required for `Double` to implement `TryComputer<App, (), u64>` ``
 form is `PromoteAsync<Promote<Double>>`; a `#[cgp_computer]` provider needs neither, since it is
 wired to `PromoteComputer<Self>`.
 
-A concrete context calling `App::handle(…)` by bare name is ambiguous (`E0034`) when `CanHandle` is
-imported and the `Handler` provider trait is in scope, as it is through the prelude, for the reason
-given in
+A concrete context calling `App::handle(…)` by bare name is ambiguous (`E0034`) when both
+`CanHandle` and the `Handler` provider trait are imported, for the reason given in
 [`Computer`'s Known issues](computer.md#known-issues).
 
 ## Source

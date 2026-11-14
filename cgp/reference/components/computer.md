@@ -77,12 +77,13 @@ pub trait CanComputeAsync<Code, Input> {
 `CanComputeAsyncRef` is its by-reference counterpart, with `compute_async_ref` taking
 `input: &Input`. None of the four imports `HasErrorType`, because none can fail.
 
-The prelude exports the provider traits `Computer` and `AsyncComputer` and the keys
-`ComputerComponent`, `ComputerRefComponent`, and `AsyncComputerComponent`. The consumer traits
-`CanCompute`, `CanComputeRef`, `CanComputeAsync`, and `CanComputeAsyncRef`, the provider traits
-`ComputerRef` and `AsyncComputerRef`, the key `AsyncComputerRefComponent`, and the one-step promotion providers
-(`Promote`, `PromoteAsync`, `PromoteRef`, `TryPromote`) are imported from `cgp::extra::handler`, as
-are the promotion bundles such as `PromoteComputer`.
+Every name of the four components is imported from `cgp::extra::handler`, because the prelude
+exports none of the handler family: the consumer traits `CanCompute`, `CanComputeRef`,
+`CanComputeAsync`, and `CanComputeAsyncRef`, the provider traits `Computer`, `ComputerRef`,
+`AsyncComputer`, and `AsyncComputerRef`, their four keys, the one-step promotion providers
+(`Promote`, `PromoteAsync`, `PromoteRef`, `TryPromote`), and the promotion bundles such as
+`PromoteComputer`. A provider written with `#[cgp_impl]` or `#[cgp_provider]` on `Computer` also
+needs `ComputerComponent` in scope, because the macro names the key as `{Trait}Component`.
 
 The `#[prefix]` registration decides how a context that joins `DefaultNamespace` wires these
 components. It binds a provider at the prefixed path, as
@@ -126,7 +127,7 @@ Promotion lets one `Computer` impl answer the other members, with one limit. Lif
 input, so it works only when the provider accepts `&'a Input` for every lifetime `'a`. A computer
 written for an owned `u64` answers `compute`, `try_compute`, and `compute_async` through promotion,
 but not `compute_ref`; the check reports it as
-``required for `Double` to implement `for<'a> cgp::prelude::Computer<App, (), &'a u64>` ``. A
+``required for `Double` to implement `for<'a> Computer<App, (), &'a u64>` ``. A
 [`#[cgp_computer]`](../macros/cgp_computer.md) function over a reference parameter, as
 `fn double(value: &u64) -> u64`, does meet the bound and answers `compute_ref`.
 
@@ -155,6 +156,7 @@ through `CanTryCompute`:
 ```rust
 use core::marker::PhantomData;
 use cgp::extra::handler::{CanCompute, CanTryCompute, PromoteComputer};
+use cgp::extra::handler::{Computer, ComputerComponent, TryComputer, TryComputerComponent};
 use cgp::prelude::*;
 use cgp::core::error::ErrorTypeProviderComponent;
 
@@ -201,6 +203,7 @@ dereferences to it:
 
 ```rust
 use core::marker::PhantomData;
+use cgp::extra::handler::{ComputerComponent, ComputerRefComponent};
 use cgp::prelude::*;
 use cgp::extra::handler::{CanCompute, CanComputeRef, ComputerRef, PromoteRef};
 
@@ -242,6 +245,7 @@ use core::marker::PhantomData;
 use cgp::extra::handler::{
     AsyncComputerRef, AsyncComputerRefComponent, CanComputeAsync, CanComputeAsyncRef,
 };
+use cgp::extra::handler::{AsyncComputer, AsyncComputerComponent};
 use cgp::prelude::*;
 
 #[cgp_new_provider]
@@ -283,8 +287,8 @@ pub async fn run(app: &App, text: &String) -> (u64, usize) {
 }
 ```
 
-The futures need an executor to run, which CGP leaves to the application. `AsyncComputer` is in the
-prelude; `AsyncComputerRef` is imported from `cgp::extra::handler`.
+The futures need an executor to run, which CGP leaves to the application. `AsyncComputer` and
+`AsyncComputerRef` are both imported from `cgp::extra::handler`.
 
 ## Related constructs
 
@@ -306,12 +310,12 @@ These constructs are the ones the computer components work with:
 
 **Calling a computer on a concrete context by its bare name is ambiguous.** A context that delegates
 `ComputerComponent` also implements the `Computer` provider trait through the delegation blanket
-impl, and the prelude brings `Computer` into scope, so once `CanCompute` is imported too,
+impl, so in a module that imports both `CanCompute` and `Computer`,
 `App::compute(&App, PhantomData::<()>, 21)` fails with
 ``error[E0034]: multiple applicable items in scope``, its notes naming `CanCompute` and
-`cgp::prelude::Computer` as the two candidates. Method syntax, `App.compute(…)`, is unambiguous
+`Computer` as the two candidates. Method syntax, `App.compute(…)`, is unambiguous
 because only the consumer trait takes `self`; `<App as CanCompute<(), u64>>::compute(…)` names the
-consumer trait explicitly. Without the consumer trait in scope the same call compiles and runs the
+consumer trait explicitly. With only `Computer` imported, the same call compiles and runs the
 provider trait's `compute`, with `App` as its own provider through the delegation blanket impl. The
 same applies to every handler-family member whose consumer and provider traits are both in scope.
 

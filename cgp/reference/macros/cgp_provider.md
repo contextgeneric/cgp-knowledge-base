@@ -97,7 +97,7 @@ suffix; when present, that `Type` is substituted into the first position of the 
 
 `#[cgp_provider]` emits two items: the provider impl, passed through unchanged, and an
 `IsProviderFor` impl derived from it. Starting from this provider for `ComputerRef` (which is
-imported from `cgp::extra::handler`, while its `ComputerRefComponent` marker is in the prelude):
+imported from `cgp::extra::handler` with its `ComputerRefComponent` marker):
 
 ```rust
 #[cgp_provider]

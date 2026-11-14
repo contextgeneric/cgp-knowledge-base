@@ -49,11 +49,10 @@ The parts are these:
 `TryComputerRef`, with consumer trait `CanTryComputeRef`, is identical except that `try_compute_ref`
 takes `input: &Input`.
 
-The prelude exports the provider trait `TryComputer` and the key `TryComputerComponent`. The consumer
-traits `CanTryCompute` and `CanTryComputeRef`, the provider trait `TryComputerRef`, the key
-`TryComputerRefComponent`, and the one-step promotion providers are imported from
-`cgp::extra::handler`. A context calling either member must also wire an error type, since both
-consumer traits have `HasErrorType` as a supertrait.
+The consumer traits `CanTryCompute` and `CanTryComputeRef`, the provider traits `TryComputer` and
+`TryComputerRef`, the keys `TryComputerComponent` and `TryComputerRefComponent`, and the one-step
+promotion providers are imported from `cgp::extra::handler`. A context calling either member must
+also wire an error type, since both consumer traits have `HasErrorType` as a supertrait.
 
 ## Implementations
 
@@ -101,6 +100,7 @@ This provider parses a `String` into a `u64` and raises the parse error into the
 ```rust
 use core::marker::PhantomData;
 use core::num::ParseIntError;
+use cgp::extra::handler::{TryComputer, TryComputerComponent};
 use cgp::prelude::*;
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;

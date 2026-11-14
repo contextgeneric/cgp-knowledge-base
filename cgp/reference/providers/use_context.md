@@ -20,7 +20,8 @@ wiring unless the wiring names an inner provider.
 
 ## Definition
 
-`UseContext` is a unit struct defined in `cgp-component` and exported by the prelude:
+`UseContext` is a unit struct defined in `cgp-component` and imported from `cgp::core::component`;
+the prelude does not export it:
 
 ```rust
 pub struct UseContext;
@@ -74,6 +75,7 @@ This higher-order provider scales the area of an inner shape and asks the contex
 area:
 
 ```rust
+use cgp::core::component::UseContext;
 use cgp::prelude::*;
 
 #[cgp_component(AreaCalculator)]

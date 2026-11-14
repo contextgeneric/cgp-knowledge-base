@@ -265,7 +265,8 @@ the lifetime elaboration, and the generated names:
   matcher form.
 - [auto_dispatch/consumer_traits_in_scope.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/auto_dispatch/consumer_traits_in_scope.rs):
   a synchronous and an async dispatch trait in a module that imports `CanCompute` and
-  `CanComputeAsync`, pinning that the generated matcher call names its provider trait.
+  `CanComputeAsync` beside `Computer` and `AsyncComputer`, pinning that the generated matcher call
+  names its provider trait.
 - [auto_dispatch/method_name_in_scope.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/auto_dispatch/method_name_in_scope.rs):
   a free function named `area` beside a dispatch trait with an `area` method, pinning that the
   per-variant helper takes a reserved name.

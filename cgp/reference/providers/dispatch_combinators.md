@@ -199,7 +199,7 @@ pub trait HasFieldHandlers<M> {
 `HasFieldHandlers` applies `ToFieldHandlers` to a type's `HasFields::Fields`. Because only the
 `Either`/`Void` list is handled, the convenience matchers apply to enums, not to structs: wiring
 one for a struct `Scene` fails with
-``error[E0277]: the trait bound `MatchWithHandlers<_>: cgp::prelude::Computer<App, (), Scene>` is not satisfied``,
+``error[E0277]: the trait bound `MatchWithHandlers<_>: Computer<App, (), Scene>` is not satisfied``,
 followed by the unsatisfied `ToFieldHandlers` bound on the struct's `Cons` field list and its
 missing `HasExtractor`.
 
@@ -277,6 +277,7 @@ This matcher dispatches a `Shape` to a per-variant area provider with an explici
 
 ```rust
 use core::marker::PhantomData;
+use cgp::extra::handler::{Computer, ComputerComponent};
 use cgp::prelude::*;
 use cgp::extra::dispatch::{ExtractFieldAndHandle, HandleFieldValue, MatchWithHandlers};
 
@@ -403,13 +404,13 @@ the needed impl:
   `TryComputerRefComponent`, and `HandlerRefComponent`. Those entries lead to `MatchWithHandlersRef`
   or `MatchWithHandlersMut`, which implement only `Computer` and `AsyncComputer`, so wiring a
   fallible component to one of these matchers fails with an unsatisfied bound, noted as
-  ``required for `MatchWithValueHandlersRef<ComputeAreaOfRef>` to implement `IsProviderFor<cgp::prelude::HandlerComponent, App, ((), &'a Shape)>` ``.
+  ``required for `MatchWithValueHandlersRef<ComputeAreaOfRef>` to implement `IsProviderFor<HandlerComponent, App, ((), &'a Shape)>` ``.
   The owned `MatchWithValueHandlers` has the same limit without the misleading entries. The `Mut`
   form's `ComputerRefComponent` and `AsyncComputerRefComponent` entries cannot resolve either, as
   the convenience-matcher section explains.
 - **`BuildAndMergeOutputs`.** It routes `ComputerRefComponent`, `TryComputerRefComponent`, and
   `HandlerRefComponent` to `BuildWithHandlers`, which implements only `Computer`, `TryComputer`, and
-  `Handler`, so the check fails on `IsProviderFor<cgp::prelude::ComputerRefComponent, …>` and
+  `Handler`, so the check fails on `IsProviderFor<ComputerRefComponent, …>` and
   rustc lists the three impls it has. The builder ignores its input, so a `…Ref` route would add
   nothing.
 

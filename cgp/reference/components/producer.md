@@ -40,8 +40,8 @@ The parts are these:
 - **`#[prefix(@cgp.extra.handler in DefaultNamespace)]`** registers the component under
   `@cgp.extra.handler`, like the rest of the family.
 
-`Producer` does not import `HasErrorType`, because it cannot fail. The prelude exports `Producer`
-and `ProducerComponent`; the consumer trait `CanProduce` is imported from `cgp::extra::handler`.
+`Producer` does not import `HasErrorType`, because it cannot fail. `Producer`,
+`ProducerComponent`, and the consumer trait `CanProduce` are imported from `cgp::extra::handler`.
 
 ## Implementations
 
@@ -103,6 +103,7 @@ A context wires a producer and calls it:
 
 ```rust
 use core::marker::PhantomData;
+use cgp::extra::handler::{Producer, ProducerComponent};
 use cgp::prelude::*;
 use cgp::extra::handler::CanProduce;
 
@@ -161,7 +162,7 @@ These constructs are the ones `Producer` works with:
 **`PromoteProducer<P>` answers the fallible and async members only when `P` is wired to it.** A
 context wiring `TryComputerComponent` to `PromoteProducer<MagicNumber>`, for a hand-written
 `MagicNumber` that implements only `Producer`, fails at the check with
-``error[E0277]: the trait bound `MagicNumber: DelegateComponent<cgp::prelude::ComputerComponent>` is not satisfied``
+``error[E0277]: the trait bound `MagicNumber: DelegateComponent<ComputerComponent>` is not satisfied``
 and the note ``required for `MagicNumber` to implement `Computer<App, (), ()>` ``, because the
 bundle's `TryComputerComponent` entry is `Promote<MagicNumber>`, which looks for a `Computer` through
 `MagicNumber`'s own wiring. Wire the producer to the bundle, or write it with `#[cgp_producer]`.

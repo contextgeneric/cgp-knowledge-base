@@ -355,7 +355,7 @@ The chain's strip,
 drops the module segments of an `a::b::C` identifier run unless the qualifier tells two types apart.
 A module is named in lowercase and a type or trait in uppercase, so the run keeps everything from
 its first uppercase segment: a trait's method keeps its trait
-(`cgp::prelude::TryComputer::try_compute` reads `TryComputer::try_compute`), and a run with no
+(`cgp::macro_prelude::TryComputer::try_compute` reads `TryComputer::try_compute`), and a run with no
 uppercase segment keeps its last one. rustc's own rule decides which ones do: a name it prints
 qualified is either non-unique or glob-imported, so a qualified name the crate does not glob-import
 is ambiguous, and its qualifier stays. A glob-imported name is qualified whether or not it collides,
