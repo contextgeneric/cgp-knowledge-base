@@ -175,8 +175,9 @@ It is built from [consumer and provider traits](../../cgp/concepts/consumer-and-
 
 **Modularity Hierarchy is a hybrid**: an explanation walking the five tiers of the hierarchy, a section
 each with illustrative code built from the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md)
-concept, then a decision-guide tail that is shorter, scannable, and uses tables. It is where the
-homepage's cost section hands a skeptic, and the only public page that draws CGP's boundary.
+concept, which stays their source of truth, then a decision-guide tail that is shorter, scannable,
+and uses tables. It is where the homepage's cost section hands a skeptic, and the only public page
+that draws CGP's boundary.
 
 - **The tail** renders [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp)
   for a public reader: the rule of thumb, the alternative-by-alternative guide with each alternative's

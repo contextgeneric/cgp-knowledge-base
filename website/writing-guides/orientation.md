@@ -7,7 +7,8 @@ proof.
 
 - **Where they live**: `docs/index.md`, `docs/overview.md`, `docs/quickstart.md`,
   `docs/resources.md`, and `docs/contribute.md`, each with its record under
-  [pages/](../pages/README.md)
+  [pages/](../pages/README.md); the AI section's overview, `docs/ai/index.md`, follows the same
+  rules, as [its record](../pages/ai-overview.md) states
 - **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md), except the
   Contribute page's sponsorship section, which is the author's
@@ -22,8 +23,8 @@ proof.
 ## What separates orientation from every other page type
 
 **If a sentence on an orientation page is not routing the reader, orienting them in one line,
-getting a program to run, or, on the Overview, showing a feature, it belongs on another page.** Each neighbouring type owns what this one
-refuses:
+getting a program to run, or, on the Overview, showing a feature, it belongs on another page.** Each
+neighbouring type owns what this one refuses:
 
 - **The [homepage](homepage.md) persuades.** A reader who clicked *Docs* has already given CGP the
   benefit of the doubt, and repeating the pitch spends their patience.

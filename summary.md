@@ -877,9 +877,9 @@ it stale.
   release the site ships with, the Linux-only rule, and the version-free concession.
 - [orientation.md](website/writing-guides/orientation.md) — the routing pages: what separates
   orientation from persuading, teaching, arguing and specifying; the Introduction's three parts; the
-  Overview's feature tour; the Quickstart's ten-minute target, its one-context program, and the boundary against Hello World; the
-  Resources index; the Contribute page's routes and the two sections that stay in the author's
-  hands; and what must never appear on any of them.
+  Overview's feature tour; the Quickstart's ten-minute target, its one-context program, and the
+  boundary against Hello World; the Resources index; the Contribute page's routes and the two
+  sections that stay in the author's hands; and what must never appear on any of them.
 - [reference.md](website/writing-guides/reference.md) — the canonical per-construct reference ported
   from the internal one: why the site rather than docs.rs is canonical, the six-section layered descent
   serving beginner to advanced on one page, the obligation to cover every form the parser accepts and
