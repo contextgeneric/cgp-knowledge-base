@@ -21,7 +21,7 @@ revision preserves unless the user says otherwise:
 - **Level of explanation**: whether the series shows a mechanism's desugaring, gestures at it, or stays
   silent.
 - **Register, shape, and payoff**: first-principles or applied, which of CGP's three shapes its running
-  example wires, and the step where the reader sees why it was worth doing.
+  example wires, and the step where the reader sees why it was worth doing, one per part of a series.
 
 **Adding to a tutorial means finding the right rung, not appending to the end.** A concept that does
 not fit the ramp belongs in a new part or a new series, and the document says which.

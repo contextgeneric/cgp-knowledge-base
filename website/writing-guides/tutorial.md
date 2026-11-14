@@ -220,7 +220,8 @@ non-obvious ordering, and the level of explanation. Two more items belong in eve
 
 - **The register**, which decides whether a desugaring section is required.
 - **The payoff position**: the step where the reader sees why the tutorial was worth doing, which
-  moving earlier robs of its motivation and moving later loses the reader to.
+  moving earlier robs of its motivation and moving later loses the reader to. A multi-part series
+  records one payoff per part, rising from basic to advanced, and a part added later records its own.
 
 ## What must not be in a tutorial
 

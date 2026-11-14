@@ -64,6 +64,20 @@ coherence when it hits it. It does not assume [Hello World](hello-world.md), tho
 **Register and shape.** First-principles, on a **value context** whose component targets `Self`:
 `Rectangle` is the thing whose area is computed.
 
+**Payoffs, one per part, from basic to advanced.** Each stays after the steps that motivate it, and a
+part added later records its own:
+
+- **Index**: the closing statement of what would fix both problems, parameter threading and methods
+  tied to one type, which tells the reader what to look for.
+- **Context-Generic Functions**: `PlainRectangle` and `ScaledRectangle` both use the same
+  `rectangle_area` without knowing about each other.
+- **Static Dispatch**: two payoffs. First, contexts that two blanket impls could not serve are each
+  wired to their own named provider and both work, after the coherence error that motivates it. Then
+  `ScaledAreaCalculator<Inner>` wraps another provider, teaching higher-order providers, the concept
+  that covers what middleware and aspect-oriented programming do.
+- **Checking and Debugging**: one mis-wiring through three diagnostics, ending with `cargo cgp check`
+  naming the missing fields at the wiring site, where the raw error pointed at a correct line.
+
 **Concept sequence.** Plain functions → concrete-context methods → `#[cgp_fn]` + `#[implicit]` →
 `#[uses]` → *(optional desugaring)* → a second shape → the need for a unified trait → the coherence
 error → `#[cgp_component]` → `#[cgp_impl]` → explicit provider calls → hand-written consumer impls →
