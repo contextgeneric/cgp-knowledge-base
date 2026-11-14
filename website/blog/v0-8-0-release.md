@@ -118,14 +118,17 @@ providers, and database bodies, with explicit checks on concrete contexts. The l
 is hypothetical; its omitted providers are supplied as stubs for compilation. These checks verify
 wiring, not a database implementation or a complete web service.
 
-The missing-height program is a [compile-fail
-fixture](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/example-code/tests/compile_fail/blog/v0_8_0_missing_height.rs).
+The missing-height program is a
+[compile-fail fixture](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/example-code/tests/compile_fail/blog/v0_8_0_missing_height.rs).
 Both quoted diagnostic bodies were captured from that program in a temporary library target as
 `src/lib.rs`, using cargo with stable Rust 1.99 and the local source-built cargo-cgp driver. The
-repaired program passes cargo-cgp, and a runtime test asserts that a three-by-four rectangle has
-area twelve. The historical preset and old attribute-separator listings are explicitly v0.7.0 input,
-not current examples to compile against v0.8.0. The proposed `???` keys and nested helper-macro form
-are labeled pseudocode in text fences, not presented as accepted Rust syntax.
+`cargo check` body's `help:` line was later edited by hand to the `cgp::macro_prelude::Chars` path
+that rustc prints once the prelude no longer carries `Chars`, matching the fixture's blessed output,
+so both bodies are recaptured against the released tool. The repaired program passes cargo-cgp, and
+a runtime test asserts that a three-by-four rectangle has area twelve. The historical preset and old
+attribute-separator listings are explicitly v0.7.0 input, not current examples to compile against
+v0.8.0. The proposed `???` keys and nested helper-macro form are labeled pseudocode in text fences,
+not presented as accepted Rust syntax.
 
 The production site build passes without broken links or anchors, and the full example suite passes
 against the sibling `cgp` checkout.
