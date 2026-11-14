@@ -360,6 +360,9 @@ These fixtures pin the class, one group per shape:
   a header for a component whose `name:` renames its key; `[CGP-E070]`.
 - [`wiring/unresolved-wiring-name/parameterized_name_default_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/parameterized_name_default_component.rs):
   a header for a component whose key takes a parameter; `[CGP-E070]` replaces the `E0107`.
+- [`wiring/unresolved-wiring-name/parameterized_key_trait_arity.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/parameterized_key_trait_arity.rs):
+  the same header without the trait's own argument; the trait's arity `E0107` keeps rustc's
+  wording beside the `[CGP-E070]`, whose attribute form keeps the key's parameter name.
 - [`wiring/unresolved-wiring-name/provider_header_beside_wrong_half.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_header_beside_wrong_half.rs):
   a header missing its key beside a consumer-trait and a non-CGP-trait header; `[CGP-E041]` beside
   `[CGP-E032]` and `[CGP-E033]`, whose own `E0425`s stay dropped.
