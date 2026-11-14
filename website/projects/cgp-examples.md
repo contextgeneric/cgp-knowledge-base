@@ -43,7 +43,8 @@ A revision must respect these facts:
 
 - **Every run and diagnostic was reproduced.** `expression`'s three tests were run offline and passed,
   and `web-app` was checked with `cargo cgp check`. Each *Try a change* result, and each test the pages
-  ask a reader to add, was run in a probe crate and is recorded in its example's record.
+  ask a reader to add, was run in a probe crate and is recorded in the internal document the page
+  ports.
 - **Two contexts have no test, so their pages give one.** The `add-mult-binary-op` and
   `add-mult-code` pages open *Run it* with an integration test the reader saves under
   `expression/tests/`, run as written in a copy of the repository. If the repository gains the tests,
@@ -190,7 +191,8 @@ design; the `web-app` pages link it at each stage's section, and the post can li
 
 ## Maintaining it
 
-- **The pilot's example pages set the pattern for the whole section**, so a lesson from writing them
-  revises [the guide](../writing-guides/project.md) rather than letting the next project drift.
+- **`expression`'s example pages, the Projects section's pilot, set the pattern for the whole
+  section**, so a lesson from writing them revises [the guide](../writing-guides/project.md) rather
+  than letting the next project drift.
 - **Each crate stays a demonstration**: a page that begins to document every item of a crate has
   become a reference, which this section does not carry.

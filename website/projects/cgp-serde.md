@@ -98,8 +98,8 @@ it works for a reader who reads nothing else.
 **The examples are the `cgp-serde-examples` crate's Cargo example targets**, the repository's only
 runnable programs; the tests in `cgp-serde-tests` get no pages.
 
-**`serde-comparison.md` must keep its last section**, *When plain Serde is the better choice*, since
-it is the evaluator's destination from the index.
+**`serde-comparison.md` must keep its *When plain Serde is the better choice* section**, since the
+page is the evaluator's destination from the index.
 
 ## The pages still to write
 
