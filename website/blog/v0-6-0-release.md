@@ -73,6 +73,7 @@ new to CGP.
 
 ## Maintaining it
 
-Leave it alone. Its `HasCgpProvider` history is the only published account of that design's origin;
+Leave it alone. It is the release note to read for why current CGP looks the way it does, and its
+`HasCgpProvider` history is the only published account of that design's origin;
 read it before anyone proposes reintroducing shared context providers. For current guidance on the
 choice it settled, use [writing-providers](../../cgp/guides/writing-providers.md).

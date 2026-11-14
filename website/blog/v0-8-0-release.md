@@ -177,9 +177,10 @@ explicitly a layout-dependent estimate rather than a measured PDF length.
 **Keep the order and the style the author asked for.** cargo-cgp and the documentation stay before the
 longer namespace explanation, for readers who skip that walkthrough. The post is in natural style:
 paragraphs may begin with a situation, an observation, or a personal motivation and develop toward
-the point, so do not impose point-first openings or a repeated problem-and-solution template. Vary
-transitions around code listings and explain their consequences without announcing the next step or
-restating the syntax.
+the point, so do not impose point-first openings or a repeated problem-and-solution template. Keep
+the subjects clear, the reasoning connected, each paragraph on one point, and the language plain and
+accurate. Vary transitions around code listings and explain their consequences without announcing the
+next step or restating the syntax.
 
 **Preserve the content and its placement:**
 

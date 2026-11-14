@@ -15,7 +15,8 @@ Hypershell.
 - **The `cgp-handler` crate:** three components of one shape, `Handler` for asynchronous fallible
   operations, `Computer` for pure synchronous transforms, and `Producer` for input-free production. Each
   carries a phantom `Code` parameter, which the post explains is for type-level DSLs and for
-  dispatching in API handlers, the mechanism [Hypershell](hypershell-release.md) is built on.
+  dispatching in API handlers, the mechanism [Hypershell](hypershell-release.md) is built on and the
+  reason the crate was written.
 - **`#[wrap_provider]` in presets:** a preset's `Provider` type wrapped in `UseDelegate`, so a mapping
   table becomes a delegation target.
 - **`derive_delegate` in `#[cgp_component]`:** the `UseDelegate` dispatcher impl generated for a
