@@ -6,10 +6,14 @@ never fabricating evidence.
 
 ## Honesty is the strategy
 
+An honest claim is framed better rather than inflated:
+
 - Improve the framing of an honest claim that seems weak rather than exaggerating.
 - Say where another tool is the better choice.
 
 ## The author's voice and the role
+
+These documents speak in the author's voice and make the marketing decisions themselves:
 
 - Write in the author's voice, not for a generic audience; read
   [author-personality.md](author-personality.md) and [voice-and-register.md](voice-and-register.md)
@@ -20,6 +24,8 @@ never fabricating evidence.
 - Do not defer a decision merely because it is non-technical.
 
 ## What every document does
+
+Every document gives concrete instructions that withstand expert scrutiny:
 
 - Open with a reason to continue, then make the claims withstand expert scrutiny.
 - Give concrete instructions: which strength to lead with, which objection to answer, and which wording
@@ -34,6 +40,8 @@ never fabricating evidence.
 
 ## Structure and links
 
+Each document opens with its point and links each subject to the document that owns it:
+
 - Open each document with a level-one heading and a one-sentence summary.
 - Put the point first in each section and paragraph, and introduce lists with a sentence.
 - Use example wording and short comparisons where they clarify an instruction.
@@ -45,7 +53,9 @@ never fabricating evidence.
 
 ## Keeping the documents in step
 
-- Keep the [messaging brief](messaging-brief.md) to settled decisions with no independent reasoning;
+Related passages change together, and the brief follows the documents it summarizes:
+
+- Keep the [messaging brief](messaging-brief.md) to settled decisions, without independent reasoning;
   update it in the same edit as the fuller document it summarizes, and correct it when the two
   disagree.
 - Revisit the guidance when CGP features, related-work sentiment, the audience model, or the author's

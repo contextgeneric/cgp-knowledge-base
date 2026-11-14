@@ -6,6 +6,8 @@ follows, and [the `cgp` writing guide](../writing-guide.md) the rules for the re
 
 ## Class documents
 
+A class document describes one kind of failure from real compilations, backed by a fixture:
+
 - Verify a claim against a real compilation, not memory: read the fixture's blessed `.rust.stderr` and
   `.cgp.stderr`, or re-run `cargo cgp check`.
 - Check a raw-diagnostic claim on stable `rustc`; the `.rust.stderr` is blessed on the pinned nightly
@@ -22,6 +24,8 @@ follows, and [the `cgp` writing guide](../writing-guide.md) the rules for the re
 
 ## Code entries
 
+A code entry owns a Rust error code's rule, and the class documents link it:
+
 - Verify every error-code entry against the official Rust documentation, the reference, and the linked
   RFCs or issues.
 - Confirm the message wording against a real compilation where a class already pins it.
@@ -35,6 +39,8 @@ follows, and [the `cgp` writing guide](../writing-guide.md) the rules for the re
 
 ## Handling the acceptable / problematic / rejection split
 
+The catalog documents acceptable failures in full and leaves defects and rejections with their macro:
+
 - Keep a fixture's output quality, its `//@quality:` header, separate from the CGP-defect
   classification the [catalog README](README.md) describes.
 - Document an acceptable failure here in full; do not record it under a macro's Known issues.
@@ -43,6 +49,8 @@ follows, and [the `cgp` writing guide](../writing-guide.md) the rules for the re
 - Do not catalog a failure the macro catches by rejecting its input; keep it with the macro.
 
 ## Gathering an error with a sub-agent
+
+A sub-agent reads a long error only when a search will not settle it:
 
 - Grep the captured `.stderr` for the suspected line before delegating.
 - Delegate the reading when the grep will not settle it, using the

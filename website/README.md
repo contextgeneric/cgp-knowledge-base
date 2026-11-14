@@ -65,8 +65,9 @@ A record gives its page's status as one of these words:
 
 ## Rules for records
 
-These rules govern the section's own documents; the rules for the published pages are in the website
-repository's [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md).
+Each page has one record, kept current as the page changes. These rules govern the section's own
+documents; the rules for the published pages are in the website repository's
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md):
 
 - Write a page's record to [the document template](#the-document-template), and a writing guide to
   the guide shape the same section gives.

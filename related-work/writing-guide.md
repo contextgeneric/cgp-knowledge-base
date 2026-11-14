@@ -5,6 +5,8 @@ This guide holds the rules for writing and revising a related-work comparison. T
 
 ## Compile the foreign snippets, and record the toolchain
 
+Every foreign snippet that can be compiled is compiled, with its toolchain recorded:
+
 - Compile or type-check every foreign snippet that can be compiled, and note the toolchain and version.
 - Adapt a documentation example that does not compile as written rather than reproducing its defect.
 - Use Nix to compile a snippet where it is cheap; skip a package that builds a whole compiler toolchain
@@ -14,6 +16,8 @@ This guide holds the rules for writing and revising a related-work comparison. T
 - Note a syntax that changed between versions where the snippet appears, with the older form named.
 
 ## What every comparison covers
+
+A comparison explains the related work as its own community would, then places CGP against it:
 
 - Explain the related concept faithfully enough that its own community would recognize it, and
   honestly enough that a skeptic who prefers it would accept the comparison.
@@ -29,8 +33,10 @@ This guide holds the rules for writing and revising a related-work comparison. T
 
 ## Sources
 
+Every factual claim rests on a source the document names:
+
 - Ground every factual claim in a real source: official documentation, primary papers, or reputable
-  community writing, with opinion attributed as opinion; invent no quotation, statistic, or
+  community writing, with opinion attributed as opinion; never invent a quotation, a statistic, or
   version-specific behavior.
 - For a concept from programming-language research, read the foundational paper and the current
   research that generalizes or corrects it, not only the documentation.
@@ -39,6 +45,8 @@ This guide holds the rules for writing and revising a related-work comparison. T
 - Verify an uncertain detail against the source rather than trusting memory.
 
 ## The CGP side and the document shape
+
+The CGP side uses current, verified code and the knowledge base's vocabulary, in a fixed shape:
 
 - Verify every CGP snippet against the source, use the modern idioms, and draw from
   [../examples/](../examples/README.md).

@@ -5,6 +5,8 @@ knowledge base's [AGENTS.md](../AGENTS.md) holds the rules every document follow
 
 ## Keeping a document in step with the tool
 
+A `cargo-cgp` document changes with the tool, and its inline docs change in the same pass:
+
 - Fix the code's inline docs in the same pass: add a one-line `///` to a public item that lacks one,
   correct a stale comment, and delete a comment that restates the code.
 - Keep a source doc pointer on its knowledge-base path, such as
@@ -16,11 +18,16 @@ knowledge base's [AGENTS.md](../AGENTS.md) holds the rules every document follow
 
 ## Show the example behind an error message
 
+A quoted diagnostic comes from a real fixture, cut to the fragment that carries the point:
+
 - Quote the fragment that carries the point, never a whole cascade.
 - Distil a UI fixture's program rather than inventing a fresh one, and check the quoted output against
   its blessed `.cgp.stderr` and `.rust.stderr`.
 
 ## Implementation documents
+
+An implementation document gives the architecture and the intention, and leaves the mechanics to the
+code:
 
 - Open with a level-one heading and a one-sentence summary, and close with Tests and Source.
 - Make Tests and Source bullet lists, one item per line.
@@ -37,5 +44,7 @@ knowledge base's [AGENTS.md](../AGENTS.md) holds the rules every document follow
 - Record a limitation beside the behavior it qualifies, and remove it when closed.
 
 ## Registering a category
+
+A new category registers in this section's index:
 
 - Register a new category in this section's [README.md](README.md) with its own `README.md`.

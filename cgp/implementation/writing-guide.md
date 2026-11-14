@@ -6,6 +6,8 @@ knowledge base's [AGENTS.md](../../AGENTS.md) holds the rules every document fol
 
 ## Keeping a document in step with the code
 
+An implementation document changes with the code it describes and indexes every test:
+
 - Update the Tests or Snapshots section in the same change as a test or snapshot move.
 - Keep every test and snapshot pointer here; a reference document never points at a test.
 - Verify every claim against the `types/<construct>/` modules, the `functions/` helpers, and the tests.
@@ -14,6 +16,9 @@ knowledge base's [AGENTS.md](../../AGENTS.md) holds the rules every document fol
 - Keep inline docs terse and leave the deep mechanics to the implementation document.
 
 ## Placing and shaping a document
+
+An implementation document is placed by the source construct it describes and gives the high-level
+picture:
 
 - Place a document by the source construct it describes.
 - Make one `asts/` document cover one evaluation stack, not one type.
@@ -29,6 +34,8 @@ knowledge base's [AGENTS.md](../../AGENTS.md) holds the rules every document fol
 
 ## Tests, snapshots, and known issues
 
+The Tests, Snapshots, and Known issues sections index everything that pins the macro's behavior:
+
 - Link every behavioral test and rejection case in Tests, with a one-line note on what it pins.
 - Index every snapshot in Snapshots, describe its variant, and state the variants that have no
   snapshot.
@@ -40,6 +47,9 @@ knowledge base's [AGENTS.md](../../AGENTS.md) holds the rules every document fol
   section.
 
 ## Documenting how a macro's expansion can fail to compile
+
+A failure the macro defers to the compiler is documented as acceptable only when it passes the
+adjacency test:
 
 - Separate an acceptable failure, which the macro intentionally defers to the compiler, from a
   problematic failure, which is a defect.
@@ -57,6 +67,8 @@ knowledge base's [AGENTS.md](../../AGENTS.md) holds the rules every document fol
   fixture.
 
 ## Alignment with the reference
+
+The reference and the implementation document split one construct between them:
 
 - Keep in the reference document the user-facing contract, syntax, expansion, and user-visible corner
   cases, pointing only at library source.

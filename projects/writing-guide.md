@@ -6,6 +6,8 @@ linking a project at the branch [../sibling-projects.md](../sibling-projects.md)
 
 ## A project section documents its project in depth
 
+A project section is verified against the project's source, as `cgp/` is against `cgp`:
+
 - Verify the section against the project's source, exactly as `cgp/` is verified against `cgp`.
 - Treat a change to the project's bounds, wire format, context dependencies, or crate as a change to
   the matching document.
@@ -19,6 +21,8 @@ linking a project at the branch [../sibling-projects.md](../sibling-projects.md)
 
 ## Verify behavior with a probe, not by reading alone
 
+A claim about how the project behaves is checked by running it:
+
 - Check a runtime claim by running it in a scratch crate that declares dependencies by version and
   overrides them with local paths.
 - Check a compile-time claim by building the probe, and with `cargo cgp check` where a diagnostic is
@@ -28,6 +32,8 @@ linking a project at the branch [../sibling-projects.md](../sibling-projects.md)
 - Never link the probe from a document.
 
 ## Leave CGP itself to cgp/
+
+A project section says what the project does with CGP, and links CGP itself:
 
 - Link a CGP construct or idea to its document under [../cgp/](../cgp/README.md); say only what the
   project does with it.
@@ -39,10 +45,14 @@ linking a project at the branch [../sibling-projects.md](../sibling-projects.md)
 
 ## The shape of a project section
 
+Every project section follows one shape:
+
 - Follow the section shape in [README.md](README.md): a README, and the architecture, reference,
   guides, examples, comparison, testing, and issues documents the project needs.
 
 ## Reference entries
+
+Each public item gets its own reference entry in a fixed shape:
 
 - Give each public item its own level-two section: Definition, Behavior, Context dependencies, Pairing,
   and, when needed, Known issues.
@@ -50,6 +60,8 @@ linking a project at the branch [../sibling-projects.md](../sibling-projects.md)
 - Put material that spans several items in its own section after the entries.
 
 ## Public material
+
+Each document records the public material it feeds before a page uses it:
 
 - End each document with the public material it feeds, or `None yet`.
 - Treat each example document as the record its public page is written from.
@@ -59,6 +71,8 @@ linking a project at the branch [../sibling-projects.md](../sibling-projects.md)
   describes it.
 
 ## Registration
+
+A new document registers in every index above it, in the same change:
 
 - Register a new document in its directory's `README.md` and the project `README.md` as well as
   [../summary.md](../summary.md), in the same change.

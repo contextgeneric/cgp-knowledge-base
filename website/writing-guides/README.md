@@ -33,13 +33,16 @@ wrong:
 
 ## Before writing a page
 
+A page starts from its guide and its record:
+
 - Read the page's guide and the page's own record, and read
   [information-architecture.md](../information-architecture.md) before adding or moving a page.
 - Add a writing guide before adding a page of a kind the site has not published.
 
 ## Layer the depth; do not omit the advanced material
 
-These rules govern public pages, not the knowledge base's documents.
+A public page covers its whole subject and keeps it approachable through layers rather than
+omission. These rules govern public pages, not the knowledge base's documents:
 
 - Cover everything the subject supports; let the layers set the order a reader meets things, and
   resolve the tension with structure rather than omission.
@@ -51,6 +54,8 @@ These rules govern public pages, not the knowledge base's documents.
 - Enumerate forms against the parser, not the previous draft, and say when forms combine.
 
 ## Blog post conventions
+
+Every blog post follows the site's file and front-matter conventions:
 
 - Name a blog post `blog/<YYYY-MM-DD>-<name>.md`, or a directory with an `index.md` when it carries
   images.

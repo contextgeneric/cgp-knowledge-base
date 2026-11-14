@@ -5,6 +5,8 @@ This guide holds the rules for writing and revising the worked examples. The kno
 
 ## Building on a sibling CGP project
 
+An example builds on a sibling project when one already serves the use case:
+
 - Build on a sibling CGP project when it already serves the use case: use its crates, link its
   documents and source at the branch [../sibling-projects.md](../sibling-projects.md) records, and
   verify against that branch.
@@ -15,6 +17,8 @@ This guide holds the rules for writing and revising the worked examples. The kno
   present it as a description of the project.
 
 ## What an example is
+
+An example is quotable, correct, and self-contained, written fresh in current CGP:
 
 - Judge an example by whether it is quotable and correct, not by whether it covers every detail.
 - Keep the prose light: enough to make the code legible, a short note on the concept each step shows,
@@ -35,6 +39,8 @@ This guide holds the rules for writing and revising the worked examples. The kno
   not contain.
 
 ## The document shape
+
+An example develops its use case in titled sections, from the simplest form to the wired version:
 
 - Open with a level-one heading, a one-sentence summary, a concept list with reference links, and any
   shared assumption.

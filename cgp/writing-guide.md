@@ -7,6 +7,8 @@ the [error catalog](errors/writing-guide.md) and the
 
 ## Keeping a document in step with its construct
 
+A construct's reference document changes with the construct and leads with its current form:
+
 - Add a construct's reference document and register it in the index; remove or supersede both when
   the construct is removed; revise the Expansion section when the expansion changes.
 - Lead with the current form and keep a legacy form only as a clearly labeled note for reading
@@ -14,6 +16,8 @@ the [error catalog](errors/writing-guide.md) and the
 - State what needs updating in the skill when its checkout is absent.
 
 ## Authoring conventions
+
+Documents here draw their code from the examples and verify it against the source:
 
 - Show code freely, and let the prose around it carry the meaning.
 - Prefer snippets that match the worked examples in [../examples/](../examples/README.md); replace an
@@ -24,6 +28,8 @@ the [error catalog](errors/writing-guide.md) and the
   an illustration, not a reproduction, and still uses current idioms and compiles.
 
 ## Reference documents
+
+A reference document records every form its construct accepts, in a fixed shape:
 
 - Follow the document shape: Purpose, Syntax, Syntax Grammar when the macro has custom syntax,
   Expansion, Examples, Related constructs, Known issues when needed, Source, and Public pages when the
@@ -43,8 +49,10 @@ the [error catalog](errors/writing-guide.md) and the
 
 ## Syntax Grammar conventions
 
+A Syntax Grammar section states exactly what the macro parses, in the Rust Reference's notation:
+
 - Give a Syntax Grammar section to a macro whose invocation accepts a bespoke grammar.
-- Omit it for a macro whose invocation is a plain Rust item with no arguments.
+- Omit it for a macro whose invocation is a plain Rust item without arguments.
 - Describe only the tokens the macro itself parses, not the surrounding delimiters or the item.
 - Write one production per line in a fenced ` ```ebnf ` block, in the Rust Reference's notation.
 - Use CamelCase for a nonterminal, `ALL_CAPS` for a lexer token, and backticked characters for a
@@ -61,10 +69,12 @@ the [error catalog](errors/writing-guide.md) and the
 
 ## Concept and guide documents
 
+A concept document explains one idea across constructs, and a guide recommends a choice between them:
+
 - Give a concept document one idea that spans several constructs, with only the mechanism needed to
   make it legible.
-- Give a concept its own page when no single construct owns it and a reader would otherwise assemble it
-  from three reference documents.
+- Give a concept its own page when a single construct does not own it and a reader would otherwise
+  assemble it from three reference documents.
 - Give a guide a recommendation, its trade-offs, and a concrete before/after refactoring.
 - Move a guide's long explanation of a construct to the reference or a concept and link it.
 - Link a guide's exact syntax to the reference, its mechanism to the concepts, and its worked scenario
@@ -76,12 +86,16 @@ the [error catalog](errors/writing-guide.md) and the
 
 ## Say which shape an example wires
 
+Every example names the shape it wires, so a reader can tell which arrangement the code shows:
+
 - Say which context shape and which target an example uses, with the qualifiers
   [vocabulary.md](../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target)
   defines.
 - Say so in a sentence when a document introduces a second shape; the labels need not appear.
 
 ## Reviewing and updating a document
+
+A review checks every claim against the source before it improves the prose:
 
 - Review in two passes: confirm every claim against the source, then improve how the document reads.
 - Follow the implementation when the document, the skill, and the implementation disagree.
