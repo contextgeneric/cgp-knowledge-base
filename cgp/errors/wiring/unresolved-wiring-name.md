@@ -228,11 +228,12 @@ the provider of a `#[cgp_impl]` header, or on the provider trait's name in a `#[
   ``the wiring key `CanGreet` is a consumer trait, but a key names a component``, and
   ``help: name its component instead: `GreeterComponent` ``.
 - **`[CGP-E041]`** for a component not in scope:
-  ``the component `ErrorTypeProviderComponent` is not in scope``, and
-  ``help: import it with `use cgp::core::error::ErrorTypeProviderComponent;` ``, the shortest public
-  path from a dependency (or a `crate::` path for a local component), with rustc's suggestions
-  dropped.
-  At a provider header, the same code names the trait's component with the same help; for a header
+  ``the component `ErrorTypeProviderComponent` is not in scope``, and `help: import the component`
+  with `use cgp::core::error::ErrorTypeProviderComponent;` as the line it inserts, the shortest
+  public path from a dependency (or a `crate::` path for a local component), with rustc's
+  suggestions dropped. The fix also spans the name the error points at, so an editor offers it
+  there, and it is machine-applicable when one path imports the component.
+  At a provider header, the same code names the trait's component with the same fix; for a header
   through a module that re-exports the trait alone it reads
   ``the component `GreeterComponent` is not in module `crate::facade` ``, with a `note` that the
   macro names the component through that module and a `help` naming the trait through the module
@@ -350,6 +351,10 @@ These fixtures pin the class, one group per shape:
   headers importing a library's provider traits without their keys, one defined in a library
   module, one in a crate the library re-exports, and `cgp`'s `ErrorTypeProvider`; `[CGP-E041]`
   names each key's public path.
+- [`wiring/unresolved-wiring-name/component_import_fix.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/component_import_fix.rs):
+  headers and a wiring key missing their keys, in modules with and without `use` lines; its JSON
+  pins `[CGP-E041]`'s fix, machine-applicable for keys one path reaches and maybe correct for one
+  two paths reach.
 - [`wiring/unresolved-wiring-name/provider_header_facade.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_header_facade.rs):
   a header naming the trait through a module that re-exports it alone; `[CGP-E041]` in its module
   form.

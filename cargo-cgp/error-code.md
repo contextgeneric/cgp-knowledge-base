@@ -492,12 +492,17 @@ for `CGP-E060`.
   resolves to a provider trait whose component has that name. The component is read from the trait by
   `DefId`, so two components whose provider traits share a name stay distinct. A repeat at one span
   prints once, and rustc's suggestions are dropped.
-- **Fix (in the `help`):** `` import it with `use <path>;` ``. The path is a `crate::` path for a local
-  component, and otherwise the shortest public path from a direct dependency's root that does not go
-  through a `macro_prelude` module, since the compiler's own printing can name a re-exported crate by a
-  name that does not compile. The module form's `note` says that the macro names the component through
-  the module the header names, and its `help` names the trait through the module that defines its
-  component, or re-exporting the component from the module.
+- **Fix (a suggestion):** `import the component`, inserting `use <path>;` as a line where rustc
+  puts its own import, before the module's first `use` line or at the start of a module without
+  one. The path is a `crate::` path for a local component, and otherwise the shortest public path
+  from a direct dependency's root that does not go through a `macro_prelude` module, since the
+  compiler's own printing can name a re-exported crate by a name that does not compile. A second
+  part keeps the name the error points at unchanged, so an editor offers the fix there, and the fix
+  is machine-applicable, which an editor marks as its preferred fix, when one path imports the
+  component into the module. Without a place for the line, such as a module a macro generated, the
+  path is a `help`, `` import it with `use <path>;` ``. The module form's `note` says that the
+  macro names the component through the module the header names, and its `help` names the trait
+  through the module that defines its component, or re-exporting the component from the module.
 - **Class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
 
 ### `CGP-E042`: wiring key names no component

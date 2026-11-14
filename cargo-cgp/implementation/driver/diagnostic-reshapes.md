@@ -443,6 +443,15 @@ These points need care:
   it.
 - **A repeat at the same span is dropped,** while a diagnostic outside the entries stays, repeats
   included.
+- **`CGP-E041`'s import is a fix an editor applies,** not a `help` note. A check's fix appears in
+  Rust Analyzer's menu only on the fix's own spans, and rustc's import sits on the module's first
+  `use` line, so the suggestion inserts the `use` line there and keeps the name at the caret
+  unchanged as a second part. The line goes at the start of the line, indented like it, so the
+  terminal shows a plain insertion and applying the fix leaves both lines indented. A `use` item
+  with an attribute is passed over, since the HIR keeps the attribute without a span. The fix is
+  machine-applicable only when one path imports the component into the module, counted through the
+  crate's visible modules and the dependencies' public ones
+  ([`component_import_fix`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/component_import_fix.rs)).
 - **A provider header is read by its trait, never by the name.** The macro spans the derived key on
   the trait's last segment, so the pass finds the local impl whose trait path ends at the caret and
   takes the component from that provider trait's delegation blanket. A trait that is no provider
