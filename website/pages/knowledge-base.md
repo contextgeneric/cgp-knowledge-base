@@ -17,14 +17,14 @@ directions apart:
 
 - **The index** (`index.md`): what the base is, who writes it and for whom, the order of authority
   from source code to base to skill and site, a one-line map of each top-level section named in
-  prose, a section on its current state (an early phase, documents awaiting review, problems filed on
-  the issue tracker), the four entry files as links, and routing by question.
+  prose, a section on its current state (the errors the checks can miss, and problems filed on the
+  issue tracker), the four entry files as links, and routing by question.
 - **How CGP's Documentation Is Written** (`how-cgp-is-documented.md`), the fact about the project:
   the problem of one-shot prompting from stale training material and of reading macro source, the
   write-once-and-keep-true rules, `#[cgp_component]` traced through its five views, the `AGENTS.md`
   rules and the communication strategy, who directs the work and its separate passes, how the site's
-  pages derive from the base, and where the checks stop, including the base's early phase and where
-  to file an error.
+  pages derive from the base, and where the checks stop, including the errors they miss and where to
+  file one.
 - **Using the Knowledge Base with Your Agent** (`using-it-with-your-agent.md`), the site's first
   how-to page: when the skill suffices, access, the instructions to give an agent with the section
   that owns each kind of question, the context cost of `summary.md`, and reviewing the answer, with
