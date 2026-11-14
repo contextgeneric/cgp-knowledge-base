@@ -64,19 +64,18 @@ keeps the middle of the header from leaking too):
 //           for FirstNameToString where …  {}
 ```
 
-The derived **component reference**, the `Component` in that `IsProviderFor<Component, …>`, is
-spanned on `call_site`, not on the provider trait it is derived from. It appears only as this
-interior type argument, which anchors no error caret (a coherence conflict on the marker reports on
-the `impl` header, an unmet dependency on the `where`-clause bound), so a narrower span buys nothing
-at the compiler. It would, though, mislead the editor: rust-analyzer maps a source token to its
-expansion by source range, so had this reference borrowed the provider trait's span it would share
-that trait token's range, and go-to-definition on the provider trait a user wrote (in a
-`#[cgp_impl]` block or a hand-written provider impl) would then offer the component struct as a
-spurious second target. `call_site` shares no narrow user token's range, keeping the reference out
-of the editor's way. This is the reference-side dual of the
-[`#[cgp_component]` marker struct](../entrypoints/cgp_component.md#behavior-and-corner-cases), whose
-*definition* is instead spanned on the provider identifier so navigation to it lands cleanly; see
-the [Spans note](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote).
+The derived **component reference**, the `Component` in that `IsProviderFor<Component, …>`, keeps
+the provider trait's path. `ItemCgpProvider::component_type` copies the path the impl names the
+trait by, renames its last segment to `{Trait}Component`, and drops the trait's generic arguments,
+so `crate::components::Greeter<__Context__>` gives `crate::components::GreeterComponent`, which
+resolves without an import. The renamed segment carries the trait identifier's span, because it is
+the token name resolution fails on when the key is not in scope: the `E0425` then lands on the
+trait's name in the header, the token the user wrote, rather than on the whole attribute. With both
+names resolved, rust-analyzer maps the trait's name to both references, so its hover there shows the
+key below the trait; go-to-definition still gives one target, since the
+[`#[cgp_component]` marker struct](../entrypoints/cgp_component.md#behavior-and-corner-cases) is
+spanned on the same provider identifier as the trait. See the
+[Spans note](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote).
 
 The trait arguments come from `ProviderImplArgs::from_generic_args`, and the derivation ends by
 running

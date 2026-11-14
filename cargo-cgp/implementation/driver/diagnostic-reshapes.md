@@ -494,8 +494,7 @@ which. The header stays the compiler's, without a code
 An attribute macro's generated code carries the attribute's span, so rustc can suggest an insertion
 right after its `]`, such as `#[cgp_auto_getter].as_deref()`, which no edit of the user's source can
 apply
-([`auto_getter_mut_option`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_getter_mut_option.rs),
-[`parameterized_name_default_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/parameterized_name_default_component.rs)).
+([`auto_getter_mut_option`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/auto_getter_mut_option.rs)).
 `drop_attribute_splices` recognizes it by the span it edits, never its text: an insertion at a span
 an attribute macro's expansion carries, exactly where that expansion's call site ends.
 

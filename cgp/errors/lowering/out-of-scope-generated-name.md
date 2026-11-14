@@ -48,8 +48,7 @@ One adjacent code is worth knowing, because a grep for `E0433` will not find it.
 compiler looked up with no path context is reported as [`E0425`](../error_codes/e0425.md) instead,
 with the same "cannot find type" headline but the bare label `not found in this scope`. In CGP that
 is most often a generated `…Component` marker an ill-formed `#[cgp_impl]` header derived from a
-trait that is not a provider trait, where the caret sits on the attribute rather than in the code it
-rewrote.
+trait that is not a provider trait, where the caret sits on the trait's name in the header.
 
 ## Where the root cause is
 
@@ -152,8 +151,8 @@ from `cgp` would make every `cgp` user link `alloc`, and the only alternative wa
   the adjacent `E0425` shape: a `#[cgp_impl]` header names the consumer trait
   `CanCalculateArea<Rectangle>` where the provider trait `AreaCalculator` belongs, so the derived
   `CanCalculateAreaComponent` marker does not exist; the `.rust.stderr` pins `E0425` with the caret
-  on the `#[cgp_impl]` attribute, beside an `E0107` on the header, and the `.cgp.stderr` leads with
-  `[CGP-E032]`. The shape is cataloged as a [wrong component half](wrong-component-half.md).
+  on the trait's name in the header, beside an `E0107` on the same name, and the `.cgp.stderr` leads
+  with `[CGP-E032]`. The shape is cataloged as a [wrong component half](wrong-component-half.md).
 - [`ok/abstract_db_transaction.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/abstract_db_transaction.rs):
   the clean-compile counterpart: the same two abstract types named in both components' signatures,
   where promoting them is what makes naming them legal. Two further `ok/` fixtures pin the positions

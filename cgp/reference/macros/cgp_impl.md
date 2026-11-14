@@ -55,12 +55,22 @@ The attribute argument has three parts, of which only the provider name is requi
 - **The provider name** (`RectangleAreaCalculator` above) is the type that occupies the `Self`
   position in the generated provider impl.
 - **`: ComponentType`** is an optional suffix that overrides the component name used in the
-  generated [`IsProviderFor`](../traits/is_provider_for.md) impl. When omitted, the component defaults
-  to the provider trait's name with a `Component` suffix, so implementing `AreaCalculator` targets
-  `AreaCalculatorComponent`. The override is not checked against the trait: a component that is not
-  the provider trait's own makes the trait's `IsProviderFor` supertrait reject the generated impl,
-  as for [`#[cgp_provider]`](cgp_provider.md), with
+  generated [`IsProviderFor`](../traits/is_provider_for.md) impl. When omitted, the component is
+  derived from the provider trait's path, as the next paragraph describes, so implementing
+  `AreaCalculator` targets `AreaCalculatorComponent`. The override is not checked against the trait:
+  a component that is not the provider trait's own makes the trait's `IsProviderFor` supertrait
+  reject the generated impl, as for [`#[cgp_provider]`](cgp_provider.md), with
   ``E0277: the trait bound `Wrong: IsProviderFor<AreaCalculatorComponent, __Context__>` is not satisfied``.
+
+**The default component keeps the path the header names the trait by.** The macro appends
+`Component` to the trait's last segment and drops the trait's generic arguments. So
+`impl AreaCalculator` names `AreaCalculatorComponent`, which must be in scope beside the trait,
+while `impl crate::shapes::AreaCalculator` names `crate::shapes::AreaCalculatorComponent`, which the
+module need not import. The key carries the span of the trait's name, so when it does not resolve,
+the compiler reports ``cannot find type `AreaCalculatorComponent` in this scope`` on that name in
+the header. A header that reaches the trait through a module re-exporting the trait without its key
+fails the same way, as ``cannot find type `AreaCalculatorComponent` in module `crate::facade` ``.
+With both names in scope, Rust Analyzer's hover on the trait's name shows the key below the trait.
 
 Without `new`, the provider struct must already be declared, and a wiring entry naming a struct
 nothing declares fails at the wiring. Only one block may declare a given struct: a provider that
@@ -160,8 +170,9 @@ The optional `new` keyword makes the macro also emit `pub struct <ProviderType>;
 the type that takes the `Self` position of the generated provider impl: a plain provider name, a
 generic provider such as `ScaledAreaCalculator<InnerCalculator>`, or the literal `Self` for the
 bare-impl passthrough described in Expansion. The optional `: ComponentType` overrides the component
-used in the generated `IsProviderFor` impl, defaulting otherwise to the provider trait's name with a
-`Component` suffix. Both `ProviderType` and `ComponentType` are Rust `Type` productions.
+used in the generated `IsProviderFor` impl, defaulting otherwise to the provider trait's path with
+`Component` appended to its last segment. Both `ProviderType` and `ComponentType` are Rust `Type`
+productions.
 
 ## Expansion
 

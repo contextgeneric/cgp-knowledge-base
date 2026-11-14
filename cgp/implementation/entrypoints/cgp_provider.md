@@ -38,8 +38,9 @@ The macro has a single lowering stage, `ItemCgpProvider::lower`, which produces 
 `LoweredCgpProvider` bundling three items; the [`cgp_provider` AST stack](../asts/cgp_provider.md)
 documents those types in full. Within that one stage the work splits three ways:
 
-- deriving the **component type**, defaulting to the provider trait's name with a `Component`
-  suffix, or using the attribute's explicit override;
+- deriving the **component type**, defaulting to the provider trait's path with `Component`
+  appended to its last segment and spanned on the trait's name, or using the attribute's explicit
+  override;
 - deriving the **`IsProviderFor` impl**, cloning the provider impl, stripping its body and
   associated types, and swapping the trait for `IsProviderFor<Component, Context, Params>`;
 - deriving the **provider struct**, emitted only when `new` is set.
@@ -158,6 +159,9 @@ as the `(Code, Input)` case shown above.
   and
   [async_and_send/spawn.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/async_and_send/spawn.rs)
   exercise `#[cgp_provider]` and `#[cgp_new_provider]` directly in real wiring.
+- [basic_delegation/provider_trait_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/provider_trait_path.rs)
+  wires a `#[cgp_provider]` and a `#[cgp_new_provider]` impl whose header names the provider trait
+  as `super::components::Greeter<Context>`, in a module that imports no key.
 - [higher_order_providers/lifetime_inner_provider.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/higher_order_providers/lifetime_inner_provider.rs)
   snapshots the Known-issues case: a higher-order provider over a *lifetime-carrying* component,
   where the inner-provider bound gets no `IsProviderFor` counterpart because the rewrite reads the

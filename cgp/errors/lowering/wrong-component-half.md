@@ -118,7 +118,7 @@ generic arguments rather than as the wrong half. Each shape adds its own compani
 
 - **A consumer trait in a `#[cgp_impl]` header:** a burst of lowering errors. An
   [`E0425`](../error_codes/e0425.md) "cannot find type `CanCalculateAreaComponent` in this scope"
-  comes first, on the attribute, with a `help:` that replaces the attribute with
+  comes first, on the trait's name in the header, with a `help:` that replaces that name with
   `AreaCalculatorComponent`. The `E0107` follows, "trait takes 0 generic arguments but 1 generic
   argument was supplied", on the header trait, with a `help:` to "remove the unnecessary generics"
   the user never wrote. For a component without type parameters, an `E0186` ("method `area` has a
@@ -139,11 +139,11 @@ generic arguments rather than as the wrong half. Each shape adds its own compani
 
 The root cause is **present but misread**. The `E0107` caret sits on the trait name the user wrote,
 the exact token to change, but it does not say that the trait is the wrong half of its component or
-which half belongs there. The surrounding helps point at wrong
-fixes: deleting generics the macro inserted, adding the generated `__Context__`, renaming the
-attribute to `AreaCalculatorComponent`, or parameterizing the provider struct by `__Context__`. In the
-header shapes the `E0107` is not first: the `E0425` arrives before it, since name resolution runs
-before the compiler lowers the impl's types, and the `E0186` and `E0207` after it repeat the mistake.
+which half belongs there. The surrounding helps point at wrong fixes: deleting generics the macro
+inserted, adding the generated `__Context__`, renaming the trait in the header to
+`AreaCalculatorComponent`, or parameterizing the provider struct by `__Context__`. In the header
+shapes the `E0107` is not first: the `E0425` arrives before it, since name resolution runs before
+the compiler lowers the impl's types, and the `E0186` and `E0207` after it repeat the mistake.
 
 The landmark is an `E0107` whose caret sits on a trait name inside a `#[cgp_impl]` header or a CGP
 attribute. Read the trait it names and compare it with the half the position expects: a provider

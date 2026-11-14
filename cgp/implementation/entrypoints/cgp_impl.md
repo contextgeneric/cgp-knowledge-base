@@ -145,13 +145,12 @@ span (bare `impl Trait` form), and the
 [`IsProviderFor` derivation](../asts/cgp_provider.md#itemproviderimpl-and-the-isproviderfor-derivation)
 reuses that same `for` token for its own header.
 
-The one token in the derived `IsProviderFor<Component, …>` impl that stays on `call_site` is the
-derived component reference, and deliberately so. It anchors no caret, so a narrower span gains
-nothing, and giving it the provider trait's span would make go-to-definition on the provider trait a
-user wrote also offer the component struct, because rust-analyzer maps a source token to its
-expansion by source range. The
+The derived component reference in the `IsProviderFor<Component, …>` impl keeps the header's path to
+the trait and the span of the trait's name, so a key that is not in scope is reported on that name
+rather than on the attribute, and a header written as `impl crate::components::Greeter` needs no
+import of the key; the
 [`IsProviderFor` derivation](../asts/cgp_provider.md#itemproviderimpl-and-the-isproviderfor-derivation)
-keeps it on `call_site`, off every user token's range.
+describes it.
 
 The one wholly-synthesized item is each `#[default_impl]` delegation impl, built entirely from
 quasi-quoted tokens whose `impl`/`{ … }` boundary carries `call_site`.
@@ -232,6 +231,10 @@ belong to this entrypoint:
   the `: ComponentType` override: `#[cgp_impl(new FortyTwo: HasFooComponent)]` targets a component
   whose marker name (`HasFooComponent`) is not the derived `FooProviderComponent`, so the
   `IsProviderFor` impl names the overriding component rather than the default.
+- [basic_delegation/provider_trait_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/provider_trait_path.rs):
+  headers naming the provider trait by path, `self::components::Greeter` and a dependency's
+  `cgp::extra::handler::Computer<Code, u64>`, whose `IsProviderFor` impls name the key by the same
+  path without its generic arguments.
 
 The `#[cgp_impl(Self)]` bare-impl passthrough has no snapshot yet.
 
@@ -261,6 +264,9 @@ The behavioral tests confirm the lowered wiring works:
   wires the overriding component (`HasFooComponent`) to the generated `FortyTwo` and confirms `App`
   implements `CanDoFoo`, proving the `: ComponentType` override is honored rather than ignored in
   favor of the derived name.
+- [basic_delegation/provider_trait_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/provider_trait_path.rs)
+  wires providers whose headers name the trait through `self::`, `super::`, `crate::`, a crate name,
+  and a leading `::`, in modules that import no key, and calls each one.
 - [basic_delegation/owned_receiver.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/owned_receiver.rs)
   covers the owned mutable `mut self` receiver, whose rewrite puts `mut` on the `__context__`
   binding rather than on its type.

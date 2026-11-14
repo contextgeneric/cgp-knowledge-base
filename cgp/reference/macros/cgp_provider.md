@@ -50,8 +50,12 @@ already exist**; `#[cgp_provider]` does not define it. Use
 [`#[cgp_new_provider]`](cgp_new_provider.md) when you want the struct declared for you.
 
 The attribute takes one optional argument, the **component type** used in the generated
-`IsProviderFor` impl. When omitted, the component defaults to the provider trait's name with a
-`Component` suffix, so implementing `AreaCalculator` targets `AreaCalculatorComponent`. Pass the
+`IsProviderFor` impl. When omitted, the component defaults to the provider trait's path with
+`Component` appended to its last segment, so implementing `AreaCalculator` targets
+`AreaCalculatorComponent`, and implementing `crate::shapes::AreaCalculator` targets
+`crate::shapes::AreaCalculatorComponent`, which the module need not import. The key carries the
+span of the trait's name, so a key that does not resolve is reported there, as for
+[`#[cgp_impl]`](cgp_impl.md#syntax). Pass the
 component explicitly when the component's marker does not follow that convention, as when the
 component renamed it with [`#[cgp_component]`](cgp_component.md)'s `name:` key:
 
@@ -89,9 +93,9 @@ CgpProviderArgs -> ComponentType?
 ComponentType   -> Type
 ```
 
-When the argument is omitted, the component defaults to the provider trait's name with a `Component`
-suffix; when present, that `Type` is substituted into the first position of the generated
-`IsProviderFor` impl. `Type` is the Rust type production.
+When the argument is omitted, the component defaults to the provider trait's path with `Component`
+appended to its last segment; when present, that `Type` is substituted into the first position of
+the generated `IsProviderFor` impl. `Type` is the Rust type production.
 
 ## Expansion
 
