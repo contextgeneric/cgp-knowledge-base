@@ -1,8 +1,8 @@
 # Extensible Data Types, Part 2: Modular Interpreters and Extensible Visitors
 
-The second part of the extensible-data-types series, applying extensible variants to the expression
-problem. It builds a modular interpreter for a toy arithmetic language in which every operator and
-every operation over the language is an independent, separately-compilable piece.
+The second part of the extensible-data-types series: extensible variants applied to the expression
+problem, building an interpreter for a toy arithmetic language in which every operator and every
+operation is an independent, separately compilable piece.
 
 - **URL**: <https://contextgeneric.dev/blog/extensible-datatypes-part-2>
 - **Source**: [blog/2025-07-09-extensible-datatypes-part-2.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-07-09-extensible-datatypes-part-2.md)
@@ -13,95 +13,75 @@ every operation over the language is an independent, separately-compilable piece
 
 ## What it covers
 
-The post opens with the strongest motivating argument in the series: an analysis of why the
-traditional visitor pattern is closed for extension, using `serde`'s `Visitor` trait as the case
-study. Because the trait fixes its set of visit methods, a format that wants to deserialize a `U256`
-cannot extend it, while a format like `postcard` that supports fewer types than JSON must reject
-unsupported cases at *runtime* despite the type formally implementing `Deserialize`. The post's
-framing (that the pattern is either too restrictive or too permissive, and that what is wanted is for
-both sides to state their requirements at compile time) is a clean statement of the problem CGP's
-dispatchers solve.
+**The opening argues the visitor pattern is closed for extension**, with `serde`'s `Visitor` as the
+case: the trait fixes its visit methods, so a format cannot add a `U256`, and a format such as
+`postcard` that supports fewer types than JSON must reject cases at *runtime* while formally
+implementing `Deserialize`. The pattern is too restrictive or too permissive, where both sides should
+state their requirements at compile time, the problem CGP's dispatchers solve.
 
-It then narrows to the [expression problem](https://en.wikipedia.org/wiki/Expression_problem) proper.
-A `MathExpr` enum with `Literal`, `Plus`, and `Times` variants forces every function over it
-(`eval`, `expr_to_string`) to be updated whenever a variant is added, and the recursion makes the
-coupling impossible to break by extracting helpers. The CGP answer is to make each operator its own
-generic struct (`Plus<Expr>`, `Times<Expr>`, `Literal<T>`) and each per-operator evaluation step its
-own `Computer` provider, recursing through the context rather than through a concrete type. Wiring
-maps each input type to its provider, with the enum itself routed to a dispatcher.
+The rest, in order:
 
-The post then adds a *second* operation, converting the expression tree to a Lisp S-expression,
-which it calls a "double expression problem," since the logic must be decoupled from both the source
-and the target type. This introduces `ComputerRef` for borrowed input, an abstract `LispExpr` type
-supplied by wiring, and a neat use of upcasting: a provider constructs values through a small local
-`LispSubExpr` enum containing only the variants it needs, then upcasts into the full target, the
-construction-side counterpart of reading a field you do not own.
-
-Two advanced sections follow. A generic `BinaryOpToLisp<Operator>` provider collapses the near-identical
-`PlusToLisp` and `TimesToLisp` into one, parameterized by a `Symbol!` operator string. And
-**code-based dispatching** uses the `Code` parameter to select between `Eval` and `ToLisp` for the
-same input type, giving a two-layer dispatch (first on input type, then on operation) that the post
-notes can be nested in either order at no runtime cost.
-
-The post closes by extending the language with `Minus` and `Negate` in a second enum, reusing the
-existing evaluators unchanged, and makes a point worth keeping: because wiring is lazy, the extended
-language can skip the to-Lisp implementations entirely and still compile.
+- **The [expression problem](https://en.wikipedia.org/wiki/Expression_problem):** a `MathExpr` enum
+  with `Literal`, `Plus`, and `Times` forces `eval` and `expr_to_string` to change with every variant,
+  and recursion defeats extracting helpers. CGP makes each operator a generic struct (`Plus<Expr>`,
+  `Times<Expr>`, `Literal<T>`) and each evaluation step a `Computer` provider recursing through the
+  context; wiring maps each input type to its provider, and the enum to a dispatcher.
+- **A second operation**, to a Lisp S-expression, a "double expression problem" decoupled from both
+  source and target types: `ComputerRef` for borrowed input, an abstract `LispExpr` type supplied by
+  wiring, and providers that build a local `LispSubExpr` enum with only the variants they need and
+  upcast it into the full target.
+- **Two advanced sections:** a generic `BinaryOpToLisp<Operator>` collapsing `PlusToLisp` and
+  `TimesToLisp`, parameterized by a `Symbol!` operator; and **code-based dispatching**, where the
+  `Code` parameter selects `Eval` or `ToLisp` for one input type, a two-layer dispatch nestable in
+  either order at no runtime cost.
+- **The closing extension:** `Minus` and `Negate` in a second enum reuse the evaluators unchanged, and
+  because wiring is lazy, the extended language can skip the to-Lisp implementations and still compile.
 
 ## How it relates to the knowledge base
 
-The scenario is re-derived in current syntax as the
-[expression interpreter example](../../examples/expression-interpreter.md); quote that, not this
-post. The concepts are [extensible variants](../../cgp/concepts/extensible-variants.md) and
-[dispatching](../../cgp/concepts/dispatching.md). The post's code lives on as the `expression` crate
-of cgp-examples, whose current form, and where each of the post's sections now sits in it, is
-documented in the
-[`expression` subproject](../../projects/cgp-examples/expression/README.md#where-the-blog-posts-code-lives).
-The components are
-[`Computer` / `CanCompute`](../../cgp/reference/components/computer.md) and its by-reference variant;
-the dispatchers are in the [dispatch combinators](../../cgp/reference/providers/dispatch_combinators.md);
-the casts are [`CanUpcast`](../../cgp/reference/traits/cast.md); the abstract target type is
-[`#[cgp_type]`](../../cgp/reference/macros/cgp_type.md) over
-[abstract types](../../cgp/concepts/abstract-types.md); and the lazy-wiring property the closing
-section relies on is [check traits](../../cgp/concepts/check-traits.md).
-
-Two pieces of the post are strategy assets. The `serde::Visitor` analysis is the most concrete
-"here is a real library that hits this wall" argument the project has published, and belongs in
-[message.md](../../communication-strategy/message.md#the-problems-cgp-removes) territory. The closing
-observation (that CGP lets you defer implementing a trait without `unimplemented!()` stubs,
-because minimal traits plus lazy wiring mean only what is used is checked) is a genuine selling point
-against heavyweight-trait designs and is the kind of claim
-[message.md](../../communication-strategy/message.md#the-strengths-worth-advertising) is built from.
+- **The source to quote:** the [expression interpreter
+  example](../../examples/expression-interpreter.md). The code lives on as cgp-examples'
+  `expression` crate; where each section now sits is in the
+[`expression`
+subproject](../../projects/cgp-examples/expression/README.md#where-the-blog-posts-code-lives).
+- **Concepts and constructs:** [extensible variants](../../cgp/concepts/extensible-variants.md),
+  [dispatching](../../cgp/concepts/dispatching.md), [`Computer` /
+  `CanCompute`](../../cgp/reference/components/computer.md) and its by-reference variant, the
+  [dispatch combinators](../../cgp/reference/providers/dispatch_combinators.md),
+  [`CanUpcast`](../../cgp/reference/traits/cast.md),
+  [`#[cgp_type]`](../../cgp/reference/macros/cgp_type.md) over [abstract
+  types](../../cgp/concepts/abstract-types.md), and lazy wiring in [check
+  traits](../../cgp/concepts/check-traits.md).
+- **Strategy assets:** the `serde::Visitor` analysis is the project's most concrete "a real library
+  hits this wall" argument, for
+  [message.md](../../communication-strategy/message.md#the-problems-cgp-removes); the closing point,
+  that minimal traits and lazy wiring defer an implementation without `unimplemented!()` stubs, is a
+  [strength](../../communication-strategy/message.md#the-strengths-worth-advertising) against
+  heavyweight-trait designs. The `serde::Visitor` motivation needs no CGP syntax and is reusable
+  verbatim.
 
 ## Where it diverges from CGP v0.8.0
 
 - **`#[cgp_context] pub struct Interpreter;` and `InterpreterComponents` no longer exist**; a context
-  now carries its own wiring table.
-- **Every provider is written inside-out** with `#[cgp_new_provider]` and an explicit
-  `context: &Context`; [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md) is the current form.
-- **`#[derive(HasFields, FromVariant, ExtractField)]` is now normally
+  carries its own wiring table.
+- **Every provider is inside-out**, with `#[cgp_new_provider]` and an explicit `context: &Context`;
+  [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md) is the current form.
+- **`#[derive(HasFields, FromVariant, ExtractField)]` is now
   [`#[derive(CgpData)]`](../../cgp/reference/derives/derive_cgp_data.md).**
-- **`UseInputDelegate` and `UseDelegate` tables are the legacy dispatch form.** The current idiom for
-  per-type dispatch on a context is the `open` statement of
+- **`UseInputDelegate` and `UseDelegate` tables are the legacy dispatch form.** Per-type dispatch on a
+  context is now the `open` statement of
   [`delegate_components!`](../../cgp/reference/macros/delegate_components.md), per
   [dispatching-per-type](../../cgp/guides/dispatching-per-type.md).
-- **`#[cgp_auto_getter] pub trait BinarySubExpression`** reads `left` and `right` through a getter
-  trait. These are fields on the *input* rather than on the provider's own context, so this
-  remains one of the cases a getter trait is still right for (see
-  [reading-context-fields](../../cgp/guides/reading-context-fields.md)), but the trait would now be
-  written with the modern attribute forms.
-- **Several code blocks are internally inconsistent**, mixing an earlier `Expr` name with the later
-  `MathExpr`: the first wiring block maps `Expr: DispatchEval` beside `Plus<MathExpr>: EvalAdd`, and
-  the manual `match` in "Dispatching Eval" matches on `Expr::Plus` in a function typed over
-  `MathExpr`. Do not copy these blocks.
+- **`#[cgp_auto_getter] pub trait BinarySubExpression`** reads `left` and `right`, fields of the
+  *input* rather than the provider's context, so a getter trait is still right here (see
+  [reading-context-fields](../../cgp/guides/reading-context-fields.md)), but it would be written with
+  the modern attribute forms.
+- **Several code blocks are internally inconsistent**, mixing an earlier `Expr` name with `MathExpr`:
+  the first wiring block maps `Expr: DispatchEval` beside `Plus<MathExpr>: EvalAdd`, and the manual
+  `match` in "Dispatching Eval" matches on `Expr::Plus` in a function typed over `MathExpr`. Do not
+  copy these blocks.
 
 ## Maintaining it
 
-Leave it alone. The part worth carrying forward into any new writing is the `serde::Visitor`
-motivation, which does not depend on CGP syntax at all and is reusable verbatim as an argument;
-everything downstream of it should be rewritten from the
+Leave it alone; write anything downstream of the `serde::Visitor` motivation from the
 [expression interpreter example](../../examples/expression-interpreter.md).
-
-**The post carries its notice.** A note at the top links the `expression` pages of the
-[cgp-examples section](../projects/cgp-examples.md) and the *Extensible variants* Concepts page, per
-the [settled case](../AGENTS.md#do-not-rewrite-history). It adds a link and changes no claim,
-snippet, or slug; nothing else in the post changes with it.
