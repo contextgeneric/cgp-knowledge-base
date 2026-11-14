@@ -190,7 +190,10 @@ Anything more is rejected:
 A provider for such a component written with [`#[cgp_impl]`](cgp_impl.md) must name the component
 explicitly, as in `#[cgp_impl(new SquareArea: AreaCalculatorComponent<Square>)]`, because the
 default component name `{Provider}Component` carries no arguments and fails with `E0107` (missing
-generics). The provider name and the context name take no generics. The attribute delimiter shown in
+generics), which `cargo cgp check` reshapes into
+[`[CGP-E070]`](../../errors/wiring/unresolved-wiring-name.md) with that form. A component whose
+`name:` renames its key without parameters needs the same form, as
+`#[cgp_impl(new UnitArea: AreaComponent)]`. The provider name and the context name take no generics. The attribute delimiter shown in
 Syntax (`(...)` for the bare form and `{...}` for the key/value form) is ordinary Rust attribute
 syntax; the argument tokens inside follow this grammar whichever delimiter is used.
 

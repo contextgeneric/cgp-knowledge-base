@@ -172,10 +172,6 @@ reading of the compiler's state the tool does not have:
 - **One implicit field read as two types:** two methods of one provider read `count` as `u32` and
   as `u64`, and rustc's `E0284` and `E0282` on the provider name `__Context__` without saying that
   the methods disagree ([`implicit_conflicting_types`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/implicit-arguments/implicit_conflicting_types.rs)).
-- **A component named with a parameter:** `#[cgp_impl(new SquareArea)]` names the component after
-  the provider trait, `AreaCalculatorComponent`, while the component's name carries a parameter, and
-  the `E0107` does not say where the name came from
-  ([`parameterized_name_default_component`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/macro-defects/parameterized_name_default_component.rs)).
 - **A dispatcher wired as the entry for the type it dispatches:** the `[CGP-E020]` help names the
   provider whose requirement closes the loop (`EvalAdd`), while the fix is a wrapper provider for
   the dispatcher's own entry, which the walk cannot infer

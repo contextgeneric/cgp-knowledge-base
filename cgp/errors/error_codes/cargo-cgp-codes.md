@@ -37,6 +37,7 @@ families, so a class document's code can be placed by its number:
 | `CGP-E030` to `CGP-E039` | A mistake in what a macro was given |
 | `CGP-E040` to `CGP-E044` | A wiring key, value, or path type that does not resolve |
 | `CGP-E050` | A failed extensible-data operation |
+| `CGP-E070` | A component a provider header derives under a name that is not the component's |
 | `CGP-E101` to `CGP-E104` | A step of a dependency chain |
 | `CGP-E110` onward | The root cause a dependency chain ends at |
 
@@ -55,7 +56,7 @@ example, [check-trait-failure](../checks/check-trait-failure.md) is stamped `[CG
 `[CGP-E035]`, and `[CGP-E036]`, [wrong component half](../lowering/wrong-component-half.md) to
 `[CGP-E032]` to `[CGP-E034]` and `[CGP-E037]`, and
 [provider impl without the macro](../lowering/provider-impl-without-macro.md) to `[CGP-E039]`;
-[unresolved wiring name](../wiring/unresolved-wiring-name.md) takes `[CGP-E038]` and `[CGP-E040]` to
-`[CGP-E044]`. The [extensible-data](../data/extensible-data.md) class takes `[CGP-E050]` for a call
+[unresolved wiring name](../wiring/unresolved-wiring-name.md) takes `[CGP-E038]`, `[CGP-E040]` to
+`[CGP-E044]`, and `[CGP-E070]`. The [extensible-data](../data/extensible-data.md) class takes `[CGP-E050]` for a call
 to a data operation, and its causes `[CGP-E118]` to `[CGP-E126]` under whichever headline its anchor
 gives.

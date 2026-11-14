@@ -47,8 +47,10 @@ to change) rather than on the `#[impl_generics]` attribute that scoped the param
 One adjacent code is worth knowing, because a grep for `E0433` will not find it. A bare name the
 compiler looked up with no path context is reported as [`E0425`](../error_codes/e0425.md) instead,
 with the same "cannot find type" headline but the bare label `not found in this scope`. In CGP that
-is most often a generated `…Component` marker an ill-formed `#[cgp_impl]` header derived from a
-trait that is not a provider trait, where the caret sits on the trait's name in the header.
+is most often a generated `…Component` marker a `#[cgp_impl]` header derived, where the caret sits on
+the trait's name in the header: from a trait that is not a provider trait, a
+[wrong component half](wrong-component-half.md), or from a provider trait whose key the module does
+not import, an [unresolved wiring name](../wiring/unresolved-wiring-name.md).
 
 ## Where the root cause is
 

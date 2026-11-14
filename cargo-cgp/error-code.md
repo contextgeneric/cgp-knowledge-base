@@ -41,6 +41,7 @@ The headline codes come in family blocks of ten, and the block says how the tool
 | `CGP-E040` to `CGP-E049` | Wiring keys and values that do not resolve | The name's position in the wiring, read once name resolution is over |
 | `CGP-E050` to `CGP-E059` | Extensible data | The typed resolver |
 | `CGP-E060` to `CGP-E069` | Structural mistakes, continued | The generated items at the caret |
+| `CGP-E070` to `CGP-E079` | Mistakes in what a macro was given, continued | The provider header at the caret, read once name resolution is over |
 
 [Diagnostic reshapes](implementation/driver/diagnostic-reshapes.md) explains how each family is
 recognized. Each entry below gives the message, the mistake, what the tool does with rustc's output,
@@ -476,16 +477,27 @@ for `CGP-E060`.
 
 ### `CGP-E041`: component not in scope
 
-- **Message:** `` [CGP-E041] the component `<Component>` is not in scope ``.
-- **Means:** a key names a component that exists but is not imported where the table is written, such as
-  `ErrorTypeProviderComponent`, which the prelude does not export.
+- **Message:** `` [CGP-E041] the component `<Component>` is not in scope ``, or
+  `` [CGP-E041] the component `<Component>` is not in module `<module>` `` at a provider header that
+  names its trait by a path.
+- **Means:** a component exists but is not in scope where it is named. A wiring key names it, such as
+  `ErrorTypeProviderComponent`, which the prelude does not export, or a `#[cgp_impl]` or
+  `#[cgp_provider]` header names it implicitly: the macro derives `GreeterComponent` from
+  `impl Greeter`, so the module imports the key beside the trait. A header written as
+  `impl crate::facade::Greeter` derives `crate::facade::GreeterComponent`, which fails when `facade`
+  re-exports the trait without its key.
 - **From:** an `E0425` from name resolution on a key, or on a whole segment of an `@`-path in a key or
-  value, when exactly one marker of that name exists among the traits the crate can see. Two of one name
-  decline. A repeat at one key prints once, and rustc's suggestions are dropped.
+  value, when exactly one marker of that name exists among the traits the crate can see; two of one name
+  decline. At a header, an `E0425` on the trait's name, the span the macro gives the key, whose header
+  resolves to a provider trait whose component has that name. The component is read from the trait by
+  `DefId`, so two components whose provider traits share a name stay distinct. A repeat at one span
+  prints once, and rustc's suggestions are dropped.
 - **Fix (in the `help`):** `` import it with `use <path>;` ``. The path is a `crate::` path for a local
   component, and otherwise the shortest public path from a direct dependency's root that does not go
   through a `macro_prelude` module, since the compiler's own printing can name a re-exported crate by a
-  name that does not compile.
+  name that does not compile. The module form's `note` says that the macro names the component through
+  the module the header names, and its `help` names the trait through the module that defines its
+  component, or re-exporting the component from the module.
 - **Class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
 
 ### `CGP-E042`: wiring key names no component
@@ -545,6 +557,26 @@ for `CGP-E060`.
 - **Fix:** follow the cause. Drop a second setting or extraction, set an unset field, add a missing variant
   or align a payload type, add the derive a `help` names, or call the method a `help` names.
 - **Class:** [extensible data](../cgp/errors/data/extensible-data.md).
+
+### `CGP-E070`: derived component names no component
+
+- **Message:**
+  `` [CGP-E070] the header derives the component `<Derived>` from the trait name `<Written>`, but the component of `<ProviderTrait>` is `<Component>` ``.
+- **Means:** a `#[cgp_impl]` or `#[cgp_provider]` header derives its component from the trait name as
+  written, and that name is not the component's. The trait is imported under another name
+  (`use …::{Greeter as G}` and `impl G` derive `GComponent`), or the component's `name:` renames its key
+  (`AreaComponent`) or gives it parameters (`AreaCalculatorComponent<Shape>`).
+- **From:** an `E0425` on the trait's name in the header, which resolves to a provider trait whose
+  component has another name, or an `E0107` "missing generics" there for a key with parameters. rustc
+  suggests nothing for the first, and an argument after the trait's name for the second, which does not
+  reach the key.
+- **Fix (in the `help`):** `` name the component in the attribute: `<attribute>` ``, the header's own
+  attribute with the component appended, as `#[cgp_impl(new UnitArea: AreaComponent)]`,
+  `#[cgp_provider(GreeterComponent)]`, or, with the header's arguments in place of the key's
+  parameters, `#[cgp_impl(new SquareArea: AreaCalculatorComponent<Square>)]`. For a renamed import the
+  `help` also offers importing the trait under its own name, and a `note` explains why rustc calls the
+  component's correct import unused.
+- **Class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
 
 ## Dependency-tree entry codes (`CGP-E1xx`)
 

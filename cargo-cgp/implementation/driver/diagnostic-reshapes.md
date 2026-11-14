@@ -24,7 +24,7 @@ The first that does not continue decides, so the order is part of the behaviour.
 this order, from `transform_with` in
 [`cgp_emitter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs):
 
-1. A misused `#[cgp_impl]`, then a provider trait named in `#[uses]`: [a wrong component half](#reshaping-a-wrong-component-half).
+1. A misused `#[cgp_impl]`, then a provider header's component key without its parameters, then a provider trait named in `#[uses]`: [a wrong component half](#reshaping-a-wrong-component-half) and [an unresolved wiring name](#reshaping-an-unresolved-wiring-name).
 2. An overflow that follows from an unresolved wiring name, then a consumer trait used as a wiring key: [an unresolved wiring name](#reshaping-an-unresolved-wiring-name).
 3. [A duplicate-key conflict](#reshaping-a-duplicate-key-conflict), then [an orphan-rule namespace registration](#reshaping-an-orphan-rule-namespace-registration).
 4. A method two `#[cgp_auto_dispatch]` traits share, then the other [structural mistakes](#reshaping-a-structural-mistake).
@@ -427,6 +427,7 @@ rustc wrote it.
 | A key whose name without `Component` names one consumer | `CGP-E042` | A guessed key |
 | A value | `CGP-E043` | An undeclared provider, with a near miss among the component's providers |
 | A `#[cgp_impl]` header's provider | `CGP-E038` | A provider never declared; a value naming it is dropped as the consequence |
+| A provider header's trait name, whose trait is a provider trait | `CGP-E041` or `CGP-E070` | The derived component not in scope, or not in the module the header names, or a derived name that is not the trait's component |
 | A type in an `@`-path, found by its own span | `CGP-E041` or `CGP-E044` | A component not in scope, or a type not declared |
 
 These points need care:
@@ -442,6 +443,18 @@ These points need care:
   it.
 - **A repeat at the same span is dropped,** while a diagnostic outside the entries stays, repeats
   included.
+- **A provider header is read by its trait, never by the name.** The macro spans the derived key on
+  the trait's last segment, so the pass finds the local impl whose trait path ends at the caret and
+  takes the component from that provider trait's delegation blanket. A trait that is no provider
+  trait is a [wrong component half](#reshaping-a-wrong-component-half), whose stage drops the
+  `E0425` later. Only this position takes rustc's ``in module `path` `` form, which a header naming
+  the trait through a module that lacks the key gets, since a qualified name in a wiring entry is
+  the program's own path.
+- **A key with parameters fails later, as an `E0107`,** while the compiler lowers the generated
+  `IsProviderFor` impl, so a stage recognizes it as it arrives: the caret is a provider header's
+  trait name, and the trait's component has the derived name and parameters of its own. Its
+  `[CGP-E070]` fills the key's parameters with the header's arguments at the same positions of the
+  provider trait.
 
 **A consumer trait as a key differs in kind** (`[CGP-E040]`). Its `E0782` arises while the compiler
 lowers the impl's header, with a `TyCtxt` in scope, so the emitter recognizes it as it arrives

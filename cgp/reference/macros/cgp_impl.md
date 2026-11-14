@@ -70,7 +70,10 @@ module need not import. The key carries the span of the trait's name, so when it
 the compiler reports ``cannot find type `AreaCalculatorComponent` in this scope`` on that name in
 the header. A header that reaches the trait through a module re-exporting the trait without its key
 fails the same way, as ``cannot find type `AreaCalculatorComponent` in module `crate::facade` ``.
-With both names in scope, Rust Analyzer's hover on the trait's name shows the key below the trait.
+`cargo cgp check` reshapes both into
+[`[CGP-E041]`](../../errors/wiring/unresolved-wiring-name.md), naming the import or the module that
+defines the key, and a trait imported under another name, which derives a key nothing declares, into
+`[CGP-E070]`, naming the real key in the `: ComponentType` form. With both names in scope, Rust Analyzer's hover on the trait's name shows the key below the trait.
 
 Without `new`, the provider struct must already be declared, and a wiring entry naming a struct
 nothing declares fails at the wiring. Only one block may declare a given struct: a provider that

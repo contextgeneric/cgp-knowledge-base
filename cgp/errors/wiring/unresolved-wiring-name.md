@@ -2,8 +2,9 @@
 
 A `delegate_components!` entry names something that does not exist where the wiring is written (a
 component not in scope, a key guessed from a trait's name, a provider never declared, a type in an
-`@`-path never declared) or a consumer trait where a component belongs, so the compiler reports the name itself (`E0425` "cannot find
-type", or `E0782` "expected a type, found a trait"), with suggestions that do not fit wiring.
+`@`-path never declared) or a consumer trait where a component belongs, or a provider header derives
+a component that is not in scope there, so the compiler reports the name itself (`E0425` "cannot
+find type", or `E0782` "expected a type, found a trait"), with suggestions that do not fit wiring.
 
 ## What triggers it
 
@@ -14,7 +15,9 @@ the key must name a component marker and the value a provider type, both in scop
 written. The macro copies the names as written and cannot check them, because which items exist and
 what they are is known only to the compiler, so a wrong name is an
 [acceptable failure](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile)
-that CGP defers to it. Its shapes differ in what the name gets wrong.
+that CGP defers to it. A `#[cgp_impl]` or `#[cgp_provider]` header names a component too, without
+writing it: the macro derives the key from the provider trait's path, so the same failure reaches a
+provider. Its shapes differ in what the name gets wrong.
 
 ### A consumer trait as a key
 
@@ -94,6 +97,56 @@ trait for a struct the author is expected to declare, and `#[cgp_impl(new GreetH
 Without either, the impl and the wiring both name a type that does not exist. A misspelled provider
 in the value, `GreeterComponent: GreetHi`, fails the same way at the value alone.
 
+### A provider header whose component is not in scope
+
+[`#[cgp_impl]`](../../reference/macros/cgp_impl.md) and
+[`#[cgp_provider]`](../../reference/macros/cgp_provider.md) derive a provider's component from the
+provider trait's path as written, appending `Component` to its last segment, so a provider in
+another module than its component imports the key beside the trait:
+
+```rust
+mod providers {
+    use cgp::prelude::*;
+
+    use crate::components::Greeter; // and `GreeterComponent`
+
+    #[cgp_impl(new GreetHello)]
+    impl Greeter {
+        fn greet(&self) -> String {
+            "Hello".to_owned()
+        }
+    }
+}
+```
+
+A header that names the trait by its path, `impl crate::components::Greeter`, derives
+`crate::components::GreeterComponent` and needs no import. A path through a module that re-exports
+the trait without its key, `impl crate::facade::Greeter`, derives a key that module lacks.
+
+### A provider header that derives another component's name
+
+The derived name is the trait's name as the header writes it, so it names nothing when that is not
+the component's name: a trait imported under another name (`use crate::components::Greeter as G;`
+and `impl G` derive `GComponent`), or a component whose `name:` renames its key (`AreaComponent`)
+or gives it parameters (`AreaCalculatorComponent<Shape>`):
+
+```rust
+#[cgp_component {
+    name: AreaComponent,
+    provider: AreaCalculator,
+}]
+pub trait CanCalculateArea {
+    fn area(&self) -> f64;
+}
+
+#[cgp_impl(new UnitArea)] // derives `AreaCalculatorComponent`
+impl AreaCalculator {
+    fn area(&self) -> f64 {
+        1.0
+    }
+}
+```
+
 ### A type in an `@`-path that is never declared
 
 A path key (`@app.Missing`), or the path a `=>` redirect points at, is a chain of segments. A
@@ -136,6 +189,20 @@ diagnostic names it. Each shape adds suggestions of its own:
   (`GreeterComponent<Missing> => …`), which no wiring entry can take, and a similarly named struct
   is suggested when there is one. A check on the context then overflows (`E0275`) on the lookup
   through the unresolved key.
+- **A provider header whose component is not in scope:** an `E0425` "cannot find type
+  `GreeterComponent` in this scope" on the trait's name in the header, the span the macro gives the
+  key. For a key of the same crate, rustc suggests the import on the module's first `use` line. For
+  a key of a dependency it suggests none on stable, only "you might be missing a type parameter",
+  and on the pinned nightly one only for a key the dependency defines in its own module, since its
+  import search does not enter a crate the dependency re-exports. A header through a module that
+  re-exports the trait alone reads "cannot find type `GreeterComponent` in module
+  `crate::facade`", with an import help and one that rewrites the header to `impl Greeter`.
+- **A provider header that derives another component's name:** an `E0425` "cannot find type
+  `GComponent`" on the trait's name, with no suggestion, or "you might be missing a type parameter"
+  for a `#[cgp_provider]` header, and an `unused_imports` warning on a correct import of the real
+  key. A key with parameters gives an `E0107` "missing generics for struct
+  `AreaCalculatorComponent`" there instead, whose help adds the argument after the trait's name
+  (`impl AreaCalculator<Shape><Square>`), which does not reach the key.
 - **A provider that is never declared:** an `E0425` "cannot find type `GreetHello` in this scope"
   at the `#[cgp_impl]` attribute and again at the wiring value. A misspelled value alone gets one,
   whose `help:` suggests a similarly named trait, often the provider trait (`Greeter` for
@@ -146,8 +213,9 @@ diagnostic names it. Each shape adds suggestions of its own:
 The root cause is **present and at the caret**: the error names exactly the token to change. The
 output does not say what the token should be, and its suggestions point elsewhere: a `dyn`, a type
 parameter, a similarly named trait or component, none of which is a wiring fix. The landmark is an
-`E0425` or `E0782` whose caret sits on a key or a value inside a `delegate_components!` block, or on
-the provider of a `#[cgp_impl]` header.
+`E0425` or `E0782` whose caret sits on a key or a value inside a `delegate_components!` block, on
+the provider of a `#[cgp_impl]` header, or on the provider trait's name in a `#[cgp_impl]` or
+`#[cgp_provider]` header, whose message names a `…Component`.
 
 ## How cargo-cgp presents it
 
@@ -164,6 +232,17 @@ the provider of a `#[cgp_impl]` header.
   ``help: import it with `use cgp::core::error::ErrorTypeProviderComponent;` ``, the shortest public
   path from a dependency (or a `crate::` path for a local component), with rustc's suggestions
   dropped.
+  At a provider header, the same code names the trait's component with the same help; for a header
+  through a module that re-exports the trait alone it reads
+  ``the component `GreeterComponent` is not in module `crate::facade` ``, with a `note` that the
+  macro names the component through that module and a `help` naming the trait through the module
+  that defines its component, or re-exporting the component.
+- **`[CGP-E070]`** for a provider header that derives another component's name:
+  ``the header derives the component `AreaCalculatorComponent` from the trait name `AreaCalculator`, but the component of `AreaCalculator` is `AreaComponent` ``,
+  and ``help: name the component in the attribute: `#[cgp_impl(new UnitArea: AreaComponent)]` ``.
+  A key with parameters takes the header's arguments in that form
+  (`AreaCalculatorComponent<Square>`); a renamed import's `help` also offers importing the trait
+  under its own name, and its `note` explains the unused-import warning.
 - **`[CGP-E042]`** for a key guessed from a trait's name:
   ``the wiring key `HasScalarTypeComponent` names no component``, and
   ``help: name the component of `HasScalarType` instead: `ScalarTypeProviderComponent` ``.
@@ -196,6 +275,10 @@ Name what the position takes, in scope:
   `use cgp::core::error::ErrorTypeProviderComponent;`.
 - **A value:** a declared provider, written with `#[cgp_impl(new GreetHello)]` or declared as its
   own struct, spelled as declared.
+- **A provider header:** the component's key imported beside its provider trait, the trait named by
+  the path of the module that defines its key, or, for a trait imported under another name or a key
+  that `name:` renames, the key named in the attribute, as
+  `#[cgp_impl(new UnitArea: AreaComponent)]` or `#[cgp_provider(AreaComponent)]`.
 
 ## Notes for tooling
 
@@ -260,6 +343,26 @@ These fixtures pin the class, one group per shape:
 - [`wiring/unresolved-wiring-name/value_not_declared_beside_cycle.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/value_not_declared_beside_cycle.rs):
   an undeclared provider beside a wiring cycle whose consumer trait's name begins with the first
   component's; the cycle's overflow is kept, as `[CGP-E020]`.
+- [`wiring/unresolved-wiring-name/provider_header_key_not_imported.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_header_key_not_imported.rs):
+  a `#[cgp_impl]` and a `#[cgp_provider]` header importing a local provider trait without its key;
+  `[CGP-E041]` names the `crate::` path at each.
+- [`wiring/unresolved-wiring-name/provider_header_dependency_key_not_imported.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_header_dependency_key_not_imported.rs):
+  headers importing a library's provider traits without their keys, one defined in a library
+  module, one in a crate the library re-exports, and `cgp`'s `ErrorTypeProvider`; `[CGP-E041]`
+  names each key's public path.
+- [`wiring/unresolved-wiring-name/provider_header_facade.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_header_facade.rs):
+  a header naming the trait through a module that re-exports it alone; `[CGP-E041]` in its module
+  form.
+- [`wiring/unresolved-wiring-name/provider_header_renamed_import.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_header_renamed_import.rs):
+  a `#[cgp_impl]` and a `#[cgp_provider]` header naming the trait under another name;
+  `[CGP-E070]` names `GreeterComponent` and each attribute's form.
+- [`wiring/unresolved-wiring-name/provider_header_renamed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_header_renamed_key.rs):
+  a header for a component whose `name:` renames its key; `[CGP-E070]`.
+- [`wiring/unresolved-wiring-name/parameterized_name_default_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/parameterized_name_default_component.rs):
+  a header for a component whose key takes a parameter; `[CGP-E070]` replaces the `E0107`.
+- [`wiring/unresolved-wiring-name/provider_header_beside_wrong_half.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_header_beside_wrong_half.rs):
+  a header missing its key beside a consumer-trait and a non-CGP-trait header; `[CGP-E041]` beside
+  `[CGP-E032]` and `[CGP-E033]`, whose own `E0425`s stay dropped.
 - [`wiring/unresolved-wiring-name/names_not_imported.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/names_not_imported.rs):
   providers, a `#[cgp_impl]` provider, and a path type declared in another module or a dependency
   but not imported; each `E0425` is left as rustc wrote it.
@@ -275,7 +378,10 @@ These fixtures pin the class, one group per shape:
   carry the names, and its Known issues on an undeclared provider.
 - [`#[cgp_component]`](../../reference/macros/cgp_component.md) and
   [`#[cgp_type]`](../../reference/macros/cgp_type.md): how a component's marker is named.
-- [`#[cgp_impl]`](../../reference/macros/cgp_impl.md): the `new` keyword that declares a provider.
+- [`#[cgp_impl]`](../../reference/macros/cgp_impl.md): the `new` keyword that declares a provider,
+  and the component a header derives from its provider trait's path.
+- [`#[cgp_provider]`](../../reference/macros/cgp_provider.md): the same derivation for a raw provider
+  impl.
 - [Conflicting wiring](conflicting-wiring.md): the sibling class, where the names resolve but two
   entries claim one key.
 - [Wrong component half](../lowering/wrong-component-half.md): the same consumer/provider confusion
