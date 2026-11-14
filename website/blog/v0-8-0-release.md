@@ -17,113 +17,100 @@ and optional agent support, then develops namespace wiring and migration from v0
 
 ## What it covers
 
-The opening connects the release to the author's aim of making CGP easier to debug, learn, and
-follow as an application grows. The narrative uses personal motivation, concrete situations, and
-observations about the code to introduce features. Paragraphs may develop toward their conclusions;
-the author explicitly requested natural prose rather than mandatory point-first openings for this
-post. The rest of the point-first-writing guidance still applies.
+The opening ties the release to the author's aim of making CGP easier to debug, learn, and follow as
+an application grows. Short cargo-cgp and documentation sections come first; namespaces are the main
+technical deep dive; other improvements, migration, and a practical closing follow.
 
-The cargo-cgp section restores the author's account of verbose diagnostics as a long-standing
-adoption barrier: a newcomer could need advanced Rust and CGP implementation knowledge to diagnose
-a simple mistake. It names the accompanying v0.1.0 release and shows the readable diagnostic
-before an expandable raw-compiler comparison, both captured from the exact missing-height program.
-It identifies the example as `src/lib.rs` in a package using CGP v0.8.0, specifies that the checker
-runs in that project, then repairs the field and verifies the check. It uses the canonical recognition qualification
-and distinguishes the optional tool's pinned nightly from ordinary stable-Rust builds.
-The compiler-API explanation follows the diagnostic demonstration, before installation instructions.
-The installation sequence includes `cargo install --locked cargo-cgp` and `cargo cgp setup`, with the
-minimum Rust version and Linux-only testing stated beside it, and links to installation and expansion
-documentation.
+**cargo-cgp.** The section restores the author's account of verbose diagnostics as a long-standing
+adoption barrier: a newcomer could need advanced Rust and CGP implementation knowledge to diagnose a
+simple mistake. It names the accompanying v0.1.0 release and shows the readable diagnostic before an
+expandable raw-compiler comparison, both captured from the exact missing-height program. It
+identifies the example as `src/lib.rs` in a package using CGP v0.8.0, runs the checker in that
+project, then repairs the field and verifies the check. It uses the canonical recognition
+qualification and distinguishes the optional tool's pinned nightly from ordinary stable-Rust builds.
+The compiler-API explanation follows the demonstration and precedes installation:
+`cargo install --locked cargo-cgp` and `cargo cgp setup`, with the minimum Rust version and
+Linux-only testing beside them, and links to the installation and expansion documentation.
 
-The documentation section explains the earlier reliance on blog posts, the missing reference
-material, and the author's limited time for a side project. It preserves his estimate that writing
-comparable documentation by hand would likely take months of full-time work, then explicitly states
-that agents, primarily Claude Code, wrote much of the new material under the author's direction. It
-routes to Reference, Concepts, Comparisons, and Projects before describing the iterative
-knowledge-base process and review limits. It links the public methodology, disclosure, and
-knowledge-base current-state pages. The skill is optional learning and debugging assistance rather
-than a proficiency guarantee. The quality concern and feedback invitation precede the process
-explanation, so the explanation answers a question the reader has already encountered. The post has
-no direct knowledge-base repository links.
+**Documentation.** The section explains the earlier reliance on blog posts, the missing reference
+material, and the author's limited time for a side project, keeping the author's estimate that
+comparable documentation by hand would likely take months of full-time work. It states that agents,
+primarily Claude Code, wrote much of the new material under the author's direction, and routes to
+Reference, Concepts, Comparisons, and Projects. The quality concern and the feedback invitation come
+before the explanation of the iterative knowledge-base process and its review limits, so the
+explanation answers a question the reader already has. It links the public methodology, disclosure,
+and knowledge-base current-state pages, and no knowledge-base repository directly. The skill is
+optional learning and debugging help, not a proficiency guarantee.
 
-The short tooling and documentation sections come first so readers who skip the long namespace
-walkthrough still see those improvements. Namespaces remain the main technical deep dive. The
-namespace section opens with the earlier wiring burden and the limits of provider bundles, then
-states its practical payoff and links for readers who want to skip to the syntax or migration. Its
-social-media example progresses from coarse manager traits through isolated dependencies and a
-higher-order filtering provider to nine flat wiring entries. Aggregate providers group the
-implementations, but array keys still repeat every component name on the application. The namespace
-reveal shows the short application table before explaining the prefix registrations that enable it.
-The namespace opt-in is explained beside the short table, and the completed configuration is
-followed by a lookup trace. Production, test, and hypothetical local configurations select whole
-groups with visible one-entry differences.
+**Namespaces.** The section opens with the earlier wiring burden and the limits of provider bundles,
+states the practical payoff, and links ahead for readers who want the syntax or migration. The
+motivation keeps the earlier grouping attempts, before the solution: why a nested macro call cannot
+supply an expanded key list to `delegate_components!`, and why preset inheritance and macro
+composition fell short; migration links back to it rather than repeating it.
 
-The main example wires environmental contexts with self-targeted components. It explains that
-successive stages replace earlier definitions, labels database operations as illustrative fragments,
-and links the public web-app walkthrough and source. It explains that grouping methods is a design
-choice rather than a restriction on what a component can contain.
-The diagnostic example uses a value context, `Rectangle`; the namespace walkthrough explains the
-subsequent shift to an application context.
+- **The example:** a social-media application wiring environmental contexts with self-targeted
+  components. It progresses from coarse manager traits through isolated dependencies and a
+  higher-order filtering provider to nine flat wiring entries. Successive stages replace earlier
+  definitions, database operations are labeled illustrative fragments, and the section links the
+  public web-app walkthrough and source. Grouping methods is presented as a design choice, not a
+  restriction on what a component can contain.
+- **The cost and the reveal:** aggregate providers group the implementations, but array keys still
+  repeat every component name on the application. The reveal shows the short application table, with
+  the namespace opt-in explained beside it, before the prefix registrations that enable it; a lookup
+  trace through the path and aggregate provider follows the completed configuration.
+- **Bundles and checks:** path-keyed intermediate bundles join the namespace themselves, while
+  bare-key leaf bundles do not. A standalone check of the concrete context is shown, and that final
+  nine-component check is distinguished from the components each intermediate stage needs. The
+  analogous `FilterSpamMessage` wrapper is introduced before the wiring uses it.
+- **Configurations:** production, test, and hypothetical local configurations select whole groups
+  with visible one-entry differences. Namespace grouping removes repeated routing entries; it does not
+  remove individual provider bindings or component checks.
+- **Context shapes:** the diagnostic example uses a value context, `Rectangle`, and the walkthrough
+  explains the shift to an application context.
 
-The namespace section traces a component lookup through its path and aggregate provider. It explains
-why path-keyed intermediate bundles join the namespace themselves, while bare-key leaf bundles do
-not, and shows a standalone check of the concrete context. It distinguishes that final nine-component
-check from the components needed by each intermediate stage, and introduces the analogous
-`FilterSpamMessage` wrapper before using it in the wiring. Namespace grouping removes repeated
-routing entries; it does not remove individual provider bindings or component checks.
+**Defaults.** Gradual adoption in a small application comes before the syntax, contrasting fixed
+namespace choices with interchangeable provider bundles. The section shows `#[default_impl]` and its
+equivalent namespace-body entry as alternatives, then binds a composite creator in the body, where
+the configuration selects the generic wrapper's inner provider. It states non-overridability and the
+ownership limits beside the benefit: a prefixed path registration requires the namespace's crate,
+whereas an unprefixed local marker has different ownership rules. Structural prefixes belong in a
+base namespace and fixed choices in a configuration namespace, leaving varying paths unbound.
 
-The defaults section introduces gradual adoption in a small application before developing the
-syntax, contrasting fixed namespace choices with interchangeable provider bundles. It shows
-`#[default_impl]` and its equivalent namespace-body entry as alternatives, then binds a
-composite creator in the body, where the configuration selects the generic wrapper's inner provider.
-It states non-overridability and ownership limits beside the benefit:
-a prefixed path registration requires the namespace's crate, whereas an unprefixed local marker has
-different ownership rules. Structural prefixes belong in a base namespace and fixed choices in a
-configuration namespace, leaving varying paths unbound.
-
-The motivation also preserves the earlier grouping attempts. It explains why a nested macro call
-cannot supply an expanded key list to `delegate_components!`, and why the preset inheritance and
-macro-composition approaches were insufficient. This background sits before the namespace solution;
-the migration section links back to it rather than repeating the history.
-
-Other improvements introduce `open`, table iteration, implementation-only generics, shape macros,
-and fieldless variants through concrete uses, then cover handler-macro fixes and the restrictions the
-release lifts: reserved variant names, another derive's helper attributes, async default bodies, and a
-provider's own const. Migration names all
-removed preset constructs, works a user-group conversion with its filter dependency and component
-checks, and covers the `use_type` separator, direct macro-crate renames, changed validation, possible
-unused imports and macro-name
-ambiguity, and error-backend behavior. Its required component registrations are stated before the
-migrated context, and the default-provider example explicitly updates the earlier implementation.
-The closing invites a small wiring refactor or the Quickstart
-and asks for specific diagnostic and documentation feedback without promising a roadmap.
+**Other improvements, migration, and the closing.** Other improvements introduce `open`, table
+iteration, implementation-only generics, shape macros, and fieldless variants through concrete uses,
+then the handler-macro fixes and the restrictions the release lifts: reserved variant names, another
+derive's helper attributes, async default bodies, and a provider's own const. Migration names every
+removed preset construct and works a user-group conversion with its filter dependency and component
+checks, stating the required component registrations before the migrated context and updating the
+earlier default-provider implementation explicitly. It covers the `use_type` separator, direct
+macro-crate renames, changed validation, possible unused imports and macro-name ambiguity, and
+error-backend behavior. The closing invites a small wiring refactor or the Quickstart and asks for
+specific diagnostic and documentation feedback without promising a roadmap.
 
 ## How it relates to the knowledge base
 
-The social-media progression comes from [the worked example](../../examples/social-media-app.md)
-and the [web-app project record](../../projects/cgp-examples/web-app/README.md). Provider composition
-and bundle behavior are owned by [higher-order providers](../../cgp/concepts/higher-order-providers.md)
-and [aggregate providers](../../cgp/concepts/aggregate-providers.md).
-
-The namespace semantics come from [namespaces](../../cgp/concepts/namespaces.md), the
-[namespaces-and-prefixes guide](../../cgp/guides/namespaces-and-prefixes.md), and the references for
-[`prefix`](../../cgp/reference/attributes/prefix.md),
-[`default_impl`](../../cgp/reference/attributes/default_impl.md),
-[`cgp_namespace!`](../../cgp/reference/macros/cgp_namespace.md), and
-[`delegate_components!`](../../cgp/reference/macros/delegate_components.md). The release inventory
-and removals belong to [v0.8.0](../../releases/v0-8-0.md) and the
-[removal ledger](../../releases/README.md#the-removal-ledger).
-
-Tool scope and installation come from [the cargo-cgp usage reference](../../cargo-cgp/reference/usage.md)
-and [installation](../../cargo-cgp/reference/installation.md). Public framing follows the
-[release-announcement guide](../writing-guides/release-announcement.md),
-[author voice](../../communication-strategy/voice-and-register.md), and
-[AI disclosure policy](../../communication-strategy/ai-disclosure.md).
+- **The example:** [the social-media worked example](../../examples/social-media-app.md) and the
+  [web-app project record](../../projects/cgp-examples/web-app/README.md); provider composition and
+  bundles are owned by [higher-order providers](../../cgp/concepts/higher-order-providers.md) and
+  [aggregate providers](../../cgp/concepts/aggregate-providers.md).
+- **Namespaces:** [namespaces](../../cgp/concepts/namespaces.md), the
+  [namespaces-and-prefixes guide](../../cgp/guides/namespaces-and-prefixes.md), and the references for
+  [`prefix`](../../cgp/reference/attributes/prefix.md),
+  [`default_impl`](../../cgp/reference/attributes/default_impl.md),
+  [`cgp_namespace!`](../../cgp/reference/macros/cgp_namespace.md), and
+  [`delegate_components!`](../../cgp/reference/macros/delegate_components.md).
+- **The release:** [v0.8.0](../../releases/v0-8-0.md) and the
+  [removal ledger](../../releases/README.md#the-removal-ledger).
+- **The tool:** [the cargo-cgp usage reference](../../cargo-cgp/reference/usage.md) and
+  [installation](../../cargo-cgp/reference/installation.md).
+- **Framing:** the [release-announcement guide](../writing-guides/release-announcement.md),
+  [author voice](../../communication-strategy/voice-and-register.md), and the
+  [AI disclosure policy](../../communication-strategy/ai-disclosure.md).
 
 ## Verification and deliberate simplifications
 
 The website's [blog example
-file](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/blog/v0_8_0_release.rs)
+file](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/example-code/tests/blog/v0_8_0_release.rs)
 compiles the initial database-only managers, the filter-dependent coarse and fine-grained
 configurations, flat and hierarchical namespace routing, fixed defaults and their body-entry
 alternative, and the migrated user group. It supplies page-elided domain types, methods, filter
@@ -132,7 +119,7 @@ is hypothetical; its omitted providers are supplied as stubs for compilation. Th
 wiring, not a database implementation or a complete web service.
 
 The missing-height program is a [compile-fail
-fixture](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/compile_fail/blog/v0_8_0_missing_height.rs).
+fixture](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/example-code/tests/compile_fail/blog/v0_8_0_missing_height.rs).
 Both quoted diagnostic bodies were captured from that program in a temporary library target as
 `src/lib.rs`, using cargo with stable Rust 1.99 and the local source-built cargo-cgp driver. The
 repaired program passes cargo-cgp, and a runtime test asserts that a three-by-four rectangle has
@@ -187,30 +174,34 @@ explicitly a layout-dependent estimate rather than a measured PDF length.
 
 ## Maintaining it
 
-Keep cargo-cgp and the documentation before the longer namespace explanation, as the author
-requested for readers who may skip that walkthrough. Preserve the natural narrative style requested
-for this post: paragraphs may begin with a situation, an observation, or a personal motivation and
-develop toward the point. Do not impose point-first openings or a repeated problem-and-solution
-template. Follow the remaining point-first-writing guidance on clear subjects, connected reasoning,
-paragraph focus, accuracy, and plain language. Vary transitions around code listings and explain
-their consequences without repeatedly announcing the next step or restating the syntax. Keep
-independent migration changes in separate paragraphs so readers can scan by construct. Within the
-namespace section, preserve the argument from useful provider separation to its wiring cost and then
-to namespace organization. Preserve the author's background on the diagnostic, documentation, and
-wiring challenges, including the time constraint and earlier grouping experiments. Preserve all
-original substantive content and examples when reorganizing; use the audit above to check coverage.
-Place that history where it motivates each improvement, rather than compressing it into a feature
-summary. Keep migration focused on the upgrade, the defaults restrictions beside their examples, and
-agent authorship separate from optional agent support. Keep the closing practical and personal, with
-honest remaining costs and a bounded request for feedback.
+**Keep the order and the style the author asked for.** cargo-cgp and the documentation stay before the
+longer namespace explanation, for readers who skip that walkthrough. The post is in natural style:
+paragraphs may begin with a situation, an observation, or a personal motivation and develop toward
+the point, so do not impose point-first openings or a repeated problem-and-solution template. Vary
+transitions around code listings and explain their consequences without announcing the next step or
+restating the syntax.
 
-The renamed headings retain explicit IDs for existing links from the web-app project pages:
-`an-example-social-media-web-app`, `fine-grained-traits`,
-`introducing-cgp-namespaces-and-paths`, and `default-implementations`. Preserve those IDs or update
-all incoming links in the same change.
+**Preserve the content and its placement:**
 
-The publication work remains separate from revision. The author reads the post before publication;
-the filename gets the actual release date, the fixed slug stays unchanged, and the site branch
-publishes only with both official releases. Re-run the quoted diagnostics against the released tool,
-verify the announcement bar and version pins, and add discussion links after submission. Release
-wording already describes the official versions as shipped, as the branch rules require.
+- **Substance:** every original substantive point and example when reorganizing; check coverage with
+  the audit above.
+- **Background:** the author's account of the diagnostic, documentation, and wiring challenges,
+  including the time constraint and the earlier grouping experiments, placed where it motivates each
+  improvement rather than compressed into a feature summary.
+- **The namespace argument:** from useful provider separation, to its wiring cost, to namespace
+  organization.
+- **Separation:** independent migration changes in separate paragraphs, so readers can scan by
+  construct; migration focused on the upgrade; the defaults restrictions beside their examples; agent
+  authorship separate from optional agent support.
+- **The closing:** practical and personal, with honest remaining costs and a bounded request for
+  feedback.
+- **Heading IDs:** the renamed headings keep explicit IDs that the web-app project pages link:
+  `an-example-social-media-web-app`, `fine-grained-traits`,
+  `introducing-cgp-namespaces-and-paths`, and `default-implementations`. Keep them, or update every
+  incoming link in the same change.
+
+**Publication is separate from revision.** The author reads the post before publication; the filename
+gets the actual release date, the fixed slug stays, and the site branch publishes only with both
+official releases. Re-run the quoted diagnostics against the released tool, verify the announcement
+bar and version pins, and add discussion links after submission. Release wording already describes
+the official versions as shipped, as the branch rules require.

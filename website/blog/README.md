@@ -1,48 +1,40 @@
 # Website blog posts
 
-This directory holds one internal document per post published on the
-[CGP blog](https://contextgeneric.dev/blog). Each document records what its post covers, which
-knowledge-base material owns that content, and, crucially, exactly how the post's code and claims
-diverge from CGP as it stands at v0.8.0. Read [../README.md](../README.md) for why this section exists
-and [../AGENTS.md](../AGENTS.md) for the rules that govern it, including the prohibition on rewriting
-a published post into agreement with the current library.
+One internal document per post on the [CGP blog](https://contextgeneric.dev/blog), and per substantial
+draft. Each records what its post covers, which knowledge-base documents own that material, and how
+its code and claims diverge from CGP v0.8.0. The rules that govern posts, including never rewriting a
+published one, are in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history).
 
-## Why the drift matters more here than anywhere else
+## How stale the posts are
 
-The blog is the site's largest and most-read body of writing, and it is also the least current. The
-[Introduction page](https://contextgeneric.dev/docs/) on the live site still directs newcomers to the
-blog as the most up-to-date resource (the `v0.8.0` branch's Introduction does not), so a reader following that advice lands on posts teaching syntax the compiler no
-longer accepts. Of the seventeen posts, eight write every provider inside-out with
-`#[cgp_provider]`/`#[cgp_new_provider]`, seven show `#[cgp_context]` on a context definition, and four
-use the removed `Async` trait or one of its aliases. The posts remain valuable (their *ideas* are
-current even where their *code* is not, and several are the only prose anywhere on the design
-questions they work through), but they can only be mined safely by an agent who knows which parts are
-dead.
-
-Each document below therefore carries a "Where it diverges from CGP v0.8.0" section listing the
-concrete constructs, names, and claims that no longer hold, with what replaced each. Read that section
-before quoting a post's code anywhere, and never take current syntax from a post.
+**The blog is the site's most-read writing and its least current.** Of the sixteen published posts,
+eight write every provider inside-out with `#[cgp_provider]`/`#[cgp_new_provider]`, seven show
+`#[cgp_context]` on a context definition, and four use the removed `Async` trait or one of its aliases.
+The live site's [Introduction](https://contextgeneric.dev/docs/) still sends newcomers to the blog as
+the most up-to-date resource; the `v0.8.0` branch's does not. The posts' ideas stay current where their
+code does not, and several are the only prose on the design questions they work through. So each
+record's "Where it diverges from CGP v0.8.0" section names what is stale, to read before quoting the
+post, per [../AGENTS.md](../AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post).
 
 ## The catalog
 
-The posts are listed in publication order, oldest first, which is also roughly the order of increasing
-reliability. Each entry gives the post's slug, its date, and a one-line summary; the status word is
-the section's fixed vocabulary from [../AGENTS.md](../AGENTS.md).
+Publication order, oldest first, which is roughly the order of increasing reliability. Status words
+follow [../AGENTS.md](../AGENTS.md#status-vocabulary).
 
 - [Announcing Context-Generic Programming](early-preview-announcement.md): 2024-12-19, *historical*.
-  The launch post: what CGP is, how it grew out of the Hermes relayer, and a plan for 2025 whose items
-  have since been resolved in ways the post could not anticipate.
-- [CGP v0.3.0 release](v0-3-0-release.md): 2025-01-09, *historical*. Abstract types via the
-  now-removed `cgp_type!` function macro, the first getter macros, `CanWrapError`, and the
-  `cgp-error-anyhow` and `cgp-runtime` crates.
+  The launch post: what CGP is, how it grew out of the Hermes relayer, and a plan for 2025 since
+  resolved in ways the post could not anticipate.
+- [CGP v0.3.0 release](v0-3-0-release.md): 2025-01-09, *historical*. Abstract types via the removed
+  `cgp_type!` function macro, the first getter macros, `CanWrapError`, and the `cgp-error-anyhow` and
+  `cgp-runtime` crates.
 - [CGP v0.4.0 release](v0-4-0-release.md): 2025-05-09, *historical*. The release that made CGP
   debuggable: `IsProviderFor`, `CanUseComponent`, `check_components!`, plus `#[cgp_context]`, the
   preset system, and the first datatype-generic support.
 - [CGP v0.4.1 release](v0-4-1-release.md): 2025-06-14, *historical*. The `cgp-handler` crate
   introducing `Handler`, `Computer`, and `Producer`, and preset improvements built for Hypershell.
 - [Hypershell: a type-level DSL for shell-scripting](hypershell-release.md): 2025-06-14,
-  *historical*. The longest post on the site and still the fullest account of building a DSL whose
-  programs are types; also the site's best standalone introduction to CGP's wiring model.
+  *historical*. The longest post on the site and the fullest account of building a DSL whose programs
+  are types; also the site's best standalone introduction to CGP's wiring model.
 - [Extensible data types, part 1: builders](extensible-datatypes-part-1.md): 2025-07-07,
   *historical*. Extensible records, safe enum upcasting and downcasting, and modular application
   construction from independent builder providers.
@@ -73,113 +65,89 @@ the section's fixed vocabulary from [../AGENTS.md](../AGENTS.md).
   `#[cgp_fn]`, `#[implicit]`, `#[uses]`, `#[extend]`, `#[use_provider]`, `#[use_type]`, and the
   removal of `#[cgp_context]`.
 - [RustLab 2025: how to stop fighting with coherence](rustlab-2025-coherence.md): 2026-03-07,
-  *historical*. A full slide-by-slide transcript of CGP's first conference talk, and the clearest
-  narrative anywhere of why coherence exists and how provider traits work around it.
+  *historical*. A slide-by-slide transcript of CGP's first conference talk, and the clearest narrative
+  anywhere of why coherence exists and how provider traits work around it.
 - [CGP v0.8.0: cargo-cgp, new documentation, and namespaces](v0-8-0-release.md): placeholder date
-  2026-05-10, **draft awaiting review and coordinated publication**. The social-media wiring
-  progression, fixed defaults and their limits, verified cargo-cgp diagnostics, expanded
-  documentation and optional agent support, other improvements, migration, and a practical closing.
+  2026-05-10, on the website's `v0.8.0` branch, **draft awaiting review and coordinated publication**.
+  The social-media wiring progression, fixed defaults and their limits, verified cargo-cgp
+  diagnostics, expanded documentation and optional agent support, other improvements, migration, and
+  a practical closing.
 
 ## Drafts that live on branches
 
-Not every unpublished post is on the branch its release is being written on, and a post that exists
-only on a feature branch is invisible to anyone reading `main`, which is how one of them went
-unrecorded here for months. **A draft substantial enough to be worth finishing gets a document here as
-soon as it exists**, with its branch named, so that the catalog is the inventory of CGP's writing
-rather than of its published writing.
+**A draft substantial enough to finish gets a record here as soon as it exists, with its branch
+named**, so the catalog inventories all of CGP's writing; a draft on a feature branch is invisible to
+anyone reading `main`.
 
 - [Using an incoherent, dictionary-passing style Rust today](incoherent-rust-today.md): on the
-  `incoherent-rust` branch, dated 2026-03-30, *draft*. Roughly 12,800 words reading CGP against the
+  `incoherent-rust` branch, dated 2026-03-30, *draft*. About 12,800 words reading CGP against the
   dictionary-passing, incoherent-traits, and context-and-capabilities discussion, and arguing that CGP
-  is a working implementation strategy for a fragment of it on stable Rust today. The only post aimed
-  at the language-design reader, and the only one whose value decays with time.
+  implements a fragment of it on stable Rust today. The only post aimed at the language-design
+  reader, and the only one whose value decays with time.
 
-One further branch carries material rather than a post, the `rustlab-presentation` branch with the
-RustLab transcript's slide assets, and [site.md](../site.md#branches-and-what-is-not-on-main) records it beside
-the `notes/` tree of working notes that sits on `main`.
+The `rustlab-presentation` branch carries the RustLab transcript's slide assets rather than a post;
+[site.md](../site.md#branches-and-what-is-not-on-main) records it.
 
 ## Reading the drift at a glance
 
-Five breaking changes account for most of the staleness across the catalog, and knowing which post
-sits on which side of each is usually enough to judge a snippet without opening the divergence
-section. The dates below are the release that made the change, so any post published earlier shows the
-old form.
+Five breaking changes account for most of the staleness. Each is dated by the release that made it,
+so a post published earlier shows the old form.
 
-- **`#[cgp_impl]` replaced the inside-out provider form** (v0.6.0, October 2025). Everything before
-  it writes `impl<Context> Greeter<Context> for GreetHello` with `#[cgp_new_provider]`; the current
-  form is `#[cgp_impl(new GreetHello)] impl Greeter`, per
+- **`#[cgp_impl]` replaced the inside-out provider form** (v0.6.0, October 2025). Earlier posts write
+  `impl<Context> Greeter<Context> for GreetHello` with `#[cgp_new_provider]`; the current form is
+  `#[cgp_impl(new GreetHello)] impl Greeter`, per
   [writing-providers](../../cgp/guides/writing-providers.md).
 - **`#[cgp_context]` and `HasCgpProvider` are gone** (`HasCgpProvider` removed in v0.6.0;
-  `#[cgp_context]` deprecated in v0.6.0 and removed in v0.7.0). Contexts now
-  carry their own wiring table directly; every `#[cgp_context]` and every `{Context}Components` struct
-  in an older post is dead syntax.
+  `#[cgp_context]` deprecated in v0.6.0 and removed in v0.7.0). Contexts carry their own wiring table,
+  so every `#[cgp_context]` and `{Context}Components` struct in an older post is dead syntax.
 - **The `Async` trait and `HasAsyncErrorType` were removed** (v0.5.0, October 2025), replaced by the
   `Send`-recovery proxy trait pattern in [send-bounds](../../cgp/concepts/send-bounds.md).
-- **Presets were replaced by namespaces** (v0.8.0, unreleased). `cgp_preset!`,
-  `#[cgp::re_export_imports]`, `#[cgp_inherit]`, and `#[wrap_provider]` no longer exist; the current
-  mechanism is [namespaces](../../cgp/concepts/namespaces.md) via
+- **Presets were replaced by namespaces** (v0.8.0). `cgp_preset!`, `#[cgp::re_export_imports]`,
+  `#[cgp_inherit]`, and `#[wrap_provider]` no longer exist; the mechanism is
+  [namespaces](../../cgp/concepts/namespaces.md) via
   [`cgp_namespace!`](../../cgp/reference/macros/cgp_namespace.md).
-- **Implicit arguments and attribute-based dependencies arrived late** (v0.7.0, February 2026).
-  Any post before it declares dependencies with hand-written `where Self: Trait` bounds and reads
-  fields through getter traits, where the current idiom is
+- **Implicit arguments and attribute-based dependencies arrived late** (v0.7.0, February 2026). Earlier
+  posts write `where Self: Trait` bounds and read fields through getter traits, where the idiom is
   [`#[uses]`](../../cgp/reference/attributes/uses.md) and
   [`#[implicit]`](../../cgp/reference/attributes/implicit.md).
 
+What each *release* shipped, and how much survives, is in [releases/](../../releases/README.md), one
+document per tag with the removal ledger; read a release document beside its post's record when the
+post's claims need checking. [v0.1.0](../../releases/v0-1-0.md) and [v0.3.1](../../releases/v0-3-1.md)
+have no post.
+
 ## Publication conventions
 
-Posts live at `blog/<date>-<name>.md`, or in a directory with an `index.md` when they carry images.
-Front matter sets the author (always `soares`, defined in
-[blog/authors.yml](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/authors.yml)),
-one or more tags from the fixed set in
-[blog/tags.yml](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/tags.yml)
-(`release`, `deepdive`, `walkthrough`), and an explicit `slug`. A `{/* truncate */}` marker separates
-the excerpt shown on the index from the body, and Docusaurus warns on any post that omits it.
+These hold for every post; [the release-announcement guide](../writing-guides/release-announcement.md)
+adds a release post's own.
 
-**Every post carries a `description`, and adding one to a published post is not rewriting it.** The
-front matter is metadata rather than a claim: it changes no sentence in the post, moves no URL, and
-touches no snippet, so the [dated-artifact rule](../AGENTS.md#do-not-rewrite-history) does not reach
-it.
+- **File:** `blog/<date>-<name>.md`, or a directory with an `index.md` when the post carries images.
+- **Front matter:** `authors: [soares]` (defined in
+  [blog/authors.yml](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/authors.yml));
+  one or more tags from the fixed set in
+  [blog/tags.yml](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/tags.yml)
+  (`release`, `deepdive`, `walkthrough`); an explicit `slug`; and a written `description`.
+- **Excerpt:** a `{/* truncate */}` marker separates it from the body; Docusaurus warns on a post
+  without one.
 
-**It does reach the feeds, though, which is worth knowing before adding one.** Docusaurus uses a
-post's `description` as its `<description>` in `rss.xml` and `atom.xml`, in place of the excerpt it
-would otherwise take from the text above the truncate marker, so a subscriber's reader may show the
-new summary for a post it already holds. The rendered blog index is unaffected and still shows each
-post's own excerpt, and the item's title, link, and date are untouched. The trade is acceptable
-because a written summary serves a subscriber better than a truncated opening paragraph, but it is a
-change to how a published artifact presents itself and should be made deliberately rather than
-discovered. Without one Docusaurus derives a description from the opening paragraph, which on a release post
-is a long announcement sentence that a search result cuts mid-clause, and which strips the backticks
-from identifiers: the v0.7.0 post's derived snippet advertised `#[cgpfn]` and `#[useprovider]`. The
-blog carries three quarters of the site's search impressions, so this is where a written description
-is worth most.
+**Always set the `slug` on a new post, and never change a published one.** Without a slug, Docusaurus
+publishes under a dated path: the [new-website post](new-website.md) is the one post in that state, at
+`/blog/2026/02/21/new-website`. Leave it, because moving a live URL breaks every inbound link.
 
-Two rules govern the wording. **Write it self-dating**, naming the version or the moment, so a
-description for a post teaching a construct the library has since removed reads as a record rather
-than as current guidance: *"CGP v0.4.0, the release that made CGP debuggable"* rather than *"how to
-debug CGP"*. And **avoid backticks**, since the meta tag is plain text and a stripped backtick runs
-identifiers together. The length budget and the rest of the conventions are in
-[pages/reference.md](../writing-guides/reference.md#conventions-the-port-must-follow).
+**Match a new release slug to its neighbours.** Posts through v0.6.1 use dashed versions
+(`v0-6-1-release`); v0.7.0 and the v0.8.0 draft use dotted ones (`v0.7.0-release`). The announcement
+bar in `docusaurus.config.ts` hardcodes one of these URLs.
 
-**Always set the `slug` on a new post.** Without one, Docusaurus does not derive a flat URL from the
-filename; it publishes the post under a *dated* path instead, so `2026-02-21-new-website.md` becomes
-`/blog/2026/02/21/new-website` rather than `/blog/new-website`. Exactly one post is in that state, the
-[new-website post](new-website.md), and its URL is inconsistent with every other post as a result.
-**Leave it.** A published post's slug is not changed, because changing it moves a live URL and breaks
-every inbound link to it; the inconsistency is cheaper than the breakage. The rule applies forward only:
-set the slug before a post is published, never after.
+**Every post carries a `description`, and adding one to a published post is not rewriting it**: it
+changes no sentence, URL, or snippet, so the dated-artifact rule does not reach it. Add one
+deliberately, because Docusaurus puts it in `rss.xml` and `atom.xml` in place of the excerpt, so a
+subscriber's reader may show the new summary for a post it already holds; the rendered index still
+shows the excerpt. Without one, Docusaurus derives a description from the opening paragraph, which a
+search result cuts mid-clause and which loses the backticks around identifiers. The blog carries three
+quarters of the site's search impressions, so the written description is worth most here.
 
-One further inconsistency is worth knowing before adding a post: the release-note slugs are not
-uniform. Posts through v0.6.1 use dash-separated versions (`v0-6-1-release`), while v0.7.0 and the
-v0.8.0 draft use dotted ones (`v0.7.0-release`). Match whichever neighbours a new post rather than
-assuming a single rule, and check the announcement bar in `docusaurus.config.ts`, which hardcodes one
-of these URLs.
-
-## Where the release history lives
-
-These documents record what each *post* said. What each *release* actually shipped (and how much of
-it survives) is tracked separately in [releases/](../../releases/README.md), one document per tag,
-with a removal ledger dating every construct that has been renamed or deleted. Each release document
-links to its announcement post and to the document here that covers it; read the pair together when a
-post's claims need checking against what the release really contained. Two of the release documents
-have no post at all ([v0.1.0](../../releases/v0-1-0.md) and [v0.3.1](../../releases/v0-3-1.md)), and
-one post, the [v0.8.0 draft](v0-8-0-release.md), covers a release that has not happened yet.
+- **Self-dating:** name the version or the moment, so a description of a removed construct reads as a
+  record: *"CGP v0.4.0, the release that made CGP debuggable"*, not *"how to debug CGP"*.
+- **No backticks:** the meta tag is plain text, and a stripped backtick runs identifiers together.
+- **Length and the rest:** the reference guide's
+  [conventions](../writing-guides/reference.md#conventions-the-port-must-follow).

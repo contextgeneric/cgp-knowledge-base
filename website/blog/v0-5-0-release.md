@@ -1,8 +1,8 @@
 # CGP v0.5.0 Release: Auto dispatchers, extensible datatype improvements, monadic computation, RTN emulation, modular serde, and more
 
-A large release with equally large breaking changes. It adds `#[derive(CgpData)]`,
-`#[cgp_auto_dispatch]`, the optional builder, and monadic computation; and it removes the `Async`
-trait, replacing it with the `Send`-recovery proxy pattern that CGP still uses today.
+A large release with large breaking changes: it adds `#[derive(CgpData)]`, `#[cgp_auto_dispatch]`, the
+optional builder, and monadic computation, and removes the `Async` trait for the `Send`-recovery proxy
+pattern CGP still uses.
 
 - **URL**: <https://contextgeneric.dev/blog/v0-5-0-release>
 - **Source**: [blog/2025-10-12-v0.5.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-10-12-v0.5.0-release.md)
@@ -12,63 +12,59 @@ trait, replacing it with the `Send`-recovery proxy pattern that CGP still uses t
 
 ## What it covers
 
-The new features cluster around extensible data. `#[derive(CgpData)]` becomes the umbrella derive,
-replacing the previous need to list `HasField`, `HasFields`, `BuildField`, `FromVariant`, and
-`ExtractField` individually. `#[cgp_auto_dispatch]` lifts a plain per-type trait onto an enum whose
-variants all implement it, so `HasArea` implemented for `Circle` and `Rectangle` is automatically
-implemented for `Shape`, across crate boundaries, with neither the trait nor the enum
-knowing about the other. `UpdateField` generalizes field mutation on a partial record, with
-`BuildField` becoming a blanket impl over it. Two builder extensions follow: `finalize_with_default`
-fills uninitialized fields from `Default`, and the new `IsOptional` marker gives a builder whose type
-does not change as fields are set, so a partial record can be filled dynamically, the form
-`cgp-serde` uses for deserialization. The visitor dispatchers grow to six, adding mutable and
-tuple-input variants. `AsyncComputer` arrives as the async counterpart of `Computer`, making `Handler`
-the async counterpart of `TryComputer`. The `cgp-monad` crate lands, with a retroactive treatment of
-monads that lets `Result` and `Option` be used as monads without implementing anything on them. And
-`Symbol!` gains the ability to produce a real `&'static str` at compile time through `StaticString`.
+The new features cluster around extensible data:
 
-The breaking changes are led by the **removal of `Async`**, and the post's explanation of it is the
-most important thing in it. `Async` had been an alias for `Send + Sync`, sprinkled through CGP so that
-futures returned by generic async methods would be `Send` enough for `tokio::spawn`. Return Type
-Notation would have solved this properly but is not close to stabilizing. The alternative CGP found is
-to define a *proxy trait* (`CanSendRun` alongside `CanRun`) whose method promises a `Send` future,
-implement it by hand on the concrete context, and let the trait solver see through to the concrete
-types. Providers stay free of `Send` bounds; the guarantee is recovered exactly where it is needed.
+- **`#[derive(CgpData)]`:** one derive in place of `HasField`, `HasFields`, `BuildField`,
+  `FromVariant`, and `ExtractField`.
+- **`#[cgp_auto_dispatch]`:** lifts a per-type trait onto an enum whose variants implement it, so
+  `HasArea` for `Circle` and `Rectangle` holds for `Shape`, across crates, with neither the trait nor
+  the enum knowing about the other.
+- **Builders:** `UpdateField` generalizes field mutation on a partial record, with `BuildField` a
+  blanket impl over it; `finalize_with_default` fills unset fields from `Default`; and the `IsOptional`
+  marker gives a builder whose type does not change as fields are set, the form `cgp-serde`
+  deserializes with.
+- **Dispatchers and handlers:** the visitor dispatchers grow to six, with mutable and tuple-input
+  variants; `AsyncComputer` arrives, making `Handler` the async counterpart of `TryComputer`.
+- **`cgp-monad`:** a retroactive treatment of monads that uses `Result` and `Option` without
+  implementing anything on them.
+- **`Symbol!`:** produces a `&'static str` at compile time through `StaticString`.
 
-The remaining breaking changes: `symbol!` becomes `Symbol!` and desugars differently, gaining a length
-prefix so `StaticString` can reconstruct the string, with `ι` replaced by `ζ` to avoid a
-`confusable_idents` warning and `Char` renamed `Chars`; `cgp-field` exports are reorganized into
-submodules; partial data types gain the `__Partial` prefix; `CanRun` gains a `Code` parameter; and
-`HasInner` is removed in favor of `UseField`.
+**The removal of `Async` leads the breaking changes, and its explanation is the post's most important
+part.** `Async` aliased `Send + Sync`, spread through CGP so generic async methods' futures were `Send`
+enough for `tokio::spawn`. Return Type Notation would solve this but is not close to stabilizing. CGP's
+alternative is a proxy trait (`CanSendRun` beside `CanRun`) whose method promises a `Send` future,
+implemented by hand on the concrete context so the trait solver sees the concrete types. Providers stay
+free of `Send` bounds, and the guarantee is recovered where it is needed.
 
-The post closes with two announcements: the RustLab talk, and a preview of `cgp-serde` including the
-arena-allocator deserialization example.
+The other breaking changes: `symbol!` becomes `Symbol!` with a length prefix so `StaticString` can
+rebuild the string, `ι` becomes `ζ` to avoid a `confusable_idents` warning, and `Char` becomes
+`Chars`; `cgp-field`'s exports move into submodules; partial data types gain the `__Partial` prefix;
+`CanRun` gains a `Code` parameter; and `HasInner` is removed in favor of `UseField`. The post closes
+announcing the RustLab talk and previewing `cgp-serde` with the arena-allocator deserialization example.
 
 ## How it relates to the knowledge base
 
-The `Send`-recovery pattern is the durable contribution and is documented as
-[recovering `Send` bounds](../../cgp/concepts/send-bounds.md), with the components at
-[`CanRun` / `CanSendRun`](../../cgp/reference/components/runner.md). The post's second example link
-points at an older commit of `cgp-examples`' `transfer/src/contexts/app.rs`; the two
-`CanHandleApiSend` impls it shows are unchanged in the current code, documented with the
-[`transfer` HTTP layer](../../projects/cgp-examples/transfer/reference/http-layer.md#canhandleapisend). The derive is
-[`#[derive(CgpData)]`](../../cgp/reference/derives/derive_cgp_data.md); the auto-dispatch macro is
-[`#[cgp_auto_dispatch]`](../../cgp/reference/macros/cgp_auto_dispatch.md), worked in the
-[extensible shapes example](../../examples/extensible-shapes.md). The builder extensions are
-[optional fields](../../cgp/reference/traits/optional_fields.md) over
-[`MapType`](../../cgp/reference/traits/map_type.md) and
-[`HasBuilder`](../../cgp/reference/traits/has_builder.md). The dispatchers are the
-[dispatch combinators](../../cgp/reference/providers/dispatch_combinators.md); the monad layer is
-[monadic handlers](../../cgp/concepts/monadic-handlers.md) over the
-[monad traits](../../cgp/reference/traits/monad.md) and
-[monad providers](../../cgp/reference/providers/monad_providers.md). `StaticString` is
-[`StaticFormat`](../../cgp/reference/traits/static_format.md), and the symbol desugaring is
-[`Symbol!`](../../cgp/reference/macros/symbol.md) over [`Chars`](../../cgp/reference/types/chars.md).
-Lifetimes in component parameters are [`Life`](../../cgp/reference/types/life.md).
-
-The `cgp-serde` preview is superseded by the [release post](cgp-serde-release.md) and the
-[modular serialization example](../../examples/modular-serialization.md); the project itself is
-documented at [projects/cgp-serde/](../../projects/cgp-serde/README.md).
+- **`Send` recovery:** [recovering `Send` bounds](../../cgp/concepts/send-bounds.md), with
+  [`CanRun` / `CanSendRun`](../../cgp/reference/components/runner.md). The post's second example links
+  an older commit of `cgp-examples`' `transfer/src/contexts/app.rs`; its two `CanHandleApiSend` impls
+  are unchanged, documented with the
+  [`transfer` HTTP layer](../../projects/cgp-examples/transfer/reference/http-layer.md#canhandleapisend).
+- **Data:** [`#[derive(CgpData)]`](../../cgp/reference/derives/derive_cgp_data.md);
+  [`#[cgp_auto_dispatch]`](../../cgp/reference/macros/cgp_auto_dispatch.md), worked in the
+  [extensible shapes example](../../examples/extensible-shapes.md);
+  [optional fields](../../cgp/reference/traits/optional_fields.md) over
+  [`MapType`](../../cgp/reference/traits/map_type.md) and
+  [`HasBuilder`](../../cgp/reference/traits/has_builder.md); the
+  [dispatch combinators](../../cgp/reference/providers/dispatch_combinators.md).
+- **Monads:** [monadic handlers](../../cgp/concepts/monadic-handlers.md) over the
+  [monad traits](../../cgp/reference/traits/monad.md) and
+  [monad providers](../../cgp/reference/providers/monad_providers.md).
+- **Type-level strings:** [`StaticFormat`](../../cgp/reference/traits/static_format.md) and
+  [`Symbol!`](../../cgp/reference/macros/symbol.md) over [`Chars`](../../cgp/reference/types/chars.md);
+  lifetimes in component parameters are [`Life`](../../cgp/reference/types/life.md).
+- **The `cgp-serde` preview:** superseded by the [release post](cgp-serde-release.md), the
+  [modular serialization example](../../examples/modular-serialization.md), and
+  [projects/cgp-serde/](../../projects/cgp-serde/README.md).
 
 ## Where it diverges from CGP v0.8.0
 
@@ -82,22 +78,19 @@ documented at [projects/cgp-serde/](../../projects/cgp-serde/README.md).
 - **`check_components!` still uses the `CanDeserializeApp for App` form**, replaced in v0.7.0 by an
   optional `#[check_trait(...)]` attribute.
 - **The migration advice to copy `Async` and `HasAsyncErrorType` locally still works**, but it is
-  transitional advice for a version-old codebase and should not be read as a recommendation for new
-  code.
+  transitional advice for a version-old codebase, not a recommendation for new code.
 - **The `#[cgp_component { provider: ..., derive_delegate: ... }]` brace form no longer parses.** The
-  brace form now takes only `name`, `provider`, and `context`, so `derive_delegate` is a separate
-  `#[derive_delegate(...)]` attribute rather than a brace key. The positional `#[cgp_component(Handler)]`
-  form is idiomatic.
-- **Two notes on the RTN discussion.** The post's claim that RTN "does not appear to be close to
-  stabilization" was accurate at the time and should be re-checked before being repeated anywhere
-  public. And the proxy-trait workaround the post calls temporary is still in use, so it should be
-  presented as CGP's current answer rather than as a stopgap awaiting removal.
+  brace form takes only `name`, `provider`, and `context`, so `derive_delegate` is a separate
+  `#[derive_delegate(...)]` attribute. The positional `#[cgp_component(Handler)]` form is idiomatic.
+- **Two notes on the RTN discussion.** The claim that RTN "does not appear to be close to
+  stabilization" was accurate then and must be re-checked before it is repeated publicly. The
+  proxy-trait workaround the post calls temporary is still in use, so present it as CGP's current
+  answer, not a stopgap.
 
 ## Maintaining it
 
-Leave it alone. The `Async`-removal section is the most substantive prose the project has published on
-the `Send`-bound problem in async Rust, and the reasoning transfers cleanly even though its code does
-not; [send-bounds](../../cgp/concepts/send-bounds.md) is where that reasoning now lives in current
-form. Anything written publicly about CGP and async should be checked against the survey evidence in
-[evidence.md](../../communication-strategy/evidence.md), which warns
-that async and function coloring is a high-attention topic where the honest attachment is narrow.
+Leave it alone. Its `Async`-removal section is the project's most substantive published prose on the
+`Send`-bound problem; [send-bounds](../../cgp/concepts/send-bounds.md) holds that reasoning in current
+form. Check public writing on CGP and async against
+[evidence.md](../../communication-strategy/evidence.md), which warns that async and function coloring
+draw high attention while the honest attachment is narrow.

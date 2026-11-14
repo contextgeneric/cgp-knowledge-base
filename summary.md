@@ -902,8 +902,8 @@ it stale.
 
 ### `website/blog/`: one document per published post
 
-- [README.md](website/blog/README.md) — the chronological catalog, why drift matters most here, the
-  five breaking changes that account for it, and the site's publication conventions.
+- [README.md](website/blog/README.md) — how stale the posts are, the chronological catalog, the drafts
+  on branches, the five breaking changes that account for the drift, and the publication conventions.
 - [early-preview-announcement.md](website/blog/early-preview-announcement.md) — the launch post, CGP's
   origin in the Hermes relayer, and a 2025 plan since resolved by other means.
 - [v0-3-0-release.md](website/blog/v0-3-0-release.md) — abstract types via the removed `cgp_type!`,
