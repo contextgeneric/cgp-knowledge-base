@@ -197,7 +197,7 @@ the naming rule exempts them.
 
 ### Orientation pages: the Introduction, the Quickstart, and Resources
 
-- **Guide:** [orientation.md](orientation.md).
+- **Guide:** [orientation.md](orientation.md), which the AI section's overview also follows.
 - **Strategy:** [the tag line](../../communication-strategy/identity.md#the-tag-line) and
   [the pitch](../../communication-strategy/identity.md#the-pitch-that-follows-the-line);
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring) and

@@ -11,7 +11,7 @@ the website's `v0.8.0` branch; each project's plan below says which pages.
 - **Page-type spec** — [../writing-guides/project.md](../writing-guides/project.md), which holds the
   page kinds, the mapping from internal document to page, and the rules every page follows; read it
   first
-- **Status** — in progress: the section index and parts of cgp-examples, Hypershell, and cgp-serde
+- **Status** — Draft: the section index and parts of cgp-examples, Hypershell, and cgp-serde
   are written, each listed in its plan's *What is written*; the error backends are planned
 
 ## What the section replaces
