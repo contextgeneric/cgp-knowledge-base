@@ -17,9 +17,9 @@ into the concrete struct is implemented only for the fully-present configuration
 The family is built around a single primitive, `UpdateField`, that changes one field's storage from
 one state to another. Everything else is either a wrapper over that primitive (`BuildField` sets an
 absent field present, `TakeField` removes a present field) or an entry/exit point for the whole
-process (`HasBuilder`/`IntoBuilder` start a build, `FinalizeBuild` ends one). The traits are in the
-prelude, except `TakeField` and `CanBuildFrom`, which are imported from `cgp::core::field::traits`
-and `cgp::core::field::impls`. They are implemented for a struct by
+process (`HasBuilder`/`IntoBuilder` start a build, `FinalizeBuild` ends one). `HasBuilder`,
+`BuildField`, and `FinalizeBuild` are in the prelude; `IntoBuilder`, `UpdateField`, and `TakeField`
+are imported from `cgp::core::field::traits`, and `CanBuildFrom` from `cgp::core::field::impls`. They are implemented for a struct by
 [`#[derive(BuildField)]`](../derives/derive_build_field.md), which also generates the partial
 companion type they operate on.
 

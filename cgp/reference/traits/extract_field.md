@@ -237,9 +237,8 @@ The family is normally driven through `to_extractor`, a chain of `extract_field`
 `finalize_extract_result` to discharge the impossible remainder at the end:
 
 ```rust
-use cgp::core::field::traits::{ExtractField, HasExtractor};
+use cgp::core::field::traits::{ExtractField, FinalizeExtractResult, HasExtractor};
 use cgp::prelude::*;
-use cgp::core::field::traits::FinalizeExtractResult;
 
 pub struct Circle {
     pub radius: f64,

@@ -32,6 +32,10 @@ its marker; do not write `::cgp::...` path literals inline.
   [cgp-macro-core/src/macros/export.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/macros/export.rs);
   the marker set they generate lives in
   [cgp-macro-core/src/exports.rs](https://github.com/contextgeneric/cgp/blob/main/crates/macros/cgp-macro-core/src/exports.rs),
-  and the `::cgp::macro_prelude` re-export surface is what makes the emitted paths resolve.
+  and the `::cgp::macro_prelude` re-export surface is what makes the emitted paths resolve. It is a
+  module of its own, separate from `cgp::prelude`, in
+  [crates/main/cgp/src/macro_prelude.rs](https://github.com/contextgeneric/cgp/blob/main/crates/main/cgp/src/macro_prelude.rs),
+  which re-exports the `macro_prelude` modules of `cgp-core` and `cgp-extra`; a name a marker emits
+  needs no place in the prelude.
 - The convention that all CGP items are referenced through these markers is recorded in
   [crates/macros/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/crates/macros/AGENTS.md).

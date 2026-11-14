@@ -364,8 +364,8 @@ not one of those items keeps its qualifier: in a crate that glob-imports its own
 `std::io::Error` stays qualified
 ([`glob_imported_error_route`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/errors/glob_imported_error_route.rs)).
 Each item counts under every path rustc prints for it. rustc prints a parent module by its name
-alone when that name is unique, so an item a glob re-exports out of a private module prints from
-its nearest uniquely named enclosing module, `add::EvalAdd` for `providers::eval::add::EvalAdd`, and
+alone when that name is unique, so an item a glob re-exports out of a private module prints from its
+nearest uniquely named enclosing module, `add::EvalAdd` for `providers::eval::add::EvalAdd`, and
 reads bare
 ([`glob_reexported_provider_cycle`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/wiring-cycle/glob_reexported_provider_cycle.rs)).
 A shorter path that starts at the name of a crate-root item or of a crate is left out, since rustc
@@ -375,11 +375,12 @@ prints a path from there for that other item
 The driver supplies the glob-imported names from the resolver's `glob_map`, and the items from each
 glob `use`'s target module. Reading that module needs the HIR, so only a message the tool rewrote
 gets it; an untransformed message, which can arrive during name resolution, treats a glob-imported
-name as unambiguous. Two kinds of run always collapse: one rooted at the `cgp` crate, since the
-prelude glob is why rustc qualifies it, and one ending in a name of CGP's encoding (`Symbol`,
-`Chars`, `Nil`, `Cons`, `Either`, `Void`, `PathCons`, `Field`, `Index`, `HasField`), whichever crate
-re-exports it, because the stages after the strip match those names bare. Some of them are ambiguous
-(`std::str::Chars`), but in a CGP diagnostic they are the encoding the resugaring folds away:
+name as unambiguous. Two kinds of run always collapse: one rooted at the `cgp` crate, since rustc
+qualifies a CGP name by the module that re-exports it, `cgp::prelude` or `cgp::macro_prelude`, and
+one ending in a name of CGP's encoding (`Symbol`, `Chars`, `Nil`, `Cons`, `Either`, `Void`,
+`PathCons`, `Field`, `Index`, `HasField`), whichever crate re-exports it, because the stages after
+the strip match those names bare. Some of them are ambiguous (`std::str::Chars`), but in a CGP
+diagnostic they are the encoding the resugaring folds away:
 
 ```text
 cgp::prelude::HasErrorType                        →   HasErrorType

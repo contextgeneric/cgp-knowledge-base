@@ -25,7 +25,6 @@ and no presence tracking, only a direct constructor per variant.
 The derive is applied to an enum and takes no arguments:
 
 ```rust
-use cgp::core::field::traits::FromVariant;
 use cgp::prelude::*;
 
 #[derive(FromVariant)]
@@ -34,6 +33,9 @@ pub enum Shape {
     Rectangle(Rectangle),
 }
 ```
+
+The derive is in the prelude, but the `FromVariant` trait it implements is not; code that calls
+`from_variant` imports it from `cgp::core::field::traits`.
 
 Each variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its
 payload type becomes the constructor's value type. A variant carries either one unnamed payload, as

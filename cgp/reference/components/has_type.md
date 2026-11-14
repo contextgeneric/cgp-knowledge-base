@@ -83,9 +83,8 @@ trait it names, such as `HasScalarType`.
 This context resolves two tags to two types through `open`:
 
 ```rust
-use cgp::core::types::HasType;
+use cgp::core::types::{HasType, TypeOf, TypeProviderComponent};
 use cgp::prelude::*;
-use cgp::core::types::{TypeOf, TypeProviderComponent};
 
 pub struct ScalarTag;
 pub struct NameTag;

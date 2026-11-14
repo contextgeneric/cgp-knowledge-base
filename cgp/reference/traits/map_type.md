@@ -161,9 +161,8 @@ to `IsPresent`, supplying `Default::default()` wherever a field was `IsNothing` 
 `Option`:
 
 ```rust
-use cgp::core::field::impls::IsOptional;
+use cgp::core::field::impls::{IsNothing, IsOptional, IsPresent};
 use cgp::core::field::traits::TransformMap;
-use cgp::core::field::impls::{IsNothing, IsPresent};
 use cgp::prelude::*;
 
 pub struct FillDefaults;

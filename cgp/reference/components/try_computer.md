@@ -49,9 +49,9 @@ The parts are these:
 `TryComputerRef`, with consumer trait `CanTryComputeRef`, is identical except that `try_compute_ref`
 takes `input: &Input`.
 
-The prelude exports the provider trait `TryComputer` and the keys `TryComputerComponent` and
-`TryComputerRefComponent`. The consumer traits `CanTryCompute` and `CanTryComputeRef`, the provider
-trait `TryComputerRef`, and the one-step promotion providers are imported from
+The prelude exports the provider trait `TryComputer` and the key `TryComputerComponent`. The consumer
+traits `CanTryCompute` and `CanTryComputeRef`, the provider trait `TryComputerRef`, the key
+`TryComputerRefComponent`, and the one-step promotion providers are imported from
 `cgp::extra::handler`. A context calling either member must also wire an error type, since both
 consumer traits have `HasErrorType` as a supertrait.
 

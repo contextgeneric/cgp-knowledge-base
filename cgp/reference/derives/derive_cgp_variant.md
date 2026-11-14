@@ -137,9 +137,8 @@ A variant is most useful when matching generically with a guaranteed-exhaustive 
 calls, with `finalize_extract_result` discharging the impossible remainder:
 
 ```rust
-use cgp::core::field::traits::{ExtractField, HasExtractor};
+use cgp::core::field::traits::{ExtractField, FinalizeExtractResult, HasExtractor};
 use cgp::prelude::*;
-use cgp::core::field::traits::FinalizeExtractResult;
 
 #[derive(CgpVariant)]
 pub enum Shape {

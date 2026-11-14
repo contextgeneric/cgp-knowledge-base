@@ -30,7 +30,6 @@ empty remainder.
 The derive is applied to an enum and takes no arguments:
 
 ```rust
-use cgp::core::field::traits::ExtractField;
 use cgp::prelude::*;
 
 #[derive(ExtractField)]
@@ -39,6 +38,10 @@ pub enum Shape {
     Rectangle(Rectangle),
 }
 ```
+
+The derive is in the prelude, but the traits it implements are not; code that calls their methods
+imports `HasExtractor`, `HasExtractorRef`, `HasExtractorMut`, `ExtractField`, and `FinalizeExtract`
+from `cgp::core::field::traits`.
 
 Each variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its
 payload type becomes its value type. A variant carries either one unnamed payload, as
@@ -194,9 +197,8 @@ The extractor is driven through `to_extractor`, a chain of `extract_field` calls
 `finalize_extract_result` to discharge the impossible remainder:
 
 ```rust
-use cgp::core::field::traits::{ExtractField, HasExtractor};
+use cgp::core::field::traits::{ExtractField, FinalizeExtractResult, HasExtractor};
 use cgp::prelude::*;
-use cgp::core::field::traits::FinalizeExtractResult;
 
 #[derive(ExtractField)]
 pub enum Shape {

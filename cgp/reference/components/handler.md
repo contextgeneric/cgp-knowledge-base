@@ -52,9 +52,9 @@ The parts are these:
 `HandlerRef`, with consumer trait `CanHandleRef`, is identical except that `handle_ref` takes
 `input: &Input`.
 
-The prelude exports the provider trait `Handler` and the keys `HandlerComponent` and
-`HandlerRefComponent`. The consumer traits `CanHandle` and `CanHandleRef`, the provider trait
-`HandlerRef`, and the one-step promotion providers are imported from `cgp::extra::handler`.
+The prelude exports the provider trait `Handler` and the key `HandlerComponent`. The consumer traits
+`CanHandle` and `CanHandleRef`, the provider trait `HandlerRef`, the key `HandlerRefComponent`, and
+the one-step promotion providers are imported from `cgp::extra::handler`.
 
 ## Implementations
 
@@ -163,11 +163,10 @@ message into a context whose error type is `String`, so `RaiseFrom` raises it th
 
 ```rust
 use core::marker::PhantomData;
-use cgp::extra::handler::HandlerRefComponent;
+use cgp::extra::handler::{CanHandleRef, HandlerRef, HandlerRefComponent};
 use cgp::prelude::*;
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
-use cgp::extra::handler::{CanHandleRef, HandlerRef};
 
 #[cgp_impl(new NonEmptyLength)]
 #[uses(CanRaiseError<String>)]

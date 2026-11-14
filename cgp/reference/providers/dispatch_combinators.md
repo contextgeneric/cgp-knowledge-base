@@ -22,9 +22,8 @@ Both halves are handler providers, so they wire into a context with
 - **The builders** implement `Computer`, `TryComputer`, and `Handler`, propagating an inner
   provider's error in the fallible forms.
 
-The prelude exports the value matchers `MatchWithValueHandlers`, `MatchWithValueHandlersRef`,
-`MatchWithValueHandlersMut`, and their `MatchFirstWith…` counterparts. Every other name here is
-imported from `cgp::extra::dispatch`.
+None of these names is in the prelude. Every one of them, the value matchers included, is imported
+from `cgp::extra::dispatch`.
 
 ## The matcher loop: `DispatchMatchers`
 
@@ -430,9 +429,7 @@ Either the entries should be removed, or the matchers should gain fallible impls
   (`match_with_field_handlers.rs`, `match_first_with_field_handlers.rs`, `to_field_handlers.rs`),
   and the builders in `field_builders/` (`build_and_set_field.rs`, `build_and_merge.rs`) and
   `builders/build_and_merge_outputs.rs`.
-- The prelude re-exports the value matchers from
-  [crates/main/cgp-extra/src/prelude.rs](https://github.com/contextgeneric/cgp/blob/main/crates/main/cgp-extra/src/prelude.rs);
-  the remaining structs are reached through `cgp::extra::dispatch`.
+- Every struct, the value matchers included, is reached through `cgp::extra::dispatch`.
 
 ## Public pages derived from this document
 

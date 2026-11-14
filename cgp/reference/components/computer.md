@@ -77,10 +77,10 @@ pub trait CanComputeAsync<Code, Input> {
 `CanComputeAsyncRef` is its by-reference counterpart, with `compute_async_ref` taking
 `input: &Input`. None of the four imports `HasErrorType`, because none can fail.
 
-The prelude exports the provider traits `Computer`, `AsyncComputer`, and `AsyncComputerRef` and the
-keys `ComputerComponent`, `ComputerRefComponent`, `AsyncComputerComponent`, and
-`AsyncComputerRefComponent`. The consumer traits `CanCompute`, `CanComputeRef`, `CanComputeAsync`,
-and `CanComputeAsyncRef`, the provider trait `ComputerRef`, and the one-step promotion providers
+The prelude exports the provider traits `Computer` and `AsyncComputer` and the keys
+`ComputerComponent`, `ComputerRefComponent`, and `AsyncComputerComponent`. The consumer traits
+`CanCompute`, `CanComputeRef`, `CanComputeAsync`, and `CanComputeAsyncRef`, the provider traits
+`ComputerRef` and `AsyncComputerRef`, the key `AsyncComputerRefComponent`, and the one-step promotion providers
 (`Promote`, `PromoteAsync`, `PromoteRef`, `TryPromote`) are imported from `cgp::extra::handler`, as
 are the promotion bundles such as `PromoteComputer`.
 
@@ -154,10 +154,9 @@ through `CanTryCompute`:
 
 ```rust
 use core::marker::PhantomData;
-use cgp::extra::handler::PromoteComputer;
+use cgp::extra::handler::{CanCompute, CanTryCompute, PromoteComputer};
 use cgp::prelude::*;
 use cgp::core::error::ErrorTypeProviderComponent;
-use cgp::extra::handler::{CanCompute, CanTryCompute};
 
 #[cgp_new_provider]
 impl<Context, Code> Computer<Context, Code, u64> for Double {
@@ -240,9 +239,10 @@ An async provider declares `async fn` in its impl. Wiring `AsyncComputerComponen
 
 ```rust
 use core::marker::PhantomData;
-use cgp::extra::handler::{AsyncComputerRef, AsyncComputerRefComponent};
+use cgp::extra::handler::{
+    AsyncComputerRef, AsyncComputerRefComponent, CanComputeAsync, CanComputeAsyncRef,
+};
 use cgp::prelude::*;
-use cgp::extra::handler::{CanComputeAsync, CanComputeAsyncRef};
 
 #[cgp_new_provider]
 impl<Context, Code> AsyncComputer<Context, Code, u64> for DoubleAsync {
