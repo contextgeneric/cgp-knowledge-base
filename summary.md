@@ -778,9 +778,9 @@ it stale.
   one entry rather than one document per page, with the Projects section recorded one plan per
   project.
 - [website/information-architecture.md](website/information-architecture.md) — the site as intended:
-  why most readers never see the homepage, the four routes in and why three fail, what each surface is
-  for, the target page inventory including unwritten pages and the AI section's overview and
-  knowledge-base subsection, the sidebar order, and each reader profile's path through the site.
+  the four public properties, why most readers never see the homepage and what that requires of every
+  page, what each surface is for, the target page inventory and the AI section's two directions, the
+  sidebar order and its reasons, each reader profile's path, and where a new page goes.
 - [website/patterns-book.md](website/patterns-book.md) — the CGP Patterns book, a legacy resource the site's pages leave out: its measured search
   performance and the single chapter carrying 77% of it, the split between seven current chapters and
   twelve stale ones, the one outbound link in nineteen chapters, the 28 unwritten entries the website

@@ -12,9 +12,9 @@ recommends it; this record stays for the book's repository.
 - **URL**: <https://patterns.contextgeneric.dev/>
 - **Source**: [`cgp-patterns`](https://github.com/contextgeneric/cgp-patterns), an
   [mdBook](https://rust-lang.github.io/mdBook/) whose chapters live in `content/`
-- **Last updated**: its content 2025-05-09, for the v0.4.0 release; its introduction since, which
-  now says which chapters are current and which predate the syntax
-- **Library pin**: `cgp = "0.4.0"`, three minor versions behind the published v0.7.0
+- **Last updated**: its content 2025-05-09, for the v0.4.0 release; its introduction revised since,
+  and it now says which chapters are current and which predate the syntax
+- **Library pin**: `cgp = "0.4.0"`, four minor versions behind v0.8.0
 - **Status**: **Outdated** in part: 7 of 19 written chapters are current, 12 are not
 - **Written**: 19 chapters of a 47-entry table of contents; the other 28 entries link nowhere
 
