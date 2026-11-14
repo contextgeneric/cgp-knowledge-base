@@ -115,7 +115,16 @@ programs the pages say compile under `tests/cargo_cgp/`.
 - Write and revise every page in natural-writing style, as the
   [tooling guide](../writing-guides/tooling.md#writing-style) requires, keeping tables, lists, and code
   blocks for sets and copied text. Preserve the captured outputs, runnable snippets, command syntax,
-  and the error-code entries' anchors and message forms.
+  and the error-code entries' anchors and message forms. The pages' prose follows these shapes, which
+  a revision keeps:
+  - The installation and editor pages separate prerequisites from instructions, and keep
+    requirements, command behavior, and limitations in separate paragraphs.
+  - The check and expansion pages connect each output to the requirement it exposes.
+  - The reading and troubleshooting pages connect each symptom to its cause and remedy;
+    troubleshooting runs from toolchain availability through driver loading to version checks.
+  - Error-code entries explain why a requirement fails before giving the remedy, and data-state
+    entries relate an operation's requirement to the builder or extractor in use.
+  - Repeated toolchain and build-authority explanations stay brief.
 - **Re-run the commands rather than editing their output.** Every quoted diagnostic and listing came
   from the tool on the program the page shows, and a paraphrase reads as a version mismatch; the
   guide's draft checks are the procedure.

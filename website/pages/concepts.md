@@ -29,9 +29,13 @@ split, then the three faces of dependency injection, then composition and scale,
 ideas, with *Recovering `Send` bounds* and *Modularity Hierarchy* last.
 
 **Every page and the index are in natural-writing style.** The index groups reading links by the
-question they answer. Each page opens with the idea and its purpose; running examples enter in the
-body, each tied to the requirement or limit it shows; cost sections relate each limit to the
-mechanism it qualifies; tables and reading lists stay where readers compare or choose.
+question they answer. Each page opens with the idea and its purpose, and the openings distinguish
+shared type choices, reusable wiring, explicit checks, computation composition, structural data
+operations, and stronger async bounds before their scenarios. Running examples enter in the body,
+each tied to the requirement or limit it shows, with short comparisons (type selection against type
+imports, matching against building) and consequences that form one argument in connected prose. Cost
+sections relate each limit to the mechanism it qualifies; tables and reading lists stay where readers
+compare or choose.
 
 ### What each page must preserve
 

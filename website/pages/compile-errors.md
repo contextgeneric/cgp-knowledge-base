@@ -12,7 +12,7 @@ tables.
 ## What it covers
 
 The page documents no construct. It turns the twenty-one class documents under
-[cgp/errors/](../../cgp/errors/README.md) into one page, because sixteen public pages would be a
+[cgp/errors/](../../cgp/errors/README.md) into one page, because twenty-one public pages would be a
 category no reader scans. It states the catalog's **hidden-versus-surfaced** axis once near the top as
 "the one distinction that explains everything", and opens with a lookup table keyed on what a reader
 has in front of them: a `rustc` code and a message shape.

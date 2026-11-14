@@ -12,7 +12,8 @@ how the documentation is written, and two how-to pages.
 
 ## What it covers
 
-The four pages explain the public [knowledge base](../../README.md) and keep the AI section's two directions apart:
+The four pages explain the public [knowledge base](../../README.md) and keep the AI section's two
+directions apart:
 
 - **The index** (`index.md`): what the base is, who writes it and for whom, the order of authority
   from source code to base to skill and site, a one-line map of each top-level section named in

@@ -15,9 +15,8 @@ the internal reference.
 The reference is the site's largest surface and is [canonical](../writing-guides/reference.md)
 rather than a supplement to docs.rs: the completeness obligation is against the index, so no
 construct is missing from the site. It is a top-level category at `docs/reference/`, position 7, with
-a hand-written index as its category link and seven subdirectories by what a construct *is*. The
-groups with a written Overview (`macros/`, `attributes/`, `derives/`, `providers/`, and `traits/`)
-link it as their category page; the rest use a `generated-index`. Two pages document no construct:
+a hand-written index as its category link and seven subdirectories by what a construct *is*, each of
+which links a written overview as its category page. Two pages document no construct:
 the [compile-errors page](compile-errors.md) and the [glossary](glossary.md).
 
 The groups and their layout:
@@ -33,8 +32,8 @@ The groups and their layout:
   own overview. These use the guide's
   [built-in-component variant](../writing-guides/reference.md#the-layered-page).
 - **`providers/`:** fifty pages: sixteen singletons, including the five `With…` aliases
-  (`WithContext`, `WithType`, `WithField`, `WithFieldRef`, `WithDelegatedType`), and the subsections `error/` (7), `handler/` (13), `dispatch/` (11),
-  and `monad/` (3), each with an overview.
+  (`WithContext`, `WithType`, `WithField`, `WithFieldRef`, `WithDelegatedType`), and the subsections
+  `error/` (7), `handler/` (13), `dispatch/` (11), and `monad/` (3), each with an overview.
 - **`traits/`:** fifty-seven construct pages in eleven importance-ordered subdirectories mirroring the
   internal trait families: `wiring` (3), `field-access` (6), `shape` (5), `builder` (7), `optional`
   (8), `variant` (7), `casting` (4), `type-level` (7), `namespace` (3), `formatting` (3), and `monad`

@@ -25,8 +25,9 @@ dependency* have few glossary links because their uses already link their Concep
 ## How it relates to the knowledge base
 
 [writing-guides/reference.md](../writing-guides/reference.md#the-glossary-page) specifies the page,
-its entries, and the rules for linking a term; the definitions follow [vocabulary.md](../../communication-strategy/vocabulary.md). The page
-shows no code, so it has no `example-code` mirror.
+its entries, and the rules for linking a term; the definitions follow
+[vocabulary.md](../../communication-strategy/vocabulary.md). The page shows no code, so it has no
+`example-code` mirror.
 
 ## Maintaining it
 

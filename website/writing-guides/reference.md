@@ -180,6 +180,8 @@ Two groups vary the descent:
   it appears once. *Under the hood* shows how the macros generate and consume it. Each trait page
   states where its traits are imported from, since about half are outside the prelude.
 
+The macro, attribute, and derive groups have no *Definition* section.
+
 ## Conventions the port must follow
 
 These mechanics are settled; copy them rather than rediscover them.
