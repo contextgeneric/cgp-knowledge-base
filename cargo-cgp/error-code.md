@@ -696,11 +696,13 @@ code of their own:
 ## Maintaining this catalog
 
 The codes are defined in the code, so this catalog tracks them under the
-[synchronization rule](../AGENTS.md#keeping-each-section-in-step-with-its-source). The constants live in the
+[synchronization rule](../AGENTS.md#keeping-each-section-in-step-with-its-source). The constants
+live in the
 [`code`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/code.rs)
 module, and every message and `help` is worded in the rustc-free
 [`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis)
-and [`rewrite`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite)
+and
+[`rewrite`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite)
 modules, from what the driver's `detect` and `resolve` modules recover.
 
 A new main-message class takes the next free number in its family's block, and a family that outgrows its

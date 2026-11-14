@@ -2,8 +2,8 @@
 
 This directory documents every public item in the `expression` crate, grouped by family, with one
 document per family following the entry template in
-[../../../writing-guide.md](../../../writing-guide.md#reference-entries). The tables below list every item so a
-reader can find one by what it handles and see which contexts wire it. Read the
+[../../../writing-guide.md](../../../writing-guide.md#reference-entries). The tables below list
+every item so a reader can find one by what it handles and see which contexts wire it. Read the
 [architecture](../architecture/README.md) first for how the families fit together.
 
 ## Providers

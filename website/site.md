@@ -93,11 +93,11 @@ holds its conventions. Four matter from this side:
 - **Generated code is only shape-checked here;** `cargo cgp expand` on the test target is the
   authority on its text.
 
-**A page gets its file when someone writes, revises, or reviews it,** so a missing file means
-nobody has been through the page, per
-[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#code). On `v0.8.0` the
-targets are `tests/concepts/` (every concept page with code), `tests/comparisons/` (every comparison
-page), `tests/tutorials/` (the ported tutorial parts), the standalone binaries
+**A page gets its file when someone writes, revises, or reviews it,** so a missing file means nobody
+has been through the page, per
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#code). On
+`v0.8.0` the targets are `tests/concepts/` (every concept page with code), `tests/comparisons/`
+(every comparison page), `tests/tutorials/` (the ported tutorial parts), the standalone binaries
 `tests/quickstart.rs`, `tests/overview.rs`, and `tests/front_page.rs`, `tests/cargo_cgp/`, and
 `tests/reference/`, which mirrors `errors.rs`, `macros/`, `attributes/`, `derives/`, `traits/`,
 `providers/` (every page with code), `components/` with `handler/`, and `types/`. The `traits/` and

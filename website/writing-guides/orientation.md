@@ -150,12 +150,13 @@ instead, because a pin crates.io does not carry fails on the reader's first buil
 
 ## Resources
 
-**The ecosystem index, for a reader who wants something that is not on this site.** It is a list, and
-each entry says in one line what the thing is and who it is for. The entries are the crates, the
+**The ecosystem index, for a reader who wants something that is not on this site.** It is a list,
+and each entry says in one line what the thing is and who it is for. The entries are the crates, the
 toolchain, the talks, and the projects built with CGP, leaving out the CGP Patterns book and the
-Hermes SDK, which are [legacy resources](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources). A link
-to another page of this site belongs in the Introduction's routing list instead. Every entry is
-checked when the page is touched: the crate exists under the name given, the link resolves, and
+Hermes SDK, which are
+[legacy resources](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources).
+A link to another page of this site belongs in the Introduction's routing list instead. Every entry
+is checked when the page is touched: the crate exists under the name given, the link resolves, and
 anything version-specific holds, since this page ages by accumulation.
 
 ## The Contribute page
@@ -173,8 +174,8 @@ as a fact about the routes rather than as encouragement.
 first that fits. The routes may be grouped or renamed, and one with nowhere to lead is removed:
 
 - **Discussion:** the Discord server, GitHub Discussions, and the subreddit.
-- **Reporting a problem:** a confusing page, or an error in the knowledge base, a contribution in its
-  own right because the checks can miss an error, per
+- **Reporting a problem:** a confusing page, or an error in the knowledge base, a contribution in
+  its own right because the checks can miss an error, per
   [contributions from outside the project](../../communication-strategy/ai-disclosure.md#contributions-from-outside-the-project).
   Link the knowledge base's issue tracker and the section on reporting problems in *Contributing to
   CGP with an Agent*, which [knowledge-base.md](knowledge-base.md#the-section-shape) specifies.
@@ -190,14 +191,14 @@ first that fits. The routes may be grouped or renamed, and one with nowhere to l
 
 **The sponsorship section and the acknowledgement belong to the author.** The sponsorship section is
 his first-person account, per
-[author-personality.md](../../communication-strategy/author-personality.md#stated-preferences), under
-its own heading, with nothing before it speaking as "I"; a revision fixes a broken link and changes
-anything else only at his request. The acknowledgement records where CGP came from, which
+[author-personality.md](../../communication-strategy/author-personality.md#stated-preferences),
+under its own heading, with nothing before it speaking as "I"; a revision fixes a broken link and
+changes anything else only at his request. The acknowledgement records where CGP came from, which
 [the website repository's rules](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources)
 leave to the author: keep its text under a `##` heading, so the page has one `h1`, and raise its
 Hermes SDK link, the only one outside the dated posts to that
-[legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources), with the author rather than
-editing it.
+[legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources),
+with the author rather than editing it.
 
 **Elsewhere the page is in project voice**: the reader is "you" and the project is "CGP", never "we"
 or "our" for a project with one author, per

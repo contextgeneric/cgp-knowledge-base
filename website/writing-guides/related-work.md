@@ -61,13 +61,15 @@ transformations make the port, and the first decides whether it is publishable:
   compared idea; the public reader already knows it. Keep the terms the comparison needs, one cited
   snippet per sub-concept, and a link to the primary source. The test, and the port's one judgement
   call: a practitioner skims it without irritation, and a curious Rust reader can still follow.
-- **Re-point every link**, per the [one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links): a concept to its
-  Concepts page, a reference link to its reference page, an example to the tutorial or Projects example
-  page with the same scenario or inlined code, a blog record to the live post, and a
-  communication-strategy link dropped. A point drawn from the
-  [unpublished incoherent-Rust draft](../blog/incoherent-rust-today.md) is never cited: attribute it to
-  the [RustLab transcript](../blog/rustlab-2025-coherence.md) where the transcript makes it, state it as
-  the project's own analysis where it does not, and otherwise hold it until the post publishes.
+- **Re-point every link**, per the
+  [one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links): a
+  concept to its Concepts page, a reference link to its reference page, an example to the tutorial
+  or Projects example page with the same scenario or inlined code, a blog record to the live post,
+  and a communication-strategy link dropped. A point drawn from the
+  [unpublished incoherent-Rust draft](../blog/incoherent-rust-today.md) is never cited: attribute it
+  to the [RustLab transcript](../blog/rustlab-2025-coherence.md) where the transcript makes it,
+  state it as the project's own analysis where it does not, and otherwise hold it until the post
+  publishes.
 - **Keep the Sources section**, including the sentence recording which toolchain compiled each family
   of snippets, since it says what was verified and what was transcribed.
 
@@ -108,15 +110,15 @@ The titles below are jobs; a page's headings may name the compared tool.
   that puts it to work, and the neighbouring comparison a reader of this one likely knows.
 - **Sources**: the internal document's framed list, re-pointed, opening with the toolchain sentence.
 
-The page closes with the provenance note in the wording the reference and Concepts pages share, adding
-that its CGP code was verified against the library's source and its other snippets against the
-toolchains named in Sources, per [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page).
+The page closes with the provenance note in the wording the reference and Concepts pages share,
+adding that its CGP code was verified against the library's source and its other snippets against
+the toolchains named in Sources, per
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page).
 
 ## Writing about another community's tool
 
 **Never disparage the compared tool, and assume its maintainers are reading**, per the
-[base-wide rule](../../AGENTS.md#this-repository-is-public) and the
-[strategy's guardrail](../../communication-strategy/writing-guide.md#honesty-is-the-strategy). The internal
+[base-wide rule](../../AGENTS.md#this-repository-is-public). The internal
 documents faithfully record what users dislike about their tools, so three habits keep the port
 honest:
 
@@ -154,11 +156,11 @@ such as overlapping impls failing with `E0119`, is a `trybuild` compile-fail fix
 CGP snippets from the internal document, which takes them from [examples/](../../examples/README.md),
 in the modern idioms the [guides](../../cgp/guides/README.md) teach.
 
-**Foreign snippets are compiled against a named toolchain before publication**, recorded in the page's
-Sources sentence, per the
+**Foreign snippets are compiled against a named toolchain before publication**, recorded in the
+page's Sources sentence, per the
 [related-work rules](../../related-work/writing-guide.md#compile-the-foreign-snippets-and-record-the-toolchain).
-A snippet that cannot be run, because the feature is a proposal or a research fork, says so beside the
-code.
+A snippet that cannot be run, because the feature is a proposal or a research fork, says so beside
+the code.
 
 **Say when a syntax is version-specific**, naming the older form, as the internal documents do: OCaml's
 `match ... with effect` from 5.3, Scala's colon-form `given` from 3.6, Zig's lowercase type tags from
@@ -186,8 +188,8 @@ explanations do not fit, since this reader arrives with a vocabulary rather than
 
 **Publishing the section adds a public claim**: the author reads every page's *What each approach
 costs* and *Where the other tool is the better choice* in full before publication, per the
-[authorship rule](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong), and the
-[disclosure page](../pages/ai-disclaimer.md) says so.
+[authorship rule](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong),
+and the [disclosure page](../pages/ai-disclaimer.md) says so.
 
 ## What must not be on a comparison page
 

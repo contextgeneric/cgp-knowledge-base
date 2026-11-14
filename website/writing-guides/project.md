@@ -144,8 +144,8 @@ Two kinds of program need a different first step:
 
 **The body quotes the parts that carry the program's ideas, each under a heading that names the
 idea**, not the file, per
-[projects/writing-guide.md](../../projects/writing-guide.md#the-shape-of-a-project-section), so the headings in
-order summarize how the program works. In each part:
+[projects/writing-guide.md](../../projects/writing-guide.md#the-shape-of-a-project-section), so the
+headings in order summarize how the program works. In each part:
 
 - **Name each construct on first appearance, with a one-clause gloss and a link**: a CGP construct
   to its [reference page](reference.md), a project construct to the project's reference page or, in
@@ -261,8 +261,8 @@ macro, a public trait, or an adapter type.
 - **An error or detail type produced by one provider** is documented on that provider's page.
 
 **Each page follows the component and trait variant of the site reference's
-[layered descent](reference.md#the-layered-page)**, with the fields of the internal entry template in
-[projects/writing-guide.md](../../projects/writing-guide.md#reference-entries) placed inside it:
+[layered descent](reference.md#the-layered-page)**, with the fields of the internal entry template
+in [projects/writing-guide.md](../../projects/writing-guide.md#reference-entries) placed inside it:
 
 1. **A one-sentence summary**, from the entry's opening sentence.
 2. **Overview**: the problem the construct solves in the project, with the gloss a newcomer needs.
@@ -321,15 +321,16 @@ Sidebar labels carry no backticks, and an apostrophe inside a single-quoted YAML
 [the reference's conventions](reference.md#conventions-the-port-must-follow).
 
 **Every written page closes with the provenance note.** Projects pages are agent-written from this
-base, the first level in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md), so they use
-the reference's shared sentence. A scaffolded stub carries none, per
-[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page). Each project's plan records the level.
+base, the first level in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md), so they
+use the reference's shared sentence. A scaffolded stub carries none, per
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page). Each
+project's plan records the level.
 
 ## Linking
 
 **A Projects page never links into the knowledge base**, per the
-[one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links). Each kind of internal link has a fixed
-replacement:
+[one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links). Each
+kind of internal link has a fixed replacement:
 
 | Internal link target | Public replacement |
 |---|---|
@@ -390,11 +391,12 @@ where it is known, what the diagnostics look like when the wiring is wrong, and 
 proof of concept where it is one. Never state a benchmark, compile time, or adoption claim the
 project has not measured.
 
-**Each post that presents a project gets a notice at its top pointing to the section, and each example
-page links the post back.** The notice is the one sanctioned edit to a published post, per
-[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts): it adds a link and changes no claim. The plan names
-the posts. The link back sits in *Where to go next*, at the post's section for the program where there
-is one, and says the post's code predates the current design where it does.
+**Each post that presents a project gets a notice at its top pointing to the section, and each
+example page links the post back.** The notice is the one sanctioned edit to a published post, per
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts): it
+adds a link and changes no claim. The plan names the posts. The link back sits in *Where to go
+next*, at the post's section for the program where there is one, and says the post's code predates
+the current design where it does.
 
 **The notice goes on each post that presents a project or a feature its pages document**, once that
 section is written: the post the section grew out of, the series posts that explain the feature's

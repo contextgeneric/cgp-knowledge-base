@@ -103,7 +103,8 @@ four of its habits matter most here:
 - **No unbenchmarked performance claim.** "Faster" needs a citable number, and CGP's honest claim is
   almost always about compile-time-versus-runtime placement rather than speed.
 - **No hedged or pre-release wording.** On the release branch, write official versions as already
-  shipped; the post and site publish only after both releases exist, and that gate stays out of the draft.
+  shipped; the post and site publish only after both releases exist, and that gate stays out of the
+  draft.
 
 ## Publishing, and what happens afterwards
 

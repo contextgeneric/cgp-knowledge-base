@@ -143,8 +143,8 @@ retain an unsupported claim, but a local revision is not permission to rewrite t
 
 Docs pages describe current behavior and can be corrected in place. Published blog posts are dated
 records and follow the separate restrictions in
-[website/AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts). Record drift in their internal
-documents rather than silently updating historical code or claims.
+[website/AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts).
+Record drift in their internal documents rather than silently updating historical code or claims.
 
 Preserve passages that deliberately carry the author's personal voice, such as the sponsorship
 section above and personal statements about maturity or capacity. Follow the page's provenance

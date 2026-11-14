@@ -760,8 +760,8 @@ it stale.
 ## `website/`: the public website, page by page
 
 - [website/README.md](website/README.md) — what this section records and why a public site needs an
-  internal record, records against specifications, the document template, the status words, and the
-  catalog.
+  internal record, records against specifications, the document template, the status words, the
+  rules for records, and the catalog.
 - [website/information-architecture.md](website/information-architecture.md) — the site as intended:
   the four public properties, why most readers never see the homepage and what that requires of every
   page, what each surface is for, the target page inventory and the AI section's two directions, the
@@ -833,7 +833,8 @@ it stale.
 ### `website/writing-guides/`: how new pages should be written
 
 - [README.md](website/writing-guides/README.md) — what a writing guide is, the five decisions every
-  guide assumes (voice, frame, name, style, and offloading), the catalog, the reading map that names
+  guide assumes (voice, frame, name, style, and offloading), what to read before writing a page,
+  layering the depth, the blog post conventions, the catalog, the reading map that names
   the communication-strategy and SEO sections each kind of page draws on, and where a guide's
   authority stops.
 - [homepage.md](website/writing-guides/homepage.md) — the landing page: its two-tier structure, the

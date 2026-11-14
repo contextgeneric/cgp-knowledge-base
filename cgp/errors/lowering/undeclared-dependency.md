@@ -19,9 +19,10 @@ and [`#[use_type]`](../../reference/attributes/use_type.md) an abstract type tog
 that declares it. A dependency left out of them is used on a context that carries no bound for it.
 
 The macros cannot catch the omission, because they do not type-check what they lower: which trait a
-method belongs to, or which trait declares an associated type, is known only to the compiler. So
-the omission is an [acceptable failure](../../implementation/writing-guide.md) that CGP defers to the
-compiler. It takes one shape for each kind of declaration.
+method belongs to, or which trait declares an associated type, is known only to the compiler. So the
+omission is an
+[acceptable failure](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile)
+that CGP defers to the compiler. It takes one shape for each kind of declaration.
 
 ### A trait the body calls without `#[uses]`
 

@@ -13,7 +13,8 @@ including corner-case behavior, known limitations and bugs, and the test suite t
 construct. It is the documentation an agent reviewing or maintaining the macro source reads first:
 it records the current state of the code in one place so an agent can pick up a construct's
 implementation from where the last one left off. The authoring rules, document templates, and the
-synchronization rule that binds these documents to the code live in [writing-guide.md](writing-guide.md).
+synchronization rule that binds these documents to the code live in
+[writing-guide.md](writing-guide.md).
 
 These documents complement the [construct reference](../reference/README.md) rather than repeating
 it. The reference explains what each construct does for a *user* (its accepted syntax and the code

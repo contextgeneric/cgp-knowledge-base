@@ -45,13 +45,17 @@ The sections then run from most AI to least:
 
 [ai-disclosure.md](../../communication-strategy/ai-disclosure.md) owns the policy, the wording
 rules, the two claims easiest to get wrong, and the page's specification. Its review claim is taken
-from the [authorship rule](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong) rather
-than paraphrased, because a wrong version is a false public claim about the project. The disposition
-behind it is in [author-personality.md](../../communication-strategy/author-personality.md), and the
-linking mechanics in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page).
+from the
+[authorship rule](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong)
+rather than paraphrased, because a wrong version is a false public claim about the project. The
+disposition behind it is in
+[author-personality.md](../../communication-strategy/author-personality.md), and the linking
+mechanics in
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page).
 
 The page is one of the two surfaces allowed to link into the knowledge base, with the
-[knowledge-base pages](knowledge-base.md), per [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links): the
+[knowledge-base pages](knowledge-base.md), per
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links): the
 base is the subject it discloses. It links the repository's front door, never a path inside it, and
 links the [process page](knowledge-base.md) for the full account.
 

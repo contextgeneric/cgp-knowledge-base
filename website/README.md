@@ -2,20 +2,20 @@
 
 This section is the knowledge base's record of the public CGP website, the Docusaurus site at
 <https://contextgeneric.dev> built from the
-[`contextgeneric.dev`](https://github.com/contextgeneric/contextgeneric.dev) repository. It documents
-nothing about CGP itself: for each page the site publishes, it records what the page says, how
-current it is, and which knowledge-base documents an agent reads before touching it. The rules for
-its records are [below](#rules-for-records), and the rules for the pages are in the website
+[`contextgeneric.dev`](https://github.com/contextgeneric/contextgeneric.dev) repository. It
+documents nothing about CGP itself: for each page the site publishes, it records what the page says,
+how current it is, and which knowledge-base documents an agent reads before touching it. The rules
+for its records are [below](#rules-for-records), and the rules for the pages are in the website
 repository's [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md).
 
 ## Why the section exists
 
 The website is public and the knowledge base is internal, so a published page cannot link into the
 base, apart from the pages that explain the base, within the bounds of
-[the one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links). The agent maintaining a page still needs the
-background and current-version facts only the base holds, so each record here links outward to the
-page and inward to the reference, concepts, examples, and communication-strategy documents the page
-rests on.
+[the one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links).
+The agent maintaining a page still needs the background and current-version facts only the base
+holds, so each record here links outward to the page and inward to the reference, concepts,
+examples, and communication-strategy documents the page rests on.
 
 The records also track drift. Almost every blog post predates v0.8.0, and several teach syntax the
 library no longer accepts, such as `#[cgp_context]`, `cgp_preset!`, the `Async` trait, `ProvideType`,
@@ -65,9 +65,8 @@ A record gives its page's status as one of these words:
 
 ## Rules for records
 
-These rules govern the section's own documents; the rules for the published pages are in the
-website repository's
-[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md).
+These rules govern the section's own documents; the rules for the published pages are in the website
+repository's [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md).
 
 - Write a page's record to [the document template](#the-document-template), and a writing guide to
   the guide shape the same section gives.

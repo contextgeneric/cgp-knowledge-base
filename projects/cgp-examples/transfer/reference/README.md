@@ -2,9 +2,10 @@
 
 This directory documents every public item in the `transfer` crate, grouped by family, with one
 document per family following the entry template in
-[../../../writing-guide.md](../../../writing-guide.md#reference-entries). The tables below list every item so a
-reader can find one by what it is, see where it is wired, and know which module to import it from.
-Read the [architecture](../architecture/README.md) first for how the families fit together.
+[../../../writing-guide.md](../../../writing-guide.md#reference-entries). The tables below list
+every item so a reader can find one by what it is, see where it is wired, and know which module to
+import it from. Read the [architecture](../architecture/README.md) first for how the families fit
+together.
 
 ## Components and abstract types
 

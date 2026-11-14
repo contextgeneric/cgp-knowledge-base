@@ -229,10 +229,10 @@ it then needs only part of what the rest of this file describes. The website's
 [knowledge base pages](https://contextgeneric.dev/docs/ai/knowledge-base) explain this use to the
 people directing such agents. These facts matter to an outside agent.
 
-**The authoring rules bind only an agent that edits this base or a member project.** The
-`AGENTS.md` and the section writing guides describe how documents are written and kept in sync. A reading agent can treat
-them as context for how much to trust a document, and skip their instructions about registering,
-committing, and loading the writing skill.
+**The authoring rules bind only an agent that edits this base or a member project.** The `AGENTS.md`
+and the section writing guides describe how documents are written and kept in sync. A reading agent
+can treat them as context for how much to trust a document, and skip their instructions about
+registering, committing, and loading the writing skill.
 
 **Read selectively, because the index is large.** [summary.md](summary.md) lists every document in
 one file of roughly a hundred kilobytes. An agent with a narrow question can start from the section

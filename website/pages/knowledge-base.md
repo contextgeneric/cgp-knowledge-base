@@ -49,14 +49,15 @@ which also owns the
 [contribution policy](../../communication-strategy/ai-disclosure.md#contributions-from-outside-the-project);
 the page shape, how-to rules, and draft checks come from
 [writing-guides/knowledge-base.md](../writing-guides/knowledge-base.md). The term follows
-[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each), and
-the readers are the two hypothesis profiles in
+[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
+and the readers are the two hypothesis profiles in
 [readers.md](../../communication-strategy/readers.md#the-reader-who-doubts-agent-written-documentation).
 
-The pages are the second exception to the [one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links):
-they link the base's front door, its issue tracker, and its four top-level entry files, and name every
-deeper path in prose. The base's [README](../../README.md#reading-it-from-outside-the-project) carries
-the matching section for an outside agent, which the using page relies on.
+The pages are the second exception to the
+[one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links):
+they link the base's front door, its issue tracker, and its four top-level entry files, and name
+every deeper path in prose. The base's [README](../../README.md#reading-it-from-outside-the-project)
+carries the matching section for an outside agent, which the using page relies on.
 
 Pages outside the subsection link in with one line beside the reader's task: the skill index to the
 using page, the Contribute page's *Contribute Code or Documentation* section to the contributing

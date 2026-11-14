@@ -163,8 +163,9 @@ Each is recorded in the project's [housekeeping](../../projects/hypershell/issue
 ### Knowledge-base prerequisites
 
 - **A comparison document**, `projects/hypershell/shell-script-comparison.md`, named for what it
-  compares against per [projects/writing-guide.md](../../projects/writing-guide.md#the-shape-of-a-project-section):
-  what a shell script does that Hypershell does not, what the type-level form adds, where the shell is
+  compares against per
+  [projects/writing-guide.md](../../projects/writing-guide.md#the-shape-of-a-project-section): what
+  a shell script does that Hypershell does not, what the type-level form adds, where the shell is
   the better choice, and the relationship to tagless final and Servant. Its sources are the
   announcement post's trade-offs and related-work sections, re-verified against the current code.
 - **A confirmed run of `compare_and_branch`**, recorded in its example document.

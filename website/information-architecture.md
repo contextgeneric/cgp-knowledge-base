@@ -18,15 +18,16 @@ must not duplicate:
   the **canonical construct reference**.
 - **[docs.rs/cgp](https://docs.rs/cgp):** the crate's API signatures. The site does not defer to it;
   see [writing-guides/reference.md](writing-guides/reference.md).
-- **The [CGP Patterns book](https://patterns.contextgeneric.dev/):** CGP from first principles, without
-  the `cgp` crate's constructs, and a [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources)
+- **The [CGP Patterns book](https://patterns.contextgeneric.dev/):** CGP from first principles,
+  without the `cgp` crate's constructs, and a
+  [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources)
   the site leaves out.
 - **[cgp-skills](https://github.com/contextgeneric/cgp-skills):** the agent skill, published on the site
   as a copy under `docs/ai/` whose source lives in that repository.
 
 The site may cite these and never this [knowledge base](README.md), outside the bounds of the
-[one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links), which is why each page's provenance is recorded
-here rather than on the page.
+[one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links),
+which is why each page's provenance is recorded here rather than on the page.
 
 ## Most readers do not arrive at the homepage
 
@@ -173,9 +174,10 @@ where each should end up. A page that fits no path probably should not exist.
   *Checking and debugging* → the reference, where they live once writing code. The checking tutorial
   is where this reader learns to read a CGP error or gives up.
 - **Evaluator:** the front page's cost section → *Modularity Hierarchy* → Resources → the Projects
-  index and the libraries' limitations pages. Candour and the Projects section, real systems the site
-  hosts, persuade them; the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) is a
-  [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources) the site leaves out.
+  index and the libraries' limitations pages. Candour and the Projects section, real systems the
+  site hosts, persuade them; the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) is a
+  [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources)
+  the site leaves out.
 - **Type-system and functional-programming reader:** *Bypassing coherence* → *Consumer and provider
   traits* → the comparison for the paradigm they know → the Hypershell section, the deep-dive posts,
   and the [RustLab transcript](blog/rustlab-2025-coherence.md), the best thing on the site for them.

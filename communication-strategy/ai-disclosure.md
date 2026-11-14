@@ -9,7 +9,7 @@ CGP must disclose its substantial use of AI. Agent-written documentation, the
 [public knowledge base](https://github.com/contextgeneric/cgp-knowledge-base), and `Co-Authored-By`
 commit trailers make that use visible. A disclosure should give readers an accurate account without
 making them reconstruct it from repository history. The
-[honesty rule](writing-guide.md#honesty-is-the-strategy) applies to process as well as technical claims.
+[honesty rule](../AGENTS.md#this-repository-is-public) applies to process as well as technical claims.
 
 The author's own writing provides the model for disclosure. The
 [new-website post](../website/blog/new-website.md) describes LLM assistance with the site's design,
@@ -123,17 +123,18 @@ The claims the project can make, and their limits, are these:
   reference document, its implementation document, and the skill's reference describe the same
   construct, and a change to one is a change to all.
 - **The rules are written down and public.** The base's `AGENTS.md` holds the rules every document
-  follows, each section's writing guide records how its documents are written, and the outputs (the skill and the website's ported pages) are derived from the base
-  rather than written fresh.
+  follows, each section's writing guide records how its documents are written, and the outputs (the
+  skill and the website's ported pages) are derived from the base rather than written fresh.
 - **A person directs the work, and agents ask rather than guess.** The author designs CGP, writes
-  and revises the rules, and chooses what gets documented, per [the first
-  level](#documentation-and-articles-written-by-agents-from-a-public-knowledge-base). Every
-  `AGENTS.md` tells an agent to stop and ask when a choice has more than one defensible answer. A
-  review of a document checks its claims against the source in one pass before improving its prose
-  in another, per [the `cgp` writing guide](../cgp/writing-guide.md#reviewing-and-updating-a-document),
-  and a new kind of website page gets its writing guide before the page, per
-  [the website writing guides](../website/writing-guides/README.md#before-writing-a-page). Do not turn
-  this into a claim that the author reads every page; the review arrangement is stated below.
+  and revises the rules, and chooses what gets documented, per
+  [the first level](#documentation-and-articles-written-by-agents-from-a-public-knowledge-base).
+  Every `AGENTS.md` tells an agent to stop and ask when a choice has more than one defensible
+  answer. A review of a document checks its claims against the source in one pass before improving
+  its prose in another, per
+  [the `cgp` writing guide](../cgp/writing-guide.md#reviewing-and-updating-a-document), and a new
+  kind of website page gets its writing guide before the page, per
+  [the website writing guides](../website/writing-guides/README.md#before-writing-a-page). Do not
+  turn this into a claim that the author reads every page; the review arrangement is stated below.
 - **The checks are partly mechanical and mostly not.** Expansion snapshots and `cargo-cgp` UI
   fixtures fail a build when generated code or a diagnostic changes. Agreement between prose and
   code is enforced by agents following the rules and by the author's review, which can miss a stale

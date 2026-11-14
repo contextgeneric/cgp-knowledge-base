@@ -3,8 +3,9 @@
 This document records what is wrong with or missing from cgp-serde on the `v0.8.0` branch, grouped
 as defects, missing features, and housekeeping. Every entry was confirmed against the source with a
 probe build unless it says otherwise. Remove an entry in the same change that fixes it in the
-project, per [../writing-guide.md](../writing-guide.md#the-shape-of-a-project-section). The reference documents
-carry the same issues in their per-provider Known issues sections, with the behavior in full.
+project, per [../writing-guide.md](../writing-guide.md#the-shape-of-a-project-section). The
+reference documents carry the same issues in their per-provider Known issues sections, with the
+behavior in full.
 
 ## Defects
 

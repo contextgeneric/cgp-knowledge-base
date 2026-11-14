@@ -25,15 +25,15 @@ records the three build settings this needs.
 
 ## How it relates to the knowledge base
 
-The skill is built from this base and is one of the [five views](../../cgp/writing-guide.md) of CGP's
-truth, under the [synchronization rule](../../AGENTS.md#the-synchronization-rule). The site renders
+The skill is built from this base and is one of the five views of CGP's truth that the
+[synchronization rule](../../AGENTS.md#the-synchronization-rule) keeps in agreement. The site renders
 the skill repository rather than transcribing it, so the page cannot drift from the skill, and
 correcting the skill is the only way to correct the page. Three consequences follow:
 
 - **The skill's links are published, and that is accepted.** The skill cites the knowledge base by
   GitHub URL roughly ninety times. These pages are the bounded exception to the
-  [one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links): they are prose for agents, the index says
-  so first, and nobody hand-writes them.
+  [one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links):
+  they are prose for agents, the index says so first, and nobody hand-writes them.
 - **Heading depth matters here.** Docusaurus anchors `h2` and `h3` only, so a skill file must have one
   `#` title with its sections beneath it, or its sections lose their anchors and table-of-contents
   entries. Check with a count of `#` headings outside code fences; a plain grep overcounts shell
@@ -48,8 +48,8 @@ correcting the skill is the only way to correct the page. Three consequences fol
 - The index is the only page here an agent writes. Correct the skill in
   [`cgp-skills`](https://github.com/contextgeneric/cgp-skills), read that checkout to know what the
   skill says, and leave the submodule pointer to the author, per
-  [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#the-agent-skill). A lagging snapshot is not a
-  defect.
+  [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#the-agent-skill).
+  A lagging snapshot is not a defect.
 - Advancing the snapshot is one submodule pointer commit, but a **new file** in `cgp/references/`
   also needs a symlink beside its siblings, because the site publishes named files rather than a
   directory glob.

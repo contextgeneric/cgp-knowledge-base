@@ -103,10 +103,10 @@ base first, and release conditions), the source posts, and what maintaining the 
 ## Maintaining these documents
 
 **A plan leads its pages until they land, then records them.** As a project's pages are written, its
-plan lists them as written, removes the prerequisites they met, and records the revision each page was
-verified against and how the pages were made, per
-[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page). The [page records' index](../pages/README.md)
-points here, since the section is a ported catalog.
+plan lists them as written, removes the prerequisites they met, and records the revision each page
+was verified against and how the pages were made, per
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page). The
+[page records' index](../pages/README.md) points here, since the section is a ported catalog.
 
 **The synchronization rule reaches the public pages**: a change to a provider's behavior updates its
 internal reference entry and its public page in the same change, and a change to an example updates

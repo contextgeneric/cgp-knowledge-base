@@ -44,8 +44,8 @@ change to mark it. Say so when that happens, per [writing-guide.md](writing-guid
 
 ## The catalog
 
-The authoring rules for examples, including how to add a new one, live in [writing-guide.md](writing-guide.md), on
-top of the base-wide rules in [../AGENTS.md](../AGENTS.md).
+The authoring rules for examples, including how to add a new one, live in
+[writing-guide.md](writing-guide.md), on top of the base-wide rules in [../AGENTS.md](../AGENTS.md).
 
 - [Area calculation](area-calculation.md): computing the area of several shapes, progressing from
   field-driven functions to a wireable area component with composable higher-order providers.

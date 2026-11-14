@@ -48,14 +48,14 @@ extended by anyone without upstream coordination.
 
 ## Which revision these documents describe
 
-These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0 and is not yet
-released. The repository's `main` branch tracks `cgp` 0.7.0, and the crates on crates.io are the
-0.1.0 release (tag `v0.1.0`), built against `cgp` 0.4.1. All three carry version 0.1.0. They differ
-in architecture, not only in syntax: the published release and `main` both assemble the language
-from `cgp_preset!` presets, and `v0.8.0` is the only branch built on `HypershellNamespace`. It is
-also the only one that dispatches on the input type with path keys, where `main` uses
-`UseInputDelegate`. So code quoted from these documents compiles only against `v0.8.0`. Source links
-point at that branch, per
+These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0 and is not yet released. The
+repository's `main` branch tracks `cgp` 0.7.0, and the crates on crates.io are the 0.1.0 release
+(tag `v0.1.0`), built against `cgp` 0.4.1. All three carry version 0.1.0. They differ in
+architecture, not only in syntax: the published release and `main` both assemble the language from
+`cgp_preset!` presets, and `v0.8.0` is the only branch built on `HypershellNamespace`. It is also
+the only one that dispatches on the input type with path keys, where `main` uses `UseInputDelegate`.
+So code quoted from these documents compiles only against `v0.8.0`. Source links point at that
+branch, per
 [../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
 
 ## How it is organized
@@ -104,9 +104,9 @@ leaves out:
 ## The documents
 
 The section follows the project shape in
-[../writing-guide.md](../writing-guide.md#the-shape-of-a-project-section). Start with the architecture for the
-ideas every piece shares, then use the reference to look up an item, and the examples to see a
-program run.
+[../writing-guide.md](../writing-guide.md#the-shape-of-a-project-section). Start with the
+architecture for the ideas every piece shares, then use the reference to look up an item, and the
+examples to see a program run.
 
 - [architecture/](architecture/README.md): the design on one page, and one document per idea:
   - [abstract-syntax.md](architecture/abstract-syntax.md): programs as types, the four kinds of

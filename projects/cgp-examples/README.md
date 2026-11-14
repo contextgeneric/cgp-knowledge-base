@@ -34,10 +34,11 @@ crate uses current CGP idioms, so its code is safe to copy for the patterns it s
 
 ## Which revision these documents describe
 
-These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0. It is ahead of `main`,
-which builds against the published `cgp` 0.7.0 and has no `web-app` crate, no namespace wiring in
+These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0. It is ahead of `main`, which
+builds against the published `cgp` 0.7.0 and has no `web-app` crate, no namespace wiring in
 `transfer`, and no `transfer` README. None of the crates is published. Source links point at the
-`v0.8.0` branch, per [../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
+`v0.8.0` branch, per
+[../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
 
 The repository also carries an unmerged `profile-picture` branch, which adds a `profile-picture`
 crate and drops `web-app`. Nothing on that branch is documented here; the published version of that
@@ -71,7 +72,8 @@ rather than in a subproject's `issues.md`:
 ## The documents
 
 Each subproject has its own section, sized to its crate, with its own `testing.md` and `issues.md`,
-per [../writing-guide.md](../writing-guide.md#the-shape-of-a-project-section). One document spans them:
+per [../writing-guide.md](../writing-guide.md#the-shape-of-a-project-section). One document spans
+them:
 
 - [constructs.md](constructs.md): each CGP construct the crates use, mapped to the subproject
   documents that show it in running code.

@@ -149,11 +149,12 @@ an advanced reader continues into the machinery.
   which have no public home. It sits after the examples on purpose, because a reader judges between
   constructs better having just seen one in use.
 - **Under the hood:** the exact expansion, with before/after blocks, required on a macro, attribute,
-  derive, or trait page, because a Rust programmer will not adopt macros they cannot see through. The
-  heading marks it as internals, so it needs no admonition. Check it with `cargo cgp expand`, since it
-  drifts most. For a macro or attribute with custom syntax, a **`## Formal grammar`** section follows
-  it, in the Rust Reference's [notation](https://doc.rust-lang.org/reference/notation.html), under the
-  internal [conventions](../../cgp/writing-guide.md#syntax-grammar-conventions). The argument-free macros
+  derive, or trait page, because a Rust programmer will not adopt macros they cannot see through.
+  The heading marks it as internals, so it needs no admonition. Check it with `cargo cgp expand`,
+  since it drifts most. For a macro or attribute with custom syntax, a **`## Formal grammar`**
+  section follows it, in the Rust Reference's
+  [notation](https://doc.rust-lang.org/reference/notation.html), under the internal
+  [conventions](../../cgp/writing-guide.md#syntax-grammar-conventions). The argument-free macros
   (`#[async_trait]`, `#[cgp_auto_dispatch]`, `#[cgp_auto_getter]`) have no grammar section.
 - **Common Mistakes:** corner cases, surprising behavior, and open bugs, from the internal Known
   issues, omitted when there are none and never softened.
@@ -227,12 +228,13 @@ dropped. `Product!`, `Sum!`, `Struct!`, `Enum!`, `Path!`, and `#[async_trait]` a
 never use the word above the advanced line; `Symbol!` is not.
 
 **Provenance note:** every reference page, a written index included, closes with "An AI agent wrote
-this page using the CGP knowledge base. Its content was verified against the library's source. See How
-AI is used in this project.", the last phrase linking the disclosure's documentation section, per
-[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page). Other footers follow its sentence structure:
-"revised" for a revision alone, "wrote and revised" for both; tooling pages keep their claims about
-verification against the tool; a footer never attributes verification to a person or agent the record
-does not name. Pages without a note and the skill snapshot are outside this convention.
+this page using the CGP knowledge base. Its content was verified against the library's source. See
+How AI is used in this project.", the last phrase linking the disclosure's documentation section,
+per [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page).
+Other footers follow its sentence structure: "revised" for a revision alone, "wrote and revised" for
+both; tooling pages keep their claims about verification against the tool; a footer never attributes
+verification to a person or agent the record does not name. Pages without a note and the skill
+snapshot are outside this convention.
 
 **Verification:**
 
@@ -273,8 +275,8 @@ notice, while `traits/`, where generated constructs sit among written ones, uses
 ## Linking: three destinations, and one prohibition
 
 **A reference page never links into the knowledge base,** per the
-[one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links); it is the easiest thing to get wrong in a port.
-Links go to three places instead:
+[one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links); it
+is the easiest thing to get wrong in a port. Links go to three places instead:
 
 - **Elsewhere on the site:** the [tutorial](tutorial.md) that teaches the construct, the
   [Projects example page](project.md#the-example-page) that shows it in a program, the

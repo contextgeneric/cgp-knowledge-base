@@ -33,7 +33,8 @@ The import declares the alias `Scalr`, so the bare `Scalr` in the return type is
 same failure arises from a stale name after a trait rename, or from importing an item that lives on
 a different trait than the one named. CGP is working as designed here: it cannot see the trait's
 item list during expansion, so it lowers the name literally and defers to the compiler: an
-[acceptable failure](../../implementation/writing-guide.md), not a defect.
+[acceptable failure](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile),
+not a defect.
 
 ## The raw diagnostic
 

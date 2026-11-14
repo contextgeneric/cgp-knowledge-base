@@ -5,7 +5,8 @@ It is the documentation an agent reviewing, debugging, or extending the source r
 records the current state of the code in one place, so an agent can pick up a subsystem from where
 the last one left off rather than reconstructing it from the crates each time. The authoring rules,
 the document shape, and the synchronization rule that binds these documents to the code live in
-[../writing-guide.md](../writing-guide.md) for the section's implementation rules, on top of the knowledge-base-wide rules in [../../AGENTS.md](../../AGENTS.md).
+[../writing-guide.md](../writing-guide.md) for the section's implementation rules, on top of the
+knowledge-base-wide rules in [../../AGENTS.md](../../AGENTS.md).
 
 Each document explains how one subsystem *works* and *why it is built that way*. That includes where
 it depends on the compiler's unstable `rustc_driver` behavior, and how the design compares to a

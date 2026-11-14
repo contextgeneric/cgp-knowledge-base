@@ -27,10 +27,10 @@ Honesty is the whole value of the section. A document that flatters CGP or misre
 work is worse than useless, because the readers it ultimately serves are the people most able to see
 through both. So each document explains the related work well enough that its own community would
 recognize the account, states the pros and cons of both sides, and names the cases where the related
-work is the better tool. The [writing-guide.md](writing-guide.md) in this directory carries the authoring rules,
-chiefly the obligations every document must meet and the rule that sets this section apart from the
-rest of the knowledge base: unlike examples, related-work documents cite their sources and compile
-their foreign-language snippets.
+work is the better tool. The [writing-guide.md](writing-guide.md) in this directory carries the
+authoring rules, chiefly the obligations every document must meet and the rule that sets this
+section apart from the rest of the knowledge base: unlike examples, related-work documents cite
+their sources and compile their foreign-language snippets.
 
 ## How related work differs from the other sections
 
@@ -56,9 +56,9 @@ comparisons span all three.
 ## The catalog
 
 Each document below names an external concept and compares it to CGP. The authoring rules for adding
-one live in [writing-guide.md](writing-guide.md). The first two documents are the ones a Rust reader compares CGP
-to before any other, so they are listed first. The type-theoretic ideas follow, then dependency
-injection, the runtime mechanisms, and the senses of the word "capability".
+one live in [writing-guide.md](writing-guide.md). The first two documents are the ones a Rust reader
+compares CGP to before any other, so they are listed first. The type-theoretic ideas follow, then
+dependency injection, the runtime mechanisms, and the senses of the word "capability".
 
 - [Rust's own proposals](rust-language-proposals.md): specialization (RFC 1210, unstable since 2016
   with a lifetime soundness hole), the dictionary-passing account of traits, Boxy's named and

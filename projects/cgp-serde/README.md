@@ -40,14 +40,14 @@ yet, because the record and sequence providers do not declare a length. The desi
 
 ## Which revision these documents describe
 
-These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0 and is not yet
-released. The crates on crates.io and the repository's `main` branch are the 0.2.0 release, built
-against `cgp` 0.7.0; the `v0.8.0` branch still carries version 0.2.0 in its manifests. The library
-crates on the two branches offer the same components and providers and differ only in attribute
-syntax that `cgp` 0.8.0 changed, while the tests on `v0.8.0` wire per-type dispatch with the
-`open` statement where the release builds `UseDelegate` tables. So what these documents say a
-provider does holds for both, but code quoted from them compiles only against the `v0.8.0` branch.
-Source links point at that branch, per
+These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0 and is not yet released. The
+crates on crates.io and the repository's `main` branch are the 0.2.0 release, built against `cgp`
+0.7.0; the `v0.8.0` branch still carries version 0.2.0 in its manifests. The library crates on the
+two branches offer the same components and providers and differ only in attribute syntax that `cgp`
+0.8.0 changed, while the tests on `v0.8.0` wire per-type dispatch with the `open` statement where
+the release builds `UseDelegate` tables. So what these documents say a provider does holds for both,
+but code quoted from them compiles only against the `v0.8.0` branch. Source links point at that
+branch, per
 [../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
 
 ## How it is organized
@@ -100,8 +100,8 @@ summary leaves out:
 ## The documents
 
 The section follows the project shape in
-[../writing-guide.md](../writing-guide.md#the-shape-of-a-project-section). Start with the architecture for the
-ideas every provider shares, then use the reference to look up a provider.
+[../writing-guide.md](../writing-guide.md#the-shape-of-a-project-section). Start with the
+architecture for the ideas every provider shares, then use the reference to look up a provider.
 
 - [architecture/](architecture/README.md): the design on one page, and one document per idea:
   - [serde-bridge.md](architecture/serde-bridge.md): what cgp-serde replaces in Serde, what it

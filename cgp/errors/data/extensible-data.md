@@ -17,9 +17,10 @@ may still yield, `IsNothing` for a field not yet set, `IsVoid` for a variant rul
 [extractor](../../reference/traits/extract_field.md) operation, and every
 [cast](../../reference/traits/cast.md) built on them, is implemented only for the marker
 configurations where it is valid, so an operation applied in the wrong state has no impl. The
-failure is an [acceptable](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile)
-one: the derive cannot know which operations the program will apply, and the compiler checks each one
-against the state the program reaches. The shapes differ in which state is wrong.
+failure is an
+[acceptable](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile)
+one: the derive cannot know which operations the program will apply, and the compiler checks each
+one against the state the program reaches. The shapes differ in which state is wrong.
 
 ### A field set twice, or taken before it is set
 

@@ -87,5 +87,5 @@ lines the page numbers.
   the quoted error's first line, and screenshot every visual change at the guide's sizes in both
   themes in Firefox and Chrome.
 - The page is on the author's
-  [read-in-full list](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong), so a
-  substantial change returns to the author before publication.
+  [read-in-full list](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong),
+  so a substantial change returns to the author before publication.

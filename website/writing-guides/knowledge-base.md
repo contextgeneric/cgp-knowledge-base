@@ -22,7 +22,9 @@ and two of them are the site's first how-to guides.
 ## Why this is its own kind of page
 
 **These pages explain the knowledge base itself**, so they cannot do their job without naming its
-files, and the [one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links) grants them a bounded exception.
+files, and the
+[one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links)
+grants them a bounded exception.
 
 **They carry both directions of the AI section, one per page.** The process page is a **fact about the
 project**, read by someone deciding whether to trust agent-written pages; the two how-to pages are
@@ -50,11 +52,11 @@ implementation.
   with the problem as a mechanism rather than a judgement: an agent reading CGP's macro source sees
   token manipulation rather than meaning, and one prompted without a written record falls back on
   training that shows syntax the library no longer accepts. It traces `#[cgp_component]` through the
-  views that must agree, so "kept in sync" is checkable; says who directs the work (the author designs
-  CGP, writes the rules, and chooses what is documented, and the rules tell agents to ask rather than
-  guess and to check claims before polishing prose); links the disclaimer for who reviews what rather
-  than restating it; and ends on the limits, including the errors the checks miss, sending a reader who
-  finds an error to the issue tracker. Every claim comes from
+  views that must agree, so "kept in sync" is checkable; says who directs the work (the author
+  designs CGP, writes the rules, and chooses what is documented, and the rules tell agents to ask
+  rather than guess and to check claims before polishing prose); links the disclaimer for who
+  reviews what rather than restating it; and ends on the limits, including the errors the checks
+  miss, sending a reader who finds an error to the issue tracker. Every claim comes from
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#the-knowledge-base-behind-the-first-level),
   and the page is on the author's
   [read-in-full list](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong).
@@ -98,9 +100,10 @@ needs the steps:
 
 - **Never link into a document inside a section of the base.** The pages may link the repository's
   front door, its issue tracker, and its four top-level entry files (`README.md`, `summary.md`,
-  `AGENTS.md`, `sibling-projects.md`), per [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links), and every
-  page that asks a reader to report a problem links the issue tracker. A section is named by its
-  directory in prose, as an instruction to pass to an agent.
+  `AGENTS.md`, `sibling-projects.md`), per
+  [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links), and
+  every page that asks a reader to report a problem links the issue tracker. A section is named by
+  its directory in prose, as an instruction to pass to an agent.
 - **Never characterize other projects' AI use, or public attitudes to it.** The process page contrasts
   CGP's practice with one-shot prompting as a mechanism; it calls nobody's output slop and does not
   describe what the Rust community thinks, which

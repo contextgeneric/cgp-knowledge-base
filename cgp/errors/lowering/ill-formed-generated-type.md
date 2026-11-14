@@ -37,8 +37,9 @@ ill-formed, and the compiler rejects it. The boundary is shared by
 [`#[cgp_fn]`](../../reference/macros/cgp_fn.md)
 [`#[implicit]`](../../guides/reading-context-fields.md) argument, since all three lower field types
 through `parse_field_type`. Deferring to the compiler is correct here, because the macro lacks the
-type information the check needs: an [acceptable failure](../../implementation/writing-guide.md), not a
-defect.
+type information the check needs: an
+[acceptable failure](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile),
+not a defect.
 
 ## The raw diagnostic
 

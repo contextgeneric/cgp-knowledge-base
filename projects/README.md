@@ -67,8 +67,8 @@ expecting: the project moves with the library while the post that announced it d
   `cgp-error-std`, which each make one concrete type a context's abstract error. Documented with one
   subdirectory per crate and a shared architecture and guides, against the `cgp` repository's `main`
   branch, where they live under `crates/standalone/error/`.
-- [writing-guide.md](writing-guide.md): this section's rules, on verifying a section against its project's source,
-  probing a runtime claim, and the shape each project document follows.
+- [writing-guide.md](writing-guide.md): this section's rules, on verifying a section against its
+  project's source, probing a runtime claim, and the shape each project document follows.
 
 ## How these relate to the rest of the base
 
