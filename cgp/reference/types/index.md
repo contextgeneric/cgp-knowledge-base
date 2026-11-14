@@ -49,7 +49,8 @@ itself, with no `Field<Index<0>, _>` wrapper, although its `HasField<Index<0>>` 
 
 Access by index resolves entirely at compile time, because the position lives in the type. There is
 no bounds check and no runtime indexing, and an out-of-range index is a type error rather than a
-panic: `Index<5>` on a three-field struct has no matching `HasField` impl. `Index` is in the prelude.
+panic: `Index<5>` on a three-field struct has no matching `HasField` impl. `Index` is not in the
+prelude; it is imported from `cgp::core::field::types`.
 
 ### Writing it, and what goes wrong
 
@@ -60,11 +61,11 @@ positional field outside a derive or to read one through `get_field`. In an erro
 
 The two mistakes are a position the struct lacks and a string where a number belongs. Reading
 `*point.get_field(PhantomData::<Index<5>>)` on `pub struct Point(pub f64, pub f64, pub f64);` fails
-with ``error[E0277]: the trait bound `Point: cgp::prelude::HasField<cgp::prelude::Index<5>>` is not satisfied``,
+with ``error[E0277]: the trait bound `Point: cgp::macro_prelude::HasField<cgp::macro_prelude::Index<5>>` is not satisfied``,
 and the help lines list the three `HasField<Index<0>>` to `HasField<Index<2>>` impls the struct does
 have, so an off-by-one index surfaces the same way. `Symbol!("0")` is a string tag, never generated
 for a tuple field, so reading it on `Pair` fails with
-``error[E0277]: the trait bound `Pair: cgp::prelude::HasField<cgp::macro_prelude::Symbol<1, cgp::macro_prelude::Chars<'0', Nil>>>` is not satisfied``.
+``error[E0277]: the trait bound `Pair: cgp::macro_prelude::HasField<cgp::macro_prelude::Symbol<1, cgp::macro_prelude::Chars<'0', Nil>>>` is not satisfied``.
 
 ## Examples
 
@@ -88,6 +89,8 @@ pub struct Pair(pub u32, pub String);
 A field is then read by passing its `Index` tag, with the position fixed at compile time:
 
 ```rust
+use cgp::core::field::traits::HasField;
+use cgp::core::field::types::Index;
 use cgp::prelude::*;
 
 let pair = Pair(7, "hi".to_string());

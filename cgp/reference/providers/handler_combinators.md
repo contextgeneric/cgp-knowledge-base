@@ -301,10 +301,11 @@ table maps each input type to its provider.
 This pipeline of computers reads a factor or an addend from context fields at each stage:
 
 ```rust
-use core::marker::PhantomData;
-use cgp::extra::handler::{Computer, ComputerComponent};
+use cgp::core::field::traits::HasField;
+use cgp::core::field::types::Field;
+use cgp::extra::handler::{CanCompute, Computer, ComputerComponent, PipeHandlers};
 use cgp::prelude::*;
-use cgp::extra::handler::{CanCompute, PipeHandlers};
+use core::marker::PhantomData;
 
 #[cgp_new_provider]
 impl<Context, Tag, Field> Computer<Context, Tag, u64> for Multiply<Field>

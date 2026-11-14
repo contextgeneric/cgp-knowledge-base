@@ -163,6 +163,7 @@ case `#[cgp_auto_getter]` cannot express. The context stores the value in `first
 method is `name`:
 
 ```rust
+use cgp::core::field::impls::UseField;
 use cgp::prelude::*;
 
 #[cgp_getter]

@@ -104,6 +104,7 @@ variants:
 
 ```rust
 use cgp::core::field::traits::FromFields;
+use cgp::core::field::types::{Either, Field};
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, CgpData)]

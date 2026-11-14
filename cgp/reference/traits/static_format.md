@@ -76,8 +76,8 @@ pub trait StaticString {
 It is a blanket impl over a private `StaticBytes` trait, which only `Symbol<LEN, Chars>` and `Nil`
 implement, so a bare `Chars` list lacks it:
 ``<Chars<'a', Nil> as StaticString>::VALUE`` fails with
-``error[E0277]: the trait bound `cgp::macro_prelude::Chars<'a', cgp::prelude::Nil>: StaticString` is not satisfied``,
-with a help line naming the unimplemented `StaticBytes`. `Nil`'s value is `""`.
+``error[E0277]: the trait bound `cgp::macro_prelude::Chars<'a', Nil>: StaticString` is not satisfied``,
+with a label naming the unimplemented `StaticBytes`. `Nil`'s value is `""`.
 `Symbol<LEN, Chars>` computes a `[u8; LEN]` byte array at const-evaluation time by walking the
 `Chars` list and UTF-8-encoding each character into the array, then `StaticString::VALUE` validates
 those bytes as UTF-8 and exposes the result as a `&'static str`. The `LEN` const parameter of the

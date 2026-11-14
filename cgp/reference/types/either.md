@@ -86,8 +86,8 @@ for that job.
 
 An enum's shape follows each variant's own form: a variant with one unnamed field has that field's
 type as its payload, a named-field variant a product of `Field` entries keyed by `Symbol!`, a
-multi-field tuple variant one keyed by `Index`, and a unit variant `Nil`. Both types are in the
-prelude.
+multi-field tuple variant one keyed by `Index`, and a unit variant `Nil`. Neither type is in the
+prelude; both are imported from `cgp::core::field::types`, and `Sum!` writes them for you.
 
 ### Matching a sum, and what goes wrong
 
@@ -95,7 +95,7 @@ A `match` on a sum selects a branch by depth, and its last arm is the `Void` pos
 arm may be left out, since Rust treats an uninhabited payload as unreachable in a match on a value, so
 `match shape.to_fields() { Either::Left(c) => …, Either::Right(Either::Left(r)) => … }` is
 exhaustive. Behind a reference it is required: omitting it on a `&Sum![u32, bool]` fails with
-``error[E0004]: non-exhaustive patterns: `&cgp::prelude::Either::Right(cgp::prelude::Either::Right(_))` not covered``,
+``error[E0004]: non-exhaustive patterns: `&Either::Right(Either::Right(_))` not covered``,
 with the note `` `Void` is uninhabited but is not being matched by value, so a wildcard `_` is required ``,
 and `Either::Right(Either::Right(void)) => match *void {}` closes it. A positional match belongs
 where the enum's order is known; generic code takes an enum apart by variant name through the
@@ -140,6 +140,7 @@ pub enum Shape {
 A sum type can also be written directly, and a value picks one branch by its nesting depth:
 
 ```rust
+use cgp::core::field::types::Either;
 use cgp::prelude::*;
 
 type Token = Sum![u32, String, bool];

@@ -92,6 +92,7 @@ entry, whatever its key.
 A provider that needs a field gets a matching marker impl automatically:
 
 ```rust
+use cgp::core::field::traits::HasField;
 use cgp::prelude::*;
 
 #[cgp_component(Greeter)]

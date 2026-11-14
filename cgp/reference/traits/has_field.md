@@ -52,9 +52,9 @@ pub trait HasFieldMut<Tag>: HasField<Tag> {
 
 Neither trait carries a `#[diagnostic::on_unimplemented]` note; a missing field is reported as an
 unsatisfied `HasField<Symbol<…>>` bound, whose tag spells the field name, and
-[cargo-cgp](../cargo-cgp.md) turns it into a "missing field" message. `HasField` is in the
-prelude; `HasFieldMut`, `FieldGetter`, `MutFieldGetter`, `MapField`, and `FieldMapper` are imported
-from `cgp::core::field::traits`.
+[cargo-cgp](../cargo-cgp.md) turns it into a "missing field" message. Only the `HasField` derive is
+in the prelude; `HasField`, `HasFieldMut`, `FieldGetter`, `MutFieldGetter`, `MapField`, and
+`FieldMapper` are imported from `cgp::core::field::traits`.
 
 Field access has a provider-side mirror, so it can be wired like a component rather than only
 implemented on the context. `FieldGetter<Context, Tag>` corresponds to `HasField`, taking the
@@ -162,6 +162,7 @@ A provider that needs a value from its context expresses the need as a `HasField
 the field with `get_field`:
 
 ```rust
+use cgp::core::field::traits::HasField;
 use cgp::prelude::*;
 
 #[cgp_component(Greeter)]

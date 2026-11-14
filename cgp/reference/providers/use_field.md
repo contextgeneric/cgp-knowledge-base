@@ -30,7 +30,8 @@ pub struct UseField<Tag>(pub PhantomData<Tag>);
 pub type WithField<Tag> = WithProvider<UseField<Tag>>;
 ```
 
-`UseField` is in the prelude. `WithField` is not, and is imported from `cgp::core::field::impls`.
+Neither `UseField` nor `WithField` is in the prelude; both are imported from
+`cgp::core::field::impls`.
 
 ## Implementations
 
@@ -97,6 +98,7 @@ where
 This getter reads a field whose name differs from the method's:
 
 ```rust
+use cgp::core::field::impls::UseField;
 use cgp::prelude::*;
 
 #[cgp_getter]

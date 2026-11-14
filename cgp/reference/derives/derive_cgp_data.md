@@ -215,8 +215,9 @@ A struct example shows the builder view end to end. Because `Person` derives `Cg
 builder that can be filled field by field and from other structs that share field names:
 
 ```rust
-use cgp::prelude::*;
 use cgp::core::field::impls::CanBuildFrom;
+use cgp::core::field::traits::{BuildField, FinalizeBuild, HasBuilder};
+use cgp::prelude::*;
 
 #[derive(CgpData)]
 pub struct Person {

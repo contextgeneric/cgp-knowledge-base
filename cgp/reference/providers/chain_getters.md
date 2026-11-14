@@ -76,8 +76,8 @@ This getter reads a port stored inside the context's config:
 
 ```rust
 use cgp::core::component::WithProvider;
+use cgp::core::field::impls::{ChainGetters, UseField};
 use cgp::prelude::*;
-use cgp::core::field::impls::ChainGetters;
 
 #[cgp_getter]
 pub trait HasPort {

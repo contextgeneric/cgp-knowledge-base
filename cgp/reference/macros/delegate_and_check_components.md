@@ -281,6 +281,7 @@ component with a generic marker can be wired and checked in one step.
 A main context wired and checked together is the intended use:
 
 ```rust
+use cgp::core::field::impls::UseField;
 use cgp::prelude::*;
 
 #[derive(HasField)]

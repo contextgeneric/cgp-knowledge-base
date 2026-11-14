@@ -72,7 +72,7 @@ pub trait ToFieldsRef: HasFieldsRef {
 
 `to_fields` consumes the value to produce the shape, `from_fields` rebuilds the value from the
 shape, and `to_fields_ref` borrows the value to produce a shape of references, for when the value
-must be kept. `HasFields` is in the prelude, as is its derive; the other four traits are imported
+must be kept. Only its derive is in the prelude; `HasFields` and the other four traits are imported
 from `cgp::core::field::traits`.
 
 ## Behavior

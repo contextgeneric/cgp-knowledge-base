@@ -144,8 +144,9 @@ derive the record machinery, a builder can copy shared fields in bulk with `buil
 rest individually:
 
 ```rust
-use cgp::prelude::*;
 use cgp::core::field::impls::CanBuildFrom;
+use cgp::core::field::traits::{BuildField, FinalizeBuild, HasBuilder};
+use cgp::prelude::*;
 
 #[derive(CgpRecord)]
 pub struct Person {

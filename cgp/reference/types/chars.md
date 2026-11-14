@@ -100,6 +100,7 @@ A type-level string most often appears as the `Tag` of a [`HasField`](../traits/
 naming the field a function or provider reads:
 
 ```rust
+use cgp::core::field::traits::HasField;
 use cgp::prelude::*;
 
 fn print_name<Context>(context: &Context)

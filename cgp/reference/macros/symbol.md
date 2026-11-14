@@ -92,6 +92,7 @@ parameter, so length-dependent code reads it from the type instead of recursing 
 from any context that has one:
 
 ```rust
+use cgp::core::field::traits::HasField;
 use cgp::prelude::*;
 
 fn print_name<Context>(context: &Context)

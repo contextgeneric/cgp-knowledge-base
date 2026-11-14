@@ -72,10 +72,11 @@ impl<Head, Tail: Len> Len for Cons<Head, Tail> {
 // <Product![u32, String, bool] as Len>::LEN == 3
 ```
 
-`Nil` ends the string and path lists too: `Symbol!("hi")` is `Symbol<2, Chars<'h', Chars<'i', Nil>>>`,
-the empty string is `Symbol<0, Nil>`, and a `Path!` chain of [`PathCons`](path_cons.md) cells ends in
-`Nil`. It is also the shape of a unit struct that derives `HasFields`, and `product![]` is the `Nil`
-value. Both types are in the prelude.
+`Nil` ends the string and path lists too: `Symbol!("hi")` is
+`Symbol<2, Chars<'h', Chars<'i', Nil>>>`, the empty string is `Symbol<0, Nil>`, and a `Path!` chain
+of [`PathCons`](path_cons.md) cells ends in `Nil`. It is also the shape of a unit struct that
+derives `HasFields`, and `product![]` is the `Nil` value. Neither type is in the prelude; both are
+imported from `cgp::core::field::types`, and `Product!` writes them for you.
 
 ### Reading and writing them, and what goes wrong
 

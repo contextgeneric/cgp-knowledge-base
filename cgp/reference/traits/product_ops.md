@@ -143,6 +143,7 @@ concatenating compute new product types:
 
 ```rust
 use cgp::core::field::traits::{AppendProduct, ConcatProduct};
+use cgp::core::field::types::Field;
 use cgp::prelude::*;
 
 type Base = Product![Field<Symbol!("host"), String>];

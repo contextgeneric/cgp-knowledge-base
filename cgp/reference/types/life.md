@@ -26,14 +26,15 @@ it in generated code and in errors about provider resolution, and writes it in o
 pub struct Life<'a>(pub PhantomData<*mut &'a ()>);
 ```
 
-It holds no runtime data; it only carries `'a` in the type system, and it is in the prelude. The
-phantom type `*mut &'a ()` decides how `Life<'a>` behaves under subtyping. A `*mut T` is invariant
-in `T`, so `Life<'a>` is invariant in `'a`: a `Life<'long>` is neither a subtype nor a supertype of
-a `Life<'short>`, and a function returning its `Life<'l>` argument as a `Life<'s>` fails with
-`lifetime may not live long enough`, while the same function over a `PhantomData<&'l ()>` compiles.
-The lifetime is therefore exact wherever subtyping could apply, as in a provider struct holding a
-`PhantomData<Life<'a>>`. Trait resolution matches lifetimes exactly whatever the variance, so the
-choice governs values and types containing `Life`, not which impl the compiler selects.
+It holds no runtime data; it only carries `'a` in the type system. It is not in the prelude and is
+imported from `cgp::core::field::types`. The phantom type `*mut &'a ()` decides how `Life<'a>`
+behaves under subtyping. A `*mut T` is invariant in `T`, so `Life<'a>` is invariant in `'a`: a
+`Life<'long>` is neither a subtype nor a supertype of a `Life<'short>`, and a function returning its
+`Life<'l>` argument as a `Life<'s>` fails with `lifetime may not live long enough`, while the same
+function over a `PhantomData<&'l ()>` compiles. The lifetime is therefore exact wherever subtyping
+could apply, as in a provider struct holding a `PhantomData<Life<'a>>`. Trait resolution matches
+lifetimes exactly whatever the variance, so the choice governs values and types containing `Life`,
+not which impl the compiler selects.
 
 The raw pointer has a side effect: `Life<'a>` is neither `Send` nor `Sync`, and neither is any
 struct holding a `PhantomData<Life<'a>>`, such as the provider struct `#[cgp_new_provider]` (or
@@ -75,6 +76,8 @@ the inner-provider `IsProviderFor` counterpart, recorded in the
 in the check for it. A borrowing getter component, wired on a context that holds a borrow:
 
 ```rust
+use cgp::core::field::traits::HasField;
+use cgp::core::field::types::Life;
 use cgp::prelude::*;
 
 #[cgp_component(ReferenceGetter)]

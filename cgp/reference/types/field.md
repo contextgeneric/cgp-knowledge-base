@@ -50,9 +50,9 @@ The remaining impls defer to the value and ignore the tag, so a `Field` compares
 `Value`. `Debug` forwards to the value's `Debug` without showing the tag, and `PartialEq` and `Eq`
 compare only `value`, each requiring the matching bound on `Value`. Code that needs the name reads
 it from the `Tag` parameter through trait resolution, such as matching a `Field<Symbol!("name"), _>`
-against a `HasField<Symbol!("name")>` bound, never from stored data. Those four impls are the
-whole set: `Field` is not `Clone`, `Copy`, or `Default` whatever its `Value` is, and it is in the
-prelude.
+against a `HasField<Symbol!("name")>` bound, never from stored data. Those four impls are the whole
+set: `Field` is not `Clone`, `Copy`, or `Default` whatever its `Value` is. It is not in the prelude
+and is imported from `cgp::core::field::types`.
 
 ### Reading it, and what goes wrong
 
@@ -98,6 +98,7 @@ pub struct Person {
 A single `Field` can be built from its value, with the tag supplied by the annotation:
 
 ```rust
+use cgp::core::field::types::Field;
 use cgp::prelude::*;
 
 let name: Field<Symbol!("name"), String> = "Alice".to_string().into();

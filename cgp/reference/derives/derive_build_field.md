@@ -143,10 +143,9 @@ value alongside a partial value with that field absent. `FinalizeBuild` is likew
 subtrait of `PartialData`; the derive only provides the all-present impl.
 
 `TakeField` is the trait behind bulk merging: `CanBuildFrom`'s `build_from` recurses over a source
-record's field list, taking each field out of the source and building it into the target. Like
-`IntoBuilder` and `UpdateField`, and unlike `HasBuilder`, `BuildField`, and `FinalizeBuild`, it is
-not in the prelude, so code calling `take_field` directly imports it from
-`cgp::core::field::traits`.
+record's field list, taking each field out of the source and building it into the target. Like the
+rest of the builder family, it is not in the prelude, so code calling `take_field` directly imports
+it from `cgp::core::field::traits`.
 
 **That recursion is over the *source's* field list, which is why the source of a `build_from` needs
 [`#[derive(HasFields)]`](derive_has_fields.md) as well as this derive.** `CanBuildFrom` bounds the
@@ -175,8 +174,9 @@ The builder is driven through `builder()`, `build_field`, and `finalize_build`, 
 (from the field crate's `CanBuildFrom`) copying every shared field from another record at once:
 
 ```rust
-use cgp::prelude::*;
 use cgp::core::field::impls::CanBuildFrom;
+use cgp::core::field::traits::{BuildField, FinalizeBuild, HasBuilder};
+use cgp::prelude::*;
 
 // The source of a `build_from` needs its field list too, so it derives `HasFields` as well.
 #[derive(HasFields, BuildField)]

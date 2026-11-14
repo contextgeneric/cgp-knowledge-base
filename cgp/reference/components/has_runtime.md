@@ -78,6 +78,7 @@ and a test context, with only the wiring changed.
 A context declares its runtime type and the field that holds the runtime:
 
 ```rust
+use cgp::core::field::impls::UseField;
 use cgp::prelude::*;
 use cgp::extra::runtime::{
     HasRuntime, RuntimeGetterComponent, RuntimeOf, RuntimeTypeProviderComponent,

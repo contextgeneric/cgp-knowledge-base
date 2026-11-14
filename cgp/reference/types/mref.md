@@ -72,6 +72,7 @@ wanted `get_or_clone`.
 A getter returning `MRef` lets one context lend a stored field and another build the value:
 
 ```rust
+use cgp::core::field::impls::UseField;
 use cgp::core::field::types::MRef;
 use cgp::prelude::*;
 
