@@ -42,9 +42,9 @@ implementation.
   and who it is written for; a one-line map of each top-level section, named in prose rather than
   linked; the order of authority (the source code outranks the base, and the base outranks the agent
   skill and the website pages derived from it); that the base is written for agents and records
-  unfinished work and known defects; a section of its own stating that the base is in an early phase
-  and under active development, with many documents still awaiting review, improving step by step
-  toward full accuracy to the author's intent; and routes by the question each page answers. Avoid
+  unfinished work and known defects; a section of its own stating that the checks can miss errors,
+  so some documents still contain them, that reports move the base toward full accuracy to the
+  author's intent, and where to file one; and routes by the question each page answers. Avoid
   exact document counts; "several hundred documents" stays true.
 - **How CGP's Documentation Is Written** (`how-cgp-is-documented.md`) explains the process. It opens
   with the problem as a mechanism rather than a judgement: an agent reading CGP's macro source sees
@@ -53,7 +53,7 @@ implementation.
   views that must agree, so "kept in sync" is checkable; says who directs the work (the author designs
   CGP, writes the rules, and chooses what is documented, and the rules tell agents to ask rather than
   guess and to check claims before polishing prose); links the disclaimer for who reviews what rather
-  than restating it; and ends on the limits, including the base's early phase, sending a reader who
+  than restating it; and ends on the limits, including the errors the checks miss, sending a reader who
   finds an error to the issue tracker. Every claim comes from
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#the-knowledge-base-behind-the-first-level),
   and the page is on the author's

@@ -664,7 +664,7 @@ it stale.
   use of AI: the reach-and-verifiability principle behind the gradient, the four levels from
   agent-written documentation through revised drafts and non-imported code to the hand-written core
   library, the claims the project can make about the knowledge-base process behind the first level
-  and their limits including the base's early phase, the light policy requiring AI-assisted
+  and their limits including the errors the checks miss, the light policy requiring AI-assisted
   contributions to use the knowledge base and to include the prompts behind them, reports of
   problems in the base as a contribution,
   the wording rules, the non-uniform-review claim that is easiest to get wrong, the site's

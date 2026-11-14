@@ -245,13 +245,12 @@ rule](AGENTS.md#the-synchronization-rule). An agent auditing CGP should check a 
 member project's source, which [sibling-projects.md](sibling-projects.md) locates, rather than
 trusting the document alone.
 
-**The base is in an early phase and under active development.** Many documents still need further
-review, by the author and by agents, and some contain errors or inconsistencies nobody has found
-yet. The aim is to improve it step by step toward full accuracy, meaning agreement with the author's
-intent as well as with the source. An outside agent that finds a problem should say so to the person
-directing it, who can file it on the [issue
-tracker](https://github.com/contextgeneric/cgp-knowledge-base/issues), with the prompt that found
-it.
+**Some documents still contain errors.** The checks against the source can miss a stale sentence or
+an inconsistency, so some documents contain errors nobody has found yet, and each report moves the
+base toward full accuracy, meaning agreement with the author's intent as well as with the source. An
+outside agent that finds a problem should say so to the person directing it, who can file it on the
+[issue tracker](https://github.com/contextgeneric/cgp-knowledge-base/issues), with the prompt that
+found it.
 
 ## License
 

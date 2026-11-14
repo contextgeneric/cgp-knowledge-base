@@ -138,13 +138,15 @@ The claims the project can make, and their limits, are these:
   fixtures fail a build when generated code or a diagnostic changes. Agreement between prose and
   code is enforced by agents following the rules and by the author's review, which can miss a stale
   sentence. State this limit wherever the process is described.
-- **The base is in an early phase and under active development.** Many of its documents still need
-  further review, by the author and by agents, and some contain errors or inconsistencies that no
-  review has found yet. The aim is to improve it step by step toward full accuracy, meaning
-  agreement with the author's intent as well as with the source. Say this wherever a page sends a
-  reader to the base or describes its process, so the reader weighs a document accordingly. The
-  knowledge-base overview's *Its current state* section states it in full; a page that mentions the
-  base in passing uses a one-clause form and links that section rather than repeating it.
+- **Some documents still contain errors.** The checks above can miss a stale sentence or an
+  inconsistency, so some documents contain errors that no review has found yet, and reports of them
+  move the base toward full accuracy, meaning agreement with the author's intent as well as with the
+  source. Say this wherever a page sends a reader to the base or describes its process, so the reader
+  weighs a document accordingly and knows where to report a problem. The knowledge-base overview's
+  *Its current state* section states it in full; a page that mentions the base in passing uses a
+  one-clause form and links that section rather than repeating it. Do not call the base early or say
+  that it awaits review; the claim is about the errors the checks miss, not about how far the work
+  has come.
 
 Draw the contrast with one-shot prompting as a mechanism, as in the first claim. Do not characterize
 other projects' AI use or the public's view of it, which [evidence.md](evidence.md) does not record.
@@ -153,9 +155,9 @@ error checkable and correctable against a public record, which is the strongest 
 
 ## Contributions from outside the project
 
-**Finding problems in the knowledge base is a useful contribution in its own right.** Because the
-base is still being reviewed, an error or an inconsistency someone finds and reports is work the
-project would otherwise have to do itself. Reports go to the knowledge base's
+**Finding problems in the knowledge base is a useful contribution in its own right.** The checks
+can miss an error or an inconsistency, so one that someone finds and reports is work the project
+would otherwise have to do itself. Reports go to the knowledge base's
 [issue tracker](https://github.com/contextgeneric/cgp-knowledge-base/issues), and public pages send
 readers there for any problem in a document.
 

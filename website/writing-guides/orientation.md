@@ -174,7 +174,7 @@ first that fits. The routes may be grouped or renamed, and one with nowhere to l
 
 - **Discussion:** the Discord server, GitHub Discussions, and the subreddit.
 - **Reporting a problem:** a confusing page, or an error in the knowledge base, a contribution in its
-  own right because the base is still being reviewed, per
+  own right because the checks can miss an error, per
   [contributions from outside the project](../../communication-strategy/ai-disclosure.md#contributions-from-outside-the-project).
   Link the knowledge base's issue tracker and the section on reporting problems in *Contributing to
   CGP with an Agent*, which [knowledge-base.md](knowledge-base.md#the-section-shape) specifies.
