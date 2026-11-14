@@ -10,8 +10,8 @@ Invoke the `/cgp` skill. Read the macro's [reference document](../reference/READ
 implementation documents (the entrypoint, the AST stack, and the functions it drives), and the
 `AGENTS.md` files that keep those views in sync. Then read the implementation in
 `crates/macros/`, starting from the `cgp-macro-lib` entry and following it into the
-`cgp-macro-core` types and helpers. Finally read the tests: the behavioral tests in `cgp-tests`, and
-the rejection cases and expansion snapshots in `cgp-macro-tests`.
+`cgp-macro-core` types and helpers. Finally read the tests: the behavioral tests and expansion snapshots in
+`cgp-tests`, and the parser corner cases and rejection cases in `cgp-macro-tests`.
 
 ## Harden the implementation and its tests
 
