@@ -5,6 +5,8 @@ and [summary.md](summary.md) for every document it contains.
 
 ## Orient before any task
 
+- Learn CGP and its tools from the `/cgp` skill and this knowledge base; never restate them in an
+  `AGENTS.md`.
 - Invoke the `/cgp` skill before working with CGP constructs, and re-invoke it when you move into an
   unfamiliar construct.
 - Load the `/point-first-writing` skill before writing or revising prose, which is nearly every task.
