@@ -47,6 +47,7 @@ the [`cgp`](https://github.com/contextgeneric/cgp) source at the relevant tag.
 | `#[cgp_context]` | [v0.4.0](v0-4-0.md) | Deprecated in [v0.6.0](v0-6-0.md), removed in [v0.7.0](v0-7-0.md) |
 | `cgp_preset!`, `#[cgp::re_export_imports]`, `IsPreset` | [v0.4.0](v0-4-0.md) | Removed in [v0.8.0](v0-8-0.md), superseded by [namespaces](../cgp/concepts/namespaces.md) |
 | `#[wrap_provider]` | [v0.4.1](v0-4-1.md) | Removed in [v0.8.0](v0-8-0.md) with the rest of the preset system |
+| `derive_delegate:` key of `#[cgp_component { … }]` | [v0.4.1](v0-4-1.md) | Became the separate `#[derive_delegate(...)]` attribute in [v0.8.0](v0-8-0.md) |
 | `{Type}Of` type alias | [v0.4.0](v0-4-0.md) | Removed in [v0.7.0](v0-7-0.md), superseded by `#[use_type]` |
 | `Char` | [v0.4.0](v0-4-0.md) | Renamed `Chars` in [v0.5.0](v0-5-0.md) |
 | `ι` field abbreviation | [v0.4.0](v0-4-0.md) | Replaced by `ζ` in [v0.5.0](v0-5-0.md) |
@@ -55,6 +56,7 @@ the [`cgp`](https://github.com/contextgeneric/cgp) source at the relevant tag.
 | `#[cgp_inherit]` | [v0.6.0](v0-6-0.md) | Removed in [v0.8.0](v0-8-0.md) with the presets it inherited from |
 | `ProvideType` / `TypeComponent` | pre-[v0.7.0](v0-7-0.md) | Renamed `TypeProvider` / `TypeProviderComponent` in [v0.7.0](v0-7-0.md) |
 | `#[use_type(Trait::Type)]` separator | [v0.7.0](v0-7-0.md) | Changed to `#[use_type(Trait.Type)]` in [v0.8.0](v0-8-0.md) |
+| `#[use_type(@Context::Trait::Type)]` | [v0.7.0](v0-7-0.md) | Changed to `#[use_type(Trait.Type in Context)]` in [v0.8.0](v0-8-0.md) |
 | `#[use_namespace]`, then `#[namespace]` | never released | Both are mid-development names for [v0.8.0](v0-8-0.md)'s `#[prefix]` |
 
 Three constructs are still present but demoted rather than removed, which is a distinction worth

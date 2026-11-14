@@ -1000,8 +1000,8 @@ it stale.
 - [v0-7-0.md](releases/v0-7-0.md) — 2026-02-28, the most recent shipped release: the attribute suite
   and the removal of `#[cgp_context]`; its changelog entry is mislabelled v0.6.2.
 - [v0-8-0.md](releases/v0-8-0.md) — **unreleased**, in development on `main`: namespaces and
-  paths, the `open` statement, the removal of presets, the error backends' behavior changes, and why
-  it is not v0.7.1.
+  paths, the `open` statement, the removal of presets, the `no_std` build and its `alloc` feature,
+  the syntax and behavior changes since v0.7.0, and why it is not v0.7.1.
 
 ## `projects/`: the libraries built with CGP
 
