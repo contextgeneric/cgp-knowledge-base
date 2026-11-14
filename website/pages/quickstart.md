@@ -54,6 +54,8 @@ compares the page's `src/main.rs` block with the compiled program.
   [release checklist](../writing-guides/release-announcement.md#publishing-and-what-happens-afterwards)
   beside the tutorials.
 - **Walk the install at the release.** `cgp = "0.8.0"` does not resolve on crates.io until the
-  release is published, so the guide's real check, pasting the program into a fresh project on a
-  clean machine and timing the walk, runs then, before the branch merges if the crate is published
-  first.
+  release is published, so the page must not publish before it, and the guide's real check, pasting
+  the program into a fresh project on a clean machine and timing the walk, runs then, before the
+  branch merges if the crate is published first. The ten-minute target is unmeasured: an agent's walk
+  from a fresh project with a path dependency built and ran the program in a few seconds, but no cold
+  reader has walked it with a friction log.

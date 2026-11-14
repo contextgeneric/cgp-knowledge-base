@@ -22,6 +22,20 @@ primary inspiration, and recording that CGP was developed at
 [Informal Systems](https://informal.systems/) as part of the
 [Hermes SDK](https://github.com/informalsystems/hermes-sdk/).
 
+## Where it diverges from the guide
+
+The page predates [the orientation guide](../writing-guides/orientation.md#the-contribute-page), and
+the author allowed it to be rewritten in full. Its routes are the right ones, but it diverges in five
+ways:
+
+- The opening and the documentation section speak as a corporate "we" and "us".
+- The opening never names Context-Generic Programming.
+- The components section leads with "modularity".
+- The front matter has no `description`.
+- The acknowledgement sits under a second `#` heading.
+
+The sponsorship section and the acknowledgement's text stay as they are.
+
 ## How it relates to the knowledge base
 
 The page is the top rung of the conversion ladder in
