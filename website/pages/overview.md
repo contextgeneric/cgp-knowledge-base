@@ -15,7 +15,7 @@ answer.
 ## What it covers
 
 The page follows
-[the homepage guide's specification](../writing-guides/homepage.md#the-overview-the-feature-tour). It
+[the orientation guide's specification](../writing-guides/orientation.md#the-overview). It
 opens with the problem it answers, the name and the tag line whole, a pointer for newcomers, and the
 note that the examples are fragments of compiled programs.
 

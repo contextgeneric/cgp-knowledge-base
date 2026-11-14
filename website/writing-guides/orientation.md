@@ -1,12 +1,12 @@
 # Writing an orientation page
 
-An orientation page's job is to **send the reader somewhere**, or to **prove that the thing runs**.
-It does not teach, and it does not persuade. Its reader has already decided CGP is worth a few
+An orientation page's job is to **send the reader somewhere**, or to **prove that the thing runs**,
+or, on the Overview, to **show each feature working**. It does not teach, and it does not argue. Its reader has already decided CGP is worth a few
 minutes and wants either the shortest route to what they came for or the shortest proof that it
 works.
 
-- **Where they live**: `docs/index.md`, `docs/quickstart.md`, `docs/resources.md`, and
-  `docs/contribute.md`
+- **Where they live**: `docs/index.md`, `docs/overview.md`, `docs/quickstart.md`,
+  `docs/resources.md`, and `docs/contribute.md`
 - **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md), except the
   Contribute page's sponsorship section, which is the author's
@@ -90,6 +90,60 @@ page assumes those four words. It **does not carry the maturity discussion**, wh
 page's cost section's job: an evaluator reaches that from above the fold on the front page, not by
 scrolling the docs root. And it **does not route newcomers to the blog**; the blog is named as a
 record of releases and talks, with the caveat that older posts describe the library as it was.
+
+## The Overview
+
+**The feature tour: it shows each feature working, states where it stops, and sends the reader to the
+page that explains it.** It is the one orientation page that presents the project, as the front
+page's [offload destination](homepage.md#the-offload-rule-and-the-pages-it-offloads-to) for essay
+sections 2 and 3, so its opening names Context-Generic Programming and states the tag line whole. It
+settles the site's feature lists: the front page carries the five from
+[identity.md](../../communication-strategy/identity.md#the-headline-feature-set), four as cards and the
+fifth in its reassurance line, and the Overview expands each with an example. Each section leads from
+a problem the reader may have to its example and limit, so a reader who followed a front-page card
+reads one connected explanation. Its reading is the shared set and
+[the front page's row](README.md#the-front-page-and-the-overview).
+
+The page has these parts, in this order:
+
+- **Opening:** the problem the tour answers, the name and the tag line, what the tour covers, that the
+  examples are fragments of compiled programs, a pointer for a newcomer to *Still Ordinary Rust*, and
+  a link to the Quickstart for a reader who wants to run one.
+- **Key features:** the five headline features under identity.md's titles, word for word and in its
+  order, each opening with the problem, stated fairly (where plain Rust already handles a case, say so
+  first), then one compiled example of about fifteen lines, the limit the strategy pairs with the
+  strength, and a link to the page
+  [seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) names as
+  the feature's owner. The opening says once that examples leave out the imports, unneeded
+  definitions, and each context's check, and Type-Safe Wiring names `delegate_and_check_components!`
+  as the one-step form.
+- **Beyond choosing implementations:** abstract types, extensible records and variants, composable
+  handlers, namespaces, and higher-order providers, one or two sentences each with its Concepts page
+  and no code, since a first-time reader shown them in code meets more constructs than the tour can
+  explain. The abstract-types item carries the payoff: the error type stops being a parameter every
+  layer carries.
+- **The problems it solves:** a two-column table from each problem in
+  [message.md](../../communication-strategy/message.md#the-problems-cgp-removes), in the reader's
+  words, to the Concepts page that answers it; the framework author's path in
+  [information-architecture.md](../information-architecture.md#how-each-reader-moves-through-the-site)
+  starts here.
+- **When a plain trait is enough:** the costs in two short paragraphs, pointing to Type-Safe Wiring
+  for the raw errors rather than repeating the `cargo-cgp` qualification, the agent skill beside the
+  learning time, a link to the front page's cost section for the maturity, and *Modularity Hierarchy*.
+- **Where to go next:** the Quickstart and Hello World, the Concepts pages, the comparisons, and the
+  reference.
+
+**The headline features run one scenario**, the profile-picture scenario under the names the `cgp`
+README uses, among the
+[canonical examples](../../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs),
+compiled in the website's `example-code` crate at `tests/overview.rs`. Off the page: a construct
+reference, a second explanation of what a Concepts page explains, and the project's maturity.
+
+**Checking a draft:** read it through with natural-writing's checks, then check that each feature
+title matches identity.md, each feature section has its problem, example, limit, and link, the breadth
+list shows no code, the table covers every problem in message.md, every snippet matches
+`tests/overview.rs`, and the page passes the naming check; then view it at phone width in both themes,
+where long signatures scroll inside their block.
 
 ## The Quickstart
 

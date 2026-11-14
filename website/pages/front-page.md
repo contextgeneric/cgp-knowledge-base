@@ -71,9 +71,12 @@ the name, tag line, reassurance line, and curated features;
 diff tints and verdict marks, and [seo.md](../seo.md#the-off-site-metadata-is-under-set) the title.
 
 The page's code is compiled in the [`example-code` crate](../site.md#the-example-code-crate) at
-`tests/front_page.rs`, with the rejected block as a fixture under `tests/compile_fail/front_page/`.
-Its tests compare the text between the `front-page:` markers in `index.tsx` with the compiled code,
-and the quoted `E0119` with the fixture's snapshot.
+`tests/front_page.rs`, with a `check_components!` assertion per wired type, so the wiring is shown
+to resolve rather than merely parse, and the rejected block as a fixture under
+`tests/compile_fail/front_page/`. Its tests compare the text between the `front-page:` markers in
+`index.tsx` with the compiled code, and the quoted `E0119`, without its location line, with the
+fixture's snapshot; the rejected block starts at the fixture's first line, so the quote names the
+lines the page numbers.
 
 ## Maintaining it
 

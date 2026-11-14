@@ -70,8 +70,8 @@ Register a new guide here in the same change that adds it, and in [../../summary
 
 - [homepage.md](homepage.md): the landing page, covering its two-tier structure, the settled before/after
   example that carries the hook together with the copy that sells it and the properties a replacement
-  must keep, the bounded essay beneath it, the dedicated documentation pages the essay offloads to, the
-  Overview's specification as the feature tour, and the routing at the end.
+  must keep, the bounded essay beneath it, the pages the essay offloads to, the images, and the draft
+  checks.
 - [explanation.md](explanation.md): the understanding-oriented Concepts pages, which the homepage
   offloads to, covering what every one owes its reader, how a concept document is rewritten into one, the specs
   for the three roles the homepage names, and where the pages sit in the docs tree.
@@ -98,9 +98,9 @@ Register a new guide here in the same change that adds it, and in [../../summary
   external Rust documentation to link for concepts a page assumes, and the two non-construct pages the
   section carries, the error catalog and the glossary.
 - [orientation.md](orientation.md): the pages whose job is routing rather than teaching, covering the
-  Introduction, the Quickstart, Resources, and the Contribute page. What separates orientation from
-  the homepage, a tutorial, an explanation and a reference; what each of the four pages is for; the
-  Quickstart's ten-minute activation target and the boundary that keeps it from becoming a second
+  Introduction, the Overview's feature tour, the Quickstart, Resources, and the Contribute page. What
+  separates orientation from the homepage, a tutorial, an explanation and a reference; what each of
+  the five pages is for; the Quickstart's ten-minute activation target and the boundary that keeps it from becoming a second
   Hello World; the version pin that ties it to the release; and the Contribute page's routes, with
   the sponsorship section and the acknowledgement left in the author's hands.
 - [knowledge-base.md](knowledge-base.md): the pages explaining the public knowledge base, covering
@@ -165,8 +165,8 @@ the naming rule exempts them.
 
 ### The front page and the Overview
 
-- **Guide:** [homepage.md](homepage.md), including
-  [the offload rule](homepage.md#the-offload-rule-and-the-pages-it-offloads-to) for the Overview.
+- **Guide:** [homepage.md](homepage.md) for the front page, and
+  [orientation.md](orientation.md#the-overview) for the Overview.
 - **Style:** natural style for both, as for every page.
 - **Strategy:** [identity.md](../../communication-strategy/identity.md), whole;
   [message.md](../../communication-strategy/message.md)'s

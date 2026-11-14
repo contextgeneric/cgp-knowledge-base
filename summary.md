@@ -851,9 +851,8 @@ it stale.
   that names the communication-strategy and SEO sections each kind of page draws on.
 - [homepage.md](website/writing-guides/homepage.md) — the landing page: its two-tier structure, the
   settled before/after example with the copy that sells it and the six properties a replacement must
-  keep, the five-section bounded essay and its layout, the offload rule and the dedicated
-  explanation pages it offloads to, the Overview's specification as the feature tour, and what must
-  never appear on the page.
+  keep, the five-section bounded essay and its layout, the offload rule and the four pages it
+  offloads to, the images, and what must never appear on the page.
 - [explanation.md](website/writing-guides/explanation.md) — the understanding-oriented `Concepts`
   tier, one page per idea: what every explanation page owes, what Diátaxis gives the tier and where CGP
   diverges, how a concept document is rewritten into one, the fixed page shape, specs for the three
@@ -878,7 +877,7 @@ it stale.
   release the site ships with, the Linux-only rule, and the version-free concession.
 - [orientation.md](website/writing-guides/orientation.md) — the routing pages: what separates
   orientation from persuading, teaching, arguing and specifying; the Introduction's three parts; the
-  Quickstart's ten-minute target, its one-context program, and the boundary against Hello World; the
+  Overview's feature tour; the Quickstart's ten-minute target, its one-context program, and the boundary against Hello World; the
   Resources index; the Contribute page's routes and the two sections that stay in the author's
   hands; and what must never appear on any of them.
 - [reference.md](website/writing-guides/reference.md) — the canonical per-construct reference ported
