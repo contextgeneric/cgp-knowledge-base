@@ -343,7 +343,8 @@ it stale.
 - [wiring/unconstrained-generic.md](cgp/errors/wiring/unconstrained-generic.md) — a per-entry generic
   that never reaches the key (`E0207`).
 - [wiring/unresolved-wiring-name.md](cgp/errors/wiring/unresolved-wiring-name.md) — a wiring key or
-  value that names nothing in scope, or a consumer trait as a key (`E0425`, `E0782`).
+  value that names nothing in scope, a consumer trait as a key, or a provider header's derived
+  component not in scope (`E0425`, `E0782`, `E0107`).
 - [wiring/wiring-cycle.md](cgp/errors/wiring/wiring-cycle.md) — a delegation that chases its own tail,
   overflowing the solver.
 - [lowering/ill-formed-generated-type.md](cgp/errors/lowering/ill-formed-generated-type.md) — a

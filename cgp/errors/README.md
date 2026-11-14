@@ -220,7 +220,8 @@ Structural wiring errors, in [wiring/](wiring/):
   the key, leaving an impl parameter unconstrained (`E0207`).
 - [Unresolved wiring name](wiring/unresolved-wiring-name.md): a wiring key or value that names
   nothing in scope (a component not imported, a key guessed from a trait's name, a provider never
-  declared) or a consumer trait where a component belongs (`E0425`, `E0782`).
+  declared), a consumer trait where a component belongs, or a component a provider header derives
+  that is not in scope or not the trait's (`E0425`, `E0782`, `E0107`).
 
 Lowering errors, in [lowering/](lowering/):
 
