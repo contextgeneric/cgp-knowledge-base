@@ -1,358 +1,227 @@
 # Writing an explanation page
 
-An explanation page exists to make a reader **understand** something about CGP that they were not going
-to reach by following a tutorial or looking up a construct. Its reader is not doing anything while they
-read (no editor open, no compiler running), so the page's whole job is to leave them holding an idea
-they did not have before, and able to repeat it.
+An explanation page makes a reader **understand** something about CGP that following a tutorial or
+looking up a construct would not give them. Its reader has no editor open, so the page's whole job is
+to leave them holding an idea they did not have, and able to repeat it.
 
-This page type is the site's **Concepts** tier. The rest of the docs tree holds orientation (the
-Introduction), a feature-and-benefit summary (the Overview), a link directory, a contribution page, the
-tutorials, the reference, and the published agent skill, and none of them explains CGP's ideas at length
-to a public reader. The tier exists for two reasons at once. The [homepage guide](homepage.md) offloads to it, so everything
-that outgrows a homepage section becomes one of these pages; and the site needs a public counterpart to
-the internal [cgp/concepts/](../../cgp/concepts/README.md) catalog, so that every cross-cutting CGP idea
-has somewhere a reader can be sent.
+This is the site's **Concepts** tier: one page per idea, mirroring the internal
+[cgp/concepts/](../../cgp/concepts/README.md) catalog one to one, so every cross-cutting CGP idea has
+a public page a reader can be sent to. Three of its pages are the
+[homepage](homepage.md#the-offload-rule-and-the-pages-it-offloads-to)'s offload destinations,
+specified [below](#the-three-pages-the-homepage-offloads-to).
 
-The second reason decides the tier's shape: it is the **Concepts** section, with **one page per idea**,
-mirroring the internal catalog one to one: eighteen pages plus a hand-written index. The three pages the
-homepage offloads to are three of those eighteen rather than the whole tier; which concept page plays
-each role is recorded in [information-architecture.md](../information-architecture.md), and the current
-state of the section in [pages/concepts.md](../pages/concepts.md).
-
-- **Where they live**: `docs/concepts/`; see
-  [Placing them in the docs tree](#placing-them-in-the-docs-tree)
+- **Where they live**: `docs/concepts/`, recorded in [pages/concepts.md](../pages/concepts.md)
 - **Voice**: project voice, per
-  [voice-and-register.md](../../communication-strategy/voice-and-register.md), with one real tension
-  worked out below
+  [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Raw material**: [cgp/concepts/](../../cgp/concepts/README.md), rewritten rather than copied
 - **Reading**: the shared set and [the concept pages' row](README.md#concept-pages) of the reading
   map
 
 ## Writing style
 
-Use **natural-writing** whenever adding or revising a public page under `docs/concepts/`. Select
-that style in the `point-first-writing` skill and apply it throughout the page. Let each sentence
-build on the previous one, connect paragraphs so readers can follow the reasoning, and vary
-sentence length. Use lists for sets of distinct items and connected prose to develop an argument.
-
-Keep the concept and its purpose as the subject of the opening. An example may help introduce
-that concept, but readers must understand that the page explains the idea, not the example's
-application domain. Develop running examples where they support the explanation. Preserve
-technical conditions, exceptions, and uncertainty when revising the prose.
+Write every page under `docs/concepts/` in **natural-writing**'s natural style: each sentence builds
+on the last, paragraphs connect the reasoning, and sentence lengths vary, with lists for sets of
+distinct items and prose for an argument. Keep the concept and its purpose the subject of the
+opening; an example may introduce it, but the reader must understand that the page explains the idea,
+not the example's domain. Preserve technical conditions, exceptions, and uncertainty when revising.
 
 ## What an explanation page is not
 
-Three page types sit next to this one and the boundaries are worth stating, because a draft that drifts
-across one stops serving anybody.
-
-A **tutorial** teaches a reader to do something, and is judged on whether they got there. It carries the
-reader step by step and withholds anything they do not need yet, per [tutorial.md](tutorial.md). An
-explanation page assumes nobody is following along, which is exactly what frees it to take the long way
-round, discuss alternatives, and admit complications a tutorial must suppress.
-
-A **reference page** specifies a construct completely and is read in fragments by someone looking one
-thing up. Its published home is the site's own reference tier, which is
-[canonical rather than a supplement to rustdoc](reference.md) and is ported from the exhaustive internal
-[cgp/reference/](../../cgp/reference/README.md). An explanation page names constructs but never
-enumerates their syntax: the moment it starts listing accepted forms, it has become a bad reference.
-
-The **homepage** makes the idea click in one screen and one bounded essay. An explanation page is where
-that essay's material goes when it needs room. The relationship is one-directional and worth keeping
-that way: the homepage links down, and the explanation page does not try to re-earn the reader's
-attention, because they have already given it.
+- **Not a [tutorial](tutorial.md)**, which carries a reader step by step and withholds what they do
+  not need yet. An explanation assumes nobody is following along, which frees it to take the long way
+  round, discuss alternatives, and admit complications.
+- **Not a [reference page](reference.md)**, which specifies a construct completely for a reader
+  looking one thing up. An explanation names constructs but never enumerates their syntax.
+- **Not the homepage**, which makes the idea click in one screen and a bounded essay. The homepage
+  links down to these pages, and they do not re-earn the reader's attention.
 
 ## What every explanation page owes its reader
 
-Six obligations hold across the tier.
+- **Answer "why", not "how do I".** The page organizes around a question a reader would ask aloud
+  (*why can't Rust do this?*, *what is actually generated?*, *should I use this?*) and is finished
+  when it is answered. If the next sentence would be "now add this to your `Cargo.toml`", the material
+  belongs in a tutorial.
+- **Explain the existing thing properly before improving on it.** CGP
+  [enhances Rust's trait system rather than replacing it](../../communication-strategy/identity.md),
+  so a page that opens on coherence as a limitation has the argument backwards. The
+  [RustLab transcript](../blog/rustlab-2025-coherence.md) is the model: it establishes that the trait
+  system's global lookup gives Rust transitive dependency injection, so coherence is *correct*, before
+  a word about working around it.
+- **Be as long as the idea needs, and say so at the top**, with a sentence or two on what the page
+  covers and how far it goes.
+- **Show code as illustration, not as steps.** Snippets make an argument concrete and are read rather
+  than typed; they may elide bodies with `/* ... */` and are never numbered as instructions.
+- **State the cost**: what the subject costs or where it stops applying, since skeptics and
+  evaluators read these pages to the end.
+- **End by routing, not by concluding.**
 
-**Answer "why", not "how do I".** The organizing question of the page is a question a reader would
-actually ask out loud (*why can't Rust do this?*, *what is actually generated?*, *should I use this?*),
-and the page is finished when that question is answered. If the natural next sentence is "now add this to
-your `Cargo.toml`", the material belongs in a tutorial.
+## Where CGP departs from Diátaxis
 
-**Explain the existing thing properly before improving on it.** This is the project's frame and its
-author's most consistent habit: CGP
-[enhances Rust's trait system rather than replacing it](../../communication-strategy/identity.md), so a
-page that opens by describing coherence as a limitation has the argument backwards. The
-[RustLab transcript](../blog/rustlab-2025-coherence.md) is the model: roughly ten slides establishing
-that the trait system's global lookup gives Rust free transitive dependency injection, and that
-coherence is therefore *correct*, before a word about working around it.
+Diátaxis's account of explanation is adopted: it is understanding-oriented, read away from the work,
+may discuss alternatives and history, makes connections, and permits judgement. Two divergences
+follow from decisions made elsewhere:
 
-**Be as long as the idea needs, and say so at the top.** Length is not a failing here; ambushing the
-reader with it is. Open with a sentence or two saying what the page covers and roughly how far it goes,
-the way the [Hypershell post](../blog/hypershell-release.md) opens with a reading estimate and a
-section-by-section preview. A reader who knows the shape navigates; a reader who does not, abandons.
-
-**Show code as illustration, not as steps.** Snippets on an explanation page exist to make an argument
-concrete (this is the impl Rust rejects, this is what the macro generates) and are read rather than
-typed. They may elide bodies with `/* ... */`, they need not build to a runnable program, and they
-should never be numbered or sequenced as instructions.
-
-**State the cost.** Every page in this tier names what its subject costs or where it stops applying,
-because these are the pages a skeptic reads all the way through and the ones an evaluator quotes.
-
-**End by routing, not by concluding.** A summary paragraph that restates what the reader just read is
-wasted space. Send them to the tutorial that puts the idea to work, the neighbouring explanation page, or
-the reference that specifies it.
-
-## What Diátaxis gives this tier, and where CGP diverges
-
-Diátaxis's account of explanation is the most directly usable part of the framework for this site, and
-most of it is adopted without qualification. Explanation is **understanding-oriented** and read away from
-the work. It may **discuss alternatives and history**, which a tutorial must not. It should **make
-connections** between ideas rather than treating each in isolation. And it explicitly permits **opinion
-and judgement**, which reference and tutorial do not.
-
-Two divergences matter, and both are consequences of decisions made elsewhere.
-
-**Opinion is allowed but must not be personal.** Diátaxis is right that explanation is where a project
-says what it thinks, but the website speaks in the **project voice**, and the first-person, personally
-candid register belongs to the blog. Resolve this by grounding the judgement rather than attributing it:
-"this is more machinery than a plain trait needs" rather than "I think this is more machinery than a
-plain trait needs". Where an argument genuinely depends on the author having made a choice and having
-reasons, the page states the reasoning impersonally and links to the blog post or the transcript where
-he makes it in his own voice.
-
-**The reference boundary is softer here than Diátaxis draws it.** Diátaxis keeps mechanism out of
-explanation, but CGP's central credibility problem is that its macros generate code, and a Rust
-programmer will not adopt what they cannot see through, the same reason
-[a tutorial must show the desugaring](tutorial.md). So *How CGP works* is deliberately a page about
-mechanism, and any explanation page may show generated code where showing it is the argument. The line
-that still holds is enumeration: showing what a macro produces is explanation, listing every form it
-accepts is reference.
+- **Opinion is allowed but not personal.** The site speaks in the project voice, so ground a
+  judgement rather than attribute it: "this is more machinery than a plain trait needs", not "I think".
+  Where an argument depends on the author's reasons, state them impersonally and link the blog post or
+  transcript where he makes them.
+- **Mechanism is allowed.** A Rust programmer will not adopt what they cannot see through, so *How CGP
+  works* is about mechanism and any page may show generated code where showing it is the argument. The
+  line that holds is enumeration: showing what a macro produces is explanation, listing every form it
+  accepts is reference.
 
 ## Turning a concept document into an explanation page
 
-The raw material for this tier is [cgp/concepts/](../../cgp/concepts/README.md), which already contains
-careful, verified accounts of every idea these pages need. **They are not copy-paste sources.** A concept
-document is written for an agent that has loaded the `/cgp` skill, so it uses "provider trait",
-"impl-side dependency", and `IsProviderFor` as known vocabulary and links sideways into the reference for
-anything it does not carry. A public reader has none of that.
+**A concept document is a rewrite source, not a copy source.** It is written for an agent that has
+loaded the `/cgp` skill, so it uses "provider trait", "impl-side dependency", and `IsProviderFor` as
+known vocabulary. Three transformations make it public:
 
-Three transformations turn one into the other. **Apply the vocabulary schedule**: defer or gloss the
-terms [vocabulary.md](../../communication-strategy/vocabulary.md) says to defer, and introduce the rest
-with a plain-language definition on first use. **Add the motivation the concept document assumes**: a
-public explanation must establish both what the concept means and why it matters. Its opening
-keeps that concept as the subject, with examples supporting its explanation. And **remove the
-internal machinery** (`DelegateComponent`, `IsProviderFor`, the `Symbol<…>` list) unless the page's
-subject *is* that machinery, in which case introduce it as the mechanism behind the model rather
-than as the model.
+- **Apply the vocabulary schedule**: defer or gloss the terms
+  [vocabulary.md](../../communication-strategy/vocabulary.md) defers, and define the rest in plain
+  language on first use.
+- **Add the motivation the document assumes**: what the concept means and why it matters, with the
+  concept as the subject of the opening.
+- **Remove the internal machinery** (`DelegateComponent`, `IsProviderFor`, the `Symbol<…>` list) unless
+  the page's subject *is* that machinery, in which case introduce it as the mechanism behind the model.
 
-The synchronization rule applies unchanged in both directions: an explanation page's claims are bound to
-the source exactly as a concept document's are, and a change to the underlying behavior updates both.
+The synchronization rule binds the page and its document in both directions.
 
 ## The page shape
 
-Every page in the tier follows the same shape, which is looser than a reference page's fixed template
-because an explanation is an argument rather than a specification, and firmer than nothing because a
-reader who has read one page should be able to skim the next by habit.
-
-**Open with the concept, its purpose, and the page's scope.** Establish what the page explains
-and why a reader would care, then say how far the explanation goes. Any example in the opening
-must support that purpose without making the example appear to be the page's subject.
-
-The opening paragraph also names **Context-Generic Programming** once, beside a plain description,
-and links the Introduction, because a reader arriving from a search result may not know what the
-page belongs to. Where the concept concerns choosing an implementation, as coherence, the
-consumer/provider split, and wiring do, relate a short form of the tag line to it, as in "CGP
-extends Rust with pluggable trait implementations, and Rust's coherence rules are why that needs
-more than an ordinary impl"; where it does not, as with the `Send`-bound workaround, leave the line
-out. The
-[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) owns
-the detail. Every page carries a written `description` and a problem-oriented `title` in the
-reader's words, per
+**Open with the concept, its purpose, and the page's scope**, any example supporting that purpose.
+The opening paragraph names **Context-Generic Programming** once beside a plain description and links
+the Introduction. Where the concept concerns choosing an implementation, as coherence, the
+consumer/provider split, and wiring do, it relates a short form of the tag line, as in "CGP extends
+Rust with pluggable trait implementations, and Rust's coherence rules are why that needs more than an
+ordinary impl"; otherwise, as with the `Send`-bound workaround, it leaves the line out, per the
+[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page). Every
+page carries a written `description` and a problem-oriented `title` in the reader's words, per
 [formats.md](../../communication-strategy/formats.md#titles-first-lines-and-search), written in the
 same edit as the opening.
 
-**Develop the idea in as many sections as it takes**, with the argument's own headings rather than
-prescribed ones, and with code shown as illustration rather than as steps.
+**Develop the idea in as many sections as it takes**, under the argument's own headings.
 
-**Close with two fixed sections, in this order.** *What it costs* names what the idea costs or where
-it stops applying, and is not optional, since these are the pages a skeptic reads to the end. *Where to
-go next* routes to the neighbouring concept, the tutorial that puts the idea to work, and the
-reference pages that specify the constructs, rather than summarizing what the reader just read.
-Where a [Projects](project.md) example page shows the idea in a running program, the list ends with
-it, labelled *In practice:* the way a comparison is labelled *Comparison:*, once that page is
-published.
+**Close with two fixed sections, in this order.** *What it costs* names what the idea costs or where it
+stops applying, and is required. *Where to go next* routes to the neighbouring concept, the tutorial
+that puts the idea to work, and the reference pages for its constructs; where a [Projects](project.md)
+example page shows the idea in a running program, the list ends with it, labelled *In practice:*, as a
+comparison is labelled *Comparison:*, once that page is published.
 
 The written [Consumer and provider traits](https://contextgeneric.dev/docs/concepts/consumer-and-provider-traits)
-page is the model, and it shows what the shape looks like when the argument is about a mechanism.
+page is the model.
 
 ## The three pages the homepage offloads to
 
-The homepage's [offload rule](homepage.md) names three explanation destinations, and each is a page of
-the Concepts section rather than a separate artifact: *Why CGP exists* is **Bypassing coherence**, *How
-CGP works* is **Consumer and provider traits** with **Impl-side dependencies** beside it, and *When to
-use CGP* is **Modularity Hierarchy**. The specifications below stand for the pages they describe, so read
-each one as the spec for the concept page that plays its role.
+The homepage's three explanation destinations are Concepts pages: *Why CGP exists* is **Bypassing
+coherence**, *How CGP works* is **Consumer and provider traits** with **Impl-side dependencies** beside
+it, and *When to use CGP* is **Modularity Hierarchy**. Each specification below is that page's.
 
 ### Why CGP exists
 
-**The page the homepage links to most**, published as *Bypassing coherence*. Its organizing
-question is *why can't Rust do this already?*, and it is the long-form version of the homepage's first
-essay section.
+**Bypassing coherence is the page the homepage links most**, the long form of its first essay section,
+organized around *why can't Rust do this already?* It runs in five movements:
 
-The argument runs in five movements. Establish that **Rust's trait system doubles as a
-dependency-injection mechanism**: a generic impl can require `where T: Display` without any caller
-naming it, and the compiler resolves that bound and every transitive bound beneath it. Show that this
-**only works if every lookup finds the same implementation**, which is what the overlap rule and the
-orphan rule buy, so coherence is a guarantee rather than a restriction. Then show **what the guarantee
-costs**, concretely: two blanket impls that could both match one type are rejected even when the author
-knows which should apply, and a trait cannot be implemented for a type from another crate. Then the
-**workarounds**: the newtype dance, and the marker-struct-plus-helper-trait pattern developers
-[reinvent independently](../../communication-strategy/evidence.md), which the page names rather than
-teaches, because recognizing the hand-rolled pattern sets up the move. Finally the **move**: the
-implementation's `Self` becomes a type the implementing crate owns, so both rules are satisfied; and coherence
-is **restored locally**, because each type names exactly one provider, so no call site is ambiguous.
-"Coherence is not repealed; it is scoped" is the sentence the page exists to earn.
+1. **The trait system doubles as dependency injection**: a generic impl requires `where T: Display`
+   without any caller naming it, and the compiler resolves that bound and every one beneath it.
+2. **This works only if every lookup finds the same implementation**, which the overlap and orphan
+   rules buy, so coherence is a guarantee rather than a restriction.
+3. **What the guarantee costs**: two blanket impls that could both match one type are rejected even
+   when the author knows which applies, and a foreign trait cannot be implemented for a foreign type.
+4. **The workarounds**, the newtype and the marker-struct-plus-helper-trait pattern developers
+   [reinvent independently](../../communication-strategy/evidence.md), named rather than taught.
+5. **The move**: the implementation's `Self` becomes a type the implementing crate owns, so both rules
+   are satisfied, and coherence is **restored locally**, because each type names one provider. The page
+   exists to earn "Coherence is not repealed; it is scoped."
 
-Built from [coherence](../../cgp/concepts/coherence.md) and
+It is built from [coherence](../../cgp/concepts/coherence.md) and
 [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md), with the
 [RustLab transcript](../blog/rustlab-2025-coherence.md) as the model for pacing and the
-[modular serialization example](../../examples/modular-serialization.md) for verified code. It should
-name the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) at the end, because a reader
-who has just been told coherence can be escaped needs to hear immediately that most code should not.
+[modular serialization example](../../examples/modular-serialization.md) for verified code, and it
+names the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md) at the end, because a
+reader just told coherence can be escaped needs to hear that most code should not.
 
-#### Keep it at the basic tier, and defer the shapes
-
-The five movements end the page. It stops at the provider-trait move and simple per-type wiring, and it
-does **not** climb into CGP's more modular shapes: no parameter-targeted component, no per-value
-dispatch, no type that stands for an application, and none of the value-context / environmental-context
-or self-targeted / parameter-targeted vocabulary. Coherence is the most basic idea in the section, and a
-reader meeting it should not have to hold the modularity hierarchy in their head to follow it.
-
-The examples are therefore all tier-3 retrofit: a self-targeted trait such as `CanEncode`, wired
-onto the concrete types that use it (`String`, `Vec<u8>`). That earns the whole point on its own, because
-overlapping providers become legal and each type coherently names one. How far the idea then scales,
-whether to one choice per application or one per type per application, is the
-[Modularity Hierarchy](../../cgp/concepts/modularity-hierarchy.md) page's job, and the coherence page hands
-off to it in a sentence rather than teaching it. The application-context shape, the two transitions
-between shapes, and the qualifiers that name them belong on that page, taught the way the
+**It stays at the basic tier.** The five movements end the page: no parameter-targeted component, no
+per-value dispatch, no type standing for an application, and none of the context-shape vocabulary.
+Its examples are tier-3 retrofits, a self-targeted trait such as `CanEncode` wired onto the types that
+use it (`String`, `Vec<u8>`). How far the idea scales, and the application shape with its transitions
+and qualifiers, belong to *Modularity Hierarchy*, taught as the
 [comprehension barrier](../../communication-strategy/readers.md) and
-[vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) prescribe.
+[vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target)
+prescribe; this page hands off in a sentence.
 
 ### How CGP works
 
-The page for the reader who believes the pitch and now wants to see through the macros. Its organizing
-question is *what is actually generated, and what does it cost?*, and it is the site's direct answer to
-["macros are magic"](../../communication-strategy/message.md#the-objections-readers-bring).
+**The page for a reader who believes the pitch and wants to see through the macros**, organized
+around *what is actually generated, and what does it cost?*, and the site's answer to
+["macros are magic"](../../communication-strategy/message.md#the-objections-readers-bring). It covers,
+in order:
 
-It covers, in order: the **two traits** one definition produces and why the split is what makes the
-overlap legal; the **wiring table** as a compile-time lookup, described with the settings-map analogy
-before any trait name; **what a call actually resolves to**, traced once end to end; the **plain Rust** a
-small example expands into, ideally straight from
-[`cargo cgp expand`](../../cgp/reference/cargo-cgp.md) so the reader can reproduce it; and **why none of
-it costs anything at runtime**: no vtable, no container, nothing in the binary for an unused provider.
-It should also explain, briefly, that **wiring is lazy** and that this is why a check exists, which is
-the honest setup for the errors discussion.
+- the **two traits** one definition produces, and why the split makes the overlap legal;
+- the **wiring table** as a compile-time lookup, described with the settings-map analogy before any
+  trait name;
+- **what a call resolves to**, traced once end to end;
+- the **plain Rust** a small example expands into, ideally from
+  [`cargo cgp expand`](../../cgp/reference/cargo-cgp.md) so the reader can reproduce it;
+- **why none of it costs anything at runtime**: no vtable, no container, nothing in the binary for an
+  unused provider;
+- briefly, that **wiring is lazy**, which is why a check exists.
 
-Built from [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md),
+It is built from [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md),
 [impl-side dependencies](../../cgp/concepts/impl-side-dependencies.md), and
-[check traits](../../cgp/concepts/check-traits.md). This is the one page in the tier where
-`DelegateComponent` and `IsProviderFor` may be named, because the page's subject is the mechanism, but
-they arrive late, after the model has landed, and are introduced as the machinery behind it.
+[check traits](../../cgp/concepts/check-traits.md). It is the one page in the tier that may name
+`DelegateComponent` and `IsProviderFor`, late, as the machinery behind a model that has already landed.
 
 ### When to use CGP, and when not
 
-This page is titled **Modularity Hierarchy**, and it is a hybrid rather than a pure decision guide. It
-opens as an explanation, walking the five tiers of the hierarchy in a section each with code shown as
-illustration, and closes with a decision-guide tail that exists to be acted on: shorter, more
-scannable, and using tables where prose would slow a reader who is deciding. It plays the homepage's
-*When to use CGP* role, because the cost section needs somewhere to hand a skeptic and nothing else on
-the site draws CGP's boundary in public.
+**Modularity Hierarchy is a hybrid**: an explanation walking the five tiers of the hierarchy, a section
+each with illustrative code built from the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md)
+concept, then a decision-guide tail that is shorter, scannable, and uses tables. It is where the
+homepage's cost section hands a skeptic, and the only public page that draws CGP's boundary.
 
-The tail is [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp) rendered for
-a public reader: the rule of thumb, the alternative-by-alternative guide with each alternative's home
-ground conceded first, and the cases where CGP is simply the wrong tool. Two rules bind it especially
-tightly. **Never disparage the alternative**: represent each as its own users would recognize it. And
-**if a table is used, every row must concede a case where the other tool wins**; a table showing CGP
-winning everything reads as a strawman and loses the reader it was written for. The tier sections that
-open the page are built from the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md)
-concept, which stays their source of truth.
-
-Because the page's whole subject is where CGP's costs outweigh its benefits, it is also one of the two
-places the **agent-support mitigation** belongs: the learning curve, the diagnostics, and the wiring
-volume are three of the costs a reader is weighing here, and CGP's published agent skill genuinely
-changes their size. State it where those costs are discussed, as a smaller cost rather than a
-disappearing one, and do not let it soften a boundary, since a codebase that will only ever have one
-application still belongs on `#[cgp_fn]` alone, regardless of who writes the wiring.
-
-This page also carries a second decision the others do not: **which of CGP's three shapes to reach for.**
-Some readers will resist being taught three where they expected one, and the defence is to show that each
-answers a different question rather than representing a different amount of sophistication. Two questions
-settle it, and they should appear as questions rather than as a taxonomy: *is the operation about the
-data, or about the application?* About the data means a value context and the retrofit shape, about the
-application means an environmental context. And *does it concern a type you don't own, which different
-applications must treat differently?* If so the target moves into a parameter, and if not, self-targeting
-is enough.
-
-Presented that way the shapes read as a decision the reader is already equipped to make. Presented as
-three named forms to learn first, they read as the complexity the page exists to disarm. State plainly
-that the application shape is where most CGP code lives, so the reader knows the common case rather than
-inferring that the most elaborate shape is the intended destination.
-
-Since the [coherence page](#why-cgp-exists) stays at the basic tier and does not introduce these
-shapes, this page is where a reader first meets them: introduce the application-context idea rather than
-assuming it, building it from code the way the
-[comprehension barrier](../../communication-strategy/readers.md) describes.
+- **The tail** renders [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp)
+  for a public reader: the rule of thumb, the alternative-by-alternative guide with each alternative's
+  home ground conceded first, and the cases where CGP is the wrong tool. Never disparage an
+  alternative, and if a table is used, every row concedes a case where the other tool wins.
+- **The agent-support mitigation belongs here**, one of its two places, beside the learning curve,
+  the diagnostics, and the wiring volume, as a smaller cost rather than a disappearing one; it never
+  softens a boundary, since a codebase with one application still belongs on `#[cgp_fn]` alone.
+- **It decides which of the three shapes to reach for**, as two questions rather than a taxonomy: *is
+  the operation about the data, or about the application?* (a value context and the retrofit shape,
+  or an environmental context), and *does it concern a type you don't own that different applications
+  must treat differently?* (if so, the target moves into a parameter). State that the application
+  shape is where most CGP code lives. Since the coherence page stops before the shapes, this page
+  introduces the application context, building it from code as the
+  [comprehension barrier](../../communication-strategy/readers.md) describes.
 
 ## Placing them in the docs tree
 
-The sidebar is autogenerated from the `docs/` directory tree, so these pages need a directory with a
-`_category_.json` and `sidebar_position` front matter; see [site.md](../site.md#how-the-site-is-built) for
-the mechanics and for the stock-Docusaurus policy that constrains anything more elaborate.
-
-**Do not name the category after the framework.** "Explanation" is a term for the people organizing the
-documentation, not for the people reading it, and Diátaxis itself advises against exposing its own
-vocabulary in navigation. The category is labelled **Concepts**, which names the same thing plainly and
-matches the word the knowledge base already uses for these documents, so the internal and public names
-agree.
-
-The section sits at `docs/concepts/`, between Tutorials and Comparisons, and its pages are ordered in the
-sidebar as a reader meets the ideas rather than as the internal catalog lists them: the coherence
-problem and the trait split first, then the three faces of dependency injection, then composition and
-scale, then the applied ideas, with the `Send`-bound workaround and the how-far-to-go decision guide
-last. The order and its reasoning are recorded in
-[information-architecture.md](../information-architecture.md#navigation-and-sidebar-order).
+The section sits at `docs/concepts/` with a `_category_.json` and `sidebar_position` front matter,
+under the mechanics and stock-Docusaurus policy in [site.md](../site.md#how-the-site-is-built). The
+category is labelled **Concepts**, never "Explanation", which is the organizers' term and which
+Diátaxis itself keeps out of navigation; "Concepts" also matches the knowledge base's name. The
+sidebar orders the pages as a reader meets the ideas rather than as the catalog lists them;
+[pages/concepts.md](../pages/concepts.md) records the order.
 
 ## What must not be on an explanation page
 
-**No instructions.** No install steps, no "add this to your `Cargo.toml`", no numbered sequence to
-follow. The moment the reader is expected to be typing, the page has become a tutorial with the teaching
-removed.
-
-**No exhaustive syntax.** Naming a construct and showing one use is explanation; listing its accepted
-forms is reference, and it belongs on the [reference page](reference.md) for that construct.
-
-**No first-person narration.** Project voice throughout. Where the argument wants a person behind it,
-link to the [transcript](../blog/rustlab-2025-coherence.md) or the blog post that has one.
-
-**No unmotivated mechanism.** Every piece of machinery a page shows must answer a question the page has
-already made the reader ask. `IsProviderFor` on *How CGP works* is earned; `IsProviderFor` on *Why CGP
-exists* is not.
-
-**No claim without its cost.** These are the pages read end to end by the least credulous readers, so an
-unqualified feature claim does more damage here than anywhere else on the site.
+- **No instructions**: no install steps, no `Cargo.toml` edits, no numbered sequence to follow.
+- **No exhaustive syntax**: one use of a construct is explanation; its accepted forms belong on its
+  [reference page](reference.md).
+- **No first-person narration**; link the [transcript](../blog/rustlab-2025-coherence.md) or a blog
+  post where the argument wants a person behind it.
+- **No unmotivated mechanism**: each piece of machinery answers a question the page has already made
+  the reader ask, so `IsProviderFor` is earned on *How CGP works* and not on *Why CGP exists*.
+- **No claim without its cost.**
 
 ## Checking a draft
 
-**State the page's organizing question and check the page answers it**, and only it. A page answering
-two questions is two pages, and the second one is the essay that should have been offloaded.
-
-**Check the frame.** Does the page explain what Rust already does, correctly and sympathetically, before
-improving on it? This is the single most common way a CGP explanation goes wrong.
-
-**Check the natural-writing style.** Read the page from start to finish. Each sentence should build
-on the preceding one, paragraphs should connect the reasoning, and sentence lengths should vary.
-The opening must establish the concept and its purpose, with the examples supporting that subject.
-
-**Find the cost.** If the page makes a claim and never names its limit, it is not finished.
-
-**Check the voice.** Project voice, no first person, and any judgement grounded rather than attributed.
-
-**Check what leaked in.** No install steps, no syntax tables, and no internal machinery the page has not
-earned.
-
-**Verify every snippet** against the source and the `/cgp` skill, preferring code already verified in
-[examples/](../../examples/README.md), and remember that a concept document is a rewrite source rather
-than a copy source.
+- **State the page's organizing question** and check the page answers it, and only it; a second
+  question is a second page.
+- **Check the frame**: the page explains what Rust already does, correctly and sympathetically, before
+  improving on it, the most common way a CGP explanation goes wrong.
+- **Read it through in natural style**: each sentence builds on the last, and the opening establishes
+  the concept and its purpose, with examples supporting it.
+- **Find the cost**, and check the voice: no first person, judgements grounded.
+- **Check what leaked in**: install steps, syntax tables, or unearned machinery.
+- **Verify every snippet** against the source and the `/cgp` skill, preferring code verified in
+  [examples/](../../examples/README.md).
