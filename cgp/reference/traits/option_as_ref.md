@@ -81,7 +81,7 @@ pub struct App {
 
 - The trait and its blanket impl are in
   [crates/core/cgp-field/src/traits/option_as_ref.rs](https://github.com/contextgeneric/cgp/blob/main/crates/core/cgp-field/src/traits/option_as_ref.rs),
-  re-exported through `cgp::prelude`.
+  re-exported through `cgp::core::field::traits`.
 
 ## Public pages derived from this document
 

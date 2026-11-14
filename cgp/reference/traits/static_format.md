@@ -28,8 +28,8 @@ in [`ChainGetters`](../providers/chain_getters.md) and do not use paths at all.
 ## Definition
 
 The three differ in where they are imported from, and the split is worth stating before the
-definitions because no two of them agree. `ConcatPath` is in the prelude. `StaticString` comes from
-`cgp::core::field::traits`. And `StaticFormat`, which lives in the same crate as `ConcatPath`, comes
+definitions because no two of them agree. None is in the prelude. `StaticString` comes from
+`cgp::core::field::traits`, and `StaticFormat` and `ConcatPath`, which live in the same crate, come
 from `cgp::core::base::traits`, the module through which `cgp-core` re-exports `cgp-base`;
 `cgp-base` in turn re-exports `cgp-base-types::*`, so the same module tree also reaches
 `cgp::core::base::types` for [`Chars`](../types/chars.md), [`Cons`](../types/cons.md), `Nil`,
@@ -76,7 +76,7 @@ pub trait StaticString {
 It is a blanket impl over a private `StaticBytes` trait, which only `Symbol<LEN, Chars>` and `Nil`
 implement, so a bare `Chars` list lacks it:
 ``<Chars<'a', Nil> as StaticString>::VALUE`` fails with
-``error[E0277]: the trait bound `cgp::prelude::Chars<'a', cgp::prelude::Nil>: StaticString` is not satisfied``,
+``error[E0277]: the trait bound `cgp::macro_prelude::Chars<'a', cgp::prelude::Nil>: StaticString` is not satisfied``,
 with a help line naming the unimplemented `StaticBytes`. `Nil`'s value is `""`.
 `Symbol<LEN, Chars>` computes a `[u8; LEN]` byte array at const-evaluation time by walking the
 `Chars` list and UTF-8-encoding each character into the array, then `StaticString::VALUE` validates

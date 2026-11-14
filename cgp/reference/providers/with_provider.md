@@ -18,7 +18,7 @@ Users rarely write `WithProvider` in full, because its common uses have aliases:
 
 | Alias | Expands to | Defined in | In the prelude |
 | --- | --- | --- | --- |
-| `WithContext` | `WithProvider<UseContext>` | `cgp-component` | yes |
+| `WithContext` | `WithProvider<UseContext>` | `cgp-component` | no, `cgp::core::component` |
 | `WithType<Type>` | `WithProvider<UseType<Type>>` | `cgp-type` | no, `cgp::core::types` |
 | `WithDelegatedType<Components>` | `WithProvider<UseDelegatedType<Components>>` | `cgp-type` | no, `cgp::core::types` |
 | `WithField<Tag>` | `WithProvider<UseField<Tag>>` | `cgp-field` | no, `cgp::core::field::impls` |
@@ -26,7 +26,8 @@ Users rarely write `WithProvider` in full, because its common uses have aliases:
 
 ## Definition
 
-`WithProvider` is defined in `cgp-component` and is in the prelude:
+`WithProvider` is defined in `cgp-component` and imported from `cgp::core::component`; it is not in
+the prelude:
 
 ```rust
 pub struct WithProvider<Provider>(pub PhantomData<Provider>);

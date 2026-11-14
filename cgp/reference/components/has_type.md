@@ -44,8 +44,8 @@ The parts are these:
   `UseDelegate` impl for the legacy per-tag delegation table.
 - **`TypeOf<Context, Tag>`** is the short spelling of the resolved type.
 
-None of these names except `HasType` and `TypeProvider` is in the prelude. `TypeProviderComponent`
-and `TypeOf` are imported from `cgp::core::types`.
+None of these names is in the prelude. `HasType`, `TypeProvider`, `TypeProviderComponent`, and
+`TypeOf` are imported from `cgp::core::types`.
 
 ## Behavior
 
@@ -83,6 +83,7 @@ trait it names, such as `HasScalarType`.
 This context resolves two tags to two types through `open`:
 
 ```rust
+use cgp::core::types::HasType;
 use cgp::prelude::*;
 use cgp::core::types::{TypeOf, TypeProviderComponent};
 

@@ -75,6 +75,7 @@ Three details of the `Cons` impl matter to a user:
 This getter reads a port stored inside the context's config:
 
 ```rust
+use cgp::core::component::WithProvider;
 use cgp::prelude::*;
 use cgp::core::field::impls::ChainGetters;
 

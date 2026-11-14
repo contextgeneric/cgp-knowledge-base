@@ -43,8 +43,8 @@ The parameters identify one provider trait implementation:
   `IsProviderFor<AreaCalculatorComponent, App, (Rectangle,)>`, is a different bound, and rustc adds
   ``help: for that trait implementation, expected `Rectangle`, found `(Rectangle,)` ``.
 
-The trait is in the prelude. It carries no `#[diagnostic::on_unimplemented]` attribute; diagnostics
-are left to [cargo-cgp](../cargo-cgp.md).
+The trait is not in the prelude; it is imported from `cgp::core::component`. It carries no
+`#[diagnostic::on_unimplemented]` attribute; diagnostics are left to [cargo-cgp](../cargo-cgp.md).
 
 ## Behavior
 

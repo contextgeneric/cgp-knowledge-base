@@ -672,10 +672,10 @@ code of their own:
 - **Obligation-note renaming:** the `required for … to implement …` notes of an unresolved diagnostic name
   the consumer and provider traits instead of the wiring traits. A generated parameter such as `__Context__`
   is never called a context.
-- **Path stripping:** rustc's module paths go (`cgp::prelude::Chars` becomes `Chars`), but a qualifier that
-  tells two types apart stays (`std::io::Error` beside a crate's own `Error`), and so does the path of a
-  `use` statement a `help` writes. It applies to every rewritten message, and to any other only when a
-  resugaring below fired there.
+- **Path stripping:** rustc's module paths go (`cgp::macro_prelude::Chars` becomes `Chars`), but a
+  qualifier that tells two types apart stays (`std::io::Error` beside a crate's own `Error`), and so
+  does the path of a `use` statement a `help` writes. It applies to every rewritten message, and to
+  any other only when a resugaring below fired there.
 - **Resugaring:** `Symbol!`, `Product!`, `Sum!`, `Struct!`, `Enum!`, and `Path!` restore the surface syntax of
   their expansions. An open-ended path, which rustc prints with `_` for the tail the macros append, has no
   `Path!` spelling, so it stays a list, and a rewritten message names it as its key (`@foo.bar`).

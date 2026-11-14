@@ -103,8 +103,8 @@ whatever the receiver. It suits a body that wants a value that may be owned or b
 committing the field to either. The form is recognized by shape, not by name resolution: a
 single-segment path named `MRef` with exactly a lifetime and a type argument. A differently shaped
 `MRef`, or one reached through a qualified path, falls through to the owned-and-cloned case, which
-expects a field of that very type; with `'_` in it, as `cgp::prelude::MRef<'_, String>`, the
-definition fails with ``error[E0637]: `'_` cannot be used here``.
+expects a field of that very type; with `'_` in it, as `cgp::core::field::types::MRef<'_, String>`,
+the definition fails with ``error[E0637]: `'_` cannot be used here``.
 
 ## Expansion
 

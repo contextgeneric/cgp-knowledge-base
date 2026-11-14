@@ -34,7 +34,8 @@ where
 ```
 
 `Self` is the context being checked, `Component` is the component's marker, and `Params` holds the
-component's other generic parameters, as for `IsProviderFor`. The trait is in the prelude.
+component's other generic parameters, as for `IsProviderFor`. The trait is not in the prelude; it is
+imported from `cgp::core::component`.
 
 ## Behavior
 

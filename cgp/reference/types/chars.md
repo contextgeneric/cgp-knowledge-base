@@ -69,8 +69,9 @@ beyond `StaticFormat` and `Display`. `Default` is what lets a `Symbol!("…")` t
 a value where one is needed. `Chars` additionally derives `Eq`, `PartialEq`, `Clone`, and `Copy`.
 
 A bare `Chars` chain lacks the length, so `StaticString` is implemented for `Symbol` and for `Nil`
-(whose value is `""`) and not for `Chars`. Both types are in the prelude, and also reachable as
-`cgp::core::base::types`.
+(whose value is `""`) and not for `Chars`. Neither type is in the prelude; both are imported from
+`cgp::core::field::types` or `cgp::core::base::types`, and the `Symbol!` macro, which is in the
+prelude, writes them for you.
 
 ### Reading it, and what goes wrong
 
@@ -81,8 +82,8 @@ field as a `Symbol` over a `Chars` chain, read off one character at a time. A pr
 `height`, fails with a help line naming both tags:
 
 ```text
-help: the trait `HasField<Symbol<5, cgp::prelude::Chars<'w', cgp::prelude::Chars<'i', cgp::prelude::Chars<'d', cgp::prelude::Chars<'t', cgp::prelude::Chars<'h', Nil>>>>>>>` is not implemented for `Rectangle`
-      but trait `HasField<Symbol<6, cgp::prelude::Chars<'h', cgp::prelude::Chars<'e', cgp::prelude::Chars<'i', cgp::prelude::Chars<'g', cgp::prelude::Chars<'h', cgp::prelude::Chars<'t', Nil>>>>>>>>` is implemented for it
+help: the trait `HasField<Symbol<5, Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>>>` is not implemented for `Rectangle`
+      but trait `HasField<Symbol<6, Chars<'h', Chars<'e', Chars<'i', Chars<'g', Chars<'h', cgp::macro_prelude::Chars<'t', Nil>>>>>>>>` is implemented for it
 ```
 
 [`cargo cgp check`](../cargo-cgp.md) reads the chain back into the name and reports

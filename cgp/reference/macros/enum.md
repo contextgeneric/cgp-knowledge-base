@@ -103,6 +103,7 @@ A function bounded on an enum's shape converts a value built in that shape into 
 variants:
 
 ```rust
+use cgp::core::field::traits::FromFields;
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, CgpData)]

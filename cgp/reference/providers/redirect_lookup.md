@@ -26,7 +26,8 @@ This indirection lets wiring be organized by path:
 
 ## Definition
 
-`RedirectLookup` is defined in `cgp-component` and exported by the prelude:
+`RedirectLookup` is defined in `cgp-component` and imported from `cgp::core::component`; it is not
+in the prelude:
 
 ```rust
 pub struct RedirectLookup<Key, Components>(pub PhantomData<(Key, Components)>);

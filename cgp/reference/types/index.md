@@ -64,7 +64,7 @@ with ``error[E0277]: the trait bound `Point: cgp::prelude::HasField<cgp::prelude
 and the help lines list the three `HasField<Index<0>>` to `HasField<Index<2>>` impls the struct does
 have, so an off-by-one index surfaces the same way. `Symbol!("0")` is a string tag, never generated
 for a tuple field, so reading it on `Pair` fails with
-``error[E0277]: the trait bound `Pair: cgp::prelude::HasField<cgp::prelude::Symbol<1, cgp::prelude::Chars<'0', Nil>>>` is not satisfied``.
+``error[E0277]: the trait bound `Pair: cgp::prelude::HasField<cgp::macro_prelude::Symbol<1, cgp::macro_prelude::Chars<'0', Nil>>>` is not satisfied``.
 
 ## Examples
 

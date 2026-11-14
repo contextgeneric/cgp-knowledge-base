@@ -17,9 +17,9 @@ variant by variant, and have the compiler confirm the match is complete.
 The family pairs an accessor that turns a value into an extractor with a per-variant extraction
 operation and a finalize step for the empty remainder. `HasExtractor` and its borrowed forms obtain
 the extractor; `ExtractField<Tag>` tries one variant and returns either the payload or the shrunken
-remainder; `FinalizeExtract` discharges the remainder once it is uninhabited. All but
-`FinalizeExtractResult` are in the prelude; it is imported from `cgp::core::field::traits`. The
-traits are implemented for an enum by
+remainder; `FinalizeExtract` discharges the remainder once it is uninhabited. None is in the
+prelude; all four are imported from `cgp::core::field::traits`, while the `ExtractField` derive is
+in the prelude. The traits are implemented for an enum by
 [`#[derive(ExtractField)]`](../derives/derive_extract_field.md), which generates the partial
 companion enums they operate on.
 
@@ -237,6 +237,7 @@ The family is normally driven through `to_extractor`, a chain of `extract_field`
 `finalize_extract_result` to discharge the impossible remainder at the end:
 
 ```rust
+use cgp::core::field::traits::{ExtractField, HasExtractor};
 use cgp::prelude::*;
 use cgp::core::field::traits::FinalizeExtractResult;
 

@@ -49,9 +49,10 @@ Each handler component is an ordinary `#[cgp_component]`. A context calls a cons
 `CanCompute`, `CanTryCompute`, `CanHandle`, or `CanProduce`, and a provider implements the matching
 provider trait, such as `Computer`, `TryComputer`, `Handler`, or `Producer`. The context picks the
 provider in its [`delegate_components!`](../reference/macros/delegate_components.md) table under the
-component key, such as `ComputerComponent`. Every component key is in the prelude, and so are the
-provider traits apart from `ComputerRef`, `TryComputerRef`, and `HandlerRef`; those three and all
-the consumer traits are imported from `cgp::extra::handler`.
+component key, such as `ComputerComponent`. The prelude carries the provider traits `Computer`,
+`TryComputer`, `AsyncComputer`, `Handler`, and `Producer`, their keys, and `ComputerRefComponent`;
+the other by-reference provider traits and keys and all the consumer traits are imported from
+`cgp::extra::handler`.
 
 Because `Code` and `Input` are type parameters, a context can dispatch a handler on either or both.
 The recommended form is the `open` statement, whose redirect appends both parameters to the lookup

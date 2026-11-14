@@ -404,7 +404,7 @@ the needed impl:
   `TryComputerRefComponent`, and `HandlerRefComponent`. Those entries lead to `MatchWithHandlersRef`
   or `MatchWithHandlersMut`, which implement only `Computer` and `AsyncComputer`, so wiring a
   fallible component to one of these matchers fails with an unsatisfied bound, noted as
-  ``required for `cgp::prelude::MatchWithValueHandlersRef<ComputeAreaOfRef>` to implement `IsProviderFor<cgp::prelude::HandlerComponent, App, ((), &'a Shape)>` ``.
+  ``required for `MatchWithValueHandlersRef<ComputeAreaOfRef>` to implement `IsProviderFor<cgp::prelude::HandlerComponent, App, ((), &'a Shape)>` ``.
   The owned `MatchWithValueHandlers` has the same limit without the misleading entries. The `Mut`
   form's `ComputerRefComponent` and `AsyncComputerRefComponent` entries cannot resolve either, as
   the convenience-matcher section explains.

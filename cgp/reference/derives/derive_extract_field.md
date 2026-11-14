@@ -30,6 +30,7 @@ empty remainder.
 The derive is applied to an enum and takes no arguments:
 
 ```rust
+use cgp::core::field::traits::ExtractField;
 use cgp::prelude::*;
 
 #[derive(ExtractField)]
@@ -193,6 +194,7 @@ The extractor is driven through `to_extractor`, a chain of `extract_field` calls
 `finalize_extract_result` to discharge the impossible remainder:
 
 ```rust
+use cgp::core::field::traits::{ExtractField, HasExtractor};
 use cgp::prelude::*;
 use cgp::core::field::traits::FinalizeExtractResult;
 

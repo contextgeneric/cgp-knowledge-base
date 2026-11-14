@@ -122,6 +122,7 @@ derives its shape, and `rebuild` turns a value of that shape back into any type 
 `Fields`:
 
 ```rust
+use cgp::core::field::traits::FromFields;
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, HasFields)]

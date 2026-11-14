@@ -81,8 +81,8 @@ The prelude exports the provider traits `Computer`, `AsyncComputer`, and `AsyncC
 keys `ComputerComponent`, `ComputerRefComponent`, `AsyncComputerComponent`, and
 `AsyncComputerRefComponent`. The consumer traits `CanCompute`, `CanComputeRef`, `CanComputeAsync`,
 and `CanComputeAsyncRef`, the provider trait `ComputerRef`, and the one-step promotion providers
-(`Promote`, `PromoteAsync`, `PromoteRef`, `TryPromote`) are imported from `cgp::extra::handler`; the
-promotion bundles such as `PromoteComputer` are in the prelude.
+(`Promote`, `PromoteAsync`, `PromoteRef`, `TryPromote`) are imported from `cgp::extra::handler`, as
+are the promotion bundles such as `PromoteComputer`.
 
 The `#[prefix]` registration decides how a context that joins `DefaultNamespace` wires these
 components. It binds a provider at the prefixed path, as
@@ -154,6 +154,7 @@ through `CanTryCompute`:
 
 ```rust
 use core::marker::PhantomData;
+use cgp::extra::handler::PromoteComputer;
 use cgp::prelude::*;
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::extra::handler::{CanCompute, CanTryCompute};
@@ -239,6 +240,7 @@ An async provider declares `async fn` in its impl. Wiring `AsyncComputerComponen
 
 ```rust
 use core::marker::PhantomData;
+use cgp::extra::handler::{AsyncComputerRef, AsyncComputerRefComponent};
 use cgp::prelude::*;
 use cgp::extra::handler::{CanComputeAsync, CanComputeAsyncRef};
 
@@ -281,8 +283,8 @@ pub async fn run(app: &App, text: &String) -> (u64, usize) {
 }
 ```
 
-The futures need an executor to run, which CGP leaves to the application. `AsyncComputerRef` is
-in the prelude, so neither async provider needs an import beyond it.
+The futures need an executor to run, which CGP leaves to the application. `AsyncComputer` is in the
+prelude; `AsyncComputerRef` is imported from `cgp::extra::handler`.
 
 ## Related constructs
 

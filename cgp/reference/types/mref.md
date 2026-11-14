@@ -46,14 +46,15 @@ the call site. The surface has three parts:
   value or cloning the borrowed one.
 
 A borrowed `MRef` is therefore read cheaply and promoted to ownership only when asked. Those are the
-whole surface: `MRef` is neither `Clone` nor `Debug`. It is in the prelude.
+whole surface: `MRef` is neither `Clone` nor `Debug`. It is not in the prelude; it is imported from
+`cgp::core::field::types`.
 
 The getter macros and [`#[implicit]`](../attributes/implicit.md) recognize `MRef` by shape, a
 single-segment path named `MRef` with a lifetime and a type argument, and read a field of type `T`
 into `MRef::Ref(…)`. An implicit argument declared that way therefore always lends. A differently
 shaped or qualified `MRef` falls through to the owned form, which expects a field of that very type,
-so `fn greeting(&self) -> cgp::prelude::MRef<'_, String>;` under `#[cgp_auto_getter]` places `'_` in
-a `HasField` bound and fails with ``error[E0637]: `'_` cannot be used here``.
+so `fn greeting(&self) -> cgp::core::field::types::MRef<'_, String>;` under `#[cgp_auto_getter]`
+places `'_` in a `HasField` bound and fails with ``error[E0637]: `'_` cannot be used here``.
 
 ### Choosing it, and what goes wrong
 
@@ -71,6 +72,7 @@ wanted `get_or_clone`.
 A getter returning `MRef` lets one context lend a stored field and another build the value:
 
 ```rust
+use cgp::core::field::types::MRef;
 use cgp::prelude::*;
 
 #[cgp_getter]
@@ -116,6 +118,7 @@ pub fn shout<Context: HasGreeting>(context: &Context) -> String {
 Both variants share one type and are consumed the same way; only construction differs:
 
 ```rust
+use cgp::core::field::types::MRef;
 use cgp::prelude::*;
 
 let stored = String::from("hello");

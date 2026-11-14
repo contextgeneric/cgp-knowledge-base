@@ -244,6 +244,7 @@ converted to its extractor and have one variant pulled out, with the remainder c
 still-unmatched variants:
 
 ```rust
+use cgp::core::field::traits::{ExtractField, HasExtractor};
 use cgp::prelude::*;
 use cgp::core::field::traits::FinalizeExtractResult;
 

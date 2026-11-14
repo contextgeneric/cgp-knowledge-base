@@ -16,7 +16,8 @@ variant *in*.
 
 It is the smallest trait of the extensible-variant family: building one variant has no state to
 track, so it has no partial companion type and no presence markers, only a tag-selected constructor.
-It is in the prelude. It is implemented for an enum by
+The trait is not in the prelude; it is imported from `cgp::core::field::traits`, while the derive of
+the same name is in the prelude. It is implemented for an enum by
 [`#[derive(FromVariant)]`](../derives/derive_from_variant.md), which emits one impl per variant, and
 it is the construction half that the casts and dispatchers reach for after a match has decided which
 variant to build.
@@ -78,7 +79,7 @@ by `Tag` without ever mentioning a concrete variant.
 
 The tag must be written whenever the enum has two or more variants. A bare `PhantomData`, as
 `Shape::from_variant(PhantomData, circle)`, fails with `error[E0283]: type annotations needed` and
-``note: multiple `impl`s satisfying `Shape: cgp::prelude::FromVariant<_>` found``, since rustc does not
+``note: multiple `impl`s satisfying `Shape: cgp::macro_prelude::FromVariant<_>` found``, since rustc does not
 pick the impl from the payload's type; a one-variant enum has a single impl, so there the tag is
 inferred. A variant name is matched exactly, so `Symbol!("circle")` for a `Circle` variant is an
 unsatisfied `FromVariant<Symbol<6, Chars<'c', …>>>` bound (`E0277`) rather than a type mismatch. Each
@@ -103,6 +104,7 @@ local enum and widen the result.
 site can do directly and generic code can do over an abstract `Tag`:
 
 ```rust
+use cgp::core::field::traits::FromVariant;
 use cgp::prelude::*;
 
 pub struct Circle {

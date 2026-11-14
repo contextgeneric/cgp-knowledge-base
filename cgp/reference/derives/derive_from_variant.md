@@ -25,6 +25,7 @@ and no presence tracking, only a direct constructor per variant.
 The derive is applied to an enum and takes no arguments:
 
 ```rust
+use cgp::core::field::traits::FromVariant;
 use cgp::prelude::*;
 
 #[derive(FromVariant)]
@@ -113,6 +114,7 @@ inferred. A struct is rejected with ``expected `enum` ``.
 `FromVariant` lets a value be lifted into an enum generically by naming the variant with a tag:
 
 ```rust
+use cgp::core::field::traits::FromVariant;
 use cgp::prelude::*;
 
 #[derive(FromVariant)]

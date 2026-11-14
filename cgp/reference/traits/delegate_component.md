@@ -38,7 +38,8 @@ pub trait DelegateComponent<Key: ?Sized> {
 
 `Self` is the table, the type that owns the entry. `Key` is the type being looked up; it is
 `?Sized`, so an unsized marker can serve as a key. `Delegate` is the value stored at that key: a
-provider, or another table. The trait is in the prelude.
+provider, or another table. The trait is not in the prelude; it is imported from
+`cgp::core::component`.
 
 The trait carries no `#[diagnostic::on_unimplemented]` attribute. A lookup with no entry is reported
 by the compiler as ``the trait `DelegateComponent<FooComponent>` is not implemented for `App` ``,

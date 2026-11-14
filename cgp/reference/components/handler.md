@@ -163,6 +163,7 @@ message into a context whose error type is `String`, so `RaiseFrom` raises it th
 
 ```rust
 use core::marker::PhantomData;
+use cgp::extra::handler::HandlerRefComponent;
 use cgp::prelude::*;
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;

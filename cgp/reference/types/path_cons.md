@@ -68,8 +68,9 @@ or a namespace entry names as `RedirectLookup<Components, Path>`. Its impl, whic
 the component's type parameters through `ConcatPath` and looks the whole extended path up as one key
 in `Components`, as `Components: DelegateComponent<Path>`. The path therefore never names a provider
 itself; it says which key to look up, so the same path can resolve to different providers in
-different tables, and the entry it reaches may redirect again. `PathCons` and `ConcatPath` are both
-in the prelude.
+different tables, and the entry it reaches may redirect again. Neither `PathCons` nor `ConcatPath`
+is in the prelude: `PathCons` is imported from `cgp::core::base::types` and `ConcatPath` from
+`cgp::core::base::traits`, and the `Path!` macro writes the type for you.
 
 ### Reading it, and what goes wrong
 

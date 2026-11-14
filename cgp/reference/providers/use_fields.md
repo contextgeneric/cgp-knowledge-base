@@ -22,7 +22,8 @@ of methods.
 
 ## Definition
 
-`UseFields` is a unit struct defined in `cgp-component` and exported by the prelude:
+`UseFields` is a unit struct defined in `cgp-component` and imported from `cgp::core::component`; it
+is not in the prelude:
 
 ```rust
 pub struct UseFields;
@@ -73,6 +74,7 @@ foundational field getter, exist only for single-method getters.
 This getter has two methods, each read from its same-named field:
 
 ```rust
+use cgp::core::component::UseFields;
 use cgp::prelude::*;
 
 #[cgp_getter]

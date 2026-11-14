@@ -49,7 +49,8 @@ impl MapType for IsVoid    { type Map<T> = Void; }
 impl MapType for IsOptional { type Map<T> = Option<T>; }
 ```
 
-`MapType`, `IsPresent`, `IsNothing`, and `IsVoid` are in the prelude; `IsOptional` is imported from
+None of `MapType` and its markers is in the prelude: `MapType` is imported from
+`cgp::core::field::traits`, and `IsPresent`, `IsNothing`, `IsVoid`, and `IsOptional` from
 `cgp::core::field::impls`. The library also implements `MapType` for two list mappers that are not
 field states, `TryPromoteProviders` (in `cgp-monad`, `Map<P> = TryPromote<P>`) and
 `ToBuildAndMergeHandler` (in `cgp-dispatch`), which [`MapFields`](product_ops.md) applies to wrap every
@@ -80,7 +81,7 @@ Two of the three have consumers. `IsRef` and `IsMut` are what `HasExtractorRef` 
 `HasExtractorMut` fix their borrowed extractors to, but **nothing in CGP currently selects
 `IsOwned`**: no derive emits it and no provider resolves against it. It is available for a borrowed
 view that holds its payloads by value, and at present that view exists only if you write it
-yourself. `IsOwned` is also, unlike `IsRef` and `IsMut`, not in the prelude.
+yourself. `IsOwned`, like `IsRef` and `IsMut`, is imported from `cgp::core::field::impls`.
 
 A borrowed extractor combines the two families: the partial type carries one outer `MapTypeRef`
 marker (`IsRef` for `extractor_ref`, `IsMut` for `extractor_mut`) shared across all fields, and one
@@ -162,6 +163,7 @@ to `IsPresent`, supplying `Default::default()` wherever a field was `IsNothing` 
 ```rust
 use cgp::core::field::impls::IsOptional;
 use cgp::core::field::traits::TransformMap;
+use cgp::core::field::impls::{IsNothing, IsPresent};
 use cgp::prelude::*;
 
 pub struct FillDefaults;
