@@ -67,8 +67,9 @@ Each surface has one job, and a page that does two jobs is usually two pages:
 - **Reference:** explains one construct completely, for a reader who knows its name; the largest
   surface, derived from the internal reference, and canonical rather than a supplement to rustdoc.
   Spec: [writing-guides/reference.md](writing-guides/reference.md).
-- **Orientation pages** (the Introduction, the Quickstart, and Resources): route rather than teach,
-  for readers already interested. Spec: [writing-guides/orientation.md](writing-guides/orientation.md).
+- **Orientation pages** (the Introduction, the Overview, the Quickstart, and Resources): route, or on
+  the Overview tour the features, rather than teach, for readers already interested. Spec:
+  [writing-guides/orientation.md](writing-guides/orientation.md).
 - **Project pages** (Contribute and the AI disclosure page): speak about the project rather than
   about CGP. Contribute's sponsorship section is the one place the author's own voice stands on the
   site, and the disclosure page's sentence taking responsibility for what the project publishes is the

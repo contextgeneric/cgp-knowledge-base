@@ -240,7 +240,7 @@ site that states the project's maturity**.
   The maturity statement says CGP is young, its ecosystem small and community support limited, so an
   adopter of a mission-critical project should expect to investigate some problems alone; its raw
   errors can be hard to read, and `cargo-cgp` is itself an early release; code an assistant writes
-  still needs review. The section ends advising a try on a small part of a project whose
+  still needs the reader's review. The section ends advising a try on a small part of a project whose
   implementation choices already vary, linking *Modularity Hierarchy*.
 - **Layout:** a description list rather than a table, each short label in a column of its own beside
   one sentence, with a rule between rows, and the heading and lead in a column beside the rows; on a
