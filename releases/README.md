@@ -13,7 +13,7 @@ a reference document describes how a construct works now, with no trace of how i
 keeps those documents readable, but it leaves a real gap, because CGP's public material is full of
 history that a reader cannot date from the text alone. Almost every blog post on the
 [website](../website/blog/README.md) predates the current release, the
-[CGP Patterns book](https://patterns.contextgeneric.dev/) has not been updated for some time, and
+[CGP Patterns book](https://patterns.contextgeneric.dev/) was last revised for v0.4.0, and
 codebases in the wild are pinned to whatever version they adopted. Meeting `#[cgp_context]`,
 `cgp_preset!`, or `HasAsyncErrorType` in any of them raises the same question, and this is where the
 answer lives.
