@@ -20,7 +20,8 @@ The snippets use the Hypershell crates at their
 `hypershell-components`, `hypershell-tokio-components`, and `hypershell-hash-components`, plus
 `hex`, `sha2`, `tokio`, and `cgp-error-anyhow`. Every snippet was compiled and run against that
 branch in one crate. All snippets assume `use hypershell::prelude::*;`, which re-exports
-`cgp::prelude::*`, and the handler items come from `cgp::extra::handler`. The project's own
+`cgp::prelude::*` with the handler traits and keys, and the other handler items, such as
+`PipeHandlers`, come from `cgp::extra::handler`. The project's own
 mechanics are documented in [projects/hypershell/](../projects/hypershell/README.md), and this
 example links there rather than re-explaining them.
 

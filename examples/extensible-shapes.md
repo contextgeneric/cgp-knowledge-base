@@ -34,10 +34,10 @@ which one is in play and links to it:
   [dispatching per type](../cgp/guides/dispatching-per-type.md), and a
   [`check_components!`](../cgp/reference/macros/check_components.md) assertion
 
-All snippets assume `use cgp::prelude::*;`, which also brings `MatchWithValueHandlers`; the other
-dispatch combinators come from `cgp::extra::dispatch`, and the cast helpers are the
-`cgp::core::field::impls` traits `CanUpcast`, `CanDowncast`, and `CanDowncastFields`, which the
-prelude does not re-export. Each shape is its own payload struct:
+All snippets assume `use cgp::prelude::*;`, with `Computer` and `ComputerComponent` from
+`cgp::extra::handler`. The dispatch combinators, `MatchWithValueHandlers` included, come from
+`cgp::extra::dispatch`, and the cast helpers are the `cgp::core::field::impls` traits `CanUpcast`,
+`CanDowncast`, and `CanDowncastFields`, which the prelude does not re-export. Each shape is its own payload struct:
 
 ```rust
 #[derive(Debug, PartialEq)]
