@@ -1,19 +1,18 @@
 # Writing a comparison page
 
 A comparison page explains CGP to a reader who already knows a related idea from another language or
-paradigm: type classes, dependency injection, ML modules, C++ policies, algebraic effects,
-reflection. It maps CGP into the vocabulary that reader already holds, shows the two side by side in
-code, states what each costs, and says plainly where the reader's own tool is the better choice. The
-pages are ported from the internal [related-work](../../related-work/README.md) comparisons, and
-this guide fixes what changes in the port.
+paradigm, such as type classes, dependency injection, ML modules, C++ policies, algebraic effects, or
+reflection. It maps CGP into that reader's vocabulary, shows the two side by side in code, states what
+each costs, and says plainly where the reader's own tool is the better choice. The pages are ported
+from the internal [related-work](../../related-work/README.md) comparisons, and this guide fixes what
+changes in the port.
 
-- **Where they live**: `docs/comparisons/`, a top-level category labelled **Comparisons**, placed
-  directly after Concepts in the sidebar
+- **Where they live**: `docs/comparisons/`, a top-level category labelled **Comparisons**, directly
+  after Concepts in the sidebar
 - **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Derived from**: [related-work/](../../related-work/README.md), one internal document per page,
   which stays the source of truth
-- **Scale**: eleven pages plus a hand-written index, shipped with the v0.8.0 relaunch
 - **Records**: one record, [pages/comparisons.md](../pages/comparisons.md), for the whole section, per
   the [ported-catalog exception](../AGENTS.md#registering-a-document)
 - **Reading**: the shared set and [the comparison pages' row](README.md#comparison-pages) of the
@@ -21,317 +20,210 @@ this guide fixes what changes in the port.
 
 ## What the page is for
 
-A comparison page serves the reader who arrives with a working mental model and wants to know where
-CGP fits in it. [readers.md](../../communication-strategy/readers.md#readers-by-prior-mental-model)
-profiles these readers: the functional-programming practitioner, the enterprise dependency-injection
-developer, the dynamic-language developer, the framework author, and the language-design reader.
-Each already holds most of CGP's structure under other names, so the fastest way to teach them is to
-name the correspondence and then mark the places where it breaks.
+**A comparison page serves a reader who arrives with a working mental model**, one of the profiles in
+[readers.md](../../communication-strategy/readers.md#readers-by-prior-mental-model), and already holds
+most of CGP's structure under other names. The fastest way to teach that reader is to name the
+correspondence, then mark where it breaks.
 
-The success condition is that the reader can state, in their own vocabulary, three things: what CGP
-does, what it does not do that their tool does, and where their tool remains the better choice. A
-page that leaves the reader believing CGP is a version of their tool with a feature switched off has
-failed, because the first construct that behaves differently will read as a defect. A page that
-leaves them believing CGP replaces their tool has failed for the opposite reason, and for this
-audience it has also started an argument the project does not want.
+**It succeeds when the reader can state, in their own vocabulary, what CGP does, what it does not do
+that their tool does, and where their tool remains the better choice.** A reader left believing CGP is
+their tool with a feature switched off will read the first difference as a defect; one left believing
+CGP replaces their tool has been started on an argument the project does not want.
 
 ## How it differs from an explanation page
 
-A comparison page is understanding-oriented and read away from a keyboard, so the
-[explanation guide](explanation.md) supplies its base rules: name the question and the page's extent
-up front, show code as illustration, state the cost, and end by routing. Four things set it apart,
-and they are why it needs a guide of its own.
+A comparison page is understanding-oriented, so the [explanation guide](explanation.md) supplies its
+base rules: name the question and the page's extent, show code as illustration, state the cost, and
+end by routing. Four things set it apart:
 
-**The organizing question looks outward.** A Concepts page asks *why does CGP work this way*; a
-comparison page asks *how does CGP relate to the idea I already know*. The subject of most of the
-page is therefore something other than CGP, and the page has to explain it faithfully enough that
-its own community would recognize the account.
-
-**It cites sources.** No other page type on the site carries a bibliography. A comparison page does,
-because a claim about how Scala resolves a `given` or how Lean orders instances is a claim about
-someone else's system, and its credibility rests on being traceable to that system's documentation
-and literature.
-
-**It shows code in another language.** Foreign snippets are claims about that language and are
-compiled against a named toolchain before they are published, which the website's Rust-only
-verification crate cannot do for them.
-
-**Two communities read it.** The Rust reader evaluating CGP is one audience; the practitioners of
-the compared tool, who will find the page by searching for their own vocabulary, are the other.
-Every sentence about the compared tool is written as if its maintainers are reading, because some
-will be.
+- **The organizing question looks outward**: how CGP relates to the idea the reader knows. Most of the
+  page explains another system, faithfully enough that its own community would recognize the account.
+- **It cites sources.** A claim about how Scala resolves a `given` is a claim about someone else's
+  system, credible only when traceable to its documentation and literature.
+- **It shows code in another language**, compiled against a named toolchain before publication, which
+  the website's Rust-only verification crate cannot do.
+- **Two communities read it**: the Rust reader evaluating CGP, and the compared tool's practitioners,
+  who find the page through their own vocabulary. Write every sentence about their tool as if its
+  maintainers are reading.
 
 ## Derived from the internal comparison, and what changes
 
-The internal documents already carry the faithful account, the compiled snippets, the cited
-sentiment, and the honest boundary, so **a comparison page is ported rather than written fresh**.
-Four transformations turn one into the other, and the first is the one that decides whether the port
-is publishable at all.
+**A comparison page is ported rather than written fresh**, because the internal document already
+carries the faithful account, the compiled snippets, the cited sentiment, and the honest boundary. Four
+transformations make the port, and the first decides whether it is publishable:
 
-**Retire the positioning section, and apply it instead.** Every internal document closes with
-*Presenting CGP to someone who knows this*, and that section is the project's playbook for
-persuading the reader. It is never published as prose: a reader who is told which of their
-intuitions to build on and which expectations to defuse is being read the marketing plan. Its
-content becomes the page's structure. The vocabulary map it opens with becomes the *In your terms*
-table near the top of the page. The expectations it says to correct become the *What to expect that
-differs* section, written to the reader as facts about CGP rather than as advice about the reader.
-The framings it says to avoid become checks on the draft, listed under
-[Checking a draft](#checking-a-draft).
+- **Retire the positioning section, and apply it instead.** The internal *Presenting CGP to someone
+  who knows this* section is the project's playbook for persuading the reader, and is never published
+  as prose. Its vocabulary map becomes the *In your terms* table; the expectations it says to correct
+  become *What to expect that differs*, written as facts about CGP; and the framings it says to avoid
+  become checks under [Checking a draft](#checking-a-draft).
+- **Compress the concept refresher.** The internal *The concept in depth* section teaches an agent the
+  compared idea; the public reader already knows it. Keep the terms the comparison needs, one cited
+  snippet per sub-concept, and a link to the primary source. The test, and the port's one judgement
+  call: a practitioner skims it without irritation, and a curious Rust reader can still follow.
+- **Re-point every link**, per the [one-way rule](../AGENTS.md#the-one-way-link-rule): a concept to its
+  Concepts page, a reference link to its reference page, an example to the tutorial or Projects example
+  page with the same scenario or inlined code, a blog record to the live post, and a
+  communication-strategy link dropped. A point drawn from the
+  [unpublished incoherent-Rust draft](../blog/incoherent-rust-today.md) is never cited: attribute it to
+  the [RustLab transcript](../blog/rustlab-2025-coherence.md) where the transcript makes it, state it as
+  the project's own analysis where it does not, and otherwise hold it until the post publishes.
+- **Keep the Sources section**, including the sentence recording which toolchain compiled each family
+  of snippets, since it says what was verified and what was transcribed.
 
-**Compress the concept refresher.** The internal *The concept in depth* section exists so that an
-agent can learn the compared idea well enough to write about it. The public reader already knows it.
-The section shrinks to the terms the comparison needs, one cited snippet per sub-concept, and a link
-to the primary source for the rest. This is the one judgement call the port carries, and the test is
-whether a practitioner would skim it without irritation while a curious Rust reader could still
-follow the comparison from it.
-
-**Re-point every link.** The internal documents link into concepts, the reference, examples, the
-communication strategy, and the website records, none of which a public page may link, per the
-[one-way rule](../AGENTS.md#the-one-way-link-rule). A concept link becomes its Concepts page, a
-reference link becomes its reference page, an example link becomes the tutorial or Projects example
-page carrying the same scenario or the code is inlined, a blog record becomes the live post, and a
-communication-strategy link is dropped. One case needs care: two internal documents draw on the
-[record of the unpublished incoherent-Rust draft](../blog/incoherent-rust-today.md), which cannot
-be cited. Attribute those points to the [RustLab transcript](../blog/rustlab-2025-coherence.md)
-where it makes them, state them as the project's own analysis where it does not, and otherwise hold
-them until that post publishes.
-
-**Keep the Sources section.** Citations are what let the page survive a skeptic who prefers the
-other tool, and the sentence recording which toolchain compiled each family of snippets stays
-because it says honestly what was verified and what was transcribed.
-
-The internal document remains the source of truth, and the
-[synchronization rule](../../AGENTS.md#the-synchronization-rule) binds both: a change to a CGP
-construct or to the compared tool updates the internal document and the public page in the same
-change, and a public page that disagrees with its internal document is a defect in the public page.
+The [synchronization rule](../../AGENTS.md#the-synchronization-rule) binds the page to its internal
+document: a change to a CGP construct or to the compared tool updates both in the same change, and a
+public page that disagrees with its internal document is the one in error.
 
 ## The page shape
 
-Every comparison page descends through the same sections in the same order, so a reader who has read
-one can skim the next by habit. The section titles below are jobs; the headings on the page name the
-compared tool where that reads better.
+Every comparison page has the same sections in the same order, so a reader of one can skim the next.
+The titles below are jobs; a page's headings may name the compared tool.
 
-**Orientation.** Two or three sentences. Say what CGP is in one sentence, naming Context-Generic
-Programming in full beside a short form of the tag line and linking the Introduction, since this
-page may be a reader's first contact. Relate the short form to the compared idea where it meets it,
-as a type-class page can say that CGP extends Rust with pluggable trait implementations chosen per
-context; the
-[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) owns
-the detail. Say who the page is for and what it covers, and say how far it goes, because these pages
-are long.
+- **Orientation**, two or three sentences: CGP in one sentence, naming Context-Generic Programming in
+  full beside a short form of the tag line and linking the Introduction, related to the compared idea
+  where it meets it, per the
+  [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page); who
+  the page is for, what it covers, and how far it goes, because the pages are long.
+- **In your terms**, a short table mapping the reader's interface, implementation, resolution step,
+  constraint, and environment onto component, provider, wiring, impl-side dependency, and context.
+  "Context" is glossed here on first use, with the canonical gloss from
+  [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each).
+- **The idea, briefly**: the compressed refresher, each sub-concept with one cited snippet in the
+  tool's own language, and what its users value, stated as they would. Name the version where behavior
+  is version-specific.
+- **How CGP expresses it**: the same problems in CGP beside those snippets, saying where the two align
+  and part. State which of CGP's three shapes each snippet wires, per
+  [vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target).
+- **What each approach costs**, both sides in one section. The compared tool's costs as its community
+  states them, cited; CGP's ordinary costs (the wiring, the declarations, the compile-time work, and the
+  raw diagnostics), with the canonical sentence copied unchanged: `cargo cgp check` leads with the root
+  cause for the classes it recognizes, and the tool does not yet reshape every class.
+- **Where the other tool is the better choice**, its own section, never folded into the costs.
+- **What to expect that differs**: the expectations the positioning section says to correct, as plain
+  facts about CGP (it does not infer a provider from scope, a provider receives the context rather than
+  a continuation, the structure is a type rather than a descriptor, the container is the type system),
+  each followed by why CGP is arranged that way.
+- **Where to go next**: the Concepts page behind the comparison, the tutorial or Projects example page
+  that puts it to work, and the neighbouring comparison a reader of this one likely knows.
+- **Sources**: the internal document's framed list, re-pointed, opening with the toolchain sentence.
 
-**In your terms.** A short table mapping the reader's vocabulary onto CGP's: their interface, their
-implementation, their resolution step, their constraint, and their environment against component,
-provider, wiring, impl-side dependency, and context. This is the hook for the reader who knows the
-tool, and it is where "context" is glossed on first use, with the canonical gloss from
-[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each).
-
-**The idea, briefly.** The compressed refresher: the sub-concepts the comparison needs, each with
-one cited snippet in the tool's own language, and what its users value about it, stated as they
-would state it. Name the version where behavior is version-specific.
-
-**How CGP expresses it.** The same problems in CGP, shown beside the snippets above, with prose
-saying where the two align and where they part. State which of CGP's three shapes each snippet
-wires, because the comparisons span all three and the internal document already records it; the
-qualifiers and the misreadings they prevent are in
-[vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target).
-
-**What each approach costs.** Both sides, in one section. The compared tool's costs are stated as
-its own community states them, with the citation. CGP's costs are the ordinary ones, stated in the
-author's plain register: the wiring, the declarations, the compile-time work, and the raw
-diagnostics, with the canonical sentence copied rather than paraphrased: `cargo cgp check` leads
-with the root cause for the classes it recognizes, and the tool does not yet reshape every class.
-
-**Where the other tool is the better choice.** Its own section, never folded into the costs. Every
-internal document names these cases, and they are the sentences that earn the page its credibility
-with both audiences.
-
-**What to expect that differs.** The expectations the internal positioning section says to correct,
-written as plain facts about CGP: it does not infer a provider from scope, a provider receives
-the context rather than a continuation, the structure is a type rather than a descriptor, the container is the type system.
-Each is followed by why CGP is arranged that way, so the difference reads as a design choice rather
-than a gap.
-
-**Where to go next.** Route to the Concepts page carrying the idea behind the comparison, the
-tutorial or Projects example page that puts it to work, and the neighbouring comparison a reader of this one is
-likely to know.
-
-**Sources.** The framed list from the internal document, re-pointed where an entry was internal,
-opening with the toolchain sentence.
-
-The page closes with the provenance note, in the wording the reference and Concepts pages share,
-with one addition: a comparison page's CGP code was verified against the library's source and its
-other snippets against the toolchains named in Sources. The mechanics are in
-[AGENTS.md](../AGENTS.md#disclosing-ai-use-on-a-page).
+The page closes with the provenance note in the wording the reference and Concepts pages share, adding
+that its CGP code was verified against the library's source and its other snippets against the
+toolchains named in Sources, per [AGENTS.md](../AGENTS.md#disclosing-ai-use-on-a-page).
 
 ## Writing about another community's tool
 
-**Never disparage the compared tool, and assume its maintainers are reading.** This is the
+**Never disparage the compared tool, and assume its maintainers are reading**, per the
 [base-wide rule](../../AGENTS.md#this-repository-is-public) and the
-[communication strategy's guardrail](../../communication-strategy/AGENTS.md#honesty-is-the-strategy),
-and a comparison page is where it is most easily breached, because the internal documents
-faithfully record what users dislike about Spring, Scala implicits, `ImplicitParams`, and Lean's
-instance search. Three habits keep the port honest. **Attribute opinion as opinion**: "Spring's
-community steers toward constructor injection because field injection hides dependencies" is a cited
-report, while "Spring hides your dependencies" is a jab. **Prefer the tool's own documentation for
-its own limits**: GHC's manual warns that overlapping instances can give rise to incoherence, and
-quoting the manual is fairer than paraphrasing a complaint. **Cut the sentence that reads as
-mockery** even when it is true. The internal document may keep it; the page does not.
+[strategy's guardrail](../../communication-strategy/AGENTS.md#honesty-is-the-strategy). The internal
+documents faithfully record what users dislike about their tools, so three habits keep the port
+honest:
 
-**The enhances-not-replaces frame must survive the comparison.** Shorthand that works
-internally, such as "dependency injection without a container", can read on the site as CGP replacing the reader's tool or replacing Rust's traits.
-Every page states in its orientation that CGP is a library on stable Rust, that a consumer trait is
-an ordinary trait, and that the comparison is about where the ideas meet rather than which to
-abandon. The frame is settled in [identity.md](../../communication-strategy/identity.md).
+- **Attribute opinion as opinion**: a cited report of why a community steers away from a practice, not
+  a jab at the tool.
+- **Prefer the tool's own documentation for its own limits**: quoting GHC's manual on overlapping
+  instances is fairer than paraphrasing a complaint.
+- **Cut the sentence that reads as mockery**, even when it is true.
 
-**Qualify bridge terms.** "Structural typing", "duck typing", "dependency injection", "reflection",
-and "effect system" are the words readers reach for, and each names something CGP does only in part.
-Use them to meet the reader and qualify them in the same sentence, per
-[vocabulary.md](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid):
-compile-time structural reflection, the resume-in-place fragment of effect handlers, compile-time and
+**The enhances-not-replaces frame survives the comparison.** Internal shorthand such as "dependency
+injection without a container" can read on the site as CGP replacing the reader's tool or Rust's
+traits, so every page's orientation states that CGP is a library on stable Rust, that a consumer trait
+is an ordinary trait, and that the comparison is about where the ideas meet, per
+[identity.md](../../communication-strategy/identity.md).
+
+**Qualify bridge terms** in the sentence that uses them, per
+[vocabulary.md](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid): compile-time
+structural reflection, the resume-in-place fragment of effect handlers, compile-time and
 reflection-free dependency injection.
 
-**Hold the vocabulary line.** Introduce the compared tool's term once, in the refresher, and then
-let the CGP side speak CGP. Never call a CGP construct a capability, even on the capabilities page,
-whose whole argument is why the word does not fit.
+**Hold the vocabulary line.** Introduce the compared tool's term once, in the refresher, then let the
+CGP side speak CGP. Never call a CGP construct a capability, even on the capabilities page.
 
-**Distil reactions to CGP; never link or quote them.** The internal documents do not cite reactions
-to CGP, and a page must not add any. Community sentiment about the compared tool is cited; sentiment
-about CGP is summarized without a thread or a name, per the
+**Distil reactions to CGP; never link or quote them.** Sentiment about the compared tool is cited;
+sentiment about CGP is summarized without a thread or a name, per the
 [evidence rule](../../communication-strategy/evidence.md).
 
 ## Code and verification
 
-**CGP code goes in the website's `example-code` crate**, at `tests/comparisons/<page>.rs`, one
-file per page and one module per heading, following the crate's
-[conventions](../site.md#the-example-code-crate). The section needs its own
-integration-test entry point, `tests/comparisons_tests.rs`, declaring the module tree the way the
-other sections' entry points do. A snippet the page shows as rejected by
-Rust, such as the overlapping impls that fail with `E0119`, is a `trybuild` compile-fail fixture
-under `tests/compile_fail/comparisons/`. Every wired context carries a `check_components!`
-assertion, which is what confirms the wiring resolves rather than merely parses. Draw CGP snippets
-from the internal document, which already takes them from [examples/](../../examples/README.md),
-and prefer the modern idioms the [guides](../../cgp/guides/README.md) teach.
+**CGP code goes in the website's `example-code` crate**, at `tests/comparisons/<page>.rs`, one file per
+page and one module per heading, per the crate's [conventions](../site.md#the-example-code-crate),
+with `tests/comparisons_tests.rs` as the section's entry point. A snippet shown as rejected by Rust,
+such as overlapping impls failing with `E0119`, is a `trybuild` compile-fail fixture under
+`tests/compile_fail/comparisons/`. Every wired context carries a `check_components!` assertion. Draw
+CGP snippets from the internal document, which takes them from [examples/](../../examples/README.md),
+in the modern idioms the [guides](../../cgp/guides/README.md) teach.
 
-**Foreign snippets are compiled against a named toolchain before publication**, and the toolchain
-and version are recorded in the page's Sources sentence, per the
+**Foreign snippets are compiled against a named toolchain before publication**, recorded in the page's
+Sources sentence, per the
 [related-work rules](../../related-work/AGENTS.md#compile-the-foreign-snippets-and-record-the-toolchain).
-The verification crate cannot hold them, so the page's own record is where a later reviewer learns
-what was checked. A snippet that cannot be run, because the feature exists only as a proposal or a
-research fork, says so beside the code.
+A snippet that cannot be run, because the feature is a proposal or a research fork, says so beside the
+code.
 
-**Say when a syntax is version-specific**, with the older form named, so a reader meeting it
-elsewhere is not misled: OCaml's `match ... with effect` from 5.3, Scala's colon-form `given` from
-3.6, Zig's lowercase type tags from 0.14. The internal documents carry these notes and the port
-keeps them.
+**Say when a syntax is version-specific**, naming the older form, as the internal documents do: OCaml's
+`match ... with effect` from 5.3, Scala's colon-form `given` from 3.6, Zig's lowercase type tags from
+0.14.
 
 ## The index page
 
-The category needs a hand-written index rather than a generated list, because a reader arrives
-holding one background and needs to be routed to one page. The index opens by saying what the
-section is for in two sentences, naming Context-Generic Programming as every page does, then routes
-by the reader's background: a short table from *what you know* to *the page to read*, grouped as the
-internal [catalog](../../related-work/README.md) groups them, with the two pages a Rust reader
-compares CGP to first, Rust's own proposals and C++ policy-based design, listed first. It closes by
-saying what every page shares, so a reader knows the shape before opening one: a mapping into their
-terms, code side by side, costs on both sides, and where their tool wins.
+**The category has a hand-written index, because a reader holding one background needs routing to one
+page.** It says what the section is for in two sentences, naming Context-Generic Programming, then
+routes by background with a short table from *what you know* to *the page to read*, grouped as the
+internal [catalog](../../related-work/README.md) groups them, with Rust's own proposals and C++
+policy-based design first. It closes with what every page shares: a mapping into the reader's terms,
+code side by side, costs on both sides, and where their tool wins.
 
 ## Placement, navigation, and bookkeeping
 
-The section is a new top-level category at `docs/comparisons/`, labelled **Comparisons** in its
-`_category_.json` and linked to its index page rather than a generated index. It sits directly after
-Concepts, at position 6. The label and the URL both use the reader's word, matching `concepts` and
-`tutorials` beside them; "related work" names the internal directory and the academic habit it
-borrows from, and stays there. The order and the reader paths it serves are in
-[information-architecture.md](../information-architecture.md).
+**The section is `docs/comparisons/`, labelled *Comparisons***, linked to its index page, at the
+position [site.md](../site.md) records. The label and the URL use the reader's word, matching
+`concepts` and `tutorials`; "related work" names the internal directory and stays there.
 
-Page titles use the compared concept's name, because that is what the reader searches for, with a
-`description` in the front matter naming the reader the page serves. Problem-oriented titles, which
+**Page titles use the compared concept's name**, because that is what the reader searches for, with a
+`description` naming the reader the page serves. The problem-oriented titles
 [formats.md](../../communication-strategy/formats.md#titles-first-lines-and-search) prescribes for
-explanations, do not fit here: the reader is not arriving with a problem but with a vocabulary.
+explanations do not fit, since this reader arrives with a vocabulary rather than a problem.
 
-The section ships with the v0.8.0 relaunch, written on the release branch. Publishing it adds a
-public claim: the author reads the *What each approach costs* and *Where the other tool is the better
-choice* sections of every comparison page in full before publication, per the
+**Publishing the section adds a public claim**: the author reads every page's *What each approach
+costs* and *Where the other tool is the better choice* in full before publication, per the
 [authorship rule](../AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes), and the
 [disclosure page](../pages/ai-disclaimer.md) says so.
 
 ## What must not be on a comparison page
 
-**No positioning prose.** Nothing that tells the reader which of their intuitions to build on, which
-analogy to accept, or which expectation to drop. The page states facts and lets the reader place
-them.
-
-**No knowledge-base links**, per the one-way rule, and no citation of an unpublished draft.
-
-**No disparagement of the compared tool, its language, or its community**, however faithfully the
-internal document records the complaint.
-
-**No claim that CGP is the compared tool.** Not "an effect system", not "a reflection system", not
-"a DI framework", not "specialization for stable Rust", not "templates done right", and not "gives
-Rust capabilities" without the qualifier. Each of these is a framing the internal document names as
-one to avoid, and each makes the reader look for a feature CGP lacks.
-
-**No re-teaching of CGP fundamentals.** One orientation paragraph and a link. The Concepts tier
-carries the argument, and a comparison page that derives the consumer/provider split from scratch
-has become a worse copy of *Consumer and provider traits*.
-
-**No mention of agent support.** The cost section names the diagnostics and the wiring as costs and
-stops. The agent skill that reduces them is stated beside the costs in three places, the front
-page's cost section, *Modularity Hierarchy*, and Resources, as
-[message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)
-places it, and the cost section links *Modularity Hierarchy* rather than repeating the mitigation. Twelve
-pages that each mention AI beside their costs would read, taken together, as the AI-led pitch the
-strategy rules out.
-
-**No first-person narration.** Where a judgement rests on the author having made a choice, ground it
-and link the [transcript](../blog/rustlab-2025-coherence.md) or post where he makes it.
-
-**No unverified snippet in either language.**
-
-## Where the current pages stand
-
-All eleven pages and the index are written, and the section's record in
-[pages/comparisons.md](../pages/comparisons.md) carries the current state: the two code
-adaptations the port made (the encoder pair in place of `cgp-serde`'s providers, and a local field
-writer in place of a quotation of `cgp-serde`'s source), the claims that will decay on their own, and
-the mirror layout. Fourteen Concepts pages route to the comparison for their idea from their onward
-reading. What remains against this guide is the author's read of each page's two judging sections.
-
-**Two sources depend on the unpublished incoherent-Rust draft**, and the pages ported from them follow
-the rule under [Derived from the internal comparison](#derived-from-the-internal-comparison-and-what-changes):
-the Rust proposals page states the Cairo reading, the context-as-dictionary framing, and the
-single-context limits as the project's analysis, and attributes to the RustLab transcript what the
-transcript makes; the algebraic-effects page keeps the coeffects pointer as a pointer. When the
-incoherent-Rust post publishes, both pages gain a citation.
+- **No positioning prose**: nothing telling the reader which intuitions to build on, which analogy to
+  accept, or which expectation to drop.
+- **No knowledge-base links**, and no citation of an unpublished draft.
+- **No disparagement of the compared tool, its language, or its community.**
+- **No claim that CGP is the compared tool**: not "an effect system", "a reflection system", "a DI
+  framework", "specialization for stable Rust", "templates done right", or "gives Rust capabilities"
+  without the qualifier. Each makes the reader look for a feature CGP lacks.
+- **No re-teaching of CGP fundamentals**: one orientation paragraph and a link; the Concepts tier
+  carries the argument.
+- **No mention of agent support.** The cost section names the diagnostics and the wiring and links
+  *Modularity Hierarchy*, one of the three places
+  [message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)
+  states the agent skill beside the costs; a dozen pages each mentioning AI would read together as the
+  AI-led pitch the strategy rules out.
+- **No first-person narration.** Ground a judgement that rests on the author's choice, and link the
+  [transcript](../blog/rustlab-2025-coherence.md) or post where he makes it.
+- **No unverified snippet in either language.**
 
 ## Checking a draft
 
-**Read the page as a maintainer of the compared tool.** Every sentence about their tool should be
-one they would accept as fair, with its source visible. A sentence they would object to is cut or
-attributed.
-
-**Find the positioning that leaked.** Any sentence telling the reader what to think of their own
-tool, which analogy to accept, or which expectation to drop belongs to the internal document. The
-page states CGP's behavior and stops.
-
-**Check the four framings.** Grep the draft for "effect system", "reflection system", "DI
-framework", "specialization", "templates", and "capabilit", and confirm each occurrence is qualified
-or is about the compared tool rather than about CGP.
-
-**Find the section where the other tool wins.** If it is missing or folded into the costs, the page
-is overselling to the audience least tolerant of it.
-
-**Check the frame.** The orientation says CGP is a library on stable Rust and that consumer traits
-are ordinary traits, and nothing later implies the reader should abandon their tool or that CGP
-replaces Rust's.
-
-**Grep for links into the knowledge base and for the incoherent-Rust draft.** One surviving `../../`
-link or one citation of the draft is a broken or an improper page.
-
-**Verify every snippet.** CGP code compiles in the `example-code` mirror with a check per wired
-context; foreign code compiles against the toolchain named in Sources, and the sentence naming that
-toolchain is present.
-
-**Check the shape statements and the gloss.** Every CGP snippet says which context shape it wires,
-and "context" is glossed on first use in the *In your terms* table.
+- **Read the page as a maintainer of the compared tool.** Every sentence about their tool is one they
+  would accept as fair, with its source visible; cut or attribute any other.
+- **Find the positioning that leaked**: any sentence telling the reader what to think of their own
+  tool belongs to the internal document.
+- **Check the four framings**: grep for "effect system", "reflection system", "DI framework",
+  "specialization", "templates", and "capabilit", and confirm each occurrence is qualified or about the
+  compared tool.
+- **Find the section where the other tool wins**; if it is missing or folded into the costs, the page
+  oversells to the audience least tolerant of it.
+- **Check the frame**: the orientation says CGP is a library on stable Rust and consumer traits are
+  ordinary traits, and nothing later implies the reader should abandon their tool.
+- **Grep for links into the knowledge base and for the incoherent-Rust draft.**
+- **Verify every snippet**: CGP code compiles in the `example-code` mirror with a check per wired
+  context; foreign code compiles against the toolchain named in Sources, and that sentence is present.
+- **Check the shape statements and the gloss**: every CGP snippet names its context shape, and
+  "context" is glossed on first use in *In your terms*.

@@ -76,7 +76,10 @@ to expect that differs* sections; the refreshers were compressed; every internal
 to a Concepts, reference, tutorial, or blog page; and Sources were kept. The two documents that drew
 on the [unpublished incoherent-Rust draft](../blog/incoherent-rust-today.md) state those points as
 the project's analysis or attribute them to the [RustLab transcript](../blog/rustlab-2025-coherence.md),
-never citing the draft.
+never citing the draft: the Rust proposals page states the Cairo reading, the context-as-dictionary
+framing, and the single-context limits as the project's analysis, and attributes to the transcript
+what the transcript makes; the algebraic-effects page keeps the coeffects pointer as a pointer. Both
+pages gain a citation when the incoherent-Rust post publishes.
 
 **The pages' CGP code differs from the internal documents' in two places,** so a later
 synchronization should not "fix" it:

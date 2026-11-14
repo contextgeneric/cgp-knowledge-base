@@ -966,8 +966,8 @@ it stale.
 
 ### `website/tutorials/`: one document per tutorial series
 
-- [README.md](website/tutorials/README.md) — why a tutorial needs a teaching-contract document rather
-  than a drift record, the catalog, and the document shape.
+- [README.md](website/tutorials/README.md) — what a tutorial's teaching contract fixes, the catalog
+  and the applied-register tutorial it still lacks, and the document shape.
 - [hello-world.md](website/tutorials/hello-world.md) — the single-page first contact: one CGP
   function, two contexts, and an optional desugaring appendix.
 - [area-calculation.md](website/tutorials/area-calculation.md) — the four-page series from plain
