@@ -22,7 +22,8 @@ directions apart:
 - **How CGP's Documentation Is Written** (`how-cgp-is-documented.md`), the fact about the project:
   the problem of one-shot prompting from stale training material and of reading macro source, the
   write-once-and-keep-true rules, `#[cgp_component]` traced through its five views, the `AGENTS.md`
-  rules and the communication strategy, who directs the work and its separate passes, how the site's
+  rules with the section writing guides and the code repositories' own files, and the communication
+  strategy, who directs the work and its separate passes, how the site's
   pages derive from the base, and where the checks stop, including the errors they miss and where to
   file one.
 - **Using the Knowledge Base with Your Agent** (`using-it-with-your-agent.md`), the site's first
