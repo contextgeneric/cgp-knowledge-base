@@ -59,6 +59,9 @@ contradicts all three.
 
 ## The diagnosis
 
+The findings below, ordered by what they cost, show a presentation problem rather than a ranking
+one, and the stale blog posts that rank are the one place search success does harm.
+
 ### The site is shown constantly and clicked rarely
 
 **The property drew 121,685 impressions and 970 clicks over twelve months, a click-through rate of
@@ -357,8 +360,8 @@ page".
 
 ## Coding agents are the second audience
 
-**An agent reaches CGP through different surfaces from a person's search, and CGP is better placed
-there than its search performance suggests.** Two channels behave differently.
+**An agent finds CGP through surfaces other than a search engine, and CGP is better placed there
+than its search performance suggests.** Two channels behave differently.
 
 **Retrieval at coding time** serves an agent that must write correct CGP:
 
@@ -394,6 +397,8 @@ an agent already there. If it is published, it is generated from the sidebar, li
 pages, is advertised nowhere, and is never presented as a ranking technique.
 
 ## What was checked and is not worth acting on
+
+Three things were examined and deliberately left alone:
 
 - **Structured data.** Google's AI features need no schema.org markup, and a documentation site has no
   eligible rich-result type; a proposal to add JSON-LD should say what result it expects.
