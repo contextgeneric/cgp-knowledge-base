@@ -234,7 +234,8 @@ belong to this entrypoint:
 - [basic_delegation/provider_trait_path.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/provider_trait_path.rs):
   headers naming the provider trait by path, `self::components::Greeter` and a dependency's
   `cgp::extra::handler::Computer<Code, u64>`, whose `IsProviderFor` impls name the key by the same
-  path without its generic arguments.
+  path without its generic arguments, and a higher-order provider over `super::components::Greeter`,
+  whose inner provider's `IsProviderFor` counterpart names the key by that path too.
 
 The `#[cgp_impl(Self)]` bare-impl passthrough has no snapshot yet.
 

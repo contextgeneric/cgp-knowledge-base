@@ -53,11 +53,11 @@ The attribute takes one optional argument, the **component type** used in the ge
 `IsProviderFor` impl. When omitted, the component defaults to the provider trait's path with
 `Component` appended to its last segment, so implementing `AreaCalculator` targets
 `AreaCalculatorComponent`, and implementing `crate::shapes::AreaCalculator` targets
-`crate::shapes::AreaCalculatorComponent`, which the module need not import. The key carries the
-span of the trait's name, so a key that does not resolve is reported there, as for
-[`#[cgp_impl]`](cgp_impl.md#syntax). Pass the
-component explicitly when the component's marker does not follow that convention, as when the
-component renamed it with [`#[cgp_component]`](cgp_component.md)'s `name:` key:
+`crate::shapes::AreaCalculatorComponent`, which the module need not import. The key carries the span
+of the trait's name, so a key that does not resolve is reported there, as for
+[`#[cgp_impl]`](cgp_impl.md#syntax). Pass the component explicitly when the component's marker does
+not follow that convention, as when the component renamed it with
+[`#[cgp_component]`](cgp_component.md)'s `name:` key:
 
 ```rust
 #[cgp_component {

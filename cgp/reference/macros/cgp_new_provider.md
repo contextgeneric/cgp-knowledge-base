@@ -58,9 +58,8 @@ ComponentType      -> Type
 
 The argument behaves exactly as it does for `#[cgp_provider]`: omitted means the component defaults
 to the provider trait's path with `Component` appended to its last segment, and a given `Type`
-overrides it. The struct
-declaration that distinguishes this macro is implied by the macro name and is not written in the
-argument.
+overrides it. The struct declaration that distinguishes this macro is implied by the macro name and
+is not written in the argument.
 
 ## Expansion
 
