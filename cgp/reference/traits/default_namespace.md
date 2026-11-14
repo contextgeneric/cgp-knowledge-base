@@ -273,7 +273,7 @@ rather than one:
 [`default_impls2`](https://contextgeneric.dev/docs/reference/traits/namespace/default_impls2). A
 change here is propagated to each of them, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity
-rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md). The
+rule behind it are recorded in [website/pages/reference.md](../../../website/pages/reference.md). The
 `#[default_impl(...)]` attribute that registers into these traits has its own document,
 [attributes/default_impl.md](../attributes/default_impl.md), and its own public page under
 `attributes/`.

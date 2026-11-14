@@ -311,4 +311,4 @@ rather than one:
 [`derive_cgp_variant`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_variant). A
 change here is propagated to each of them, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity
-rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).
+rule behind it are recorded in [website/pages/reference.md](../../../website/pages/reference.md).

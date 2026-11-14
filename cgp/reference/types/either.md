@@ -179,4 +179,4 @@ The public reference is organized one page per type, so this document feeds two 
 [`Void`](https://contextgeneric.dev/docs/reference/types/void), both under `types/`. A change here
 is propagated to each of them, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity
-rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).
+rule behind it are recorded in [website/pages/reference.md](../../../website/pages/reference.md).

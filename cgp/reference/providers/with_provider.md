@@ -188,4 +188,4 @@ the alias family here is propagated to each page, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the
 split is recorded in
 [website/writing-guides/reference.md](../../../website/writing-guides/reference.md#granularity-one-page-per-named-construct)
-and the mapping in [website/site-structure.md](../../../website/site-structure.md).
+and the mapping in [website/pages/reference.md](../../../website/pages/reference.md).

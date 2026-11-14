@@ -106,5 +106,5 @@ the `/cgp` skill's
 reference, and the website pages that name the backends: the Resources page, the
 modular-error-handling concept page, and the reference pages for `CanRaiseError`, `CanWrapError`,
 `HasErrorType`, and the error providers. The website records for those pages are in
-[website/site-structure.md](../../website/site-structure.md). It also feeds the index of the planned
+[website/pages/reference.md](../../website/pages/reference.md). It also feeds the index of the planned
 [error backends project section](../../website/projects/error-backends.md).

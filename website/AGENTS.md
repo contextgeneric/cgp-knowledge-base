@@ -165,7 +165,7 @@ Read [README.md](README.md) for the section and the base-wide [../AGENTS.md](../
 - Register every new document in its immediate index and in [../summary.md](../summary.md) in the same
   change.
 - Add a page's document in the same change as the page.
-- Record a ported catalog as one entry in [site-structure.md](site-structure.md), not one per page.
+- Record a ported catalog as one record under [pages/](pages/README.md), not one per page.
 - Record the Projects section one level down, one plan per project.
 - Add a writing guide before adding a page of a kind the site has not published.
 - Update [information-architecture.md](information-architecture.md), [redesign-queue.md](redesign-queue.md),

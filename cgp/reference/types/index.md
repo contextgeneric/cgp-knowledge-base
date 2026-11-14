@@ -128,4 +128,4 @@ This document feeds the public [`Index`](https://contextgeneric.dev/docs/referen
 page, which is named `index_type` on the site because `index.md` there is the Types section
 overview. A change here is propagated to it, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping is recorded in
-[website/site-structure.md](../../../website/site-structure.md).
+[website/pages/reference.md](../../../website/pages/reference.md).

@@ -104,7 +104,7 @@ those responsibilities directly.
 
 The first level rests on a process rather than on a person, so the process is the claim a reader has
 to assess. This section owns the claims about it. The disclosure page states them briefly, and the
-website's [methodology page](../website/site-structure.md#knowledge-base) develops them; both take
+website's [methodology page](../website/pages/knowledge-base.md) develops them; both take
 their wording from here, so the two cannot drift apart.
 
 The claims the project can make, and their limits, are these:
@@ -175,7 +175,7 @@ handled.
 This is a light policy, and the project states that a more detailed one will follow. It contains the
 two requirements above and nothing else. Do not add requirements it does not contain, such as a
 disclosure trailer or a review attestation, until that policy is drafted. The website's
-[contributing page](../website/site-structure.md#knowledge-base) publishes it, and the disclosure
+[contributing page](../website/pages/knowledge-base.md) publishes it, and the disclosure
 page summarizes it in a section of its own.
 
 ## How to word a disclosure
@@ -231,12 +231,12 @@ agent-written documentation and end with the core library, so the page explains 
 before describing its limits. Each level covers its scope, the division of work, the reason for that
 division, and the limits of review. Give the knowledge-base process enough space for readers to
 understand how it can be checked, and link the
-[methodology page](../website/site-structure.md#knowledge-base) for the full account rather than
+[methodology page](../website/pages/knowledge-base.md) for the full account rather than
 reproducing it.
 
 Write in the project voice, with a visible personal statement where accountability requires it. For
 example, the author may say "every error is mine." The
-[Contribute page's sponsorship section](../website/site-structure.md) provides a precedent for
+[Contribute page's sponsorship section](../website/pages/contribute.md) provides a precedent for
 switching visibly to his voice.
 
 Keep the page focused on CGP's actual practice. Omit defensiveness, arguments about AI's general

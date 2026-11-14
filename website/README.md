@@ -58,18 +58,19 @@ the site's `v0.8.0` branch, and the error backends are planned. The
 author and a tag drawn from a fixed set (`release`, `deepdive`, `walkthrough`). The **front page and
 static assets** live under `src/` and `static/`.
 
-This section mirrors that shape: [site-structure.md](site-structure.md) covers the configuration, the
-navigation, and every non-blog, non-tutorial page, including one entry each for Concepts,
-Comparisons, and Reference; [blog/](blog/README.md) holds one document per blog post; and
-[tutorials/](tutorials/README.md) holds one document per tutorial series. That mirroring describes the
-site as it stands; [information-architecture.md](information-architecture.md) describes the shape it is
-being rebuilt toward, which differs.
+This section mirrors that shape: [site.md](site.md) covers the configuration, the navigation, and
+the `example-code` crate; [pages/](pages/README.md) holds one record per non-blog, non-tutorial page
+and per docs section, including Concepts, Comparisons, and Reference; [blog/](blog/README.md) holds
+one document per blog post; and [tutorials/](tutorials/README.md) holds one document per tutorial
+series. That mirroring describes the site as it stands;
+[information-architecture.md](information-architecture.md) describes the shape it is being rebuilt
+toward, which differs.
 
 ## Two kinds of document here
 
 The section holds **records** and **specifications**, and telling them apart decides which one a task
 starts from. A record, which is everything under [blog/](blog/README.md), [tutorials/](tutorials/README.md),
-and [projects/](projects/README.md) and the entries in [site-structure.md](site-structure.md), describes a page that exists: what it says,
+and [projects/](projects/README.md) and the records under [pages/](pages/README.md), describes a page that exists: what it says,
 which knowledge-base documents own its material, how far it has drifted, and what a revision must
 preserve. A specification, meaning [information-architecture.md](information-architecture.md) and everything under
 [writing-guides/](writing-guides/README.md), describes what the site should be and how a *kind* of page
@@ -124,9 +125,10 @@ record drift.
   outbound links the whole book carries, all in its introduction, why CI's single version pin makes a gradual update impossible,
   the map from each chapter to the page that now owns its material, and the five remaining changes that route its
   readers forward.
-- [site-structure.md](site-structure.md): the site's configuration, navigation, deployment, and
-  front page, plus one entry per standalone page: the Introduction, the Overview, Resources,
-  Contribute, and the AI skills page.
+- [site.md](site.md): the facts every page shares: the build and deployment, the release branch, the
+  `example-code` crate, and the navigation.
+- [pages/](pages/README.md): one record per standalone page and per docs section, from the front
+  page to the AI disclaimer.
 - [visual-design.md](visual-design.md): the site's theme: the palette built around the logo's red,
   the tokens and the Infima variables they feed, the underlined prose links, the two code themes and
   the added languages, the two self-hosted fonts, how images read in both themes, the frame of the

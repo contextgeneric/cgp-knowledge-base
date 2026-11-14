@@ -162,4 +162,4 @@ The public reference is organized one page per named construct, so this document
 [`can_wrap_error`](https://contextgeneric.dev/docs/reference/components/can_wrap_error) for its
 companion `CanWrapError`. A change here is propagated to both, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the
-split is recorded in [website/site-structure.md](../../../website/site-structure.md).
+split is recorded in [website/pages/reference.md](../../../website/pages/reference.md).

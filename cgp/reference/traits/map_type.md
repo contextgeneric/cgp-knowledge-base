@@ -249,4 +249,4 @@ rather than one: [`map_type`](https://contextgeneric.dev/docs/reference/traits/t
 [`transform_map_fields`](https://contextgeneric.dev/docs/reference/traits/type-level/transform_map_fields).
 A change here is propagated to each of them, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity
-rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).
+rule behind it are recorded in [website/pages/reference.md](../../../website/pages/reference.md).

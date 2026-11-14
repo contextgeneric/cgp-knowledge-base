@@ -34,7 +34,7 @@ document rather than a trade worth making:
 - **The site stays a stock Docusaurus installation.** Every recommendation is front matter, Markdown,
   static files, or configuration already present. The one addition the project has accepted,
   [Algolia DocSearch](#the-decisions-this-needs), is the author's decision, as
-  [site-structure.md](site-structure.md#how-the-site-is-built) requires.
+  [site.md](site.md#how-the-site-is-built) requires.
 - **The site never links into this knowledge base outside its two sanctioned surfaces.** Nothing here
   changes the [one-way link rule](AGENTS.md#the-one-way-link-rule) or widens its exceptions (the
   disclaimer and the `docs/ai/knowledge-base/` pages), including for a file such as `llms.txt` that
@@ -133,7 +133,7 @@ renders the first source line of its opening paragraph, which ends mid-sentence 
 wraps, as in *"Rust's coherence rules keep trait lookup consistent across a program. For a given
 trait, its"*, so each still needs a written one. The published skill pages are not the site's to
 edit. The conventions, including the YAML apostrophe that fails the build, are in
-[site-structure.md](site-structure.md#conventions-the-port-must-follow). On 2026-11-13, six remain: four of
+[pages/reference.md](pages/reference.md#conventions-the-port-must-follow). On 2026-11-13, six remain: four of
 the five tutorials, Resources, and Contribute.
 
 A post's description is metadata rather than a claim, so writing one does not reach the
@@ -168,7 +168,7 @@ write every provider inside-out, seven show the removed `#[cgp_context]`, and fo
 
 The four extensible-datatypes posts alone carry 41,746 impressions, and every one predates
 `#[cgp_impl]`, `#[implicit]`, and the `open` statement. **This is the one place where search success
-does harm.** The live [Introduction](site-structure.md#introduction) compounds it by telling readers
+does harm.** The live [Introduction](pages/introduction.md) compounds it by telling readers
 that "the most accurate and up-to-date resources concerning CGP are currently available in the form
 of our blog posts". The `v0.8.0` branch rewrites that sentence, which fixes the internal routing, but
 a reader who arrives from a search result may never pass through the Introduction, and
@@ -269,12 +269,12 @@ is *Context-Generic Programming (CGP) - Pluggable trait implementations for Rust
 suffix. Passing `title` to Docusaurus's `Layout` renders `{title} | {siteTitle}`, so the page sets the
 tag directly with `@docusaurus/Head`, and sets `og:title` with it so a shared link carries the same
 words. That is React on the landing page, where the
-[stock-Docusaurus policy](site-structure.md#how-the-site-is-built) already allows it. A result shows
+[stock-Docusaurus policy](site.md#how-the-site-is-built) already allows it. A result shows
 roughly the first sixty characters, so the name and the acronym display in full while the claim after
 them is cut; on a page that already ranks first for both branded queries, spending the visible
 characters on the name is a judgement about recognition rather than matching. Its description opens
 with the settled tag line verbatim, since the front page presents the project. The page itself is
-recorded in [site-structure.md](site-structure.md#the-front-page).
+recorded in [pages/front-page.md](pages/front-page.md).
 
 ### The pages that would answer the high-intent queries are not published yet
 
@@ -464,7 +464,7 @@ documentation on 2026-09-21:
   inserts a title at the top of a document only when the Markdown has no heading of its own, so a
   page that keeps its `#[cgp_component]` heading can carry a `title` written for a search result.
   `sidebar_label` stays separate and is
-  [plain text without backticks](site-structure.md#conventions-the-port-must-follow).
+  [plain text without backticks](pages/reference.md#conventions-the-port-must-follow).
 - **A page's front-matter `description` sets both `meta name="description"` and `og:description`**,
   and falls back to the first line of content when omitted, which produced the broken snippets above.
 
@@ -505,7 +505,7 @@ is what it argues.
 **A standalone "what is a blanket implementation in Rust" page would re-teach Rust**, which the
 [reference guide](writing-guides/reference.md#linking-three-destinations-and-one-prohibition) rules out
 and the glossary handles by linking Rust's own documentation. It would also break the
-[Concepts section's one-to-one mirroring](site-structure.md#concepts) of the internal catalog, since no
+[Concepts section's one-to-one mirroring](pages/concepts.md) of the internal catalog, since no
 internal concept document covers it. The reader arriving on that query is better served by a page that
 answers the question *behind* it.
 
@@ -570,7 +570,7 @@ and needs to write correct code. These surfaces serve it:
   diagnostics, and [cgp-skills](https://github.com/contextgeneric/cgp-skills) is published on the
   site and on GitHub.
 - **The knowledge base** serves an agent whose user has pointed it there to learn or audit CGP in
-  depth. The site's [knowledge-base pages](site-structure.md#knowledge-base) teach that use, and the
+  depth. The site's [knowledge-base pages](pages/knowledge-base.md) teach that use, and the
   base's README tells an outside agent what to read. The user chooses this surface rather than an
   agent discovering it, so it needs no discoverability work beyond those pages.
 - **The site itself**, fetched directly, which is why the

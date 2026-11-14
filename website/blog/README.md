@@ -95,7 +95,7 @@ rather than of its published writing.
   at the language-design reader, and the only one whose value decays with time.
 
 One further branch carries material rather than a post, the `rustlab-presentation` branch with the
-RustLab transcript's slide assets, and [site-structure.md](../site-structure.md) records it beside
+RustLab transcript's slide assets, and [site.md](../site.md#branches-and-what-is-not-on-main) records it beside
 the `notes/` tree of working notes that sits on `main`.
 
 ## Reading the drift at a glance
@@ -158,7 +158,7 @@ description for a post teaching a construct the library has since removed reads 
 than as current guidance: *"CGP v0.4.0, the release that made CGP debuggable"* rather than *"how to
 debug CGP"*. And **avoid backticks**, since the meta tag is plain text and a stripped backtick runs
 identifiers together. The length budget and the rest of the conventions are in
-[site-structure.md](../site-structure.md#conventions-the-port-must-follow).
+[pages/reference.md](../pages/reference.md#conventions-the-port-must-follow).
 
 **Always set the `slug` on a new post.** Without one, Docusaurus does not derive a flat URL from the
 filename; it publishes the post under a *dated* path instead, so `2026-02-21-new-website.md` becomes

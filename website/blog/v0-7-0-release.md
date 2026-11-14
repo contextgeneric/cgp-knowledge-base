@@ -46,7 +46,7 @@ cloned. The `{Type}Of` alias is dropped from `#[cgp_type]`, and `ProvideType`/`T
 renamed `TypeProvider`/`TypeProviderComponent`.
 
 The post also announces the [area-calculation tutorials](../tutorials/area-calculation.md) and the
-[AI skills page](../site-structure.md), and links its discussion threads.
+[AI skills page](../pages/ai-skills.md), and links its discussion threads.
 
 ## How it relates to the knowledge base
 

@@ -16,7 +16,7 @@ base, and two of them are the site's first how-to guides.
   for every claim about the process and for the contribution policy; the member repositories'
   `AGENTS.md` files for the contributor workflows
 - **Scale**: four pages, namely an index, one explanation of the process, and two how-to guides
-- **Recorded in**: one entry in [site-structure.md](../site-structure.md#knowledge-base)
+- **Recorded in**: one entry in [pages/knowledge-base.md](../pages/knowledge-base.md)
 - **Reading**: the shared set and
   [the knowledge-base pages' row](README.md#the-knowledge-base-pages-and-the-ai-disclosure-page) of
   the reading map
@@ -149,7 +149,7 @@ tracker, or a top-level entry file, and nothing deeper.
 
 **Before adding a prompt template, run it** in fresh agent sessions with no prior context, against
 the current base, on more than one agent if the page claims it is harness-neutral, and record each
-run in the site-structure entry. A template goes on a page only once its runs show it does what the
+run in the pages' record. A template goes on a page only once its runs show it does what the
 page says. An agent's run checks that the instructions are followable; it does not show how a person
 new to CGP fares, per
 [readers.md](../../communication-strategy/readers.md#keeping-the-model-observed).

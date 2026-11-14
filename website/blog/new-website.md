@@ -36,7 +36,7 @@ The post closes by previewing v0.7.0 and implicit parameters.
 
 ## How it relates to the knowledge base
 
-This post is the source for most of what [site-structure.md](../site-structure.md) records as policy,
+This post is the source for most of what [site.md](../site.md#how-the-site-is-built) records as policy,
 and it should be read before proposing any change to how the site is built. The "no plugins, no React"
 commitment in particular is a stated decision rather than an accident, so an agent adding site
 machinery is working against it and should say so to the user.
@@ -62,11 +62,11 @@ yet written, nor were the Concepts, Reference, Comparisons, Projects, and `cargo
 the website's `v0.8.0` branch. The live site still keeps the
 stock installation and the front page the post describes; the `v0.8.0` branch rewrites the front
 page's text and departs from stock in three settings, all to publish the agent skill, per
-[site-structure.md](../site-structure.md).
+[site.md](../site.md#how-the-site-is-built).
 
 ## Maintaining it
 
 Leave it alone; it is a dated account of a decision and is accurate about its own moment. Its policy
 content, however, should be treated as live: when the project changes how the site is built (adding a
 plugin, writing React, or migrating again), that decision belongs in a new post and in
-[site-structure.md](../site-structure.md), not in an edit here.
+[site.md](../site.md#how-the-site-is-built), not in an edit here.

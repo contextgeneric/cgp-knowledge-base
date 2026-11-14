@@ -402,7 +402,7 @@ compresses: a type the application chooses means an error type or a runtime *sto
 every layer has to carry*. "A context chooses it for itself" describes the construct and lands on a
 reader who already wants a type swappable; the parameter clause names what it removes and lands on a
 reader whose signatures have filled up, which is the larger group and the one this section is
-otherwise silent for. One clause is enough: the [Overview](../site-structure.md) repeats it in its
+otherwise silent for. One clause is enough: the [Overview](../pages/overview.md) repeats it in its
 breadth list, the *Abstract types* Concepts page explains the mechanism, and the pain behind it is
 an entry in [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) for a
 piece that has room to show a before and after.
@@ -604,7 +604,7 @@ line does.
 [provenance rule](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page): the front
 page presents the project, and the disclosure page, which the site's AI section links, names the
 exception and describes how the page was made. The page's record in
-[site-structure.md](../site-structure.md) still states how it was made.
+[pages/front-page.md](../pages/front-page.md) still states how it was made.
 
 ## What must not be on the homepage
 

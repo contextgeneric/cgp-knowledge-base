@@ -163,4 +163,4 @@ The public reference is organized one page per named construct, so this document
 [`send_runner`](https://contextgeneric.dev/docs/reference/components/send_runner) for the
 `Send`-future variant `CanSendRun`/`SendRunner`. A change here is propagated to both, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the
-split is recorded in [website/site-structure.md](../../../website/site-structure.md).
+split is recorded in [website/pages/reference.md](../../../website/pages/reference.md).

@@ -290,8 +290,9 @@ These documents lead the pages rather than following them, so they are plans unt
 land and records afterwards. When a project's section is written, its plan becomes the record of
 that section: the page list stays as the inventory, the prerequisites that were met are removed, and
 the plan records the revision each page was verified against and how the pages were made, per
-[AGENTS.md](../AGENTS.md#disclosing-ai-use-on-a-page). [site-structure.md](../site-structure.md)
-then gains a short *Projects* entry pointing here, since the section is a ported catalog.
+[AGENTS.md](../AGENTS.md#disclosing-ai-use-on-a-page). The
+[page records' index](../pages/README.md) lists the section and points here, since the section is a
+ported catalog.
 
 When a project's internal section changes, the synchronization rule reaches its public pages: a
 change to a provider's behavior updates the internal reference entry and the public page for that

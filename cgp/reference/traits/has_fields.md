@@ -193,4 +193,4 @@ rather than one: [`has_fields`](https://contextgeneric.dev/docs/reference/traits
 [`to_fields_ref`](https://contextgeneric.dev/docs/reference/traits/shape/to_fields_ref). A change
 here is propagated to each of them, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping and the granularity
-rule behind it are recorded in [website/site-structure.md](../../../website/site-structure.md).
+rule behind it are recorded in [website/pages/reference.md](../../../website/pages/reference.md).

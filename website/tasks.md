@@ -54,7 +54,7 @@ internal document in the same change**, because a page with no document has no r
 Landing a task means **removing its entry from [redesign-queue.md](redesign-queue.md)** rather than
 marking it done, and deleting that document once it is empty. Landing a task means **clearing the
 matching `new` or `moved` marker** in [information-architecture.md](information-architecture.md), since
-the redesign is finished when that inventory and [site-structure.md](site-structure.md) agree. And a page
+the redesign is finished when that inventory and the [page records](pages/README.md) agree. And a page
 written with AI assistance carries **one provenance note at its foot**, linking the section of the
 disclosure page that matches how it was made, with the level recorded in its internal document; the
 mechanics are in [AGENTS.md](AGENTS.md#disclosing-ai-use-on-a-page), and this one applies from the moment
@@ -66,7 +66,7 @@ Every snippet is bound by the [synchronization rule](../AGENTS.md#the-synchroniz
 against the `cgp` source and the `/cgp` skill, prefer code already verified in
 [examples/](../examples/README.md), and **never** take current syntax from a blog post. A page that
 shows code also puts that code in the website repository's
-[`example-code/` crate](site-structure.md#the-example-code-crate), at the mirrored path, so the
+[`example-code/` crate](site.md#the-example-code-crate), at the mirrored path, so the
 verification survives the session that did it. Every page
 that shows CGP code **says which of the three shapes its example is in** (a value context or an
 environmental one, self-targeted or parameter-targeted), because the site's examples span all three and a
@@ -109,7 +109,7 @@ feature set, a hook, or a blog post's opening. The wording rules are in
 hand-written index, mirroring the internal [cgp/concepts/](../cgp/concepts/README.md) catalog one to
 one, specified by [writing-guides/explanation.md](writing-guides/explanation.md). Every page that shows
 code has a compiled counterpart in the website repository's
-[`example-code/` crate](site-structure.md#the-example-code-crate). What remains is **the author's read**,
+[`example-code/` crate](site.md#the-example-code-crate). What remains is **the author's read**,
 which every page in this tier is subject to.
 
 The Projects section, which links to these pages instead of re-teaching them, is therefore unblocked.
@@ -132,7 +132,7 @@ The Projects section, which links to these pages instead of re-teaching them, is
 
 **The port is finished, and so are the tooling section and the error catalog.** Every construct has
 a page, every group has its `example-code` mirror, and what remains is the author's read of the
-index. The state of each group is recorded in [site-structure.md](site-structure.md#reference); the
+index. The state of each group is recorded in [pages/reference.md](pages/reference.md); the
 spec and the porting procedure a later page follows are in
 [writing-guides/reference.md](writing-guides/reference.md).
 
@@ -284,7 +284,7 @@ somewhere to be tracked.
   gate; the draft already uses official versions as shipped, as the branch rules require.
 
 - **V2: publish `cargo-cgp` v0.1.0 so the cargo-cgp pages become true.** The [cargo-cgp
-  section](site-structure.md#cargo-cgp), the tool's README, and the `cgp-skills` skill are written
+  section](pages/cargo-cgp.md), the tool's README, and the `cgp-skills` skill are written
   against v0.1.0 as though it had shipped, per the base's [rule on
   versions](../AGENTS.md#document-official-versions-never-pre-releases), and the front-end changes
   they rely on are on `cargo-cgp`'s `main`. What remains is the release itself. **Tag and publish
@@ -292,14 +292,14 @@ somewhere to be tracked.
   captured from `main`. The re-run reaches past the section, to every `cargo cgp check` output the
   site quotes (the compile-errors page, the checking tutorial, the reference pages, the Projects
   pages), and the editor page's rust-analyzer output, which comes from the probe the [cargo-cgp
-  record](site-structure.md#cargo-cgp) names rather than from a terminal. *Lands in:* the
+  record](pages/cargo-cgp.md) names rather than from a terminal. *Lands in:* the
   `cargo-cgp` repository, then the website's `v0.8.0` branch. *Blocks:* V1's merge. *Done when:* the
   tag exists and every quoted output matches it.
 
 ## A — The AI disclosure
 
 - **A1: the disclosure page.** Written and building at `docs/ai/disclaimer.md` on the release branch,
-  and recorded in [site-structure.md](site-structure.md). What remains is **the author's read**, which
+  and recorded in [pages/ai-disclaimer.md](pages/ai-disclaimer.md). What remains is **the author's read**, which
   is the task's real gate rather than a formality: this is the one page where a wrong sentence is a
   false public claim about the project rather than about CGP. Two things to check in particular: that
   the review claim still matches the
@@ -309,10 +309,10 @@ somewhere to be tracked.
   [ai-disclosure.md](../communication-strategy/ai-disclosure.md).
 
 - **A2: the knowledge-base pages.** Written and building at `docs/ai/knowledge-base/` on the release
-  branch, four pages recorded in one [site-structure.md](site-structure.md#knowledge-base) entry: an
+  branch, four pages recorded in one [pages/knowledge-base.md](pages/knowledge-base.md) entry: an
   index, the page describing how CGP's documentation is written, a how-to for pointing an agent at
   the base, and a how-to for contributing with an agent that publishes the light contribution
-  policy. The AI section's [overview page](site-structure.md#ai-section-overview), which routes to
+  policy. The AI section's [overview page](pages/ai-overview.md), which routes to
   them and to the skill and disclaimer, lands with them. What remains is **the author's read of the
   documentation-process page**, which is on the [read-in-full
   list](AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes) for the same reason the
@@ -350,7 +350,7 @@ first impression in the index.
   opening paragraph, which ends mid-sentence where the source wraps. Write each in the same edit as
   the page's revision, before the merge. The conventions, including the YAML apostrophe that fails
   the build, are in
-  [site-structure.md](site-structure.md#conventions-the-port-must-follow). *Lands in:* `docs/`.
+  [pages/reference.md](pages/reference.md#conventions-the-port-must-follow). *Lands in:* `docs/`.
 - **S7: the GitHub metadata.** The crate manifests are done: `homepage`, five `keywords`, and the
   `rust-patterns` and `no-std` categories are set on `[workspace.package]` and inherited by all 28
   publishable crates. What remains needs repository settings rather than a commit: the `cgp` repository's
@@ -493,7 +493,7 @@ Two documents are updated alongside every landing rather than after it, and both
 entry is removed, and [information-architecture.md](information-architecture.md), whose `new` and `moved`
 markers are cleared. **When this document is empty the redesign is finished, and it is deleted**, as is
 redesign-queue.md, and at that point the inventory in `information-architecture.md` matches
-[site-structure.md](site-structure.md).
+[pages/](pages/README.md).
 
 When a task turns out to be larger than its entry suggests, or splits, record that here rather than in the
 queue: the queue says what is wrong, and how the fix decomposes is a property of the plan.

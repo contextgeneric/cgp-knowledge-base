@@ -813,15 +813,6 @@ it stale.
   announcement bar, footer, and blog colours, Docusaurus's constraints on page layout (`data-theme`
   below `<html>`, and the ids the anchor check counts), and the contrast check with the screenshot
   practice.
-- [website/site-structure.md](website/site-structure.md) — the site's build, navigation,
-  announcement bar, deployment, the release branch that carries both `cgp` v0.8.0 and `cargo-cgp`
-  v0.1.0, the three settings that depart from stock Docusaurus to publish the agent skill from its
-  own repository, the theme as the other departure, and the `example-code/` crate that holds the
-  compiled counterparts of the code the site shows, plus one entry each for the front page,
-  Introduction, the Quickstart, Overview, Resources, Contribute, the `cargo-cgp` tooling section,
-  the AI skills section and its `cgp-skills` submodule, the Concepts section, the Comparisons
-  section, the Reference section including its compile-errors and glossary pages, the Projects
-  section, the AI section's overview and knowledge-base pages, and the AI disclaimer.
 - [website/site.md](website/site.md) — the facts every website task shares: the stock Docusaurus
   build and its three departures for the skill, the theme, deployment, broken-link checks, the
   `v0.8.0` release branch, the `example-code/` crate, the sidebar order, and the announcement bar.

@@ -27,7 +27,7 @@ because the consumer-trait blanket impl no longer goes through a per-context pro
 now implement a consumer trait *directly* for components it has not delegated, mixing hand-written
 impls with wired ones. This in turn is what makes it safe to apply `#[cgp_component]` to almost any
 existing trait without breaking its existing implementations: the `Hash` example the live site's
-[Introduction](../site-structure.md) leads with (the `v0.8.0` branch's Introduction opens on an
+[Introduction](../pages/introduction.md) leads with (the `v0.8.0` branch's Introduction opens on an
 email example instead).
 
 **Removing `HasCgpProvider`** is what enabled the above. Consumer-trait blanket impls now route
@@ -55,7 +55,7 @@ and the distinction between a context and an aggregate provider that the change 
 described in [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md).
 
 The post's `Hash` example is the origin of the framing the live
-[Introduction page](../site-structure.md) opens with, and it is a strong one for
+[Introduction page](../pages/introduction.md) opens with, and it is a strong one for
 [message.md](../../communication-strategy/message.md#the-strengths-worth-advertising): CGP can be added to an existing
 trait without breaking a single existing implementation, which is the most direct answer available to
 the incremental-adoption question in

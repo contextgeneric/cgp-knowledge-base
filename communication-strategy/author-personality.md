@@ -15,7 +15,7 @@ would not write. This document gives writers a more specific basis for their cho
 
 Stated preferences take priority over observed habits. The [blog corpus](../website/blog/README.md),
 [RustLab transcript](../website/blog/rustlab-2025-coherence.md), and
-[site pages](../website/site-structure.md) provide evidence of habits. The preferences below record
+[site pages](../website/pages/README.md) provide evidence of habits. The preferences below record
 decisions the author gave directly. Keep the distinction clear: published copy can include
 placeholder wording, and an observed pattern need not govern every future piece.
 

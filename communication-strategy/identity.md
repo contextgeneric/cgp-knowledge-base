@@ -204,6 +204,6 @@ Propagate changes to shared wording in the same edit. Check [formats.md](formats
 [messaging-brief.md](messaging-brief.md), and [vocabulary.md](vocabulary.md), then the
 [homepage guide](../website/writing-guides/homepage.md), the
 [SEO strategy](../website/seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words),
-and the [site records](../website/site-structure.md). Use [evidence.md](evidence.md) to reassess
+and the [site records](../website/pages/README.md). Use [evidence.md](evidence.md) to reassess
 audience assumptions and the [synchronization rule](../AGENTS.md#the-synchronization-rule) to check
 technical claims against the source.

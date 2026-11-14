@@ -14,7 +14,7 @@ this guide fixes what changes in the port.
 - **Derived from**: [related-work/](../../related-work/README.md), one internal document per page,
   which stays the source of truth
 - **Scale**: eleven pages plus a hand-written index, shipped with the v0.8.0 relaunch
-- **Records**: one entry in [site-structure.md](../site-structure.md) for the whole section, per
+- **Records**: one record, [pages/comparisons.md](../pages/comparisons.md), for the whole section, per
   the [ported-catalog exception](../AGENTS.md#registering-a-document)
 - **Reading**: the shared set and [the comparison pages' row](README.md#comparison-pages) of the
   reading map
@@ -204,7 +204,7 @@ about CGP is summarized without a thread or a name, per the
 
 **CGP code goes in the website's `example-code` crate**, at `tests/comparisons/<page>.rs`, one
 file per page and one module per heading, following the crate's
-[conventions](../site-structure.md#the-example-code-crate). The section needs its own
+[conventions](../site.md#the-example-code-crate). The section needs its own
 integration-test entry point, `tests/comparisons_tests.rs`, declaring the module tree the way the
 other sections' entry points do. A snippet the page shows as rejected by
 Rust, such as the overlapping impls that fail with `E0119`, is a `trybuild` compile-fail fixture
@@ -254,7 +254,7 @@ The section ships with the v0.8.0 relaunch, written on the release branch. Publi
 public claim: the author reads the *What each approach costs* and *Where the other tool is the better
 choice* sections of every comparison page in full before publication, per the
 [authorship rule](../AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes), and the
-[disclosure page](../site-structure.md#ai-disclaimer) says so.
+[disclosure page](../pages/ai-disclaimer.md) says so.
 
 ## What must not be on a comparison page
 
@@ -291,7 +291,7 @@ and link the [transcript](../blog/rustlab-2025-coherence.md) or post where he ma
 ## Where the current pages stand
 
 All eleven pages and the index are written, and the section's record in
-[site-structure.md](../site-structure.md#comparisons) carries the current state: the two code
+[pages/comparisons.md](../pages/comparisons.md) carries the current state: the two code
 adaptations the port made (the encoder pair in place of `cgp-serde`'s providers, and a local field
 writer in place of a quotation of `cgp-serde`'s source), the claims that will decay on their own, and
 the mirror layout. Fourteen Concepts pages route to the comparison for their idea from their onward

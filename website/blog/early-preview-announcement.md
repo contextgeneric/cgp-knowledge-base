@@ -75,7 +75,7 @@ and every item on it has moved:
   CGP traits landed in v0.4.0; const *generic parameters* on a component trait remain rejected, for
   the structural reason recorded in [`#[cgp_component]`](../../cgp/reference/macros/cgp_component.md).
 - **The book.** [CGP Patterns](https://patterns.contextgeneric.dev/) was not finished and has not
-  been updated for some time, a caveat the site's own [Introduction](../site-structure.md) now
+  been updated for some time, a caveat the site's own [Introduction](../pages/introduction.md) now
   carries.
 
 ## Maintaining it

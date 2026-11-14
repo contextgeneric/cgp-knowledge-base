@@ -62,7 +62,7 @@ ground affects the other's assumptions.
 ## Where tutorials sit among the site's material
 
 The site's routes into CGP are not interchangeable, so a tutorial revision should know which gap it
-fills. The [Introduction page](../site-structure.md) is orientation and routing, not
+fills. The [Introduction page](../pages/introduction.md) is orientation and routing, not
 teaching. The [blog](../blog/README.md) carries depth but is largely out of date and organized by
 release rather than by concept. The [CGP Patterns book](../patterns-book.md) is a
 [legacy resource](../AGENTS.md#leave-legacy-resources-off-public-pages) the site leaves out. **The tutorials are the only

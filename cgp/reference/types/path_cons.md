@@ -152,4 +152,4 @@ These constructs are the ones `PathCons` relates to:
 This document feeds the public
 [`PathCons`](https://contextgeneric.dev/docs/reference/types/path_cons) page under `types/`, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping is recorded in
-[website/site-structure.md](../../../website/site-structure.md).
+[website/pages/reference.md](../../../website/pages/reference.md).

@@ -159,4 +159,4 @@ under `types/`. The `Symbol` type it also documents is covered on the
 [`Symbol!`](https://contextgeneric.dev/docs/reference/macros/symbol) macro page rather than a page
 of its own, so a change to `Symbol` here is propagated there. Both are bound by the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the mapping is recorded in
-[website/site-structure.md](../../../website/site-structure.md).
+[website/pages/reference.md](../../../website/pages/reference.md).

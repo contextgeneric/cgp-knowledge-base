@@ -126,9 +126,9 @@ website does: they derive CGP from plain Rust at a pace the site's
 
 **Do not finish it.** The 28 unwritten entries were planned before the website had a documentation
 tree, and the site has since written nearly all of that material: *Related Concepts* is now the
-eleven-page [Comparisons](site-structure.md#comparisons) section, *Trait-Generic Providers* is the
-`providers/` group of the [Reference](site-structure.md#reference), and *Builder*, *Dispatcher*, and
-*Generic Data Types* are [Concepts](site-structure.md#concepts) pages. Writing them again in the book
+eleven-page [Comparisons](pages/comparisons.md) section, *Trait-Generic Providers* is the
+`providers/` group of the [Reference](pages/reference.md), and *Builder*, *Dispatcher*, and
+*Generic Data Types* are [Concepts](pages/concepts.md) pages. Writing them again in the book
 would duplicate the site, split the project's effort, and put two versions of each idea into search
 results competing with each other.
 

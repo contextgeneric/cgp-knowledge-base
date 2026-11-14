@@ -5,9 +5,9 @@ and how a reader moves between them. It is the design the site is being rebuilt 
 document the [writing guides](writing-guides/README.md) assume: each of those specifies one kind of
 page, and this one holds the shape they add up to.
 
-It is deliberately distinct from [site-structure.md](site-structure.md), and the pair is easy to
-confuse. **site-structure.md records the site as built**: the Docusaurus configuration, the current
-navigation, the deployment, and one entry per page that exists today. **This document states the site as
+It is deliberately distinct from [site.md](site.md) and the [page records](pages/README.md), and the
+pair is easy to confuse. **Those record the site as built**: the Docusaurus configuration, the
+current navigation, the deployment, and one record per page that exists today. **This document states the site as
 intended**, including pages that do not exist yet and jobs that are currently done by the wrong page.
 Where they disagree, that disagreement is the redesign, and the work it implies is listed in
 [redesign-queue.md](redesign-queue.md).
@@ -146,7 +146,7 @@ commit to. The one exception is the Projects section, which lands afterwards. Th
 [tasks.md](tasks.md).
 
 **Front page**: the hook and the bounded essay. Present and **rewritten**; its record is in
-[site-structure.md](site-structure.md#the-front-page).
+[pages/front-page.md](pages/front-page.md).
 
 **Concepts** (new category, 18 pages plus an index): present and **complete**
 
@@ -156,7 +156,7 @@ between Tutorials and Reference, and mirrors the internal
 [cgp/concepts/](../cgp/concepts/README.md) catalog one to one, the same relationship the reference
 section has to `cgp/reference/`. All eighteen are written, and the code on each is backed by the website
 repository's `example-code/` crate; the current state is recorded in
-[site-structure.md](site-structure.md).
+[pages/concepts.md](pages/concepts.md).
 
 The three explanation pages this document named are not lost, but they are no longer separate
 artifacts: *Why CGP exists* is **Bypassing coherence**, *How CGP works* is **Consumer and provider
@@ -199,7 +199,7 @@ internal [related-work](../related-work/README.md) catalog one page per document
 Concepts and Reference have to their catalogs. It is placed directly after Concepts because it is the
 same kind of reading, away from a keyboard, and because the Concepts pages route into it for the reader
 who holds a prior model. Its spec is [writing-guides/related-work.md](writing-guides/related-work.md),
-and the current state is recorded in [site-structure.md](site-structure.md). Fourteen Concepts pages
+and the current state is recorded in [pages/comparisons.md](pages/comparisons.md). Fourteen Concepts pages
 route to the comparison for their idea from their onward reading. What remains is the author's read of
 each page's two judging sections.
 
@@ -213,7 +213,7 @@ each page's two judging sections.
   `handler/` subsection for the computation family. The `traits/` group is organized into eleven
   importance-ordered subdirectories by trait family, each with its own overview, and every trait
   construct page carries a *Definition* section after its *Overview*. Ported from the internal reference,
-  and recorded in [site-structure.md](site-structure.md).
+  and recorded in [pages/reference.md](pages/reference.md).
 - **The `types/` group is split one page per type** rather than the internal reference's
   `type_level_spines` consolidation, per the
   [granularity rule](writing-guides/reference.md#granularity-one-page-per-named-construct), and flat:
@@ -233,7 +233,7 @@ each page's two judging sections.
 - A *glossary* page: present. The terms the documentation uses, CGP's own and the Rust and borrowed
   ones alike, defined in a sentence or two each and routed onward. Term lookup where the index is
   construct lookup, and the answer to vocabulary that was used across the site far more widely than it
-  was defined. Recorded in [site-structure.md](site-structure.md).
+  was defined. Recorded in [pages/glossary.md](pages/glossary.md).
 - *Tooling*: present at `docs/cargo-cgp/`, labelled for the tool rather than the category, since it
   covers one. A sibling section rather than part of the reference: nine pages, namely an overview,
   installation, one page per reading command, reading the output, editor integration, troubleshooting,
@@ -294,7 +294,7 @@ as they are written rather than planned into the target.
 **AI**: the section carries CGP's relationship with coding agents in both directions, and the two
 directions are different subjects that must be named apart rather than blended.
 - *Overview* (**new**, `docs/ai/index.md`): the section's landing page, routing by question under
-  one heading per direction. Recorded in [site-structure.md](site-structure.md#ai-section-overview).
+  one heading per direction. Recorded in [pages/ai-overview.md](pages/ai-overview.md).
 - *Using CGP with coding agents*: present as the inlined skill copy, regenerated from `cgp-skills`
   rather than edited. This is a **feature**: what CGP offers a reader who works with an assistant.
 - *AI disclaimer*: present. The disclosure page: the four levels from agent-written documentation
@@ -303,7 +303,7 @@ directions are different subjects that must be named apart rather than blended.
   answer a reader wants before they trust the rest of the site. Specified in
   [ai-disclosure.md](../communication-strategy/ai-disclosure.md) rather than in a writing guide, since
   it is one project-meta page rather than a kind the site will publish repeatedly, and recorded in
-  [site-structure.md](site-structure.md).
+  [pages/ai-disclaimer.md](pages/ai-disclaimer.md).
 
 - *The knowledge base* (**new**, `docs/ai/knowledge-base/`): four pages about the public [knowledge
   base](../README.md) the documentation is written from. The index orients a reader; *How CGP's
@@ -313,7 +313,7 @@ directions are different subjects that must be named apart rather than blended.
   apart from the two how-to pages keeps the two directions named apart inside the subsection. These
   pages and the disclaimer are the only hand-written pages that link into this base, within the
   bounds [AGENTS.md](AGENTS.md#the-one-way-link-rule) sets. Recorded in
-  [site-structure.md](site-structure.md#knowledge-base).
+  [pages/knowledge-base.md](pages/knowledge-base.md).
 
 The section stays at `docs/ai/`, labelled "AI-Assisted Development", which reads correctly for every
 page in it; the unmerged rename to `docs/ai-assisted-development/` would move every URL in it to no
@@ -333,7 +333,7 @@ the condition it sets is that nothing else above the fold does.
 The navigation bar carries Tutorials, Docs, Blog, and AI, plus a GitHub link, and the redesign adds no
 new top-level entry: the explanation tier sits under Docs, because a reader looking for "why" looks in
 the documentation rather than in a fifth menu. Keeping the bar at four also respects the
-[stock-Docusaurus policy](site-structure.md), since the sidebar is autogenerated from the `docs/`
+[stock-Docusaurus policy](site.md#how-the-site-is-built), since the sidebar is autogenerated from the `docs/`
 directory tree and a new category is a directory with a `_category_.json` rather than site machinery.
 
 The sidebar order should follow the order a reader needs things rather than the order the project thinks
@@ -457,5 +457,5 @@ first. Revisit it whenever a page's job changes, whenever a new page type appear
 path is found not to work; the last of these is evidence from
 [evidence.md](../communication-strategy/evidence.md) rather than a matter of taste. As entries in
 [redesign-queue.md](redesign-queue.md) are completed, the corresponding "new" and "moved" markers above
-should disappear, and when the inventory here matches [site-structure.md](site-structure.md) the redesign
+should disappear, and when the inventory here matches [pages/](pages/README.md) the redesign
 is finished.

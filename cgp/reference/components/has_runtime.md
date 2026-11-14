@@ -143,4 +143,4 @@ The public reference is organized one page per named construct, so this document
 [`has_runtime_type`](https://contextgeneric.dev/docs/reference/components/has_runtime_type) for the
 `HasRuntimeType` abstract-type component. A change here is propagated to both, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the
-split is recorded in [website/site-structure.md](../../../website/site-structure.md).
+split is recorded in [website/pages/reference.md](../../../website/pages/reference.md).

@@ -338,4 +338,4 @@ and its variant pages
 [`async_computer_ref`](https://contextgeneric.dev/docs/reference/components/handler/async_computer_ref)
 for `AsyncComputerRef`. A change here is propagated to each of them, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the
-split is recorded in [website/site-structure.md](../../../website/site-structure.md).
+split is recorded in [website/pages/reference.md](../../../website/pages/reference.md).

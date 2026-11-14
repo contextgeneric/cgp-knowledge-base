@@ -223,4 +223,4 @@ under the handler family:
 [`try_computer_ref`](https://contextgeneric.dev/docs/reference/components/handler/try_computer_ref)
 for its by-reference variant `TryComputerRef`. A change here is propagated to both, per the
 [synchronization rule](../../../AGENTS.md#the-synchronization-rule); the granularity rule behind the
-split is recorded in [website/site-structure.md](../../../website/site-structure.md).
+split is recorded in [website/pages/reference.md](../../../website/pages/reference.md).
