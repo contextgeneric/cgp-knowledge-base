@@ -33,9 +33,10 @@ directions apart:
 - **Contributing to CGP with an Agent** (`contributing-with-an-agent.md`), the second how-to page:
   the light contribution policy (use the knowledge base, and include the prompts behind an
   AI-assisted pull request or issue), reporting problems in the base as a contribution, the
-  side-by-side checkout layout, the `AGENTS.md` files and their shared documentation obligation, the
-  `point-first-writing` skill, the two rules that shape how the agent works with the contributor (ask
-  rather than guess, commit only when asked), and the macro review and error-message workflows.
+  side-by-side checkout layout, the `AGENTS.md` at each repository's root, the example and project
+  repositories included, and their shared documentation obligation, the `point-first-writing` skill,
+  the two rules that shape how the agent works with the contributor (ask rather than guess, commit
+  only when asked), and the macro review and error-message workflows.
 
 **The pages carry no prompt templates,** by the author's decision, until each has been tested enough
 to recommend. Adding one follows the testing step in the
