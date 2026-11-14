@@ -235,11 +235,11 @@ pub trait AreaCalculator<Context>:
 }
 ```
 
-**The provider trait's doc names its component key.** The trait keeps any doc the consumer trait
-carries and adds a paragraph of its own that links the consumer trait and the key, the one `name:`
-sets when it renames the key. A reader who hovers the provider trait in a `use` line then sees which
-key a provider imports beside it. Only the trait carries this paragraph, not the impls generated
-from it.
+**The provider trait's doc names its component key.** After any doc copied from the consumer trait,
+the provider trait carries a paragraph of its own that links the consumer trait and the key, so a
+reader who hovers the trait in a `use` line sees which key a provider imports beside it. A key that
+`name:` renames is linked under its new name. The impls generated from the trait do not carry the
+paragraph.
 
 **An associated type or const the trait declares for itself is the one `Self` the rewrite leaves
 alone.** The provider trait keeps the declaration, so a `Self::Output` in the consumer trait stays

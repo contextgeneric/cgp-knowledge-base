@@ -146,7 +146,8 @@ The marker struct carries a `#[doc]` line naming the consumer trait, so a crate 
 trait through `to_documented_provider_trait`, which adds
 ``Provider trait for [`CanGreet`]. A provider imports this trait's component key, [`GreeterComponent`], beside it.``
 after the consumer trait's copied doc, separated from it by an empty `#[doc = ""]` line so the
-consumer's summary stays its own paragraph. The link takes the component name's identifier, the one
+consumer's summary stays its own paragraph. Only a `#[doc = "…"]` string counts as a copied doc, so
+a trait with `#[doc(hidden)]` alone gets the line without the empty one. The link takes the component name's identifier, the one
 `name:` sets, without its parameters, so it resolves for a renamed or parameterized key. The stored
 `provider_trait` lacks the line, because the provider blanket impl and the `UseContext`,
 `RedirectLookup`, and `UseDelegate` impls copy its attributes, and a doc that names a trait does
@@ -202,6 +203,12 @@ all belong to this entrypoint:
 - [basic_delegation/component_assoc_const.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/component_assoc_const.rs):
   an associated const beside a method, forwarded in every impl as a projection through the trait on
   the other side.
+- [basic_delegation/doc_comment_on_cgp_component.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/doc_comment_on_cgp_component.rs):
+  the consumer trait's doc copied onto every derived item, the marker's generated line, and the
+  provider trait's key line after the user's doc and an empty line.
+- [basic_delegation/provider_trait_doc_hidden.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/basic_delegation/provider_trait_doc_hidden.rs):
+  a `#[doc(hidden)]` consumer trait without doc text, whose provider trait's key line has no empty
+  line before it.
 - [async_and_send/component_async.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/async_and_send/component_async.rs):
   an `async` method stacked with `#[async_trait]`: each forwarded call gains `.await`, and the
   attribute is copied onto every generated trait and impl but not onto the `IsProviderFor` impls.
