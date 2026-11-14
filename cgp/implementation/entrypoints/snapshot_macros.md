@@ -126,7 +126,7 @@ the *added* code and not the struct or enum it decorates, an entrypoint like
 type to attach to.
 
 The **assertion is inline by convention**, following
-[crates/tests/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/crates/tests/AGENTS.md):
+the [test suite's rules](https://github.com/contextgeneric/cgp/blob/main/crates/tests/README.md#snapshots):
 the snapshot string is written as an `insta` inline snapshot (`@"…"`) in the test file, so the
 golden output lives beside the invocation rather than in a separate `.snap` file. A golden whose
 expansion contains a double quote, such as a string literal in a method body or a `Symbol!("name")`
@@ -137,7 +137,7 @@ snapshot macro.
 
 The snapshot macros are the test harness rather than the thing under test, so their coverage is the
 set of snapshot invocations across the suite. Per
-[crates/tests/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/crates/tests/AGENTS.md),
+the [test suite's rules](https://github.com/contextgeneric/cgp/blob/main/crates/tests/README.md#snapshots),
 each CGP macro's expansion is snapshotted only in the concept target that owns its feature, and each
 owning target's snapshots are indexed by that macro's own implementation document. Representative
 usages:

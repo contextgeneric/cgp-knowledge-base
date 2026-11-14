@@ -38,4 +38,4 @@ its marker; do not write `::cgp::...` path literals inline.
   which re-exports the `macro_prelude` modules of `cgp-core` and `cgp-extra`; a name a marker emits
   needs no place in the prelude.
 - The convention that all CGP items are referenced through these markers is recorded in
-  [crates/macros/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/crates/macros/AGENTS.md).
+  the [macro crates' rules](https://github.com/contextgeneric/cgp/blob/main/crates/macros/README.md#rules-for-every-macro-crate).
