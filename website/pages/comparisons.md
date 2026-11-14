@@ -11,7 +11,7 @@ related-work document, plus an index that routes by background.
 - **How it was made:** ported by an agent from [related-work/](../../related-work/README.md); level
   one of the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md). The author's
   read of each page's two judging sections, per the
-  [authorship rule](../AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes), is
+  [authorship rule](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong), is
   outstanding.
 
 ## What it covers

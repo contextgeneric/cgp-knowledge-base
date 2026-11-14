@@ -20,7 +20,7 @@ that declares it. A dependency left out of them is used on a context that carrie
 
 The macros cannot catch the omission, because they do not type-check what they lower: which trait a
 method belongs to, or which trait declares an associated type, is known only to the compiler. So
-the omission is an [acceptable failure](../../implementation/AGENTS.md) that CGP defers to the
+the omission is an [acceptable failure](../../implementation/writing-guide.md) that CGP defers to the
 compiler. It takes one shape for each kind of declaration.
 
 ### A trait the body calls without `#[uses]`

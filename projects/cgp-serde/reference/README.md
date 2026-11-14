@@ -2,7 +2,7 @@
 
 This directory documents every public item in the cgp-serde crates, grouped by family, with one
 document per family following the entry template in
-[../../AGENTS.md](../../AGENTS.md#reference-entries). The tables below list every item so a reader
+[../../writing-guide.md](../../writing-guide.md#reference-entries). The tables below list every item so a reader
 can find a provider by what it handles, see what a context must wire for it, and know where to
 import it from. Read the [architecture](../architecture/README.md) first for the ideas the providers
 share, above all [re-entry](../architecture/reentrant-providers.md), which is what the "Re-enters

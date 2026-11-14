@@ -23,7 +23,7 @@ The `v0.8.0` page has five groups:
 
 The cgp-serde, CGP Examples, and Hypershell entries link their Projects sections. The page lists
 neither the CGP Patterns book nor the Hermes SDK, which are
-[legacy resources](../AGENTS.md#leave-legacy-resources-off-public-pages).
+[legacy resources](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources).
 
 ## How it relates to the knowledge base
 

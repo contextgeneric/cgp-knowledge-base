@@ -9,7 +9,7 @@ on the site, but its wiring code is four breaking releases out of date.
 - **Source**: [blog/2025-06-14-hypershell-release/index.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-06-14-hypershell-release/index.md)
 - **Published**: 14 June 2025, tagged `release` and `deepdive`
 - **Status**: Historical
-- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the [Hypershell pages](https://contextgeneric.dev/docs/projects/hypershell/), per [projects/hypershell.md](../projects/hypershell.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
+- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the [Hypershell pages](https://contextgeneric.dev/docs/projects/hypershell/), per [projects/hypershell.md](../projects/hypershell.md); it is the sanctioned edit in [../AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts) and changes no claim
 
 ## What it covers
 

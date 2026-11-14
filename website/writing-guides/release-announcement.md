@@ -103,8 +103,7 @@ four of its habits matter most here:
 - **No unbenchmarked performance claim.** "Faster" needs a citable number, and CGP's honest claim is
   almost always about compile-time-versus-runtime placement rather than speed.
 - **No hedged or pre-release wording.** On the release branch, write official versions as already
-  shipped, per [the branch rules](../AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once); the
-  post and site publish only after both releases exist, and that gate stays out of the draft.
+  shipped; the post and site publish only after both releases exist, and that gate stays out of the draft.
 
 ## Publishing, and what happens afterwards
 
@@ -115,7 +114,7 @@ four of its habits matter most here:
 - **Repoint the announcement bar** in `docusaurus.config.ts`, which is hardcoded.
 - **Add the discussion links** once the post is submitted.
 - **Register the post's internal document** under [blog/](../blog/README.md) in the same change, per
-  [AGENTS.md](../AGENTS.md).
+  [the rules for records](../README.md#rules-for-records).
 
 **Two items belong to the release rather than the post:**
 
@@ -128,7 +127,7 @@ four of its habits matter most here:
 
 **A release is the project's largest attention event**, so whatever the announcement links to is ready
 before it publishes, which is why the v0.8.0 announcement and the site relaunch are
-[one event](../AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once). And **nothing substantial
+one event. And **nothing substantial
 publishes beside it**: two pieces released together compete for the same readers in channels ranked by
 recency, and neither result says how its framing landed. Space other writing out after the release.
 

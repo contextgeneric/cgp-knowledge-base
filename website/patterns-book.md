@@ -6,7 +6,7 @@ website. The plan is to keep the book, annotate its stale chapters, and link it 
 book's own repository.
 
 The website treats the book as a
-[legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages), so no public page links or
+[legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources), so no public page links or
 recommends it; this record stays for the book's repository.
 
 - **URL**: <https://patterns.contextgeneric.dev/>
@@ -84,7 +84,7 @@ chooses the second.
   with the site in search.
 - **Annotate and route rather than rewrite.** Each stale chapter gets a short dated note naming the
   constructs it predates and where the current account lives, the remedy
-  [AGENTS.md](AGENTS.md#do-not-rewrite-history) sanctions for a misleading post.
+  [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts) sanctions for a misleading post.
 - **Route forward from the current half too**, where the readers are.
 
 ## The routing map
@@ -175,7 +175,7 @@ needs them.
   the fullest treatment the project has written of those subjects; a dated note keeps the explanation
   while disowning the syntax.
 - **Do not write the unwritten chapters.** They belong to the site.
-- **Do not link the book into this knowledge base.** The [one-way link rule](AGENTS.md#the-one-way-link-rule)
+- **Do not link the book into this knowledge base.** The [one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links)
   covers every public property.
 
 ## Maintaining it

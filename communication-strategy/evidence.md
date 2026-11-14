@@ -187,7 +187,7 @@ Use dependency injection as an opening only for readers who find that comparison
 already supports lightweight injection through traits and generics, and a framework-oriented pitch
 can obscure the particular problem CGP solves. Concrete use also helps evaluators, and the site's
 Projects pages supply it. The [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) is a
-[legacy resource](../website/AGENTS.md#leave-legacy-resources-off-public-pages) that public writing
+[legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources) that public writing
 leaves out.
 
 ## Where the profiles gather

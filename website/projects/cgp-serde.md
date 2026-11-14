@@ -73,7 +73,7 @@ A revision must respect these facts:
 - **The comparison's two judging sections want the author's read.** *What each approach costs* and
   *When plain Serde is the better choice* judge another project's tool, the reason those sections of
   every Comparisons page are on the author's list in
-  [../AGENTS.md](../AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes).
+  [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong).
 
 ## What it covers
 

@@ -144,7 +144,7 @@ Two kinds of program need a different first step:
 
 **The body quotes the parts that carry the program's ideas, each under a heading that names the
 idea**, not the file, per
-[projects/AGENTS.md](../../projects/AGENTS.md#the-shape-of-a-project-section), so the headings in
+[projects/writing-guide.md](../../projects/writing-guide.md#the-shape-of-a-project-section), so the headings in
 order summarize how the program works. In each part:
 
 - **Name each construct on first appearance, with a one-clause gloss and a link**: a CGP construct
@@ -219,7 +219,7 @@ crates or clone and run the repository, pinned to the version the pages describe
 illustration, then what the design costs and where to go next. The architecture index states the
 whole design on one page and is often the best page for an evaluator. A paragraph true of any CGP
 program belongs to the Concepts tier, which the page links instead, per
-[projects/AGENTS.md](../../projects/AGENTS.md#leave-cgp-itself-to-cgp).
+[projects/writing-guide.md](../../projects/writing-guide.md#leave-cgp-itself-to-cgp).
 
 **Its source is the most internal document in a section**, written for someone about to change the
 project, so apply the transformations of
@@ -262,7 +262,7 @@ macro, a public trait, or an adapter type.
 
 **Each page follows the component and trait variant of the site reference's
 [layered descent](reference.md#the-layered-page)**, with the fields of the internal entry template in
-[projects/AGENTS.md](../../projects/AGENTS.md#reference-entries) placed inside it:
+[projects/writing-guide.md](../../projects/writing-guide.md#reference-entries) placed inside it:
 
 1. **A one-sentence summary**, from the entry's opening sentence.
 2. **Overview**: the problem the construct solves in the project, with the gloss a newcomer needs.
@@ -323,12 +323,12 @@ Sidebar labels carry no backticks, and an apostrophe inside a single-quoted YAML
 **Every written page closes with the provenance note.** Projects pages are agent-written from this
 base, the first level in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md), so they use
 the reference's shared sentence. A scaffolded stub carries none, per
-[AGENTS.md](../AGENTS.md#disclosing-ai-use-on-a-page). Each project's plan records the level.
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page). Each project's plan records the level.
 
 ## Linking
 
 **A Projects page never links into the knowledge base**, per the
-[one-way rule](../AGENTS.md#the-one-way-link-rule). Each kind of internal link has a fixed
+[one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links). Each kind of internal link has a fixed
 replacement:
 
 | Internal link target | Public replacement |
@@ -362,7 +362,7 @@ diagnostics as produced.
 **Projects pages are not mirrored in the website's `example-code` crate**, because the project's
 repository already compiles its code, and the projects need what the crate lacks, such as
 Hypershell's nightly toolchain and network-bound backends; the rule is in
-[AGENTS.md](../AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post).
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#code).
 
 **Quote `cargo-cgp` output from the tool built at its current source**, which is the release the site
 documents, so a pre-release on crates.io is neither quoted nor compared against, per the base's
@@ -392,9 +392,16 @@ project has not measured.
 
 **Each post that presents a project gets a notice at its top pointing to the section, and each example
 page links the post back.** The notice is the one sanctioned edit to a published post, per
-[AGENTS.md](../AGENTS.md#do-not-rewrite-history): it adds a link and changes no claim. The plan names
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts): it adds a link and changes no claim. The plan names
 the posts. The link back sits in *Where to go next*, at the post's section for the program where there
 is one, and says the post's code predates the current design where it does.
+
+**The notice goes on each post that presents a project or a feature its pages document**, once that
+section is written: the post the section grew out of, the series posts that explain the feature's
+internals, and a talk that used the project as its demonstration. Place it directly under the front
+matter, or under the post's title where it has one, so the blog's excerpt shows it. Write it in the
+project voice, say where the code predates the current design, and link the project section and its
+Concepts page.
 
 ## What must not be on a Projects page
 

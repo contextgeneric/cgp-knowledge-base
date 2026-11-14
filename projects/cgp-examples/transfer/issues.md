@@ -3,7 +3,7 @@
 This document records what is wrong with or missing from `transfer` on the `v0.8.0` branch, grouped
 as defects, missing features, and housekeeping. Every entry was confirmed against the source, by a
 probe crate or a run of the server where it says so. Remove an entry in the same change that fixes
-it in the crate, per [../../AGENTS.md](../../AGENTS.md#the-shape-of-a-project-section).
+it in the crate, per [../../writing-guide.md](../../writing-guide.md#the-shape-of-a-project-section).
 
 ## Defects
 

@@ -29,7 +29,7 @@ explanation belongs in the reference or a concept, linked from the guide.
 
 ## The catalog
 
-The authoring rules for these documents live in [../AGENTS.md](../AGENTS.md). Each guide below names
+The authoring rules for these documents live in [../writing-guide.md](../writing-guide.md). Each guide below names
 a decision you face when writing CGP and walks through how to make it; the [Summary](#summary) at
 the end condenses all of them into one cheat-sheet, so read it first for the recommendations and
 follow a link for the full before/after mapping and the rules.

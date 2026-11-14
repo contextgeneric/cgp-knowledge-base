@@ -153,7 +153,7 @@ instead, because a pin crates.io does not carry fails on the reader's first buil
 **The ecosystem index, for a reader who wants something that is not on this site.** It is a list, and
 each entry says in one line what the thing is and who it is for. The entries are the crates, the
 toolchain, the talks, and the projects built with CGP, leaving out the CGP Patterns book and the
-Hermes SDK, which are [legacy resources](../AGENTS.md#leave-legacy-resources-off-public-pages). A link
+Hermes SDK, which are [legacy resources](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources). A link
 to another page of this site belongs in the Introduction's routing list instead. Every entry is
 checked when the page is touched: the crate exists under the name given, the link resolves, and
 anything version-specific holds, since this page ages by accumulation.
@@ -196,7 +196,7 @@ anything else only at his request. The acknowledgement records where CGP came fr
 [the website repository's rules](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources)
 leave to the author: keep its text under a `##` heading, so the page has one `h1`, and raise its
 Hermes SDK link, the only one outside the dated posts to that
-[legacy resource](../AGENTS.md#leave-legacy-resources-off-public-pages), with the author rather than
+[legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources), with the author rather than
 editing it.
 
 **Elsewhere the page is in project voice**: the reader is "you" and the project is "CGP", never "we"

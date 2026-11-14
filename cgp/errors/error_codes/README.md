@@ -78,5 +78,5 @@ These entries are a supporting reference, not a class of error: they describe Ru
 out to every class that emits it, and each class links back to the code entry in place of the raw
 `doc.rust-lang.org` URL, so the official links live here and the classes cite this directory. The
 rules for keeping these entries accurate (verifying wording against a real compilation and the
-official docs rather than memory) are the same [synchronization rules](../AGENTS.md) that govern the
+official docs rather than memory) are the same [synchronization rules](../writing-guide.md) that govern the
 whole catalog.

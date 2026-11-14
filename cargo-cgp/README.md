@@ -34,7 +34,7 @@ the environment variables the two executables agree on, the way the driver acces
 the matching document is where the intended new behavior is stated in plain language, so a reviewer
 can compare the prose against the code. Documentation that drifts out of sync with the code is worse
 than none, so keeping it accurate is a hard requirement of any change; this section's own rules live
-in [AGENTS.md](AGENTS.md), on top of the base-wide rules in [../AGENTS.md](../AGENTS.md).
+in [writing-guide.md](writing-guide.md), on top of the base-wide rules in [../AGENTS.md](../AGENTS.md).
 
 ## How it is organized
 

@@ -31,6 +31,33 @@ wrong:
 - **Offloading:** when a section outgrows its page, the explanation becomes a dedicated page that the
   shorter surface links, so each guide names the pages its subject offloads to.
 
+## Before writing a page
+
+- Read the page's guide and the page's own record, and read
+  [information-architecture.md](../information-architecture.md) before adding or moving a page.
+- Add a writing guide before adding a page of a kind the site has not published.
+
+## Layer the depth; do not omit the advanced material
+
+These rules govern public pages, not the knowledge base's documents.
+
+- Cover everything the subject supports; let the layers set the order a reader meets things, and
+  resolve the tension with structure rather than omission.
+- Cover every syntax form, option, and default a construct accepts on its reference page, which is
+  the only public source for it.
+- Say what replaced a legacy form, and put an advanced form lower on the page rather than off it.
+- Carry an idea completely on an explanation page, including the hard parts.
+- Let a tutorial select its material, deferring what it leaves out to a linked page.
+- Enumerate forms against the parser, not the previous draft, and say when forms combine.
+
+## Blog post conventions
+
+- Name a blog post `blog/<YYYY-MM-DD>-<name>.md`, or a directory with an `index.md` when it carries
+  images.
+- Set `authors`, `tags` from the fixed set, and usually an explicit `slug`; separate the excerpt with
+  `{/* truncate */}`.
+- Match a new release slug to its neighbours rather than assuming one rule.
+
 ## The catalog
 
 Register a new guide here in the same change that adds it, and in [../../summary.md](../../summary.md).
@@ -256,5 +283,5 @@ mechanics. Every snippet and claim about CGP follows the
 and the `/cgp` skill, drawing on [examples/](../../examples/README.md) where possible. The build,
 navigation, and deployment constraints are in [site.md](../site.md#how-the-site-is-built); a guide
 that would need new site machinery raises it with the user, because the project
-[decided against it](../blog/new-website.md). The rules for all website work are in
-[../AGENTS.md](../AGENTS.md).
+[decided against it](../blog/new-website.md). The rules for every page are in the website
+repository's [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md).

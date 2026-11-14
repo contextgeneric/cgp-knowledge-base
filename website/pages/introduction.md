@@ -25,7 +25,7 @@ and Contribute. A closing line names the blog as a dated record.
 
 The page has no maturity section, which belongs to the front page's cost section, per the
 [homepage guide](../writing-guides/homepage.md#below-the-fold-the-bounded-essay), and it leaves out
-the CGP Patterns book, a [legacy resource](../AGENTS.md#leave-legacy-resources-off-public-pages).
+the CGP Patterns book, a [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources).
 
 ## How it relates to the knowledge base
 

@@ -9,7 +9,7 @@ of each macro (its pipeline, the functions that synthesize its output, and every
 test suite) live in the sibling [implementation/](../implementation/README.md) directory, to which
 each reference document's Source section links; the `/cgp` skill remains a complementary teaching
 aid. The authoring rules, document template, and the requirement to keep these documents in sync
-with the code live in [../AGENTS.md](../AGENTS.md).
+with the code live in [../writing-guide.md](../writing-guide.md).
 
 ## Summary
 

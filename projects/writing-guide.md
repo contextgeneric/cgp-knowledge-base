@@ -1,19 +1,21 @@
-# AGENTS.md: the ecosystem projects
+# Writing a project section
 
-Read [README.md](README.md) for what qualifies as a project. The base-wide [../AGENTS.md](../AGENTS.md)
-rules apply.
+This guide holds the rules for writing and revising the documents of an ecosystem project's section.
+The knowledge base's [AGENTS.md](../AGENTS.md) holds the rules every document follows, including
+linking a project at the branch [../sibling-projects.md](../sibling-projects.md) records.
 
 ## A project section documents its project in depth
 
 - Verify the section against the project's source, exactly as `cgp/` is verified against `cgp`.
 - Treat a change to the project's bounds, wire format, context dependencies, or crate as a change to
   the matching document.
-- Read the project at the branch [../sibling-projects.md](../sibling-projects.md) records, and link to
-  it at that branch; this is the one departure from the root's `main` link rule.
 - Make both the project change and the document change when the checkout is present; when it is absent,
   state what needs updating.
 - Do not modify the project's source while documenting it; record a defect, missing test, or stale
   metadata in the section's `issues.md`.
+- Match a reproduced project's code to the branch [../sibling-projects.md](../sibling-projects.md)
+  records.
+- Record a project's older idiom as a change in its `issues.md`, not by modernizing an example alone.
 
 ## Verify behavior with a probe, not by reading alone
 
@@ -37,8 +39,8 @@ rules apply.
 
 ## The shape of a project section
 
-Follow the section shape in [README.md](README.md): a README, and the architecture, reference, guides,
-examples, comparison, testing, and issues documents the project needs.
+- Follow the section shape in [README.md](README.md): a README, and the architecture, reference,
+  guides, examples, comparison, testing, and issues documents the project needs.
 
 ## Reference entries
 
@@ -58,7 +60,7 @@ examples, comparison, testing, and issues documents the project needs.
 
 ## Registration
 
-- Register a new document in its directory's `README.md`, the project `README.md`, and
-  [../summary.md](../summary.md) in the same change.
+- Register a new document in its directory's `README.md` and the project `README.md` as well as
+  [../summary.md](../summary.md), in the same change.
 - Register a new project section in [README.md](README.md) and
   [../sibling-projects.md](../sibling-projects.md).

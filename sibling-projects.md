@@ -32,7 +32,7 @@ posts cite its crates and agents work on them directly. `cgp-example-profile-pic
 directory of its own, and its scenario is documented only as a worked example under
 [examples/](examples/README.md). Recording the relationship here keeps each example's provenance
 findable. A worked example may build on and link to any project in this table, per
-[examples/AGENTS.md](examples/AGENTS.md#building-on-a-sibling-cgp-project). Both repositories track
+[examples/writing-guide.md](examples/writing-guide.md#building-on-a-sibling-cgp-project). Both repositories track
 the same `cgp` version as the library, but a crate in them may still use an older idiom, so read the
 project section's note on idioms before copying from one.
 
@@ -66,7 +66,7 @@ than a link and stays relative.
 One exception applies to the projects documented under [projects/](projects/README.md). When the
 table records a branch other than `main` for one of them, as it does for `hypershell`, `cgp-serde`,
 and `cgp-examples`, whose current development lives on `v0.8.0`, its documents link to that branch,
-per [projects/AGENTS.md](projects/AGENTS.md#a-project-section-documents-its-project-in-depth),
+per [projects/writing-guide.md](projects/writing-guide.md#a-project-section-documents-its-project-in-depth),
 because `main` holds different code from the code they describe.
 
 ## Updating a revision

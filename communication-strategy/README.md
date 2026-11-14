@@ -5,7 +5,7 @@ and how to preserve the author's voice.
 
 Use it for landing pages, tutorials, READMEs, blog posts, talks, and threads. The technical sections
 explain how CGP works; this section helps writers present it to a particular reader. Read
-[AGENTS.md](AGENTS.md) for the authoring rules.
+[writing-guide.md](writing-guide.md) for the authoring rules.
 
 ## The reader and the failure mode
 

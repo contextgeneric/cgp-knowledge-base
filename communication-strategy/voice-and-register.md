@@ -44,7 +44,7 @@ a necessary qualification.
 Give an explanation the length its subject needs. A long piece should state its scope near the start
 so readers can decide where to focus. Simplify the entry without removing advanced material that
 belongs on the page; the
-[website rules](../website/AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material) define that
+[website rules](../website/writing-guides/README.md#layer-the-depth-do-not-omit-the-advanced-material) define that
 obligation by page type.
 
 Name the construct, operation, or limitation behind an abstract claim. Show the wiring entry behind
@@ -143,7 +143,7 @@ retain an unsupported claim, but a local revision is not permission to rewrite t
 
 Docs pages describe current behavior and can be corrected in place. Published blog posts are dated
 records and follow the separate restrictions in
-[website/AGENTS.md](../website/AGENTS.md#do-not-rewrite-history). Record drift in their internal
+[website/AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts). Record drift in their internal
 documents rather than silently updating historical code or claims.
 
 Preserve passages that deliberately carry the author's personal voice, such as the sponsorship

@@ -3,7 +3,7 @@
 One internal document per post on the [CGP blog](https://contextgeneric.dev/blog), and per substantial
 draft. Each records what its post covers, which knowledge-base documents own that material, and how
 its code and claims diverge from CGP v0.8.0. The rules that govern posts, including never rewriting a
-published one, are in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history).
+published one, are in [../AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts).
 
 ## How stale the posts are
 
@@ -14,7 +14,7 @@ The live site's [Introduction](https://contextgeneric.dev/docs/) still sends new
 the most up-to-date resource; the `v0.8.0` branch's does not. The posts' ideas stay current where their
 code does not, and several are the only prose on the design questions they work through. So each
 record's "Where it diverges from CGP v0.8.0" section names what is stale, to read before quoting the
-post, per [../AGENTS.md](../AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post).
+post, per [../AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#code).
 
 ## The catalog
 

@@ -34,7 +34,7 @@ how the website is built.
   read it before proposing a change to how the site is built. "No plugins, no React" is a stated
   decision, so an agent adding site machinery works against it and says so to the user.
 - **AI disclosure:** AI-drafted content on the website is expected and disclosed, which normalizes
-  the workflow [../AGENTS.md](../AGENTS.md) describes: an agent drafts from the knowledge base and the
+  the workflow [the website's AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md) describes: an agent drafts from the knowledge base and the
   author reviews. The practice is inconsistent: the [v0.6.1 post](v0-6-1-release.md) carries a per-post
   AI disclaimer while others do not, and whether to standardize it is the user's question.
 - **Framing:** a revision follows the [communication strategy](../../communication-strategy/README.md)

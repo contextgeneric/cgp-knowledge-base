@@ -52,7 +52,7 @@ the page shape, how-to rules, and draft checks come from
 the readers are the two hypothesis profiles in
 [readers.md](../../communication-strategy/readers.md#the-reader-who-doubts-agent-written-documentation).
 
-The pages are the second exception to the [one-way link rule](../AGENTS.md#the-one-way-link-rule):
+The pages are the second exception to the [one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links):
 they link the base's front door, its issue tracker, and its four top-level entry files, and name every
 deeper path in prose. The base's [README](../../README.md#reading-it-from-outside-the-project) carries
 the matching section for an outside agent, which the using page relies on.

@@ -47,7 +47,7 @@ the error, it is documented with the macro; if the *compiler* produced the error
 macro's output, it is documented here.
 
 One nuance follows the
-[acceptable / problematic split](AGENTS.md#handling-the-acceptable--problematic--rejection-split):
+[acceptable / problematic split](writing-guide.md#handling-the-acceptable--problematic--rejection-split):
 whether a failure is a CGP *defect*. An **acceptable** failure is one CGP intentionally defers to
 the compiler because it lacks the whole-program view the check needs; its documentation lives here
 in full. A **problematic** failure is a CGP *defect*: input a macro should have rejected, or an
@@ -120,7 +120,7 @@ document summarizes the *kind* of message a class produces, states whether the r
 anywhere in it, and pins the *position* where it appears when it does: very often near the last or
 second-to-last error in a cascade, since the innermost failing bound is reported after the outer
 ones. Recording the position is what lets a tool, or an agent, jump to the cause instead of reading
-the noise. The [authoring conventions](AGENTS.md) make this rule precise.
+the noise. The [authoring conventions](writing-guide.md) make this rule precise.
 
 ## Organization
 
@@ -269,11 +269,11 @@ Error-code reference, in [error_codes/](error_codes/):
 ## Relationship to the rest of the knowledge base
 
 This catalog is one of the views of CGP's truth and is bound by the
-[synchronization rule](../AGENTS.md): a class whose diagnostic the code does not produce is a bug
+[synchronization rule](../writing-guide.md): a class whose diagnostic the code does not produce is a bug
 in the change that made it stale. It leans on the other sections rather than restating them. It
 links to the [reference](../reference/README.md) for the traits and macros a class involves, to the
 [check-traits concept](../concepts/check-traits.md) for why wiring is lazy, and above all to the
 [debugging guide](../guides/debugging.md), which is the prescriptive playbook this reference-style
 catalog supports. The rules for authoring and maintaining these documents (including how they stay
 in sync with the `cargo-cgp` fixtures and how a sub-agent extracts the errors they describe) live in
-[AGENTS.md](AGENTS.md).
+[writing-guide.md](writing-guide.md).

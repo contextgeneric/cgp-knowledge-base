@@ -5,7 +5,7 @@ page states them together so a reader can hold the whole design at once before o
 reference. Each decision has its own document below, which carries the mechanism and the code; this
 page carries only the claim and why it matters. CGP's own constructs are documented under
 [cgp/](../../../cgp/README.md) and are linked rather than re-explained, per
-[../../AGENTS.md](../../AGENTS.md#leave-cgp-itself-to-cgp).
+[../../writing-guide.md](../../writing-guide.md#leave-cgp-itself-to-cgp).
 
 ## The design on one page
 

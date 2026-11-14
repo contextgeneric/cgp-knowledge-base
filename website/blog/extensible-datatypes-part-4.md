@@ -9,7 +9,7 @@ ones.
 - **Published**: 30 July 2025, tagged `deepdive`
 - **Release**: [v0.4.2](../../releases/v0-4-2.md)
 - **Status**: Historical
-- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible variants* Concepts page, the reference, and the [`expression` pages](https://contextgeneric.dev/docs/projects/cgp-examples/expression/); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
+- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible variants* Concepts page, the reference, and the [`expression` pages](https://contextgeneric.dev/docs/projects/cgp-examples/expression/); it is the sanctioned edit in [../AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts) and changes no claim
 
 ## What it covers
 

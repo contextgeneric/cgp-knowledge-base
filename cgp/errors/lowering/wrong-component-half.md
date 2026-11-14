@@ -23,7 +23,7 @@ Naming the other half gives the trait one argument too many (a consumer trait wh
 belongs) or one too few (a provider trait where a consumer trait belongs). The macros cannot catch
 it, because they do not resolve the trait names they are given, so the mistake reaches the compiler
 as an
-[acceptable failure](../../implementation/AGENTS.md#documenting-how-a-macros-expansion-can-fail-to-compile).
+[acceptable failure](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile).
 The shapes follow, one per position. A provider's attribute on a component trait, `#[uses]` where
 [`#[extend]`](../../reference/attributes/extend.md) belongs, is not among them: `#[cgp_component]`
 reads its own attributes, so it rejects `#[uses]` with a message naming the `#[extend]` form.

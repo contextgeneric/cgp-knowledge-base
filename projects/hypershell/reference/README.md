@@ -2,7 +2,7 @@
 
 This directory documents every public item in the Hypershell crates, grouped by family, with one
 document per family following the entry template in
-[../../AGENTS.md](../../AGENTS.md#reference-entries). Two adaptations of the template apply
+[../../writing-guide.md](../../writing-guide.md#reference-entries). Two adaptations of the template apply
 throughout. A syntax type and the provider that interprets it share one entry, since neither means
 anything without the other. And no entry has a Pairing field, because nothing in Hypershell has two
 directions the way serialization does. Each family document instead ends with a **Wiring** section

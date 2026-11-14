@@ -1,18 +1,20 @@
-# AGENTS.md: the CGP implementation documentation
+# Writing the implementation documents
 
-Read [README.md](README.md) for the catalog. The base-wide [../../AGENTS.md](../../AGENTS.md) rules and
-the [../AGENTS.md](../AGENTS.md) rules apply, including invoking the `/cgp` skill before writing.
+This guide holds the rules for writing and revising the documents on the macro internals. The
+knowledge base's [AGENTS.md](../../AGENTS.md) holds the rules every document follows, and
+[the `cgp` writing guide](../writing-guide.md) the rules for the reference documents they pair with.
 
-## Rules
+## Keeping a document in step with the code
 
-- Revise the matching implementation document in the same change as a parser, pipeline, generated-item,
-  or error-path change.
 - Update the Tests or Snapshots section in the same change as a test or snapshot move.
 - Keep every test and snapshot pointer here; a reference document never points at a test.
 - Verify every claim against the `types/<construct>/` modules, the `functions/` helpers, and the tests.
 - Improve the code's inline docs in the same pass: add a one-line `///` to a public item that lacks
   one, correct a stale comment, and delete a comment that restates the code.
 - Keep inline docs terse and leave the deep mechanics to the implementation document.
+
+## Placing and shaping a document
+
 - Place a document by the source construct it describes.
 - Make one `asts/` document cover one evaluation stack, not one type.
 - Split `functions/` by what a helper does, adding a sub-directory when a family grows.
@@ -24,6 +26,9 @@ the [../AGENTS.md](../AGENTS.md) rules apply, including invoking the `/cgp` skil
 - Name an internal function only as an entry point into the code.
 - Use a short before/after snippet where it makes a transform concrete.
 - Use a bullet list for a set of tests, snapshots, keys, or source pointers.
+
+## Tests, snapshots, and known issues
+
 - Link every behavioral test and rejection case in Tests, with a one-line note on what it pins.
 - Index every snapshot in Snapshots, describe its variant, and state the variants that have no
   snapshot.
@@ -51,10 +56,10 @@ the [../AGENTS.md](../AGENTS.md) rules apply, including invoking the `/cgp` skil
 - Update the error catalog class and the owning macro's implementation document when you add or bless a
   fixture.
 
-## Alignment
+## Alignment with the reference
 
-- The reference document owns the user-facing contract, syntax, expansion, and user-visible corner
-  cases, and points only at library source.
-- The implementation document owns the pipeline, the synthesizing functions, the AST types, and all
+- Keep in the reference document the user-facing contract, syntax, expansion, and user-visible corner
+  cases, pointing only at library source.
+- Keep in the implementation document the pipeline, the synthesizing functions, the AST types, and all
   test and snapshot pointers.
 - Update both views in the same change; cross-link rather than duplicate.

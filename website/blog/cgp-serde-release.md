@@ -9,7 +9,7 @@ context-and-capabilities proposal on stable Rust.
 - **Source**: [blog/2025-11-03-cgp-serde-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2025-11-03-cgp-serde-release.md)
 - **Published**: 3 November 2025, tagged `release`
 - **Status**: Historical
-- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the [cgp-serde pages](https://contextgeneric.dev/docs/projects/cgp-serde/), per [projects/cgp-serde.md](../projects/cgp-serde.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
+- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the [cgp-serde pages](https://contextgeneric.dev/docs/projects/cgp-serde/), per [projects/cgp-serde.md](../projects/cgp-serde.md); it is the sanctioned edit in [../AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts) and changes no claim
 
 ## What it covers
 

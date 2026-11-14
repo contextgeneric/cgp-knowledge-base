@@ -57,7 +57,8 @@ project's own subject, and one per **cross-cutting section**, holding material t
 ecosystem rather than to any single project. A member directory is the home of everything specific
 to its project and is verified against that project's source; a cross-cutting directory draws on all
 of them. Each directory carries a `README.md` that catalogs its contents and, where it needs rules
-of its own, an `AGENTS.md`.
+of its own, a `writing-guide.md`; the base's one [AGENTS.md](AGENTS.md) holds the rules every
+document follows.
 
 ### `cgp/`: the CGP library
 
@@ -229,7 +230,7 @@ it then needs only part of what the rest of this file describes. The website's
 people directing such agents. These facts matter to an outside agent.
 
 **The authoring rules bind only an agent that edits this base or a member project.** The
-`AGENTS.md` files describe how documents are written and kept in sync. A reading agent can treat
+`AGENTS.md` and the section writing guides describe how documents are written and kept in sync. A reading agent can treat
 them as context for how much to trust a document, and skip their instructions about registering,
 committing, and loading the writing skill.
 

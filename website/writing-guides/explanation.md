@@ -84,7 +84,9 @@ known vocabulary. Three transformations make it public:
 - **Remove the internal machinery** (`DelegateComponent`, `IsProviderFor`, the `Symbol<…>` list) unless
   the page's subject *is* that machinery, in which case introduce it as the mechanism behind the model.
 
-The synchronization rule binds the page and its document in both directions.
+The synchronization rule binds the page and its document in both directions. A concept page may cut
+a project's scenario down to what the concept needs; its code must still compile, and need not match
+the project.
 
 ## The page shape
 

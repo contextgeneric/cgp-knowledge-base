@@ -48,7 +48,7 @@ syntax that `cgp` 0.8.0 changed, while the tests on `v0.8.0` wire per-type dispa
 `open` statement where the release builds `UseDelegate` tables. So what these documents say a
 provider does holds for both, but code quoted from them compiles only against the `v0.8.0` branch.
 Source links point at that branch, per
-[../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth).
+[../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
 
 ## How it is organized
 
@@ -100,7 +100,7 @@ summary leaves out:
 ## The documents
 
 The section follows the project shape in
-[../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section). Start with the architecture for the
+[../writing-guide.md](../writing-guide.md#the-shape-of-a-project-section). Start with the architecture for the
 ideas every provider shares, then use the reference to look up a provider.
 
 - [architecture/](architecture/README.md): the design on one page, and one document per idea:

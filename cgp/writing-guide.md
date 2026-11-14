@@ -1,41 +1,27 @@
-# AGENTS.md: the `cgp` member of the knowledge base
+# Writing the `cgp` documents
 
-Read [README.md](README.md) for the catalog. The base-wide [../AGENTS.md](../AGENTS.md) rules apply.
+This guide holds the rules for writing and revising the reference, concept, and guide documents
+under `cgp/`. The knowledge base's [AGENTS.md](../AGENTS.md) holds the rules every document follows;
+the [error catalog](errors/writing-guide.md) and the
+[implementation documents](implementation/writing-guide.md) have guides of their own.
 
-## What the synchronization rule means here
+## Keeping a document in step with its construct
 
-- Update the matching reference document in the same change as a construct change to its syntax, its
-  expansion, its defaults, its error behavior, or its relationships.
-- Add a construct's reference document and register it in the index; remove or supersede both when the
-  construct is removed; revise the Expansion section when the expansion changes.
-- Keep the implementation, the snapshots, the reference, the implementation documents, and the skill in
-  agreement; when they disagree, the source wins.
-- Revise the affected skill sub-skill, the routing guidance and reading cheat sheet in `cgp/SKILL.md`,
-  and the trigger `description` in the same change.
-- Lead with the current form and keep a legacy form only as a clearly labeled note for reading existing
-  code.
-- State what needs updating there when the skill checkout is absent.
+- Add a construct's reference document and register it in the index; remove or supersede both when
+  the construct is removed; revise the Expansion section when the expansion changes.
+- Lead with the current form and keep a legacy form only as a clearly labeled note for reading
+  existing code.
+- State what needs updating in the skill when its checkout is absent.
 
 ## Authoring conventions
 
-- Invoke the `/cgp` skill before writing or revising a document.
-- Use the knowledge base vocabulary; never call what a component, a `#[cgp_fn]` function, or a getter
-  defines a "capability".
 - Show code freely, and let the prose around it carry the meaning.
-- Prefer snippets that match the worked examples in [../examples/](../examples/); replace an ad-hoc
-  snippet with the example-aligned one during a review.
+- Prefer snippets that match the worked examples in [../examples/](../examples/README.md); replace an
+  ad-hoc snippet with the example-aligned one during a review.
 - Verify against the source before writing; the Expansion section must reflect the real default
   identifiers, not idealized ones.
-
-## Which rules govern which directory
-
-- This file governs [reference/](reference/README.md), [concepts/](concepts/README.md), and
-  [guides/](guides/README.md).
-- [errors/AGENTS.md](errors/AGENTS.md) governs the error catalog.
-- [implementation/AGENTS.md](implementation/AGENTS.md) governs the macro internals.
-- The shared sections carry their own rules: [examples](../examples/AGENTS.md),
-  [related-work](../related-work/AGENTS.md), and
-  [communication-strategy](../communication-strategy/AGENTS.md).
+- Let a concept page use simplified code when the reduction explains the concept better; the code is
+  an illustration, not a reproduction, and still uses current idioms and compiles.
 
 ## Reference documents
 
@@ -90,8 +76,9 @@ Read [README.md](README.md) for the catalog. The base-wide [../AGENTS.md](../AGE
 
 ## Say which shape an example wires
 
-- Say whether a context is a value context or an environmental context.
-- Say whether a component is self-targeted or parameter-targeted.
+- Say which context shape and which target an example uses, with the qualifiers
+  [vocabulary.md](../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target)
+  defines.
 - Say so in a sentence when a document introduces a second shape; the labels need not appear.
 
 ## Reviewing and updating a document

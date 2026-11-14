@@ -20,8 +20,8 @@ it stale.
   versions and never pre-releases, the rules that follow from this repository being public, how
   links are written, the separate owners of project facts (`projects/`) and CGP patterns (`cgp/`,
   `examples/`) and matching a project's documented branch, registering a document, the prose
-  mechanics, and the committing rule; it also governs `releases/`, which has no rules
-  of its own.
+  mechanics, the committing rule, keeping each section in step with its source, and the index of
+  the section writing guides; it also governs `releases/`, which has no rules of its own.
 - [summary.md](summary.md) — this file.
 - [sibling-projects.md](sibling-projects.md) — the member projects, their repositories, the revision
   of each to read, and the rules for finding a sibling locally versus linking to it.
@@ -30,11 +30,10 @@ it stale.
 
 - [cgp/README.md](cgp/README.md) — what this member section documents, why prose beats reading the
   proc-macro source, and how its five parts divide.
-- [cgp/AGENTS.md](cgp/AGENTS.md) — the rules for documenting `cgp`: what the synchronization rule
-  lands on here (including propagating a change to the skill), the authoring conventions, which rules
-  govern which directory, the reference document template and its syntax-grammar notation, the rule
-  that a reference document covers every form its parser accepts, what a concept and a guide each owe,
-  the rule that a document says which context shape its examples wire, and how to review a document.
+- [writing-guide.md](cgp/writing-guide.md) — the rules for writing the reference, concept, and guide
+  documents: keeping a document in step with its construct, the authoring conventions, the reference
+  document shape and its Syntax Grammar notation, what a concept and a guide each owe, naming the
+  context shape an example wires, and reviewing a document.
 
 ### `cgp/reference/`: one document per construct
 
@@ -315,9 +314,9 @@ it stale.
 
 - [README.md](cgp/errors/README.md) — the catalog: why these errors are hard, the hidden-versus-
   surfaced axis it is built around, what belongs here, and the index of every class.
-- [AGENTS.md](cgp/errors/AGENTS.md) — the rules: never paste verbatim output, record the three facts a
-  tool needs, the document template, backing every class with a fixture, and gathering an error with a
-  sub-agent.
+- [writing-guide.md](cgp/errors/writing-guide.md) — the rules for the error catalog: class documents
+  verified against real compilations and backed by fixtures, code entries, the acceptable / problematic
+  / rejection split, and gathering an error with a sub-agent.
 - [hidden/unsatisfied-dependency.md](cgp/errors/hidden/unsatisfied-dependency.md) — an unmet
   impl-side dependency reached by a direct consumer-method call, where the compiler hides the cause
   behind `E0599`.
@@ -407,9 +406,9 @@ it stale.
   every reviewer needs: leading-generic insertion and lifetime ordering, keeping the generic kinds
   apart, spans for the compiler and the IDE, parsing with `parse_internal!`, lowering through
   another macro's IR, and hygiene.
-- [AGENTS.md](cgp/implementation/AGENTS.md) — the rules for this tree: what an implementation document
-  is for, the per-kind document templates, the Tests and Snapshots sections, Known issues, and how to
-  document the ways an expansion can fail to compile.
+- [writing-guide.md](cgp/implementation/writing-guide.md) — the rules for the implementation documents:
+  keeping them in step with the code, placement and shape, the Tests and Snapshots sections and Known
+  issues, how an expansion can fail to compile, and the split with the reference.
 - [review.md](cgp/implementation/review.md) — the macro review procedure: orientation, hardening the
   implementation and tests, scrutinizing the codegen, keeping the views in sync, and asking when in
   doubt.
@@ -556,11 +555,9 @@ it stale.
 
 - [README.md](examples/README.md) — the example catalog with the context shape each one wires, and how
   an example differs from a reference document.
-- [AGENTS.md](examples/AGENTS.md) — the rules: leave the mechanics to the reference, re-derive rather
-  than cite an outside source, build on and link a sibling CGP project where one serves the use case,
-  standing alone while matching a source project's code at its documented branch and leaving its records
-  to `projects/`, the document shape, naming the context shape the example wires, and where a missing
-  concept belongs.
+- [writing-guide.md](examples/writing-guide.md) — the rules for a worked example: building on a sibling
+  CGP project, re-deriving rather than citing an outside source, standing alone, the document shape, and
+  naming the context shape it wires.
 - [application-builder.md](examples/application-builder.md) — assembling an application context from
   independent per-subsystem builder providers via the extensible builder pattern.
 - [area-calculation.md](examples/area-calculation.md) — computing shape areas, from field-driven
@@ -587,9 +584,9 @@ it stale.
 - [README.md](related-work/README.md) — the catalog, why honesty is the section's whole value, how
   related work differs from the inward-looking sections, and the pointer to the website's Comparisons
   section ported from these documents.
-- [AGENTS.md](related-work/AGENTS.md) — the rules: what every document must cover, the sourcing and
-  citation obligation, compiling foreign snippets through Nix and recording the toolchain, the CGP
-  side's synchronization duty, and the document template.
+- [writing-guide.md](related-work/writing-guide.md) — the rules for a comparison: compiling the foreign
+  snippets and recording the toolchain, what every comparison covers, the sourcing obligation, and the
+  CGP side and document shape.
 - [rust-language-proposals.md](related-work/rust-language-proposals.md) — specialization, the
   dictionary-passing account of traits, named and incoherent impls, contexts and capabilities, and
   Cairo's shipped named impls, and CGP as a stable-Rust desugaring of a fragment of each with two stated
@@ -625,10 +622,9 @@ it stale.
   expert this section writes for, the voicelessness failure mode it exists to prevent, the two things
   the section deliberately does not cover, and the principles of marketing, public communication, and
   developer relations it rests on.
-- [AGENTS.md](communication-strategy/AGENTS.md) — the rules: write for the author's voice first, the
-  marketing-director and devrel roles, what every document must do, honesty as the strategy and its
-  three guardrails including distilling reaction to CGP rather than citing it, the consolidation rule,
-  and the four sync targets.
+- [writing-guide.md](communication-strategy/writing-guide.md) — the rules for the strategy documents:
+  honest framing, the author's voice and the marketing role, what every document does, structure and
+  links, and keeping the brief and related passages in step.
 - [messaging-brief.md](communication-strategy/messaging-brief.md) — the strategy on one page: the tag
   line and the two lines after it, the five features, the pain to lead with per reader, the objections
   with one-line answers, the boundary and the costs to concede, the ask per stage, the words to avoid,
@@ -674,9 +670,9 @@ it stale.
 
 - [README.md](cargo-cgp/README.md) — what this member section documents, why the tool's design needs
   prose, and how its categories divide.
-- [AGENTS.md](cargo-cgp/AGENTS.md) — the rules for documenting the tool: what the synchronization rule
-  covers here, the read-only external references, showing the example behind an error message, and
-  registering a document.
+- [writing-guide.md](cargo-cgp/writing-guide.md) — the rules for documenting the tool: keeping a
+  document in step with the source, showing the example behind an error message, the implementation
+  document shape, and registering a category.
 - [error-code.md](cargo-cgp/error-code.md) — the catalog of the `[CGP-Exxx]` codes the tool stamps on
   a rewritten message: what each means, what triggers it, and how to fix it.
 
@@ -766,13 +762,6 @@ it stale.
 - [website/README.md](website/README.md) — what this section records and why a public site needs an
   internal record, records against specifications, the document template, the status words, and the
   catalog.
-- [website/AGENTS.md](website/AGENTS.md) — the rules: the one-way link rule and its exceptions, legacy
-  resources off public pages, the published skill as a snapshot agents never edit or bump, the
-  communication-strategy reading before public prose, layering the depth rather than omitting the
-  advanced material, verifying code against current CGP in `example-code` and never against a blog
-  post, not rewriting published history, committing the redesign to the `v0.8.0` branch, who drafts a
-  page and who reads it before it publishes, disclosing AI use on a page, records and their status,
-  and registering a document.
 - [website/information-architecture.md](website/information-architecture.md) — the site as intended:
   the four public properties, why most readers never see the homepage and what that requires of every
   page, what each surface is for, the target page inventory and the AI section's two directions, the
@@ -1107,14 +1096,9 @@ it stale.
   coverage the examples add, and the failure paths, checks, and syntax nothing exercises.
 - [projects/hypershell/issues.md](projects/hypershell/issues.md) — the confirmed defects (a streamed
   body not following redirects, the unusable `StreamToLines`), missing features, and housekeeping.
-- [projects/AGENTS.md](projects/AGENTS.md) — the rules for a project section: verified against the
-  project's source at the branch sibling-projects.md records, probes rather than reading alone, leaving
-  CGP itself to `cgp/` and patterns to the worked example, the section as the primary source for its
-  project's facts, the section shape as a guide with per-subproject subdirectories and their own
-  `testing.md` and `issues.md`, a shared design and guides when subprojects are near copies, the
-  per-example documents that quote snippets rather than whole programs and serve as the records their
-  public Projects pages are written from, with any *Try a change* run recorded there first, the
-  reference entry template, and naming the public material each document feeds.
+- [writing-guide.md](projects/writing-guide.md) — the rules for a project section: verified against the
+  project's source, probes rather than reading alone, leaving CGP itself to `cgp/`, the section shape,
+  reference entries, public material, and registration.
 - [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components: what
   it is, which revision the documents describe (the `v0.8.0` branch against the published
   0.2.0), the crate split, the confirmed gaps, the section catalog, and the public material the

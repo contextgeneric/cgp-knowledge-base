@@ -1,24 +1,16 @@
-# AGENTS.md: the `cargo-cgp` member of the knowledge base
+# Writing the `cargo-cgp` documents
 
-Read [README.md](README.md) for what this section covers. The base-wide [../AGENTS.md](../AGENTS.md)
-rules apply.
+This guide holds the rules for writing and revising the documents on the `cargo-cgp` tool. The
+knowledge base's [AGENTS.md](../AGENTS.md) holds the rules every document follows.
 
-## What the synchronization rule means here
+## Keeping a document in step with the tool
 
-- Revise the matching document in the same change as a change to the tool's behavior, its argument
-  handling, the environment contract, the driver, or the crate structure.
-- Verify every claim against the source before writing it.
 - Fix the code's inline docs in the same pass: add a one-line `///` to a public item that lacks one,
   correct a stale comment, and delete a comment that restates the code.
 - Keep a source doc pointer on its knowledge-base path, such as
   `cgp-knowledge-base/cargo-cgp/implementation/driver/program.md`.
-
-## The external references are read-only ground truth
-
-- Verify a claim about `rustc_driver` or Clippy against `../external/rust` or
-  `../external/rust-clippy`.
-- Cite them, never edit them, and never create a dependency on them.
-- Keep their paths as relative filesystem references, not published links.
+- Read the compiler source from the pinned nightly's `rustc-dev` component when `../external/rust` is
+  absent.
 - Read the `cgp` source but never modify it; revise the `cgp` section of this base when the two must
   agree.
 
@@ -44,10 +36,6 @@ rules apply.
 - Record a gap in the comparison section where one exists, otherwise beside the behavior.
 - Record a limitation beside the behavior it qualifies, and remove it when closed.
 
-## Registering a document
+## Registering a category
 
-- Register a document in its category's `README.md` and in [../summary.md](../summary.md) in the same
-  change.
-- Register a new category in this section's [README.md](README.md) with its own `README.md` and, when
-  needed, an `AGENTS.md`.
-- Follow the base's prose mechanics, including the backtick and lazy-reflow rules.
+- Register a new category in this section's [README.md](README.md) with its own `README.md`.

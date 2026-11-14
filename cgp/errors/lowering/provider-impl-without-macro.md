@@ -29,7 +29,7 @@ impl<Context> Greeter<Context> for GreetHello { // no `#[cgp_provider]`
 
 The macros cannot catch it, because nothing marks the plain impl as a provider impl until the
 compiler checks its supertraits, so the mistake reaches the compiler as an
-[acceptable failure](../../implementation/AGENTS.md#documenting-how-a-macros-expansion-can-fail-to-compile).
+[acceptable failure](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile).
 
 ## The raw diagnostic
 

@@ -1,16 +1,15 @@
-# AGENTS.md: the communication strategy
+# Writing the communication strategy
 
-Read [README.md](README.md) and the base-wide [../AGENTS.md](../AGENTS.md) rules before editing.
+This guide holds the rules for writing and revising the communication-strategy documents. The
+knowledge base's [AGENTS.md](../AGENTS.md) holds the rules every document follows, including
+never fabricating evidence.
 
 ## Honesty is the strategy
 
-- Never fabricate evidence: no invented benchmark, adoption figure, quotation, or version-specific
-  claim.
 - Improve the framing of an honest claim that seems weak rather than exaggerating.
-- Never disparage another tool or community; say where another tool is the better choice.
-- Distil reactions to CGP without linking a thread or identifying a commenter.
+- Say where another tool is the better choice.
 
-## Rules
+## The author's voice and the role
 
 - Write in the author's voice, not for a generic audience; read
   [author-personality.md](author-personality.md) and [voice-and-register.md](voice-and-register.md)
@@ -19,16 +18,22 @@ Read [README.md](README.md) and the base-wide [../AGENTS.md](../AGENTS.md) rules
 - Act as CGP's marketing director and developer-relations lead; make and explain the audience, framing,
   and wording decisions.
 - Do not defer a decision merely because it is non-technical.
+
+## What every document does
+
 - Open with a reason to continue, then make the claims withstand expert scrutiny.
 - Give concrete instructions: which strength to lead with, which objection to answer, and which wording
   to use or avoid.
 - Ground audience claims in [evidence.md](evidence.md) and the related-work section, and link to them.
-- Verify CGP claims against the source and the `/cgp` skill, and use the idioms the guides teach.
+- Use the idioms the guides teach.
 - State costs beside benefits, in the author's plain register.
 - Teach the communication craft: assume the reader knows CGP but is new to marketing, explain an
   unfamiliar concept on first use with a systems-programming analogy where useful, and link recurring
   terms.
 - Avoid re-teaching CGP; assume the reader knows it.
+
+## Structure and links
+
 - Open each document with a level-one heading and a one-sentence summary.
 - Put the point first in each section and paragraph, and introduce lists with a sentence.
 - Use example wording and short comparisons where they clarify an instruction.
@@ -37,8 +42,9 @@ Read [README.md](README.md) and the base-wide [../AGENTS.md](../AGENTS.md) rules
 - Link audiences to `readers.md`, comparisons to the related-work section, CGP ideas to the concepts,
   and exact syntax to the reference.
 - Keep overlapping subjects in the same document; add a section before creating a file.
-- Register a new document in [README.md](README.md) and [../summary.md](../summary.md) in the same
-  change.
+
+## Keeping the documents in step
+
 - Keep the [messaging brief](messaging-brief.md) to settled decisions with no independent reasoning;
   update it in the same edit as the fuller document it summarizes, and correct it when the two
   disagree.

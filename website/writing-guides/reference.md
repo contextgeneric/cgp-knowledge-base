@@ -31,7 +31,7 @@ records the surface.
 all the information, and differ from a public page in four ways, which the port changes:
 
 - **Re-point every link,** because the site
-  [never links into the knowledge base](../AGENTS.md#the-one-way-link-rule);
+  [never links into the knowledge base](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links);
   [Where the internal links go](#where-the-internal-links-go) gives each replacement. This is the
   largest edit.
 - **Restructure into the [layered descent](#the-layered-page),** so a beginner and an expert can use
@@ -134,7 +134,7 @@ an advanced reader continues into the machinery.
   is the internal Purpose section rewritten for a reader without the skill, and the section most often
   ported badly.
 - **Usage:** every accepted form, each argument and option, and the defaults, from the internal Syntax
-  section. The [coverage rule](../AGENTS.md#layer-the-depth-do-not-omit-the-advanced-material) makes it
+  section. The [coverage rule](README.md#layer-the-depth-do-not-omit-the-advanced-material) makes it
   exhaustive: every form the parser accepts is here, rare, advanced, and legacy ones included.
   **Enumerate against the parser,** not the internal document; **give the forms a spine,** naming
   independent axes (an operator, a key form, a value form) and taking them in turn; and **say when the
@@ -153,7 +153,7 @@ an advanced reader continues into the machinery.
   heading marks it as internals, so it needs no admonition. Check it with `cargo cgp expand`, since it
   drifts most. For a macro or attribute with custom syntax, a **`## Formal grammar`** section follows
   it, in the Rust Reference's [notation](https://doc.rust-lang.org/reference/notation.html), under the
-  internal [conventions](../../cgp/AGENTS.md#syntax-grammar-conventions). The argument-free macros
+  internal [conventions](../../cgp/writing-guide.md#syntax-grammar-conventions). The argument-free macros
   (`#[async_trait]`, `#[cgp_auto_dispatch]`, `#[cgp_auto_getter]`) have no grammar section.
 - **Common Mistakes:** corner cases, surprising behavior, and open bugs, from the internal Known
   issues, omitted when there are none and never softened.
@@ -229,7 +229,7 @@ never use the word above the advanced line; `Symbol!` is not.
 **Provenance note:** every reference page, a written index included, closes with "An AI agent wrote
 this page using the CGP knowledge base. Its content was verified against the library's source. See How
 AI is used in this project.", the last phrase linking the disclosure's documentation section, per
-[AGENTS.md](../AGENTS.md#disclosing-ai-use-on-a-page). Other footers follow its sentence structure:
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page). Other footers follow its sentence structure:
 "revised" for a revision alone, "wrote and revised" for both; tooling pages keep their claims about
 verification against the tool; a footer never attributes verification to a person or agent the record
 does not name. Pages without a note and the skill snapshot are outside this convention.
@@ -273,7 +273,7 @@ notice, while `traits/`, where generated constructs sit among written ones, uses
 ## Linking: three destinations, and one prohibition
 
 **A reference page never links into the knowledge base,** per the
-[one-way rule](../AGENTS.md#the-one-way-link-rule); it is the easiest thing to get wrong in a port.
+[one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links); it is the easiest thing to get wrong in a port.
 Links go to three places instead:
 
 - **Elsewhere on the site:** the [tutorial](tutorial.md) that teaches the construct, the

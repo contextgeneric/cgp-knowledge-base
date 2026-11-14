@@ -10,8 +10,8 @@ and [summary.md](summary.md) for every document it contains.
 - Invoke the `/cgp` skill before working with CGP constructs, and re-invoke it when you move into an
   unfamiliar construct.
 - Load the `/point-first-writing` skill before writing or revising prose, which is nearly every task.
-- Read [README.md](README.md), [summary.md](summary.md), the section `README.md`, and the section
-  `AGENTS.md` of the section you are about to touch.
+- Read [README.md](README.md), [summary.md](summary.md), the section `README.md`, and the
+  [task guide](#task-guides) for the documents you are about to touch.
 - Read the documents a task touches before changing them, and the documents they link to when a change
   crosses a boundary.
 
@@ -34,8 +34,6 @@ and [summary.md](summary.md) for every document it contains.
   against the source, a test, a snapshot, or a command before writing it.
 - Use the Rust compiler and Clippy checkouts under `../external/` as read-only ground truth; cite them,
   never edit them, and never depend on them.
-- Read the compiler source from the pinned nightly's `rustc-dev` component when `../external/rust` is
-  absent.
 - Treat a published crate's own documentation as the ground truth for its API.
 - Prefer verifying against a source over reasoning about what it probably does.
 - Read the expansion snapshot when you doubt what a macro emits, rather than guessing.
@@ -52,11 +50,7 @@ and [summary.md](summary.md) for every document it contains.
 
 ## Document official versions, never pre-releases
 
-- Name `cgp` v0.8.0 and `cargo-cgp` v0.1.0 as the official versions the base describes.
-- Update the version rule in every `AGENTS.md` that names them when the official versions change.
 - Name official release versions only, never a pre-release.
-- Write as though the official version has been published; quote command output with the official
-  version.
 - Do not name a pre-release, describe how it behaves, compare it with the source, or tell a reader how
   to move off it.
 - Yield only to an explicit user instruction to document a particular pre-release.
@@ -70,6 +64,8 @@ and [summary.md](summary.md) for every document it contains.
 - Never disparage another project; assume its maintainers are reading.
 - Keep speculation about individuals, private correspondence, and unpublished finances or plans out.
 - Keep unfinished work and known defects in; they are the point of the base.
+- Never fabricate evidence: no invented benchmark, adoption figure, quotation, or version-specific
+  claim.
 
 ## Writing links
 
@@ -88,12 +84,6 @@ and [summary.md](summary.md) for every document it contains.
   stated outside the project's section goes stale.
 - Keep CGP patterns in [cgp/](cgp/README.md) and [examples/](examples/README.md); a project links to
   them instead of restating them.
-- Let a worked example stand alone, even when it develops the same scenario as a project, and never
-  present it as a description of the project.
-- Match a reproduced project's code to the branch [sibling-projects.md](sibling-projects.md) records.
-- Let a concept page use simplified code when the reduction explains the concept better; the code is
-  an illustration, not a reproduction, and still uses current idioms and compiles.
-- Record a project's older idiom as a change in its `issues.md`, not by modernizing the example alone.
 
 ## Registering a document, and adding a section
 
@@ -101,12 +91,13 @@ and [summary.md](summary.md) for every document it contains.
   change.
 - Fix the catalog, the summary, and every cross-link when a document is moved, renamed, split, or
   deleted.
-- Add a section by creating its directory with a `README.md`, an `AGENTS.md` if it needs rules, a base
-  `README.md` entry, and `summary.md` lines.
+- Add a section by creating its directory with a `README.md`, a `writing-guide.md` if its documents
+  need rules, a base `README.md` entry, and `summary.md` lines, and list the guide under
+  [Task guides](#task-guides).
 - Add a new member project to [sibling-projects.md](sibling-projects.md) and the matching file in each
   member repository that carries one.
-- Add a nested `AGENTS.md` only when its directory has significant rules of its own; otherwise extend the
-  parent.
+- Keep this file the base's only `AGENTS.md`; put a section's rules for its documents in its writing
+  guide.
 
 ## Keeping summary.md honest
 
@@ -142,13 +133,34 @@ and [summary.md](summary.md) for every document it contains.
   ambiguous.
 - Do not bake a guess into a document, its catalog, the summary, and the skill.
 
-## Where the section rules live
+## Keeping each section in step with its source
 
-- [cgp/AGENTS.md](cgp/AGENTS.md) governs the CGP documentation, and defers to
-  [cgp/implementation/AGENTS.md](cgp/implementation/AGENTS.md) and
-  [cgp/errors/AGENTS.md](cgp/errors/AGENTS.md).
-- [cargo-cgp/AGENTS.md](cargo-cgp/AGENTS.md) governs the tool documentation.
-- [examples/AGENTS.md](examples/AGENTS.md), [related-work/AGENTS.md](related-work/AGENTS.md),
-  [communication-strategy/AGENTS.md](communication-strategy/AGENTS.md),
-  [website/AGENTS.md](website/AGENTS.md), and [projects/AGENTS.md](projects/AGENTS.md) govern their
-  sections.
+- Update the matching `cgp/` reference document in the same change as a construct change to its
+  syntax, its expansion, its defaults, its error behavior, or its relationships, and the
+  implementation document with a parser, pipeline, generated-item, or error-path change.
+- Revise the affected skill sub-skill, the routing guidance and reading cheat sheet in the skill's
+  `SKILL.md`, and its front matter's `description` in the same change as a construct change.
+- Revise the matching error class document in the same change as a fixture change, a new code, or a
+  moved root cause.
+- Revise the matching `cargo-cgp/` document in the same change as a change to the tool's behavior, its
+  argument handling, its environment contract, its driver, or its crate structure.
+
+## Task guides
+
+Before writing or revising a document in this list, read its guide:
+
+- **A `cgp/` reference, concept, or guide document:** [cgp/writing-guide.md](cgp/writing-guide.md).
+- **An error class or code entry:** [cgp/errors/writing-guide.md](cgp/errors/writing-guide.md).
+- **An implementation document:**
+  [cgp/implementation/writing-guide.md](cgp/implementation/writing-guide.md), and for a macro review
+  [cgp/implementation/review.md](cgp/implementation/review.md).
+- **A `cargo-cgp/` document:** [cargo-cgp/writing-guide.md](cargo-cgp/writing-guide.md), and for an
+  error-message improvement
+  [cargo-cgp/implementation/improving-errors.md](cargo-cgp/implementation/improving-errors.md).
+- **A worked example:** [examples/writing-guide.md](examples/writing-guide.md).
+- **A related-work comparison:** [related-work/writing-guide.md](related-work/writing-guide.md).
+- **A communication-strategy document:**
+  [communication-strategy/writing-guide.md](communication-strategy/writing-guide.md).
+- **A project section:** [projects/writing-guide.md](projects/writing-guide.md).
+- **A website record or writing guide:** [website/README.md](website/README.md#rules-for-records)
+  and [website/writing-guides/README.md](website/writing-guides/README.md).

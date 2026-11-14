@@ -14,7 +14,7 @@ changes in the port.
 - **Derived from**: [related-work/](../../related-work/README.md), one internal document per page,
   which stays the source of truth
 - **Records**: one record, [pages/comparisons.md](../pages/comparisons.md), for the whole section, per
-  the [ported-catalog exception](../AGENTS.md#registering-a-document)
+  the [ported-catalog exception](../../AGENTS.md#registering-a-document-and-adding-a-section)
 - **Reading**: the shared set and [the comparison pages' row](README.md#comparison-pages) of the
   reading map
 
@@ -61,7 +61,7 @@ transformations make the port, and the first decides whether it is publishable:
   compared idea; the public reader already knows it. Keep the terms the comparison needs, one cited
   snippet per sub-concept, and a link to the primary source. The test, and the port's one judgement
   call: a practitioner skims it without irritation, and a curious Rust reader can still follow.
-- **Re-point every link**, per the [one-way rule](../AGENTS.md#the-one-way-link-rule): a concept to its
+- **Re-point every link**, per the [one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links): a concept to its
   Concepts page, a reference link to its reference page, an example to the tutorial or Projects example
   page with the same scenario or inlined code, a blog record to the live post, and a
   communication-strategy link dropped. A point drawn from the
@@ -110,13 +110,13 @@ The titles below are jobs; a page's headings may name the compared tool.
 
 The page closes with the provenance note in the wording the reference and Concepts pages share, adding
 that its CGP code was verified against the library's source and its other snippets against the
-toolchains named in Sources, per [AGENTS.md](../AGENTS.md#disclosing-ai-use-on-a-page).
+toolchains named in Sources, per [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page).
 
 ## Writing about another community's tool
 
 **Never disparage the compared tool, and assume its maintainers are reading**, per the
 [base-wide rule](../../AGENTS.md#this-repository-is-public) and the
-[strategy's guardrail](../../communication-strategy/AGENTS.md#honesty-is-the-strategy). The internal
+[strategy's guardrail](../../communication-strategy/writing-guide.md#honesty-is-the-strategy). The internal
 documents faithfully record what users dislike about their tools, so three habits keep the port
 honest:
 
@@ -156,7 +156,7 @@ in the modern idioms the [guides](../../cgp/guides/README.md) teach.
 
 **Foreign snippets are compiled against a named toolchain before publication**, recorded in the page's
 Sources sentence, per the
-[related-work rules](../../related-work/AGENTS.md#compile-the-foreign-snippets-and-record-the-toolchain).
+[related-work rules](../../related-work/writing-guide.md#compile-the-foreign-snippets-and-record-the-toolchain).
 A snippet that cannot be run, because the feature is a proposal or a research fork, says so beside the
 code.
 
@@ -186,7 +186,7 @@ explanations do not fit, since this reader arrives with a vocabulary rather than
 
 **Publishing the section adds a public claim**: the author reads every page's *What each approach
 costs* and *Where the other tool is the better choice* in full before publication, per the
-[authorship rule](../AGENTS.md#who-drafts-a-page-and-who-reads-it-before-it-publishes), and the
+[authorship rule](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong), and the
 [disclosure page](../pages/ai-disclaimer.md) says so.
 
 ## What must not be on a comparison page

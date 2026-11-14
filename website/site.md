@@ -55,8 +55,7 @@ change. The MDX setup rejects `{#custom-id}`, so anchors always come from headin
 **Every push to `main` deploys, so unpublished work lives on a branch named after the release it
 accompanies.** `v0.8.0` carries the whole redesign and merges when the release ships. It carries
 two releases, `cgp` v0.8.0 and `cargo-cgp` v0.1.0, merges only once both are published, and every
-page on it treats both as out; the rules are in
-[AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once).
+page on it treats both as out.
 
 Two other branches hold content that is not on `main`:
 
@@ -96,7 +95,7 @@ holds its conventions. Four matter from this side:
 
 **A page gets its file when someone writes, revises, or reviews it,** so a missing file means
 nobody has been through the page, per
-[AGENTS.md](AGENTS.md#verify-code-against-current-cgp-and-never-against-a-blog-post). On `v0.8.0` the
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#code). On `v0.8.0` the
 targets are `tests/concepts/` (every concept page with code), `tests/comparisons/` (every comparison
 page), `tests/tutorials/` (the ported tutorial parts), the standalone binaries
 `tests/quickstart.rs`, `tests/overview.rs`, and `tests/front_page.rs`, `tests/cargo_cgp/`, and

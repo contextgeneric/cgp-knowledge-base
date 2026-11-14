@@ -44,7 +44,7 @@ section states the intended generated code in plain language, and the expansion 
 [crates/tests/cgp-tests](https://github.com/contextgeneric/cgp/tree/main/crates/tests/cgp-tests),
 pin what the macro really emits. A reviewer can hold the prose, the code, and the snapshot against
 each other and see whether all three agree. Keeping them agreeing is a hard requirement of any
-change; see [AGENTS.md](AGENTS.md) for this section's rules and [../AGENTS.md](../AGENTS.md) for the
+change; see [writing-guide.md](writing-guide.md) for this section's rules and [../AGENTS.md](../AGENTS.md) for the
 ones the whole base shares.
 
 ## How it is organized

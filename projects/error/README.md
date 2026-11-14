@@ -83,7 +83,7 @@ Each crate's own `issues.md` lists what is specific to it.
 
 ## The catalog
 
-The section follows the [project shape](../AGENTS.md#the-shape-of-a-project-section), with one
+The section follows the [project shape](../writing-guide.md#the-shape-of-a-project-section), with one
 subdirectory per crate. Because the three crates are near copies of each other, the design and the
 guides are shared at the project level rather than repeated in each crate, and each crate carries a
 single `reference.md` in place of a `reference/` directory.

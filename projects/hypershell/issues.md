@@ -3,7 +3,7 @@
 This document records the open problems in Hypershell's `v0.8.0` branch, found while documenting it
 and each confirmed by a probe unless it says otherwise. They are grouped as defects, missing
 features, and housekeeping. Per
-[../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth), each is a separate
+[../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth), each is a separate
 change for the Hypershell repository, and an entry is removed in the same change that fixes it.
 
 ## Defects

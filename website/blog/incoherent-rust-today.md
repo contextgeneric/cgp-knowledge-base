@@ -105,7 +105,7 @@ developers depend on indefinitely.
 ## Maintaining it
 
 Until it publishes, revise it freely, argument included. Once published, it is a dated artifact under
-the [prohibition on rewriting](../AGENTS.md#do-not-rewrite-history), which matters more here because a
+the [prohibition on rewriting](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts), which matters more here because a
 post about a live discussion dates fast; record the drift here instead. Record here too if the upstream
 design work adopts, rejects, or supersedes any of its arguments, since that changes what the project
 should say next.

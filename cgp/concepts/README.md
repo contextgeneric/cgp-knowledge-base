@@ -23,7 +23,7 @@ wants the framing stays here.
 ## The catalog
 
 The authoring rules for concept documents, including when a cross-cutting idea earns its own page,
-live in [../AGENTS.md](../AGENTS.md). These documents explain the ideas that connect the constructs,
+live in [../writing-guide.md](../writing-guide.md). These documents explain the ideas that connect the constructs,
 each linking down to the per-construct references for the detail.
 
 - [Bypassing coherence](coherence.md): what Rust's coherence rules forbid, and the

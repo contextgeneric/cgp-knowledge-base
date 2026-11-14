@@ -56,7 +56,7 @@ from `cgp_preset!` presets, and `v0.8.0` is the only branch built on `Hypershell
 also the only one that dispatches on the input type with path keys, where `main` uses
 `UseInputDelegate`. So code quoted from these documents compiles only against `v0.8.0`. Source links
 point at that branch, per
-[../AGENTS.md](../AGENTS.md#a-project-section-documents-its-project-in-depth).
+[../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
 
 ## How it is organized
 
@@ -104,7 +104,7 @@ leaves out:
 ## The documents
 
 The section follows the project shape in
-[../AGENTS.md](../AGENTS.md#the-shape-of-a-project-section). Start with the architecture for the
+[../writing-guide.md](../writing-guide.md#the-shape-of-a-project-section). Start with the architecture for the
 ideas every piece shares, then use the reference to look up an item, and the examples to see a
 program run.
 

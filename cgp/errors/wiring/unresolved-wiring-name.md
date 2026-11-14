@@ -13,7 +13,7 @@ This class is a failure of the names in a wiring entry, not of what they wire.
 the key must name a component marker and the value a provider type, both in scope where the table is
 written. The macro copies the names as written and cannot check them, because which items exist and
 what they are is known only to the compiler, so a wrong name is an
-[acceptable failure](../../implementation/AGENTS.md#documenting-how-a-macros-expansion-can-fail-to-compile)
+[acceptable failure](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile)
 that CGP defers to it. Its shapes differ in what the name gets wrong.
 
 ### A consumer trait as a key

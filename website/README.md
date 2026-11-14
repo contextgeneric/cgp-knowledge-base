@@ -5,13 +5,14 @@ This section is the knowledge base's record of the public CGP website, the Docus
 [`contextgeneric.dev`](https://github.com/contextgeneric/contextgeneric.dev) repository. It documents
 nothing about CGP itself: for each page the site publishes, it records what the page says, how
 current it is, and which knowledge-base documents an agent reads before touching it. The rules for
-work here are in [AGENTS.md](AGENTS.md).
+its records are [below](#rules-for-records), and the rules for the pages are in the website
+repository's [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md).
 
 ## Why the section exists
 
 The website is public and the knowledge base is internal, so a published page cannot link into the
 base, apart from the pages that explain the base, within the bounds of
-[the one-way link rule](AGENTS.md#the-one-way-link-rule). The agent maintaining a page still needs the
+[the one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links). The agent maintaining a page still needs the
 background and current-version facts only the base holds, so each record here links outward to the
 page and inward to the reference, concepts, examples, and communication-strategy documents the page
 rests on.
@@ -62,9 +63,25 @@ A record gives its page's status as one of these words:
 - **Draft:** the page is unfinished, either unpublished or published with parts still to write.
 - **Superseded:** a later page has replaced it, and it is kept for the record.
 
+## Rules for records
+
+These rules govern the section's own documents; the rules for the published pages are in the
+website repository's
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md).
+
+- Write a page's record to [the document template](#the-document-template), and a writing guide to
+  the guide shape the same section gives.
+- Give a record's status as exactly one of the [status words](#status-words).
+- Link a published page by its live URL, and a source file by a GitHub URL on `main`, never a
+  relative path.
+- Add a page's record in the same change as the page.
+- Record a ported catalog as one record under [pages/](pages/README.md), not one per page, and the
+  Projects section one level down, one plan per project.
+- Update [information-architecture.md](information-architecture.md) and the page's record as work
+  lands; remove a completed entry rather than marking it done.
+
 ## The catalog
 
-- [AGENTS.md](AGENTS.md): the rules for website work.
 - [site.md](site.md): the facts every page shares: the build and deployment, the `v0.8.0` release
   branch, the `example-code` crate, and the navigation.
 - [information-architecture.md](information-architecture.md): the site as intended: what each surface

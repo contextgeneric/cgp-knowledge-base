@@ -19,13 +19,13 @@ must not duplicate:
 - **[docs.rs/cgp](https://docs.rs/cgp):** the crate's API signatures. The site does not defer to it;
   see [writing-guides/reference.md](writing-guides/reference.md).
 - **The [CGP Patterns book](https://patterns.contextgeneric.dev/):** CGP from first principles, without
-  the `cgp` crate's constructs, and a [legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages)
+  the `cgp` crate's constructs, and a [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources)
   the site leaves out.
 - **[cgp-skills](https://github.com/contextgeneric/cgp-skills):** the agent skill, published on the site
   as a copy under `docs/ai/` whose source lives in that repository.
 
 The site may cite these and never this [knowledge base](README.md), outside the bounds of the
-[one-way link rule](AGENTS.md#the-one-way-link-rule), which is why each page's provenance is recorded
+[one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links), which is why each page's provenance is recorded
 here rather than on the page.
 
 ## Most readers do not arrive at the homepage
@@ -82,9 +82,8 @@ Each surface has one job, and a page that does two jobs is usually two pages:
 
 Every page below exists on the `v0.8.0` branch unless marked **new**, and each section's record
 under [pages/](pages/README.md) or [projects/](projects/README.md) holds its pages and counts. The
-redesign publishes at once when that branch merges with the release, under
-[AGENTS.md](AGENTS.md#the-redesign-lands-on-a-release-branch-all-at-once); only the Projects section
-lands afterwards.
+redesign publishes at once when that branch merges with the release; only the Projects section lands
+afterwards.
 
 - **Front page:** the hook and the bounded essay.
 - **Overview**, staying at its current path: the feature tour. The five headline features each get a
@@ -176,7 +175,7 @@ where each should end up. A page that fits no path probably should not exist.
 - **Evaluator:** the front page's cost section → *Modularity Hierarchy* → Resources → the Projects
   index and the libraries' limitations pages. Candour and the Projects section, real systems the site
   hosts, persuade them; the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) is a
-  [legacy resource](AGENTS.md#leave-legacy-resources-off-public-pages) the site leaves out.
+  [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources) the site leaves out.
 - **Type-system and functional-programming reader:** *Bypassing coherence* → *Consumer and provider
   traits* → the comparison for the paradigm they know → the Hypershell section, the deep-dive posts,
   and the [RustLab transcript](blog/rustlab-2025-coherence.md), the best thing on the site for them.
@@ -212,7 +211,8 @@ Three questions, asked in order, settle where a page goes:
    as the one standing exception.
 
 The obligations that come with a new page, its record, a guide for a new kind, and its provenance
-note, are in [AGENTS.md](AGENTS.md).
+note, are in [the rules for records](README.md#rules-for-records) and the website's
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md).
 
 ## What this document does not decide
 

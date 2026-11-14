@@ -102,7 +102,7 @@ troubleshooting page, then the two lookup pages.
 
 ## What must not be on one
 
-- **No knowledge-base links**, per the [one-way rule](../AGENTS.md#the-one-way-link-rule).
+- **No knowledge-base links**, per the [one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links).
 - **No implementation detail as explanation.** How the two executables find each other and how the
   driver reaches the compiler appear only where a reader needs them to fix something, such as the
   sibling-path lookup on the troubleshooting page, because it is why a driver goes missing.

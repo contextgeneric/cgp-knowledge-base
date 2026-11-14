@@ -40,11 +40,11 @@ which is what almost all real CGP code does, and the ninth is
 [area calculation](area-calculation.md), the one the website's area-calculation tutorial series is
 built from. So the teaching material introduces the least representative shape first, and any
 document that draws on both it and one of the others is crossing between shapes without a signature
-change to mark it. Say so when that happens, per [AGENTS.md](AGENTS.md).
+change to mark it. Say so when that happens, per [writing-guide.md](writing-guide.md).
 
 ## The catalog
 
-The authoring rules for examples, including how to add a new one, live in [AGENTS.md](AGENTS.md), on
+The authoring rules for examples, including how to add a new one, live in [writing-guide.md](writing-guide.md), on
 top of the base-wide rules in [../AGENTS.md](../AGENTS.md).
 
 - [Area calculation](area-calculation.md): computing the area of several shapes, progressing from

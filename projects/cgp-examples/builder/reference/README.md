@@ -2,7 +2,7 @@
 
 This directory documents every public item in the `builder` crate, grouped by family, with one
 document per family following the entry template in
-[../../../AGENTS.md](../../../AGENTS.md#reference-entries). The tables below list every item so a
+[../../../writing-guide.md](../../../writing-guide.md#reference-entries). The tables below list every item so a
 reader can find one by what it builds and see which builder contexts use it. Read the
 [architecture](../architecture/README.md) first for how the families fit together.
 

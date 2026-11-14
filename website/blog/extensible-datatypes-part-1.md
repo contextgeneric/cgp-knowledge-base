@@ -9,7 +9,7 @@ independent per-subsystem builder providers.
 - **Published**: 7 July 2025, tagged `release` and `deepdive`
 - **Release**: [v0.4.2](../../releases/v0-4-2.md), announced across all four parts
 - **Status**: Historical
-- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible records* Concepts page and the [cgp-examples section](https://contextgeneric.dev/docs/projects/cgp-examples/), whose `builder` pages this post's code grew into are not yet written; per [projects/cgp-examples.md](../projects/cgp-examples.md); it is the sanctioned edit in [../AGENTS.md](../AGENTS.md#do-not-rewrite-history) and changes no claim
+- **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the *Extensible records* Concepts page and the [cgp-examples section](https://contextgeneric.dev/docs/projects/cgp-examples/), whose `builder` pages this post's code grew into are not yet written; per [projects/cgp-examples.md](../projects/cgp-examples.md); it is the sanctioned edit in [../AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts) and changes no claim
 
 ## What it covers
 

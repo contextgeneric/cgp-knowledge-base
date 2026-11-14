@@ -31,7 +31,7 @@ Three standing rules bind it, and a recommendation that breaks one is a defect h
   [Algolia DocSearch](#the-decisions-this-needs), is the author's decision, as
   [site.md](site.md#how-the-site-is-built) requires.
 - **The site never links into this knowledge base outside its two sanctioned surfaces**, under the
-  [one-way link rule](AGENTS.md#the-one-way-link-rule), including from a machine-read file such as
+  [one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links), including from a machine-read file such as
   `llms.txt`.
 
 ## What was measured
@@ -100,7 +100,7 @@ including the YAML apostrophe that fails the build, are in
 [the reference guide](writing-guides/reference.md#conventions-the-port-must-follow).
 
 A post's description is metadata rather than a claim, so writing one does not reach the
-[dated-artifact rule](AGENTS.md#do-not-rewrite-history); the wording rules that keep it from implying
+[dated-artifact rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts); the wording rules that keep it from implying
 currency are in [blog/README.md](blog/README.md#publication-conventions). A description does not rank
 a page; it supplies the snippet a reader judges before clicking.
 
@@ -108,7 +108,7 @@ a page; it supplies the snippet a reader judges before clicking.
 
 **A result shows roughly the first 60 characters**, and titles ran to 161 characters on 2026-09-21,
 the longest on the posts with the worst click-through rates. Published posts keep their titles under
-the [dated-artifact rule](AGENTS.md#do-not-rewrite-history). A new page avoids the problem with a
+the [dated-artifact rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts). A new page avoids the problem with a
 front-matter `title`, which can differ from its heading, under
 [the title rules](#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them).
 
