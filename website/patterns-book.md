@@ -12,8 +12,9 @@ recommends it; this record stays for the book's repository.
 - **URL**: <https://patterns.contextgeneric.dev/>
 - **Source**: [`cgp-patterns`](https://github.com/contextgeneric/cgp-patterns), an
   [mdBook](https://rust-lang.github.io/mdBook/) whose chapters live in `content/`
-- **Last updated**: its content 2025-05-09, for the v0.4.0 release; its introduction revised since,
-  and it now says which chapters are current and which predate the syntax
+- **Last updated**: its content 2025-05-09, for the v0.4.0 release. On the book's `v0.8.0` branch,
+  not yet merged, the introduction's *The State of This Book* section says which chapters are
+  current and which predate the syntax; the published `main` still shows *Work In Progress*
 - **Library pin**: `cgp = "0.4.0"`, four minor versions behind v0.8.0
 - **Status**: **Outdated** in part: 7 of 19 written chapters are current, 12 are not
 - **Written**: 19 chapters of a 47-entry table of contents; the other 28 entries link nowhere
@@ -138,9 +139,11 @@ memory, and [seo.md](seo.md) holds the traffic figures the plan rests on.
 
 ## The work, in order
 
-Four changes remain, all in the `cgp-patterns` repository, ordered by value per minute. **B-1 and B-3
-wait for the `v0.8.0` branch to merge**, because their destinations 404 until then; B-4 and B-5 do
-not.
+These changes remain, all in the `cgp-patterns` repository. **The book's status lands with the
+release**: its `v0.8.0` branch, whose introduction states which chapters are current, is reviewed
+against the release and merged with it, so the published book stops calling itself a work in
+progress. The rest are ordered by value per minute. **B-1 and B-3 wait for the website's `v0.8.0`
+branch to merge**, because their destinations 404 until then; B-4 and B-5 do not.
 
 **B-1: link forward from the four chapters that have readers.** *Blanket Implementations* (237
 clicks), the introduction (27), *Provider Traits* (20), and *Provider* (6) carry 290 of the book's 308
