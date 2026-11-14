@@ -1,7 +1,8 @@
 # Reviewing a CGP macro
 
-This document is the procedure for the macro review workflow that [cgp/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/AGENTS.md#macro-review-workflow)
-summarizes as rules. Review one macro at a time, and continue until no further issue is found.
+This document holds the procedure and the rules for the macro review workflow that
+[cgp/AGENTS.md](https://github.com/contextgeneric/cgp/blob/main/AGENTS.md#macro-review-workflow)
+points to. Review one macro at a time, and continue until no further issue is found.
 
 ## Orient first
 

@@ -1,7 +1,8 @@
 # Improving error messages against real-world CGP code
 
-This document is the procedure that [cargo-cgp/AGENTS.md](https://github.com/contextgeneric/cargo-cgp/blob/main/AGENTS.md#improving-error-messages-against-real-world-cgp-code)
-summarizes as rules. The work is driven from outside the repository: you are given a CGP project whose
+This document holds the procedure and its rules, which
+[cargo-cgp/AGENTS.md](https://github.com/contextgeneric/cargo-cgp/blob/main/AGENTS.md#improving-error-messages-against-real-world-cgp-code)
+points to. The work is driven from outside the repository: you are given a CGP project whose
 code does not compile, and every change lands as a test fixture before any code.
 
 ## Two rules that admit no exceptions
