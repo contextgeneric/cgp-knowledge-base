@@ -1,140 +1,74 @@
 # Website writing guides
 
-This directory holds the guides for **authoring the pages of the CGP website**: one guide per kind of
-page, saying what that page is for, what goes on it, in what order, and what must not go on it. The
-guides are prescriptive and forward-looking: they describe how a page **should be written**, not how the
-current page happens to be written, because they exist to serve a redesign of the site rather than to
-document it.
-
-## How a writing guide differs from a page document
-
-The website section holds two kinds of internal document, and confusing them is the easiest mistake to
-make here. A **page document** (everything under [blog/](../blog/README.md),
-[tutorials/](../tutorials/README.md), and the records in [pages/](../pages/README.md)) is a
-record *about a page that exists*: what it currently says, which knowledge-base documents own its
-material, how far its code has drifted, and what a revision must preserve. A **writing guide** is a
-specification *for a page that is being written or rewritten*: the job the page has to do, its structure,
-its voice, and the rules a draft is checked against.
-
-The two are complementary and are read in a fixed order. Given a task, find the writing guide for the
-*kind* of page, then the page document for the *specific* page. The guide tells you what the page should
-become; the document tells you what it is now and what constraints it already carries. When they
-disagree about a page's shape, the guide is the intent and the document records the gap, which is the
-normal state during a redesign, and the gap is worth naming in the page document rather than silently
-resolving.
+This directory holds one guide per kind of page on the CGP website: what the page is for, what goes on
+it and in what order, and what must not. The guides are prescriptive: they say how a page should be
+written, while each page's record says what the page is now, as
+[the section README](../README.md#records-and-specifications) describes. Read the guide for the page's
+kind first, then the page's record.
 
 ## What every guide here assumes
 
-Five decisions are settled across the whole site and are not re-argued in each guide. They come from
-[communication-strategy/](../../communication-strategy/README.md), and a guide that contradicts them is
-a defect in the guide.
+Five decisions hold across the site, taken from
+[communication-strategy/](../../communication-strategy/README.md); a guide that contradicts one is
+wrong:
 
-**The website speaks in the project voice; the blog speaks in the author's.** Pages under `docs/` and
-the front page are plain, addressed to the reader, with no first-person narration and no opinion
-attributed to a person. Blog posts, including the
-[release announcement](release-announcement.md), are first-person and personally candid. The one
-standing exception on the docs side is the sponsorship section of the Contribute page, which is written
-in the author's own voice and must stay that way. The full model is
-[voice-and-register.md](../../communication-strategy/voice-and-register.md).
-
-**CGP enhances Rust's trait system rather than replacing it.** Every page reinforces that frame, from
-the tag line down to a feature title, which is why "a superset of ordinary traits", "a library on stable
-Rust", and a sympathetic account of what the trait system already does are essential rather than
-defensive. See [identity.md](../../communication-strategy/identity.md).
-
-**Every page names Context-Generic Programming, and echoes the tag line rather than repeating it.**
-A page names the project in full once, in its opening paragraph, beside a plain description, and
-relates a short form of the tag line to what it explains, such as "CGP enables pluggable trait
-implementations in Rust", or leaves the line out where it does not fit. Only a page that presents the
-project states the line whole, and a generated category index carries the name in its
-`_category_.json` description. The skill pages and the published blog posts are exempt. The rule and
-its short forms belong to
-[identity.md](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page); each
-guide says only where its kind of page carries them.
-
-**Every page is written in natural style by default.** Each public page, the front page and every
-docs page alike, follows natural-writing, the style in the `point-first-writing` skill in which each
-sentence picks up from the last and transitions say how the points connect, so the whole site reads
-as one connected explanation. A guide may name another style for its kind of page, and none does.
-The documents in this knowledge base, these guides included, stay in point-first style.
-
-**Detailed explanation lives on its own page.** The site's long-standing habit is for an explanation to
-outgrow whatever container it starts in. The rule is to plan for that rather than fight it: when a
-section wants to become an essay, the essay becomes a dedicated page and the shorter surface links to
-it. Each guide therefore names the pages its subject offloads to, so the destination exists before the
-overflow does.
+- **Voice:** pages under `docs/` and the front page speak in the plain project voice, addressed to
+  the reader, without first-person narration or an opinion attributed to a person; blog posts, the
+  [release announcement](release-announcement.md) included, are first-person and candid in the
+  author's voice. The Contribute page's sponsorship section is the one docs exception and stays in
+  the author's voice. See [voice-and-register.md](../../communication-strategy/voice-and-register.md).
+- **Frame:** CGP enhances Rust's trait system rather than replacing it, so "a superset of ordinary
+  traits", "a library on stable Rust", and a sympathetic account of the trait system are essential
+  on every page. See [identity.md](../../communication-strategy/identity.md).
+- **Name:** every page names Context-Generic Programming in full once, in its opening paragraph, and
+  relates a short form of the tag line to its content or leaves the line out; only a page that
+  presents the project states the line whole, and a generated category index carries the name in its
+  `_category_.json` description. The skill pages and the published blog posts are exempt.
+  [identity.md](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page)
+  owns the rule and its short forms; each guide says where its kind carries them.
+- **Style:** every public page is written in natural-writing's natural style, unless its guide names
+  another, and none does; the guides themselves stay in point-first style.
+- **Offloading:** when a section outgrows its page, the explanation becomes a dedicated page that the
+  shorter surface links, so each guide names the pages its subject offloads to.
 
 ## The catalog
 
 Register a new guide here in the same change that adds it, and in [../../summary.md](../../summary.md).
 
-- [homepage.md](homepage.md): the landing page, covering its two-tier structure, the settled before/after
-  example that carries the hook together with the copy that sells it and the properties a replacement
-  must keep, the bounded essay beneath it, the pages the essay offloads to, the images, and the draft
-  checks.
-- [explanation.md](explanation.md): the understanding-oriented Concepts pages, which the homepage
-  offloads to, covering what every one owes its reader, how a concept document is rewritten into one, the specs
-  for the three roles the homepage names, and where the pages sit in the docs tree.
-- [tutorial.md](tutorial.md): the tutorials, covering the two registers a CGP tutorial can be written in, what
-  every tutorial owes its reader, which Diátaxis rules to adopt and which to reject, and the teaching
-  contract a new tutorial must record.
-- [release-announcement.md](release-announcement.md): the blog's most repeated artifact and the only
-  page type here written in the *author's* voice, covering the two readers a release post serves, the
-  clear lead, the placement of short announcements before a long walkthrough, the announcement's
-  parts, the breaking-changes obligation, and what publication fixes permanently.
-- [project.md](project.md): the Projects section, which ports the internal project sections to the
-  site, covering the seven page kinds, the example page written as a short tutorial with its orientation block,
-  walkthrough, named pattern, and verified change to try, one reference page per project construct, the
-  limitations page, the link map, and why project code is verified against its own repository rather
-  than the `example-code` crate.
-- [tooling.md](tooling.md): the pages documenting a program the reader *runs* rather than a construct
-  they write, covering why a tool's page fails differently from a construct's, the nine-page section
-  shape with its reading, editor, and lookup pages, the obligation to quote real output from the program the page
-  shows, writing against the release the site ships with, the Linux-only rule, and the version-free
-  concession every claim about the error experience carries.
-- [reference.md](reference.md): the canonical per-construct reference, ported from the knowledge
-  base's internal reference, covering the layered descent that serves beginner through advanced on one page,
-  the granularity and the four consolidations, where every internal link is re-pointed, the
-  external Rust documentation to link for concepts a page assumes, and the two non-construct pages the
-  section carries, the error catalog and the glossary.
-- [orientation.md](orientation.md): the pages whose job is routing rather than teaching, covering
-  the Introduction, the Overview's feature tour, the Quickstart, Resources, and the Contribute page.
-  What separates orientation from the homepage, a tutorial, an explanation and a reference; what
-  each of the five pages is for; the Quickstart's ten-minute activation target and the boundary that
-  keeps it from becoming a second Hello World; the version pin that ties it to the release; and the
-  Contribute page's routes, with the sponsorship section and the acknowledgement left in the
-  author's hands.
-- [knowledge-base.md](knowledge-base.md): the pages explaining the public knowledge base, covering
-  why they are the second sanctioned exception to the one-way link rule and how far it reaches, the
-  four-page shape that keeps the process page apart from the two how-to pages, what a how-to page
-  owes its reader as the site's first of the kind, and why prompt templates wait until they have
-  been tested.
-- [related-work.md](related-work.md): the comparison pages, ported from the internal
-  [related-work](../../related-work/README.md) documents for a reader who already knows type classes,
-  dependency injection, ML modules, effects, or another related idea, covering the four transformations the port
-  makes, above all retiring the positioning section and applying it as structure, the page shape from
-  the *In your terms* table to the section where the other tool wins, the rules for writing about
-  another community's tool, and the verification of code in two languages.
+- [homepage.md](homepage.md): the landing page: its two tiers, the settled before-and-after example
+  and what a replacement must keep, the bounded essay, the pages it offloads to, and the checks.
+- [explanation.md](explanation.md): the Concepts pages: what each owes its reader, how a concept
+  document becomes one, and the three pages the homepage offloads to.
+- [tutorial.md](tutorial.md): the tutorials: the two registers, what each owes its reader, the
+  Diátaxis rules kept and rejected, and the teaching contract a record states.
+- [release-announcement.md](release-announcement.md): the release posts, in the author's voice: the
+  two readers, the clear lead, the parts, the breaking-changes obligation, and what publication fixes.
+- [project.md](project.md): the Projects section: the page kinds, the example page as a short
+  tutorial, the reference and limitations pages, the link map, and verification against the
+  project's repository.
+- [tooling.md](tooling.md): the pages for a program the reader runs: the section shape, quoting real
+  output from the release the site ships with, the Linux-only rule, and the concession on errors.
+- [reference.md](reference.md): the construct reference: the layered page, the granularity and
+  consolidations, re-pointed links, the conventions the port follows, and the error catalog and
+  glossary pages.
+- [orientation.md](orientation.md): the routing pages: the Introduction, the Overview, the
+  Quickstart and its ten-minute target, Resources, and the Contribute page.
+- [knowledge-base.md](knowledge-base.md): the pages explaining the public knowledge base: their
+  exception to the one-way link rule, the four-page shape, the how-to pages, and why prompt templates
+  wait until tested.
+- [related-work.md](related-work.md): the comparison pages: the port from the related-work documents,
+  the page shape, writing about another community's tool, and verifying code in two languages.
 
-The guides above cover every page type the site publishes or plans, and each one precedes its pages,
-because [AGENTS.md](../AGENTS.md) requires a guide for a new *kind* of page ahead of the page rather
-than after it.
-
-One project-meta page is deliberately specified elsewhere rather than here, and knowing that stops a
-later agent hunting for a missing guide: the **AI disclosure page**, specified inside
-[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#the-page-on-the-website). It is a single
-project-meta page rather than a kind the site will publish repeatedly, and the policy and the page are
-one subject, so splitting them across two documents would guarantee that the page and the practice it
-describes drift apart.
+The AI disclosure page has no guide here: it is specified with the policy it publishes, in
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md#the-page-on-the-website).
 
 ## The reading map
 
-**Before revising a page, read the shared set below and the row for the page's kind.** The rows are
-how a writer meets [../AGENTS.md](../AGENTS.md)'s rule to read the shared set and the kind's row
-before drafting: each names the sections of the strategy and of [seo.md](../seo.md) that its kind of page
-draws on, so a writer reads those rather than all of it, about 255 KB. A row is the minimum. When a
-page makes a claim the row's sections do not cover, such as a new argument for what CGP is good for,
-read the document that owns the claim in full.
+**Before revising a page, read the shared set below and the row for the page's kind.** Each row names
+the sections of the communication strategy and of [seo.md](../seo.md) its kind of page draws on, so a
+writer reads those rather than every document. A row is the minimum: when a page makes a claim the
+row's sections do not cover, such as a new argument for what CGP is good for, read the document that
+owns the claim in full.
 
 ### Every page kind
 
@@ -316,17 +250,11 @@ the naming rule exempts them.
 
 ## Where a guide's authority stops
 
-A writing guide governs the shape and content of a page type; it does not govern the CGP facts on the
-page or the mechanics of the site. Every code snippet and every claim about CGP is bound by the
-[synchronization rule](../../AGENTS.md#the-synchronization-rule) and must be verified against the source
-and the `/cgp` skill, drawing where possible on [examples/](../../examples/README.md), which exists
-partly to be quoted. The site's build, navigation, and deployment constraints (the stock-Docusaurus
-policy, the autogenerated sidebar, `onBrokenLinks: throw`) live in
-[site.md](../site.md#how-the-site-is-built), and a guide that would require new site machinery is
-proposing something the project has
-[explicitly decided against](../blog/new-website.md) and should raise it with the user rather than
-assume it.
-
-The rules that bind all website work regardless of page type (the one-way link rule, the prohibition on
-rewriting published posts, never taking current syntax from a blog post) are in
-[../AGENTS.md](../AGENTS.md) and apply to everything here.
+A guide governs a page kind's shape and content, not the CGP facts on the page or the site's
+mechanics. Every snippet and claim about CGP follows the
+[synchronization rule](../../AGENTS.md#the-synchronization-rule) and is verified against the source
+and the `/cgp` skill, drawing on [examples/](../../examples/README.md) where possible. The build,
+navigation, and deployment constraints are in [site.md](../site.md#how-the-site-is-built); a guide
+that would need new site machinery raises it with the user, because the project
+[decided against it](../blog/new-website.md). The rules for all website work are in
+[../AGENTS.md](../AGENTS.md).
