@@ -822,6 +822,45 @@ it stale.
   the AI skills section and its `cgp-skills` submodule, the Concepts section, the Comparisons
   section, the Reference section including its compile-errors and glossary pages, the Projects
   section, the AI section's overview and knowledge-base pages, and the AI disclaimer.
+- [website/site.md](website/site.md) — the facts every website task shares: the stock Docusaurus
+  build and its three departures for the skill, the theme, deployment, broken-link checks, the
+  `v0.8.0` release branch, the `example-code/` crate, the sidebar order, and the announcement bar.
+
+### `website/pages/`: one record per standalone page and docs section
+
+- [README.md](website/pages/README.md) — the index of page records, and where blog, tutorial, and
+  Projects pages are recorded instead.
+- [front-page.md](website/pages/front-page.md) — the front page: hero, code band, five-section essay,
+  its own `<title>`, and its compiled code.
+- [introduction.md](website/pages/introduction.md) — the docs root: the short definition, the glossed
+  terms, and the routes by question.
+- [quickstart.md](website/pages/quickstart.md) — the install, one program, its output, and the
+  boundary against Hello World.
+- [overview.md](website/pages/overview.md) — the feature tour, the breadth list, and the problems
+  table.
+- [resources.md](website/pages/resources.md) — the ecosystem's link directory and how the live page
+  differs.
+- [contribute.md](website/pages/contribute.md) — the contribution paths, the acknowledgement, and the
+  author's voice in the sponsorship section.
+- [concepts.md](website/pages/concepts.md) — the explanation tier: its eighteen pages, what each must
+  preserve, the page shape, and each page's context shape.
+- [comparisons.md](website/pages/comparisons.md) — the eleven comparison pages, what each must
+  preserve, and where their code differs from the internal documents.
+- [reference.md](website/pages/reference.md) — the construct reference: its groups, the mapping from
+  internal documents, and the port's conventions.
+- [compile-errors.md](website/pages/compile-errors.md) — the reference's consolidated error page and
+  the `[CGP-Exxx]` code tables.
+- [glossary.md](website/pages/glossary.md) — the reference's term lookup and the rules for linking
+  its terms.
+- [cargo-cgp.md](website/pages/cargo-cgp.md) — the tool's nine pages and the facts behind their
+  quoted output.
+- [ai-overview.md](website/pages/ai-overview.md) — the AI section's landing page and its two
+  directions.
+- [ai-skills.md](website/pages/ai-skills.md) — the skill index and the skill served from the
+  submodule.
+- [knowledge-base.md](website/pages/knowledge-base.md) — the four pages that explain this base to a
+  person.
+- [ai-disclaimer.md](website/pages/ai-disclaimer.md) — how the project uses AI, part by part.
 
 ### `website/writing-guides/`: how new pages should be written
 
