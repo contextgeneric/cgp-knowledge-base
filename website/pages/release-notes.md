@@ -48,7 +48,12 @@ sources, and what still stands. The category sits after Resources, per
 
 ## Where it diverges from the guide
 
-- none; no page is written yet.
+- **Pages:** the index, `cgp/` v0.8.0, and `cargo-cgp/` v0.1.0 are written; the back-filled `cgp`
+  pages from v0.1.0 to v0.7.0 are not.
+- **The index:** it lacks the statement of how CGP numbers its 0.x releases, which waits for the
+  back-filled pages' check of each patch release.
+- **Release day:** both pages carry `Released on YYYY-MM-DD`, and their tag, compare, and crates.io
+  links resolve only once the releases exist.
 
 ## Maintaining it
 

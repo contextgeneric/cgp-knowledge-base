@@ -128,8 +128,8 @@ GitHub Discussions, [Discord](https://discord.gg/Hgk3rCw6pQ), and the
 [r/cgp subreddit](https://www.reddit.com/r/cgp/). The site is licensed CC BY-SA 4.0.
 
 **The `docs/` sidebar order is settled:** Introduction, Quickstart, Overview, Tutorials, Concepts
-(5), Reference (6), Tooling (7), Comparisons (8), Projects (9), AI (10), Resources (11), and
-Contribute (12), as
+(5), Reference (6), Tooling (7), Comparisons (8), Projects (9), AI (10), Resources (11), Release
+notes (12), and Contribute (13), as
 [information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants.
 Tooling holds `cargo-cgp` (1) under `docs/tooling/cargo-cgp/`, at the URLs that path gives; its
 manifest and READMEs, `cgp`'s README, and the agent skill link them there.
