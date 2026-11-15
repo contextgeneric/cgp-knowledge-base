@@ -53,7 +53,7 @@ the [`cgp`](https://github.com/contextgeneric/cgp) source at the relevant tag.
 | `cgp_type!` (function macro) | [v0.3.0](v0-3-0.md) | Became the `#[cgp_type]` attribute in [v0.4.0](v0-4-0.md) |
 | `ErrorTypeComponent` / `ProvideErrorType` | [v0.3.0](v0-3-0.md) | Renamed `ErrorTypeProviderComponent` / `ErrorTypeProvider` in [v0.4.0](v0-4-0.md) |
 | `RuntimeTypeComponent` / `ProvideRuntimeType` | [v0.3.0](v0-3-0.md) | Renamed `RuntimeTypeProviderComponent` / `RuntimeTypeProvider` in [v0.4.0](v0-4-0.md) |
-| `HasAsyncErrorType`, `CanRaiseAsyncError`, `CanWrapAsyncError` | [v0.3.0](v0-3-0.md)/[v0.3.1](v0-3-1.md) | Removed in [v0.5.0](v0-5-0.md) with `Async` |
+| `HasAsyncErrorType`, `CanRaiseAsyncError`, `CanWrapAsyncError`, `HasAsyncRuntimeType` | [v0.3.0](v0-3-0.md)/[v0.3.1](v0-3-1.md) | Removed in [v0.5.0](v0-5-0.md) with `Async` |
 | `HasComponents` | pre-[v0.4.0](v0-4-0.md) | Renamed `HasProvider` then `HasCgpProvider` in [v0.4.0](v0-4-0.md), removed in [v0.6.0](v0-6-0.md) |
 | `#[trait_alias]` | [v0.4.0](v0-4-0.md) | Renamed `#[blanket_trait]` within [v0.4.0](v0-4-0.md) |
 | `#[new_cgp_provider]` | [v0.4.0](v0-4-0.md) | Renamed `#[cgp_new_provider]` within [v0.4.0](v0-4-0.md) |
@@ -65,6 +65,9 @@ the [`cgp`](https://github.com/contextgeneric/cgp) source at the relevant tag.
 | `Char` | [v0.4.0](v0-4-0.md) | Renamed `Chars` in [v0.5.0](v0-5-0.md) |
 | `ι` field abbreviation | [v0.4.0](v0-4-0.md) | Replaced by `ζ` in [v0.5.0](v0-5-0.md) |
 | `#[cgp_dispatch]` | [v0.5.0](v0-5-0.md) | Renamed `#[cgp_auto_dispatch]` within [v0.5.0](v0-5-0.md) |
+| `cgp-async`, `cgp-sync` | [v0.1.0](v0-1-0.md) | Removed in [v0.5.0](v0-5-0.md) with `Async` |
+| `#[cgp_handler]` | [v0.4.2](v0-4-2.md) | Folded into `#[cgp_computer]`, which accepts `async` functions, in [v0.5.0](v0-5-0.md) |
+| `Promote2`, `Promote3` | [v0.4.2](v0-4-2.md) | Removed in [v0.5.0](v0-5-0.md); `PromoteAsync<Promote<P>>` lifts a `Computer` to a `Handler` |
 | `PartialFoo` generated types | [v0.4.2](v0-4-2.md) | Prefixed to `__PartialFoo` in [v0.5.0](v0-5-0.md) |
 | `#[cgp_inherit]` | [v0.6.0](v0-6-0.md) | Removed in [v0.8.0](v0-8-0.md) with the presets it inherited from |
 | `for_each_replace!` | [v0.2.0](v0-2-0.md) | Removed in [v0.4.0](v0-4-0.md) |
