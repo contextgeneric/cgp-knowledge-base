@@ -16,7 +16,7 @@ providers, so a reader sees one operation run against two backends each context 
 
 ## What it teaches
 
-The page opens with the problem: a deployment stores files in one place, and its tests would rather
+The page opens with the problem: a deployment reads its files from disk, and its tests would rather
 not touch the disk. It sets up a binary project with `cgp`, `anyhow`, and `tokio`, then introduces
 `App` as a type that stands for the application, with a `HashMap` standing in for the database and a
 `local_dir` field naming the picture folder.
@@ -28,13 +28,13 @@ picture and prints `Alice has a 16-byte picture`. **Combine the steps** adds
 `local_dir` cannot call it.
 
 **Add a backend for tests** is where the page pays off. One `#[cgp_fn]` has one implementation, so
-the storage step becomes the `CanFetchStorageObject` component with the `FetchLocalObject` provider,
+the storage step becomes the `CanFetchStorageObject` component with the `FetchLocalObject` provider.
 `App` chooses it with `delegate_components!`, described as a lookup table resolved at compile time,
 and a test module defines `TestApp`, the `FetchMemoryObject` provider, and its own table. The test
-passes without the disk, with `get_user_profile_picture` unchanged.
+passes without the disk, and `get_user_profile_picture` is unchanged.
 
 **Check the wiring** says wiring is lazy, adds `check_components!` for both contexts, deletes
-`App`'s `local_dir` field, and shows the raw error's first lines, then the `cargo cgp check` report
+`App`'s `local_dir` field, and shows a shortened raw error, then the `cargo cgp check` report
 naming the missing field, with the canonical qualification. **Where to go next** routes to the
 area-calculation series, two Concepts pages, the Overview's abstract error type, and, for the
 framework author, the extensible-data Concepts pages. The Overview's *Where to go next* and the
@@ -102,15 +102,16 @@ which resolves once the release is published.
 
 ## Maintaining it
 
-- **The code is checked twice.** The website's `example-code` crate compiles each step as a module
-  of `tests/tutorials/storage_backend.rs`, assembled from the page's blocks in order, and the
-  deliberate mistake is `tests/compile_fail/tutorials/storage_backend_missing_field.rs`: the whole
-  finished file with the field deleted, its explanation at the end so its line numbers match a
-  reader's `src/main.rs`.
-- **The quoted output is captured.** The raw excerpt matches that fixture's blessed `.stderr`, whose
-  `Chars` abbreviation depends on the toolchain, and the `cargo cgp check` report is bound in the
-  campaign's capture tool; a change to the program re-runs both rather than editing the text.
+- **The code compiles in the website's `example-code` crate.** Each step is a module of
+  `tests/tutorials/storage_backend.rs`, assembled from the page's blocks in order. The deliberate
+  mistake is `tests/compile_fail/tutorials/storage_backend_missing_field.rs`, the whole finished
+  file with the field deleted, with its explanation at the end so its line numbers match a reader's
+  `src/main.rs`.
+- **The quoted output comes from that fixture.** The raw excerpt matches its blessed `.stderr`,
+  whose `Chars` abbreviation depends on the pinned toolchain, and the `cargo cgp check` report was
+  captured from it with `cargo-cgp`'s pinned driver. A change to the program captures both again
+  rather than editing the text.
 - **Keep the payoff in place.** The component must still arrive because the test needs a second
-  backend; adding a component earlier, or an abstract error type, belongs in a new tutorial or on the
-  Overview it links.
+  backend; adding a component earlier, or an abstract error type, belongs in a new tutorial or on
+  the Overview it links.
 - **Keep the names the Overview uses**, so a reader moving between the two sees one scenario.
