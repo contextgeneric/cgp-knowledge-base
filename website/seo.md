@@ -370,9 +370,6 @@ than its search performance suggests.** Two channels behave differently.
 - **docs.rs**, the default for any Rust crate. Every publishable `cgp` library crate warns on a missing
   doc comment and CI fails on warnings, each construct's rustdoc links its website page, and the crate
   README routes readers to the site.
-- **Context7**, which carried CGP as `/contextgeneric/cgp` with 528 snippets on 2026-09-21, drawn
-  from the repository, with the retired "modular programming paradigm" line as its description. A
-  `context7.json` in the repository controls what is indexed, and the entry can be resubmitted.
 - **The published agent skill**, which needs no work; [cgp-skills](https://github.com/contextgeneric/cgp-skills)
   is published on the site and on GitHub.
 - **The knowledge base**, which a user points an agent at; the site's
