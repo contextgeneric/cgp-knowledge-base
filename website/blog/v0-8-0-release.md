@@ -17,8 +17,9 @@ and optional agent support, then develops namespace wiring and migration from v0
 
 ## What it covers
 
-The opening ties the release to the author's aim of making CGP easier to debug, learn, and follow as
-an application grows. Short cargo-cgp and documentation sections come first; namespaces are the main
+The opening line names Context-Generic Programming, linked to the Introduction, and the opening ties
+the release to the author's aim of making CGP easier to debug, learn, and follow as an application
+grows; the orientation paragraph after the truncate marker describes CGP by its tag line. Short cargo-cgp and documentation sections come first; namespaces are the main
 technical deep dive; other improvements, migration, and a practical closing follow.
 
 **cargo-cgp.** The section restores the author's account of verbose diagnostics as a long-standing
