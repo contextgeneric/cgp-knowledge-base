@@ -131,9 +131,8 @@ GitHub Discussions, [Discord](https://discord.gg/Hgk3rCw6pQ), and the
 (5), Reference (6), Tooling (7), Comparisons (8), Projects (9), AI (10), Resources (11), and
 Contribute (12), as
 [information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants.
-Tooling holds `cargo-cgp` (1) under `docs/tooling/cargo-cgp/`, whose pages set `slug` front matter
-so their URLs stay under `/docs/cargo-cgp/`, where `cargo-cgp`'s manifest and READMEs, `cgp`'s
-README, and the agent skill link them.
+Tooling holds `cargo-cgp` (1) under `docs/tooling/cargo-cgp/`, at the URLs that path gives; its
+manifest and READMEs, `cgp`'s README, and the agent skill link them there.
 
 **The announcement bar is hardcoded in `docusaurus.config.ts`,** so it is updated by hand with every
 release announcement. On `main` it promotes the v0.7.0 post; `v0.8.0` points it at the v0.8.0 post.

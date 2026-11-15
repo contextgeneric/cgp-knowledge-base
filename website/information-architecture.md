@@ -110,7 +110,7 @@ afterwards.
   reaches every construct, an error catalog page, and a glossary.
 - **Tooling** at `docs/tooling/`, a sibling section after the reference rather than part of it: an
   index that introduces the programs a reader runs beside the library and says more will join, then
-  `cargo-cgp`'s pages, whose URLs stay under `/docs/cargo-cgp/`. The tool's error-codes page is where
+  `cargo-cgp`'s pages under `/docs/tooling/cargo-cgp/`. The tool's error-codes page is where
   the error catalog sends a reader holding a `[CGP-Exxx]` code.
 - **Projects**, after the release: the index, cgp-examples, Hypershell, and cgp-serde partly written,
   and the error backends **new**. It replaces three deep dives planned earlier, as

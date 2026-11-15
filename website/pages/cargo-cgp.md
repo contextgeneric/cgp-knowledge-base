@@ -3,7 +3,7 @@
 The `cargo-cgp` section is the tool's own documentation: nine pages on installing it, running it,
 reading its output, and fixing what it reports.
 
-- **URL:** <https://contextgeneric.dev/docs/cargo-cgp/>
+- **URL:** <https://contextgeneric.dev/docs/tooling/cargo-cgp/>
 - **Source:** [docs/tooling/cargo-cgp/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/tooling/cargo-cgp)
 - **Status:** Current, written against `cargo-cgp` v0.1.0 ahead of its release, in
   natural-writing style
@@ -87,9 +87,9 @@ programs the pages say compile under `tests/cargo_cgp/`.
 
 ## What a later revision must know
 
-- **The pages live under `docs/tooling/cargo-cgp/` but keep their `/docs/cargo-cgp/` URLs**: each
-  sets `slug` in its front matter, because `cargo-cgp`'s manifest and READMEs, `cgp`'s README, and
-  the agent skill link those URLs. A new page here sets its `slug` the same way.
+- **Other repositories link these URLs**: `cargo-cgp`'s manifest and READMEs, `cgp`'s README, and
+  the agent skill link pages under `/docs/tooling/cargo-cgp/`, so moving or renaming a page updates
+  them in the same change.
 
 - **The quoted output comes from `cargo-cgp`'s `main`, the v0.1.0 release the pages document,**
   captured with the source-built tool on Linux against the sibling `cgp` checkout on the release

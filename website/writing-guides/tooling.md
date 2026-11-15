@@ -1,7 +1,7 @@
 # Writing a tooling page
 
 A tooling page documents a **program the reader runs**, not a construct they write. The site has one
-such subject, [`cargo-cgp`](https://contextgeneric.dev/docs/cargo-cgp/), and its section is the model
+such subject, [`cargo-cgp`](https://contextgeneric.dev/docs/tooling/cargo-cgp/), and its section is the model
 this guide describes.
 
 - **Where they live**: `docs/tooling/`, the Tooling section after the reference, with one category

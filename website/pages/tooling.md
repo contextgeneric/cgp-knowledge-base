@@ -39,7 +39,7 @@ have their own record, [cargo-cgp.md](cargo-cgp.md).
 ## Maintaining it
 
 - The section is `docs/tooling/` at position 7, after the reference. `cargo-cgp`'s pages sit under
-  `docs/tooling/cargo-cgp/` and keep their `/docs/cargo-cgp/` URLs through `slug` front matter, as
+  `docs/tooling/cargo-cgp/`, and other repositories link their URLs, as
   [cargo-cgp.md](cargo-cgp.md#what-a-later-revision-must-know) explains.
 - Give each new tool a section here that links its pages, and revise *More tools to come* when it
   stops being true.

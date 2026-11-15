@@ -116,7 +116,7 @@ The pages carry qualifications that a shortening revision is likely to drop:
 - **The `cargo cgp check` concession is the canonical sentence, with no version:** the tool leads
   with the root cause for the classes it recognizes and does not yet reshape every class, per
   [vocabulary.md](../../communication-strategy/vocabulary.md), linking the
-  [classes that pass through](https://contextgeneric.dev/docs/cargo-cgp/reading-output#errors-that-pass-through-unchanged)
+  [classes that pass through](https://contextgeneric.dev/docs/tooling/cargo-cgp/reading-output#errors-that-pass-through-unchanged)
   where it says more.
 - **A page that crosses between context shapes marks the crossing where it happens,** in prose beside
   the code.

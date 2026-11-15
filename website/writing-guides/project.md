@@ -352,7 +352,7 @@ whose completeness obligation made a stub for every construct.
 
 Links out of the site go to the project's repository on its default branch, the crate on crates.io or
 docs.rs, and the documentation of the external libraries it builds on. A mention of `cargo cgp check`
-links `/docs/cargo-cgp/check`, not the tool's repository.
+links `/docs/tooling/cargo-cgp/check`, not the tool's repository.
 
 ## Code on a Projects page
 

@@ -282,7 +282,7 @@ is the easiest thing to get wrong in a port. Links go to three places instead:
   [Projects example page](project.md#the-example-page) that shows it in a program, the
   [explanation page](explanation.md) behind it, and other reference pages. Prefer a tutorial when a
   reader would rather see it working. A mention of `cargo cgp check` links
-  <https://contextgeneric.dev/docs/cargo-cgp/check>, not the tool's repository.
+  <https://contextgeneric.dev/docs/tooling/cargo-cgp/check>, not the tool's repository.
 - **External Rust documentation,** from the table below, so every page links one place per concept:
   the Rust Reference for precision, the Rust Book for teaching. Book chapter numbers shift between
   editions, so recheck a Book link when revising.
