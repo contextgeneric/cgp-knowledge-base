@@ -53,9 +53,10 @@ useful when it carries explanation rather than repetition.
 
 ## The README and project front matter
 
-Use the project voice and make the first screen explain what CGP does. Put the settled descriptor
-beneath the name, follow it with a short reassurance line, and show code early. Keep any feature
-summary compact; do not make readers pass a full feature panel before reaching the example.
+Use the project voice, in natural-writing's natural style, and make the first screen explain what
+CGP does. Put the settled descriptor beneath the name, follow it with a short reassurance line, and
+show code early. Keep any feature summary compact; do not make readers pass a full feature panel
+before reaching the example.
 
 State that the library uses stable Rust and show installation early. Link readers trying CGP to the
 quickstart and evaluators to the candid maturity discussion. Use the
