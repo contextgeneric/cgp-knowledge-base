@@ -126,7 +126,8 @@ afterwards.
 - **Blog:** not planned in advance; a post is a dated statement rather than a page with a job.
 - **AI**, at `docs/ai/` labelled "AI-Assisted Development", in this order:
   - *Overview*: the section's landing page, one heading per direction.
-  - *Using CGP with coding agents*: the inlined skill, regenerated from `cgp-skills`; a **feature**.
+  - *Agent Skills*: the section's index, then one directory per skill, today the `/cgp` skill,
+    whose pages are a pinned snapshot of `cgp-skills`; a **feature**.
   - *The knowledge base*: four pages. *How CGP's Documentation Is Written* is a **fact about the
     project**; *Using the Knowledge Base with Your Agent* and *Contributing to CGP with an Agent* are
     **features**. They and the disclaimer are the only hand-written pages that link into this base,

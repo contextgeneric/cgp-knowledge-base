@@ -1,7 +1,8 @@
 # AI skills
 
-The AI skills pages publish CGP's agent skill for readers who want to hand it to an assistant: one
-index page, then the skill's own files served unedited.
+The AI skills pages publish CGP's agent skills for readers who want to hand them to an agent: one
+index page for the section, then one directory per skill, today the `/cgp` skill, whose own files
+are served unedited.
 
 - **URL:** <https://contextgeneric.dev/docs/ai/skills/>
 - **Source:** [docs/ai/skills/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/ai/skills)
@@ -11,17 +12,23 @@ index page, then the skill's own files served unedited.
 
 ## What it covers
 
-The index explains what the skill is, that it teaches the assistant rather than the reader, and the
-difference between attaching the primer and installing the complete skill; it routes learners to the
-tutorials and Concepts. It explains that cloning downloads the files and that the assistant must be
-configured to discover them, with the entry point and references kept together, and sends a reader
-whose question outgrows the skill to the [knowledge-base using page](knowledge-base.md). It carries
-no skill content of its own.
+The index, *Agent Skills*, names Context-Generic Programming, says why an agent needs a skill (the
+macros generate code the agent cannot see, and its training may show syntax the library no longer
+accepts), and introduces the `/cgp` skill: what its main page covers, a few of its references, and
+the versions it describes. It says the skill does not make the agent's code correct and asks the
+reader to review what the agent writes, tells the reader how to install it, routes learners to the
+tutorials and Concepts, sends a reader whose question outgrows the skill to the
+[knowledge-base using page](knowledge-base.md), and says the pages are a pinned snapshot. It carries
+no skill content of its own, and its foot carries the provenance line for documentation pages: level
+one of the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md).
 
-**The skill pages are symlinks, not copies.** `cgp-skills` is a git submodule at the repository
-root's `cgp-skills/`, and `SKILL.md` and one page per file in `cgp/references/` are symlinks into it,
-so the site serves the skill's own bytes at a pinned revision. [site.md](../site.md#how-the-site-is-built)
-records the three build settings this needs.
+**Each skill has its own directory, and its pages are symlinks, not copies.** `cgp-skills` is a git
+submodule at the repository root's `cgp-skills/`. Under `docs/ai/skills/cgp/`, `SKILL.md` and one
+page per file in `cgp/references/` are symlinks into it, so the site serves the skill's own bytes at
+a pinned revision; the directory's `_category_.json` labels it `/cgp` and opens its `SKILL` page.
+[site.md](../site.md#how-the-site-is-built) records the three build settings this needs. The live
+site's one older skill URL, `/docs/ai/skills/references/modularity-hierarchy`, redirects through a
+static page under `static/docs/ai/skills/references/`.
 
 ## How it relates to the knowledge base
 
@@ -51,5 +58,7 @@ correcting the skill is the only way to correct the page. Three consequences fol
   [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#the-agent-skill).
   A lagging snapshot is not a defect.
 - Advancing the snapshot is one submodule pointer commit, but a **new file** in `cgp/references/`
-  also needs a symlink beside its siblings, because the site publishes named files rather than a
-  directory glob.
+  also needs a symlink beside its siblings in `docs/ai/skills/cgp/references/`, because the site
+  publishes named files rather than a directory glob.
+- A **new skill** gets its own directory beside `cgp/`, with its symlinks and a `_category_.json`,
+  and a section on the index.
