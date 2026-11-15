@@ -2,8 +2,8 @@
 
 Write sentences that state a clear point, name the relevant subject, and explain how ideas connect.
 
-Use this guide for sentence-level revision. The
-`point-first-writing` skill covers paragraph and section
+Use this guide for sentence-level revision. The optional
+`point-first-writing` skill, when available, covers paragraph and section
 structure, [voice-and-register.md](voice-and-register.md) covers the project's and author's voices,
 and [vocabulary.md](vocabulary.md) fixes CGP terminology. Use
 [reader-simulation.md](reader-simulation.md) to check what a reader can understand from the result.
