@@ -111,23 +111,32 @@ promising a roadmap.
   [removal ledger](../../releases/README.md#the-removal-ledger).
 - **The tool:** [the cargo-cgp usage reference](../../cargo-cgp/reference/usage.md) and
   [installation](../../cargo-cgp/reference/installation.md).
+- **The smaller changes and migration:** [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md)
+  for the component key a header derives, with the
+  [unresolved wiring name](../../cgp/errors/wiring/unresolved-wiring-name.md) class and the
+  [error-code catalog](../../cargo-cgp/error-code.md) for `CGP-E041` and `CGP-E070`;
+  [`#[implicit]`](../../cgp/reference/attributes/implicit.md),
+  [`#[use_type]`](../../cgp/reference/attributes/use_type.md), and
+  [`#[derive_delegate]`](../../cgp/reference/attributes/derive_delegate.md); and the release's
+  [prelude and feature changes](../../releases/v0-8-0.md#what-it-changes-or-removes).
 - **Framing:** the [release-announcement guide](../writing-guides/release-announcement.md),
   [author voice](../../communication-strategy/voice-and-register.md), and the
   [AI disclosure policy](../../communication-strategy/ai-disclosure.md).
 
 ## Verification and deliberate simplifications
 
-The website's [blog example
-file](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/example-code/tests/blog/v0_8_0_release.rs)
+The website's
+[blog example file](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/example-code/tests/blog/v0_8_0_release.rs)
 compiles the initial database-only managers, the filter-dependent coarse and fine-grained
 configurations, flat and hierarchical namespace routing, fixed defaults and their body-entry
 alternative, and the migrated user group, then the improvements and migration listings: a provider
 importing its component key and one naming its trait by path, each wired on a context with a `&str`
-implicit read of a `String` or `Box<str>` field, the imports from the trimmed prelude,
-`#[use_type]`'s `in Context` form, the `derive_delegate` attribute, and the `alloc` feature's
-providers. It supplies page-elided domain types, methods, filter providers, and database bodies,
-with explicit checks on concrete contexts. The local SQLite variant is hypothetical; its omitted
-providers are supplied as stubs for compilation. These checks verify wiring, not a database
+implicit read of a `String` or `Box<str>` field, a `#[cgp_fn]` that reads a `Cow<'static, str>`
+field through `&str` and an `Option<Box<str>>` field through `Option<&str>`, the imports from the
+trimmed prelude, `#[use_type]`'s `in Context` form, the `derive_delegate` attribute, and the `alloc`
+feature's providers. It supplies page-elided domain types, methods, filter providers, and database
+bodies, with explicit checks on concrete contexts. The local SQLite variant is hypothetical; its
+omitted providers are supplied as stubs for compilation. These checks verify wiring, not a database
 implementation or a complete web service.
 
 The missing-height program is a
