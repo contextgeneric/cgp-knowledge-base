@@ -243,7 +243,7 @@ the provider of a `#[cgp_impl]` header, or on the provider trait's name in a `#[
   and `help: name the component in the attribute`, a fix that writes
   `#[cgp_impl(new UnitArea: AreaComponent)]`. A key with parameters takes the header's arguments in
   that form (`AreaCalculatorComponent<Square>`), a key not in scope is imported by the same fix, and
-  a renamed import's `note` explains the unused-import warning. The fix also spans the trait's
+  a renamed import beside an import of the key gets a `note` on the unused-import warning. The fix also spans the trait's
   name, so an editor offers it there.
 - **`[CGP-E042]`** for a key guessed from a trait's name:
   ``the wiring key `HasScalarTypeComponent` names no component``, and

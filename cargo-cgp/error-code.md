@@ -585,10 +585,10 @@ for `CGP-E060`.
   name unchanged, so an editor offers the fix there. The fix is machine-applicable when the header
   writes an argument for each of the key's parameters and one path imports a key it imports, and
   maybe correct otherwise, as for `impl AreaCalculator` under a key `AreaCalculatorComponent<Shape>`,
-  which keeps the parameter's name. Without a place in the source for the edit, the attribute is a
-  `help`, `` name the component in the attribute: `<attribute>` ``, naming a key not in scope by its
-  path. For a renamed import a `note` explains why rustc calls the component's correct import
-  unused.
+  which keeps the parameter's name. A module without a place for the `use` line gets the fix with
+  the key written by its path, and an attribute the tool cannot find in the source gets a `help`,
+  `` name the component in the attribute: `<attribute>` ``. For a renamed import beside an import of the component, a `note` explains why rustc calls
+  that import unused.
 - **Class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
 
 ## Dependency-tree entry codes (`CGP-E1xx`)
