@@ -93,8 +93,9 @@ crash that prints nothing or a rewrite of an error the tool should leave alone:
 A fixture that declares `//@json` also runs **the JSON pass**, which compares the compiler messages
 of `cargo cgp check --message-format=json` with `<name>.cgp.json`. Editors and agents read this
 stream, and nothing else exercises it. The snapshot keeps the fields a consumer uses, among them
-each suggestion span's replacement and applicability, which an editor turns into a quick fix, and
-leaves out the `rendered` text the `.cgp.stderr` pins.
+each suggestion span's end, replacement, and applicability, which an editor turns into a quick fix,
+the end telling an insertion from a replacement, and leaves out the `rendered` text the
+`.cgp.stderr` pins.
 
 The expand pass normalizes less, deliberately: only absolute paths. The `Chars<…>` collapse absorbs
 how rustc truncates a list in a *diagnostic*, but in an expansion a raw list means the resugaring
