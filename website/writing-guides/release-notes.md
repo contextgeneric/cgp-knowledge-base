@@ -6,7 +6,7 @@ with it, and not edited afterwards into agreement with later releases.
 
 - **Where they live**: `docs/release-notes/`, the Release notes category after Resources, with one
   sub-category per artifact, `docs/release-notes/cgp/` and `docs/release-notes/cargo-cgp/`, and one
-  page per release in each, recorded in the category's one record under [pages/](../pages/README.md)
+  page per release in each, recorded in [pages/release-notes.md](../pages/release-notes.md)
 - **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Style**: point-first, the one page kind that names it, because a reader scans the page for the

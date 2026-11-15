@@ -39,3 +39,5 @@ Pages recorded elsewhere:
 - [skill-installation.md](skill-installation.md): how to install the `/cgp` skill in each agent.
 - [knowledge-base.md](knowledge-base.md): the four pages that explain this base to a person.
 - [ai-disclaimer.md](ai-disclaimer.md): how the project uses AI, part by part.
+- [release-notes.md](release-notes.md): the dated release-notes pages, one per official release,
+  with the source document of each.

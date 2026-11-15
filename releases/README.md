@@ -6,6 +6,15 @@ that shipped in v0.3.0 may be current, may have been renamed twice, or may have 
 outright, and an agent reading old code, an old blog post, or an old book chapter needs to know which
 before it can interpret what it is looking at.
 
+Each release also has a page on the website's
+[Release notes](https://contextgeneric.dev/docs/release-notes/), and the two are layers of one
+history. The page lists the user-visible changes and the steps to upgrade, for a reader moving to
+the release; it is dated and not rewritten. The document here is its finer-detail companion and stays
+current: it keeps the internal changes, the names discarded during development, where the old
+changelog or a post was wrong, why the release took its shape, and how much of it still stands. Every
+finding of a release's diff review lands in one of the two, and the
+[release-notes guide](../website/writing-guides/release-notes.md) says which.
+
 ## Why a release history is worth keeping
 
 The rest of this base deliberately [documents the present](../AGENTS.md#document-the-present-not-the-history):
@@ -127,10 +136,27 @@ bound. Read the changelog for the shape of a release and the tagged source for w
 ## Adding a release document
 
 When a version is tagged, add its document following the shape of the existing ones: a one-sentence
-summary, a framed list of identifying facts, then **what it introduced**, **what it changed or
-removed**, and **how it relates to the current release**. Update the removal ledger above with
-anything the release renamed or deleted, add the entry to the catalog, register the document in
+summary, a framed list of identifying facts that names its release-notes page, then **what it
+introduced**, **what it changed or removed**, **the changes the release notes leave out**, and **how
+it relates to the current release**. Update the removal ledger above with anything the release
+renamed or deleted, add the entry to the catalog, register the document in
 [../summary.md](../summary.md), and add or revise the announcement post's document under
 [../website/blog/](../website/blog/README.md) so the two point at each other. There is no `AGENTS.md`
 here: the base-wide [../AGENTS.md](../AGENTS.md) governs these documents, with the single exception
 that this is the one section allowed to describe the past.
+
+Each release of `cgp` also gets its notes page, written to the
+[release-notes guide](../website/writing-guides/release-notes.md) in these steps:
+
+1. **Before the tag**, write the page on the website's release branch from the source diff since the
+   previous tag, the release document, and the post, as though the release had shipped, and add each
+   finding the page leaves out to the document's section for them.
+2. **On release day**, set the page's date to the crates.io publish date, check its tag, compare,
+   and crates.io links, and record the tag's date in the document when it differs.
+3. **Publish the page with the website**, before the release's GitHub Release, which holds one
+   sentence and a link to the page.
+4. **Register the page** in its record, [website/pages/release-notes.md](../website/pages/release-notes.md).
+
+A `cargo-cgp` release follows the same steps from the tool's own diff, and has no document here: its
+finer detail lives in the [cargo-cgp/](../cargo-cgp/README.md) section, which documents the tool as
+it is.

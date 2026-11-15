@@ -834,6 +834,8 @@ it stale.
 - [knowledge-base.md](website/pages/knowledge-base.md) — the four pages that explain this base to a
   person.
 - [ai-disclaimer.md](website/pages/ai-disclaimer.md) — how the project uses AI, part by part.
+- [release-notes.md](website/pages/release-notes.md) — the Release notes category: one dated page per
+  official release of `cgp` and `cargo-cgp`, how each is made, and the release document behind each.
 
 ### `website/writing-guides/`: how new pages should be written
 
@@ -978,9 +980,10 @@ it stale.
 
 ## `releases/`: the version history
 
-- [releases/README.md](releases/README.md) — why the base keeps one historical section, the **removal
-  ledger** dating every renamed or deleted construct, the catalog of releases, and the three places the
-  upstream changelog disagrees with the tags.
+- [releases/README.md](releases/README.md) — why the base keeps one historical section, its two layers
+  with the website's release-notes pages, the **removal ledger** dating every renamed or deleted
+  construct, the catalog of releases, the three places the upstream changelog disagrees with the tags,
+  and the steps for adding a release's document and its notes page.
 - [v0-1-0.md](releases/v0-1-0.md) — 2024-09-02, the first crates.io publication, predating the public
   announcement; every idea present, almost every name since changed.
 - [v0-2-0.md](releases/v0-2-0.md) — 2024-12-08, the pre-launch cleanup: `#[cgp_component]`, and the
