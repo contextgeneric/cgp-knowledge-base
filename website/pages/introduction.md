@@ -21,8 +21,9 @@ sidebar label "Introduction", and a written description.
 area-calculation series in that order. *Find what you need* gives one line per question with the
 page that answers it: the Overview, Bypassing coherence and Consumer and provider traits, Modularity
 Hierarchy and the front page's costs, the Comparisons, the Reference and the Glossary, `cargo-cgp`,
-the Projects, the AI section, the Videos page in Resources for a talk, and Contribute for the
-community and helping. A closing line names the blog as a dated record.
+the Projects, the AI section, the Videos page in Resources for a talk, the Community page in
+Resources for a question or CGP's news, and Contribute for helping. A closing line names the blog
+as a dated record.
 
 The page has no maturity section, which belongs to the front page's cost section, per the
 [homepage guide](../writing-guides/homepage.md#below-the-fold-the-bounded-essay), and it leaves out

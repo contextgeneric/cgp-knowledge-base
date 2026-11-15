@@ -124,8 +124,10 @@ Other Projects examples are checked in their project checkouts.
 
 **The navigation bar carries Tutorials, Docs, Blog, and AI, plus a GitHub link.** The footer repeats
 the docs entry points (the Introduction, the Quickstart, the Overview, and the Tutorials) beside
-GitHub Discussions, [Discord](https://discord.gg/Hgk3rCw6pQ), and the
-[r/cgp subreddit](https://www.reddit.com/r/cgp/). The site is licensed CC BY-SA 4.0.
+GitHub Discussions, [Discord](https://discord.gg/Hgk3rCw6pQ), the
+[r/cgp subreddit](https://www.reddit.com/r/cgp/), and the
+[Bluesky account](https://bsky.app/profile/contextgeneric.dev), the channels the Resources
+section's Community page describes. The site is licensed CC BY-SA 4.0.
 
 **The `docs/` sidebar order is settled:** Introduction, Quickstart, Overview, Tutorials, Concepts
 (5), Reference (6), Tooling (7), Comparisons (8), Projects (9), AI (10), Resources (11), Release

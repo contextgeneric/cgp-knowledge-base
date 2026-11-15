@@ -21,12 +21,13 @@ The opening names Context-Generic Programming beside a plain description and lin
 Introduction, without the tag line, then says the routes run from the smallest commitment to the
 largest and that each helps on its own. Five routes follow in project voice:
 
-- **Join the discussion:** GitHub Discussions, the Discord server, and the r/cgp subreddit.
+- **Join the discussion:** asking questions and suggesting what the documentation should cover,
+  linking the [Resources](resources.md) section's Community page for the channels.
 - **Report a problem:** a confusing or wrong page goes to GitHub Discussions or the website
   repository's issue tracker; a problem in the knowledge base goes to the base's issue tracker, with
   the reporting section of *Contributing to CGP with an Agent* for what to include.
-- **Write about CGP and share it:** independent posts, tutorials, and talks, and the Bluesky
-  account.
+- **Write about CGP and share it:** independent posts, tutorials, and talks, and following CGP on
+  Bluesky to share them, through the Community page's link.
 - **Publish reusable components:** the aim of an ecosystem where most users write only the wiring
   that selects published components and providers, stated as an aim that does not exist yet.
 - **Change CGP itself:** one paragraph routing to *Contributing to CGP with an Agent*, the site's

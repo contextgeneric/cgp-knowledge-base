@@ -807,8 +807,8 @@ it stale.
   boundary against Hello World.
 - [overview.md](website/pages/overview.md) — the feature tour, the breadth list, and the problems
   table.
-- [resources.md](website/pages/resources.md) — the Resources section's index and its Videos page,
-  and how the live page differs.
+- [resources.md](website/pages/resources.md) — the Resources section's index, its Videos page, and
+  its Community page, and how the live page differs.
 - [contribute.md](website/pages/contribute.md) — the contribution paths, the acknowledgement, and the
   author's voice in the sponsorship section.
 - [concepts.md](website/pages/concepts.md) — the explanation tier: its eighteen pages, what each must
@@ -879,9 +879,9 @@ it stale.
 - [orientation.md](website/writing-guides/orientation.md) — the routing pages: what separates
   orientation from persuading, teaching, arguing and specifying; the Introduction's three parts; the
   Overview's feature tour; the Quickstart's ten-minute target, its one-context program, and the
-  boundary against Hello World; the Resources section and its Videos page; the Contribute page's
-  routes and the two sections that stay in the author's hands; and what must never appear on any of
-  them.
+  boundary against Hello World; the Resources section, its Videos page, and its Community page; the
+  Contribute page's routes and the two sections that stay in the author's hands; and what must never
+  appear on any of them.
 - [reference.md](website/writing-guides/reference.md) — the canonical per-construct reference ported
   from the internal one: why the site rather than docs.rs is canonical, the six-section layered descent
   serving beginner to advanced on one page, the obligation to cover every form the parser accepts and

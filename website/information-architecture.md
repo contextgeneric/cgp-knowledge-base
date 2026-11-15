@@ -123,7 +123,8 @@ afterwards.
   with its boundary in [writing-guides/orientation.md](writing-guides/orientation.md); the
   *Introduction*, narrowed to the definition and the routing, with no maturity section, since the
   front page's cost section states the maturity; and *Resources*, material about CGP beyond the
-  documentation, one subpage per kind, starting with *Videos*.
+  documentation and the places where people discuss it, one subpage per kind: *Videos* and
+  *Community*.
 - **Release notes**, at `docs/release-notes/`: an index stating how CGP numbers its 0.x
   releases, then `cgp/` with a page for every official release from v0.1.0 and `cargo-cgp/` with
   one from v0.1.0, newest first. It replaces `cgp`'s `CHANGELOG.md`, which is removed, and, from
@@ -178,8 +179,9 @@ Contribute.
   [message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)
   wants agent support kept out of the opening.
 - **Release notes follow Resources** as a top-level category rather than a Resources page, as the
-  author decided, because Resources holds material about CGP beyond the site; an upgrader reaches
-  a page from the release post or the README more often than from the sidebar.
+  author decided, because Resources holds material about CGP from beyond the site and the places
+  to discuss it; an upgrader reaches a page from the release post or the README more often than
+  from the sidebar.
 
 **Name the category *Concepts*, never *Explanation* or *Understanding CGP***: "explanation" is the
 documentation organizer's word, which Diátaxis advises against exposing, and *Concepts* matches the
