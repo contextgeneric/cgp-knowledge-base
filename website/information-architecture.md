@@ -23,7 +23,7 @@ must not duplicate:
   [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources)
   the site leaves out.
 - **[cgp-skills](https://github.com/contextgeneric/cgp-skills):** the agent skill, published on the site
-  as a copy under `docs/ai/` whose source lives in that repository.
+  as a pinned snapshot under `docs/ai/skills/cgp/` whose source lives in that repository.
 
 The site may cite these and never this [knowledge base](README.md), outside the bounds of the
 [one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links),
@@ -126,8 +126,8 @@ afterwards.
 - **Blog:** not planned in advance; a post is a dated statement rather than a page with a job.
 - **AI**, at `docs/ai/` labelled "AI-Assisted Development", in this order:
   - *Overview*: the section's landing page, one heading per direction.
-  - *Agent Skills*: the section's index, then one directory per skill, today the `/cgp` skill,
-    whose pages are a pinned snapshot of `cgp-skills`; a **feature**.
+  - *Agent Skills*: the section's index, *Installing the CGP Skill*, then one directory per skill,
+    today the `/cgp` skill, whose pages are a pinned snapshot of `cgp-skills`; a **feature**.
   - *The knowledge base*: four pages. *How CGP's Documentation Is Written* is a **fact about the
     project**; *Using the Knowledge Base with Your Agent* and *Contributing to CGP with an Agent* are
     **features**. They and the disclaimer are the only hand-written pages that link into this base,
