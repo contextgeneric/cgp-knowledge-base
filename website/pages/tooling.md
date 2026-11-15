@@ -11,7 +11,8 @@ The Tooling section's index introduces the programs a reader runs beside the `cg
 
 An agent wrote the page when the author asked for a Tooling section after the reference, holding
 `cargo-cgp` and saying that more tooling will be added. Its foot carries the provenance line for
-documentation pages.
+documentation pages: level one of the four in
+[ai-disclosure.md](../../communication-strategy/ai-disclosure.md).
 
 ## What it covers
 
@@ -20,7 +21,7 @@ ordinary cargo commands, and says the tools are optional. It leaves out the tag 
 section's subject is not choosing an implementation. The *cargo-cgp* section describes the tool with
 the canonical sentence from
 [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
-and links the installation, check, reading, and error-codes pages. *More tools to come* says
+and links the installation, check, expand, reading, and error-codes pages. *More tools to come* says
 `cargo-cgp` is the only tool so far and that more tooling will be added.
 
 ## How it relates to the knowledge base

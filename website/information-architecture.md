@@ -157,8 +157,8 @@ Tutorials, Concepts, Reference, Tooling, Comparisons, Projects, Resources, Contr
 - **Concepts follows Tutorials**, because a reader who meets eighteen idea pages before writing a line
   reads them as the theory CGP demands up front; after the tutorials, they are what a reader reaches
   for once a construct raises a question.
-- **Reference and Tooling follow Concepts**, at the author's request, so the construct reference and
-  the tool a reader runs while writing code sit together.
+- **Reference and Tooling follow Concepts**, at the author's request, which puts the construct
+  reference beside the tool a reader runs while writing code.
 - **Comparisons follows them**, and a reader with a prior model still finds a comparison from the
   Concepts page that links it.
 

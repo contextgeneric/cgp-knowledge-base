@@ -10,7 +10,8 @@ closes with the author's sponsorship section and the project's acknowledgement.
 ## How the page was made
 
 An agent rewrote the page to [the orientation guide](../writing-guides/orientation.md#the-contribute-page),
-which the author allowed in full, and its foot carries the provenance line for documentation pages.
+which the author allowed in full, and its foot carries the provenance line for documentation pages:
+level one of the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md).
 The sponsorship section and the acknowledgement are the author's text, unchanged apart from the
 acknowledgement's heading level and its Hermes SDK link, which the author removed.
 
