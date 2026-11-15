@@ -93,8 +93,8 @@ Markdown**, which on a reference page was a heading made mostly of punctuation a
 sentence such as *"This is the second part of the blog series"*. On 2026-09-21 only 13 of 278 sources
 set one.
 
-**Five pages still render a derived description**: Resources, Hello World, and the three
-area-calculation pages. Each shows the first source line of its opening paragraph, cut mid-sentence
+**Four pages still render a derived description**: Hello World and the three area-calculation
+pages. Each shows the first source line of its opening paragraph, cut mid-sentence
 where the source wraps. The published skill pages are not the site's to edit. The conventions,
 including the YAML apostrophe that fails the build, are in
 [the reference guide](writing-guides/reference.md#conventions-the-port-must-follow).
