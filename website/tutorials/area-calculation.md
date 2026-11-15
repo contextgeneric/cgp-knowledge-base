@@ -136,9 +136,9 @@ series omits both. Two smaller points:
   expansion calls `.clone()`, so `Clone` is the requirement, and the `v0.8.0` branch's page says so.
 - **`#[cgp_impl]` appears in both forms.** Static Dispatch shows
   `impl<Context> AreaCalculator for Context where Self: RectangleArea` before simplifying to
-  `impl AreaCalculator`. That is deliberate, but only the second form is idiomatic per
-  [writing-providers](../../cgp/guides/writing-providers.md), and a reader who stops early copies the
-  first.
+  `impl AreaCalculator`, which is deliberate, and says after the simplification that the short form
+  with `#[uses]` is the one to write, as
+  [writing-providers](../../cgp/guides/writing-providers.md) teaches.
 
 ## Maintaining it
 
