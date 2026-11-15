@@ -40,8 +40,9 @@ Reference, Concepts, Comparisons, and Projects. The quality concern and the feed
 before the explanation of the iterative knowledge-base process and its review limits, so the
 explanation answers a question the reader already has. It links the public methodology, disclosure,
 and knowledge-base current-state pages, and no knowledge-base repository directly. The skill is
-optional learning and debugging help, not a proficiency guarantee, and the section links the
-skill's installation page for setting it up.
+optional learning and debugging help, not a proficiency guarantee; the section says the skill checks
+the project's `cgp` release before it works on the code, and links the skill's installation page for
+setting it up.
 
 **Namespaces.** The section opens with the earlier wiring burden and the limits of provider bundles,
 states the practical payoff, and links ahead for readers who want the syntax or migration. The
@@ -79,14 +80,20 @@ base namespace and fixed choices in a configuration namespace, leaving varying p
 
 **Other improvements, migration, and the closing.** Other improvements introduce `open`, table
 iteration, implementation-only generics, shape macros, and fieldless variants through concrete uses,
-then the handler-macro fixes and the restrictions the release lifts: reserved variant names, another
-derive's helper attributes, async default bodies, and a provider's own const. Migration names every
-removed preset construct and works a user-group conversion with its filter dependency and component
-checks, stating the required component registrations before the migrated context and updating the
-earlier default-provider implementation explicitly. It covers the `use_type` separator, direct
-macro-crate renames, changed validation, possible unused imports and macro-name ambiguity, and
-error-backend behavior. The closing invites a small wiring refactor or the Quickstart and asks for
-specific diagnostic and documentation feedback without promising a roadmap.
+then the `no_std` build with its `alloc` feature, the `&str` implicit read, and the generated doc
+lines, followed by the component key a provider header derives from its trait, with a compiled
+import, `CGP-E041` and `CGP-E070`, and the path form. The handler-macro fixes and the restrictions
+the release lifts follow: reserved variant names, another derive's helper attributes, async default
+bodies, and a provider's own const. Migration names every removed preset construct and works a
+user-group conversion with its filter dependency and component checks, stating the required
+component registrations before the migrated context and updating the earlier default-provider
+implementation explicitly. It then covers the trimmed prelude, with the modules the dropped names
+live in and the `cgp::macro_prelude` path in raw output, the empty default features and the `alloc`
+feature, the `use_type` separator and its `in Context` form, the `derive_delegate` attribute, direct
+macro-crate renames, changed validation, possible unused imports and macro-name ambiguity, the
+dropped `on_unimplemented` messages, and error-backend behavior. The closing invites a small wiring
+refactor or the Quickstart and asks for specific diagnostic and documentation feedback without
+promising a roadmap.
 
 ## How it relates to the knowledge base
 
@@ -114,10 +121,14 @@ The website's [blog example
 file](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/example-code/tests/blog/v0_8_0_release.rs)
 compiles the initial database-only managers, the filter-dependent coarse and fine-grained
 configurations, flat and hierarchical namespace routing, fixed defaults and their body-entry
-alternative, and the migrated user group. It supplies page-elided domain types, methods, filter
-providers, and database bodies, with explicit checks on concrete contexts. The local SQLite variant
-is hypothetical; its omitted providers are supplied as stubs for compilation. These checks verify
-wiring, not a database implementation or a complete web service.
+alternative, and the migrated user group, then the improvements and migration listings: a provider
+importing its component key and one naming its trait by path, each wired on a context with a `&str`
+implicit read of a `String` or `Box<str>` field, the imports from the trimmed prelude,
+`#[use_type]`'s `in Context` form, the `derive_delegate` attribute, and the `alloc` feature's
+providers. It supplies page-elided domain types, methods, filter providers, and database bodies,
+with explicit checks on concrete contexts. The local SQLite variant is hypothetical; its omitted
+providers are supplied as stubs for compilation. These checks verify wiring, not a database
+implementation or a complete web service.
 
 The missing-height program is a
 [compile-fail fixture](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/example-code/tests/compile_fail/blog/v0_8_0_missing_height.rs).
