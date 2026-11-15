@@ -1,8 +1,8 @@
 # The compile-errors page
 
 The compile-errors page consolidates the internal error catalog into one public page, organized by
-whether the compiler hides or surfaces a mistake's cause, and closes with the `[CGP-Exxx]` code
-tables.
+whether the compiler hides or surfaces a mistake's cause, and ends with a short section on the
+`[CGP-Exxx]` codes that links their list.
 
 - **URL:** <https://contextgeneric.dev/docs/reference/errors>
 - **Source:** [docs/reference/errors.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/reference/errors.md)
@@ -27,10 +27,10 @@ names. The checked and method-call routes to one mistake produce the same headli
 consumer-versus-provider-trait confusions are
 [wrong component half](../../cgp/errors/lowering/wrong-component-half.md).
 
-The page is the site's home for the `[CGP-Exxx]` codes, since the internal catalog that defines them
-cannot be linked from a public page: two tables close it, one for headline codes and one for
-dependency-tree codes. The [`cargo-cgp` error-codes page](cargo-cgp.md) holds the per-code entries,
-and this page keeps a short section pointing there.
+The internal catalog that defines the `[CGP-Exxx]` codes cannot be linked from a public page, so the
+[`cargo-cgp` error-codes page](cargo-cgp.md) holds the per-code entries. Near its end, this page's
+*The `[CGP-Exxx]` codes* section says what a headline code and a root-cause-tree code mark, and links
+that page.
 
 ## How it relates to the knowledge base
 
