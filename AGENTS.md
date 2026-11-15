@@ -11,9 +11,9 @@ Learn CGP from the skill and this base, then read what a task touches before cha
   `AGENTS.md`.
 - Invoke the `/cgp` skill before working with CGP constructs, and re-invoke it when you move into an
   unfamiliar construct.
-- Load the `/point-first-writing` skill before writing or revising prose, which is nearly every
-  task: apply its point-first style to internal prose, and its natural style to public-facing
-  documents, such as a repository or crate README and a website page.
+- Apply point-first writing to internal prose and natural writing to public-facing documents, such
+  as a repository or crate README and a website page; load the optional `/point-first-writing`
+  skill, which defines both styles, when it is available, before writing or revising prose.
 - Read [README.md](README.md), [summary.md](summary.md), the section `README.md`, and the
   [task guide](#task-guides) for the documents you are about to touch.
 - Read the documents a task touches before changing them, and the documents they link to when a change

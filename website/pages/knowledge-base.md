@@ -36,7 +36,7 @@ directions apart:
   the light contribution policy (use the knowledge base, and include the prompts behind an
   AI-assisted pull request or issue), reporting problems in the base as a contribution, the
   side-by-side checkout layout, the `AGENTS.md` at each repository's root, the example and project
-  repositories included, and their shared documentation obligation, the `point-first-writing` skill,
+  repositories included, and their shared documentation obligation, the optional `point-first-writing` skill,
   the two rules that shape how the agent works with the contributor (ask rather than guess, commit
   only when asked), and the macro review and error-message workflows.
 
