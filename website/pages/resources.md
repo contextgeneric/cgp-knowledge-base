@@ -28,7 +28,8 @@ each kind of resource its own section:
   [the reference guide](../writing-guides/reference.md).
 - **More to come:** more kinds, such as events, will be added, each with a page of its own.
 
-*Videos* opens with the same short form and says what each entry gives. Its one entry, *RustLab
+*Videos* opens by saying its talks introduce CGP, with the short form beside the name, and says what
+each entry gives. Its one entry, *RustLab
 2025: How to stop fighting with coherence*, embeds the talk in a player that scales to the column's
 width and links its [transcript post](../blog/rustlab-2025-coherence.md).
 
@@ -52,8 +53,8 @@ carries a books group with the CGP Patterns book and the Hermes SDK among its pr
 
 ## Maintaining it
 
-- Give each new kind of resource its own subpage, so its URL stays stable, and link it from the
-  index in the same change; revise the index's sentence on what the section holds.
+- Give each new kind of resource its own subpage, so its URL stays stable, and a section on the
+  index in the same change; revise *More to come* when the kinds it names arrive.
 - Add each new talk to *Videos* in the change that publishes it, with its transcript post where one
   exists, and check every link when a page is touched.
 - The pages are `.md` files, which Docusaurus reads as CommonMark, so the video's `style` is a plain
