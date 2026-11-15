@@ -173,8 +173,10 @@ crate in crates.io's and lib.rs's browse surfaces.
   describes itself as "CGP's agent skill", the name
   [vocabulary.md](../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
   gives it, and says what the skill does.
-- **No member repository other than `cgp` has topics**, and of the others only `cgp-serde` sets a
-  homepage, its release post rather than its Projects pages.
+- **Only `cgp` and `cgp-skills` have topics**: `cgp-skills` carries `agent-skills`, which
+  `gh skill search` finds, beside `rust`, `cgp`, `context-generic-programming`, `claude-code`, and
+  `codex`. Of the members other than `cgp`, only `cgp-serde` sets a homepage, its release post
+  rather than its Projects pages.
 
 **The front page names the project first, at the author's decision.** Its title is
 *Context-Generic Programming (CGP) - Pluggable trait implementations for Rust*, with no site-name
