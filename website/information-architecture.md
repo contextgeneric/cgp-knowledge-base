@@ -177,8 +177,8 @@ Contribute.
   screen, where
   [message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)
   wants agent support kept out of the opening.
-- **Release notes follow Resources**, at the author's request, as a top-level category rather than
-  a Resources page, because Resources holds material about CGP beyond the site; an upgrader reaches
+- **Release notes follow Resources** as a top-level category rather than a Resources page, as the
+  author decided, because Resources holds material about CGP beyond the site; an upgrader reaches
   a page from the release post or the README more often than from the sidebar.
 
 **Name the category *Concepts*, never *Explanation* or *Understanding CGP***: "explanation" is the

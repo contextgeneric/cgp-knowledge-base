@@ -12,7 +12,8 @@ with it, and not edited afterwards into agreement with later releases.
 - **Style**: point-first, the one page kind that names it, because a reader scans the page for the
   items that affect them
 - **Derived from**: the release's source diff and its document in [releases/](../../releases/README.md),
-  which stays the finer-detail companion of the page
+  or for `cargo-cgp` the [cargo-cgp/](../../cargo-cgp/README.md) section, which stays the
+  finer-detail companion of the page
 - **Status once published**: a dated record; see [A dated page](#a-dated-page)
 - **Reading**: the shared set and [the release-notes row](README.md#release-notes-pages) of the
   reading map
@@ -58,15 +59,17 @@ records.
 - **The date** is the version's publish date on crates.io, in ISO 8601 form, even where the tag is a
   day apart; the release document records both.
 - **The minimum Rust version** is the `rust-version` in the release tag's `Cargo.toml`.
-- **The pull-request links** come from the Git log's first-parent commits, written as
-  `https://github.com/contextgeneric/cgp/pull/<n>`.
+- **The pull-request links** come from the Git log's first-parent commits, written as the
+  repository's `https://github.com/contextgeneric/<repository>/pull/<n>`.
 
 ## A dated page
 
 **A page states what its release did, as of that release.** It is written on the website's release
 branch before the tag, as though the release had shipped, and its date and its tag, compare, and
 crates.io links are set on release day, when they first resolve. It publishes with the website, before
-the release's GitHub Release, which holds one sentence and a link to the page.
+the release's GitHub Release, which holds one sentence and a link to the page. A page for a release
+that predates the category is written afterwards, from the same sources, and states the same facts
+as of its release.
 
 **After publication, only a factual error against the tag is corrected.** A page is never updated to
 describe later behavior, never annotated with what a later release changed, and never given an
@@ -81,8 +84,9 @@ has its own page, states how CGP numbers its 0.x releases, and links each artifa
 sub-category. The versioning statement is written only from the checked diffs of the releases it
 describes, such as whether a patch release ever broke code.
 
-**Each sub-category** has a `_category_.json` with its label (`cgp` or `cargo-cgp`), a generated
-index, and a `description` that names Context-Generic Programming.
+**Each sub-category** has a `_category_.json` with its label (`cgp` or `cargo-cgp`), its position
+(`cgp` first, then `cargo-cgp`), a generated index, and a `description` that names Context-Generic
+Programming.
 
 **Pages sort newest first.** Docusaurus sorts by `sidebar_position`, ascending, so each page sets it
 to 100000 minus its version read as `major × 10000 + minor × 100 + patch`: v0.8.0 is 99200 and v0.7.0
@@ -145,8 +149,8 @@ inline only, because `example-code` builds against the current `cgp`.
   [seo.md](../seo.md#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them):
   the version first and under about 60 characters, and a description written for this page, not a
   template.
-- **Every breaking change**: each removal ledger row for the release appears under *Breaking
-  changes*, because a reader who learns of a removal from a compiler error has been let down at the
+- **Every breaking change**: each removal ledger row that removes or renames, in this release,
+  something an earlier release shipped appears under *Breaking changes*, because a reader who learns of a removal from a compiler error has been let down at the
   highest cost in trust.
 - **A provenance line** at the foot, linking the documentation section of the AI disclosure page, per
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page), whose
@@ -174,7 +178,8 @@ inline only, because `example-code` builds against the current `cgp`.
   or in the release document.
 - **Compare the page with the changelog entry, the GitHub Release body, and the post**, item by item;
   each item they hold that the page lacks has a reason recorded in the release document.
-- **Check the removal ledger's rows for the release** against *Breaking changes*.
+- **Check the removal ledger's rows for the release** against *Breaking changes*; a rename within the
+  release's own development, or a name never released, stays off the page.
 - **Check the facts at their sources**: the date on crates.io, the minimum Rust version in the tag's
   `Cargo.toml`, and each pull-request number in the Git log.
 - **Read the first sentence of each entry in order**; they state the changes without the rest.
