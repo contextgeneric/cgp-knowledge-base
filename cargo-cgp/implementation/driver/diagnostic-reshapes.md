@@ -464,6 +464,13 @@ These points need care:
   trait name, and the trait's component has the derived name and parameters of its own. Its
   `[CGP-E070]` fills the key's parameters with the header's arguments at the same positions of the
   provider trait.
+- **`CGP-E070`'s attribute is a fix too,** built like `CGP-E041`'s: an insertion into the header's
+  attribute, after the `#[cgp_impl]` provider or as the provider attribute's argument, and the
+  trait's name unchanged. The attribute is found in the source text above the impl, since the macro
+  consumed it and the HIR does not hold it. A key not in scope at the header, by name or through a glob, including a
+  name inside a `use` list, gets `CGP-E041`'s `use` line in the same fix, so the attribute names it
+  bare
+  ([`derived_component_fix`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/derived_component_fix.rs)).
 
 **A consumer trait as a key differs in kind** (`[CGP-E040]`). Its `E0782` arises while the compiler
 lowers the impl's header, with a `TyCtxt` in scope, so the emitter recognizes it as it arrives

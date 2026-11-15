@@ -575,12 +575,20 @@ for `CGP-E060`.
   component has another name, or an `E0107` "missing generics" there for a key with parameters. rustc
   suggests nothing for the first, and an argument after the trait's name for the second, which does not
   reach the key.
-- **Fix (in the `help`):** `` name the component in the attribute: `<attribute>` ``, the header's own
-  attribute with the component appended, as `#[cgp_impl(new UnitArea: AreaComponent)]`,
-  `#[cgp_provider(GreeterComponent)]`, or, with the header's arguments in place of the key's
-  parameters, `#[cgp_impl(new SquareArea: AreaCalculatorComponent<Square>)]`. For a renamed import the
-  `help` also offers importing the trait under its own name, and a `note` explains why rustc calls the
-  component's correct import unused.
+- **Fix (a suggestion):** `name the component in the attribute`, which binds the component explicitly
+  in the header's own attribute: `: <Component>` after the provider of `#[cgp_impl(...)]`, as
+  `#[cgp_impl(new UnitArea: AreaComponent)]`, or `(<Component>)` after a provider attribute, as
+  `#[cgp_provider(GreeterComponent)]`. A key with parameters takes the header's arguments in their
+  place, as `#[cgp_impl(new SquareArea: AreaCalculatorComponent<Square>)]`. A key the module does
+  not import is imported by the same fix, `import the component and name it in the attribute`, with
+  the `use` line of [`CGP-E041`](#cgp-e041-component-not-in-scope). A last part keeps the trait's
+  name unchanged, so an editor offers the fix there. The fix is machine-applicable when the header
+  writes an argument for each of the key's parameters and one path imports a key it imports, and
+  maybe correct otherwise, as for `impl AreaCalculator` under a key `AreaCalculatorComponent<Shape>`,
+  which keeps the parameter's name. Without a place in the source for the edit, the attribute is a
+  `help`, `` name the component in the attribute: `<attribute>` ``, naming a key not in scope by its
+  path. For a renamed import a `note` explains why rustc calls the component's correct import
+  unused.
 - **Class:** [unresolved wiring name](../cgp/errors/wiring/unresolved-wiring-name.md).
 
 ## Dependency-tree entry codes (`CGP-E1xx`)

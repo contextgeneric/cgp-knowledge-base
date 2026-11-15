@@ -240,10 +240,11 @@ the provider of a `#[cgp_impl]` header, or on the provider trait's name in a `#[
   that defines its component, or re-exporting the component.
 - **`[CGP-E070]`** for a provider header that derives another component's name:
   ``the header derives the component `AreaCalculatorComponent` from the trait name `AreaCalculator`, but the component of `AreaCalculator` is `AreaComponent` ``,
-  and ``help: name the component in the attribute: `#[cgp_impl(new UnitArea: AreaComponent)]` ``.
-  A key with parameters takes the header's arguments in that form
-  (`AreaCalculatorComponent<Square>`); a renamed import's `help` also offers importing the trait
-  under its own name, and its `note` explains the unused-import warning.
+  and `help: name the component in the attribute`, a fix that writes
+  `#[cgp_impl(new UnitArea: AreaComponent)]`. A key with parameters takes the header's arguments in
+  that form (`AreaCalculatorComponent<Square>`), a key not in scope is imported by the same fix, and
+  a renamed import's `note` explains the unused-import warning. The fix also spans the trait's
+  name, so an editor offers it there.
 - **`[CGP-E042]`** for a key guessed from a trait's name:
   ``the wiring key `HasScalarTypeComponent` names no component``, and
   ``help: name the component of `HasScalarType` instead: `ScalarTypeProviderComponent` ``.
@@ -361,6 +362,10 @@ These fixtures pin the class, one group per shape:
 - [`wiring/unresolved-wiring-name/provider_header_renamed_import.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_header_renamed_import.rs):
   a `#[cgp_impl]` and a `#[cgp_provider]` header naming the trait under another name;
   `[CGP-E070]` names `GreeterComponent` and each attribute's form.
+- [`wiring/unresolved-wiring-name/derived_component_fix.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/derived_component_fix.rs):
+  renamed imports with and without the key imported, and a parameterized key with and without the
+  header's argument; its JSON pins `[CGP-E070]`'s fix, which imports a key not in scope and is
+  maybe correct for an argument the header does not write.
 - [`wiring/unresolved-wiring-name/provider_header_renamed_key.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/provider_header_renamed_key.rs):
   a header for a component whose `name:` renames its key; `[CGP-E070]`.
 - [`wiring/unresolved-wiring-name/parameterized_name_default_component.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/unresolved-wiring-name/parameterized_name_default_component.rs):
