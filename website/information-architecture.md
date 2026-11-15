@@ -151,7 +151,7 @@ the `docs/` tree, so a new category is a directory with a `_category_.json`, wit
 [stock-Docusaurus policy](site.md#how-the-site-is-built).
 
 **The sidebar follows the order a reader needs things:** Introduction, Quickstart, Overview,
-Tutorials, Concepts, Reference, Tooling, Comparisons, Projects, Resources, Contribute, and AI.
+Tutorials, Concepts, Reference, Tooling, Comparisons, Projects, AI, Resources, and Contribute.
 
 - **The Quickstart is second** because the Introduction is the docs root, and a reader who wants to
   see CGP run should meet it before any argument.
@@ -162,6 +162,11 @@ Tutorials, Concepts, Reference, Tooling, Comparisons, Projects, Resources, Contr
   reference beside the tool a reader runs while writing code.
 - **Comparisons follows them**, and a reader with a prior model still finds a comparison from the
   Concepts page that links it.
+- **AI follows Projects**, at the author's request, which closes the sections about using CGP before
+  Resources and Contribute, the pages about the project, and keeps the section below the first
+  screen, where
+  [message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)
+  wants agent support kept out of the opening.
 
 **Name the category *Concepts*, never *Explanation* or *Understanding CGP***: "explanation" is the
 documentation organizer's word, which Diátaxis advises against exposing, and *Concepts* matches the
