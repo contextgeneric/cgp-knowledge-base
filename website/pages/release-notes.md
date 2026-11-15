@@ -48,12 +48,16 @@ sources, and what still stands. The category sits after Resources, per
 
 ## Where it diverges from the guide
 
-- **Pages:** the index, `cgp/` v0.8.0, and `cargo-cgp/` v0.1.0 are written; the back-filled `cgp`
-  pages from v0.1.0 to v0.7.0 are not.
-- **The index:** it lacks the statement of how CGP numbers its 0.x releases, which waits for the
-  back-filled pages' check of each patch release.
-- **Release day:** both pages carry `Released on YYYY-MM-DD`, and their tag, compare, and crates.io
-  links resolve only once the releases exist.
+- **Release day:** the `cgp` v0.8.0 and `cargo-cgp` v0.1.0 pages carry `Released on YYYY-MM-DD`, and
+  their tag, compare, and crates.io links resolve only once the releases exist. The other `cgp` pages
+  carry crates.io's publish dates, which differ from the tag's by a day for v0.1.0 and v0.4.1.
+- **Sources:** the pages from v0.1.0 to v0.7.0 were written after their releases, from the source diff
+  and the release document, with the changelog entry, GitHub Release, and post where they exist.
+  The v0.1.0 page links the tag in place of a compare view, since the release has no earlier tag,
+  changelog entry, or post. The v0.2.0 and v0.3.1 pages link no post, since none exists, and the v0.4.2
+  page links the first post of its four-part series.
+- **The index:** its versioning statement rests on the checked diffs of the patch releases v0.3.1,
+  v0.4.1, v0.4.2, and v0.6.1, and on the breaking changes of every minor release from v0.2.0.
 
 ## Maintaining it
 
