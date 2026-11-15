@@ -24,13 +24,15 @@ Markdown with no scripts, and says every route takes the `v0.8.0` tag, the versi
 `cgp` v0.8.0. Then, in order:
 
 - **Ask your agent to install it:** a request naming the repository's URL and the tag, which sends
-  the agent to the `cgp-skills` README's steps for agents and asks it to confirm the scope first.
-- **Installing it yourself:** one section per harness, each with its own installer and its user and
-  project skills directories: Claude Code's plugin, invoked as `/cgp:cgp`; Codex's plugin, listed as
-  `cgp:cgp`, and `$skill-installer`; Cursor's folders, `~/.cursor/skills/` being the one that syncs
-  to Cloud Agents; `gh skill` for GitHub Copilot and VS Code; `gemini skills install`, which cannot
-  pin a tag; OpenCode's folders; Pi's `pi install`; and `npx skills` or `gh skill` for any other
-  agent, with the former's telemetry and how to turn it off.
+  the agent to the `cgp-skills` README's steps for agents and asks it to confirm the scope first,
+  and a warning that the harness may ask the reader to approve the copy.
+- **Installing it yourself:** a warning to choose one route per harness, then one section per
+  harness, each with its own installer and its user and project skills directories: Claude Code's
+  plugin, invoked as `/cgp:cgp`; Codex's plugin, listed as `cgp:cgp`, and `$skill-installer`;
+  Cursor's folders, `~/.cursor/skills/` being the one that syncs to Cloud Agents; `gh skill` for
+  GitHub Copilot and VS Code; `gemini skills install`, which cannot pin a tag; OpenCode's folders;
+  Pi's `pi install`; and `npx skills` or `gh skill` for any other agent, with the former's telemetry
+  and how to turn it off.
 - **Copying the skill by hand:** the clone and copy commands, keeping `SKILL.md` with `references/`,
   and copying rather than linking, since Codex names a linked skill `cgp:cgp`.
 - **Installing it for a team:** committing the skill into the project's skills folders.
@@ -40,15 +42,19 @@ Markdown with no scripts, and says every route takes the `v0.8.0` tag, the versi
 ## How it relates to the knowledge base
 
 The page and the `cgp-skills` README give the same routes and directories, and a rule in
-`cgp-skills`' `AGENTS.md` keeps them in agreement. The commands come from each tool's help,
-documentation, or source. Before the tag existed, each route that runs on the maintainer's machine
-was installed from a local clone into a scratch project: the copy for Claude Code, Codex, OpenCode,
-and Pi, `npx skills`, `gh skill`, both plugins, and Pi's package each loaded one skill, and the
-ask-your-agent request led Claude Code and Codex to the README's folder for a project, where each
-harness refused the copy in a non-interactive run, as it would ask the user to approve it in an
-interactive one. The Cursor, GitHub Copilot, and Gemini CLI sections and the `$skill-installer`
-route rest on those tools' documentation alone, since none of them was available to test. The
-release post and *Using the Knowledge Base with Your Agent* link it.
+`cgp-skills`' `AGENTS.md` keeps them in agreement. The release post and *Using the Knowledge Base
+with Your Agent* link the page.
+
+The commands come from each tool's help, documentation, or source, and were tested from a local
+clone before the tag existed, as far as the maintainer's machine allowed:
+
+- **Loaded one skill:** the copy for Claude Code, Codex, OpenCode, and Pi, `npx skills`,
+  `gh skill`, both plugins, and Pi's package, each installed into a scratch project or home.
+- **Reached the approval step:** the ask-your-agent request, which led Claude Code and Codex to the
+  README's folder for a project, where each harness refused the copy in a non-interactive run; an
+  interactive session asks the user to approve it.
+- **Documentation only:** the Cursor, GitHub Copilot, and Gemini CLI sections and the
+  `$skill-installer` route, since none of those tools was available to test.
 
 ## Where it diverges
 
