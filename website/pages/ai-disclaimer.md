@@ -13,11 +13,12 @@ least, and who is responsible.
 
 ## What it covers
 
-The page opens with the settled descriptor, a summary of AI's roles and the author's design
-ownership, and a sentence saying the sections run from most agent-written to least. It explains why
-the division varies: agents get more writing responsibility where output can be checked against
-existing code and does not become part of a user's application, and checking an implementation is
-distinct from deciding what the library should do.
+The page opens with the linked full name, a summary of AI's roles and the author's design
+ownership, and a sentence saying the sections run from most agent-written to least; it carries no
+tag line, since it describes how the project is made rather than what CGP does. It explains why the
+division varies through the policy's two questions, whether the work enters a user's program and
+whether it can be checked against an existing source, and says the criteria decide who writes a part
+without making it correct.
 
 The sections then run from most AI to least:
 

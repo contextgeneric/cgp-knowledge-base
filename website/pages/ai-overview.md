@@ -1,7 +1,8 @@
 # AI section overview
 
-The overview is the AI section's landing page: it orients a reader with the settled descriptor and
-routes by question under two headings that keep the section's two directions apart.
+The overview is the AI section's landing page: it names Context-Generic Programming beside the two
+questions the section answers, without the tag line, and routes by question under two headings that
+keep the section's two directions apart.
 
 - **URL:** <https://contextgeneric.dev/docs/ai/>
 - **Source:** [docs/ai/index.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/ai/index.md)
@@ -12,9 +13,10 @@ routes by question under two headings that keep the section's two directions apa
 ## What it covers
 
 The category's `link` targets the page in place of a generated index. *Working with CGP through an
-agent* is the feature: what the agent skill and knowledge base can reduce, that the reader still
-reviews the result, routes to the skill, the using page, and the contributing page, and a route to
-the tutorials and Concepts for a reader learning CGP themselves. *How the CGP project uses AI* is the
+agent* is the feature: the gaps an agent has with CGP (outdated published syntax, and macro output
+it cannot see), what the agent skill and knowledge base can reduce, that the reader still reviews
+the result, routes to the skill with its installation page, the using page, and the contributing
+page, and a route to the tutorials and Concepts for a reader learning CGP themselves. *How the CGP project uses AI* is the
 fact about the project: two sentences summarizing the disclaimer's arrangement, then routes to the
 disclaimer, the process page, and the knowledge-base index.
 
