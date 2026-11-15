@@ -2,8 +2,9 @@
 
 The knowledge-base pages explain the public CGP knowledge base to a person: what it is, how CGP's
 documentation is written from it, and how to direct an agent to use it for learning, auditing, or
-contributing. They are the only hand-written pages besides the disclaimer that may link into the base,
-and two of them are the site's first how-to guides.
+contributing. Besides the disclaimer, they are the only hand-written pages that may link into the
+base, apart from the Contribute page's link to its issue tracker, and two of them are the site's
+first how-to guides.
 
 - **Where they live**: `docs/ai/knowledge-base/`, a subsection of the AI section between the agent
   skill and the disclaimer, recorded in one entry, [pages/knowledge-base.md](../pages/knowledge-base.md)

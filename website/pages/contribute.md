@@ -22,8 +22,8 @@ largest and that each helps on its own. Five routes follow in project voice:
 
 - **Join the discussion:** GitHub Discussions, the Discord server, and the r/cgp subreddit.
 - **Report a problem:** a confusing or wrong page goes to GitHub Discussions or the website
-  repository's issue tracker; a problem in the knowledge base routes to the reporting section of
-  *Contributing to CGP with an Agent*, which links the base's issue tracker.
+  repository's issue tracker; a problem in the knowledge base goes to the base's issue tracker, with
+  the reporting section of *Contributing to CGP with an Agent* for what to include.
 - **Write about CGP and share it:** independent posts, tutorials, and talks, and the Bluesky
   account.
 - **Publish reusable components:** the aim of an ecosystem where most users write only the wiring
@@ -39,10 +39,7 @@ without a link, since the SDK is a
 
 ## Where it diverges from the guide
 
-- The page links the knowledge base's issue tracker only through the contributing page, although
-  the guide says to link it: the website's
-  [link rules](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links) let
-  only the disclaimer and the knowledge-base pages link it.
+- none
 
 ## How it relates to the knowledge base
 
@@ -60,5 +57,7 @@ more. The reporting route follows
 - The sponsorship section is in the author's first-person voice and candid about finances. Do not
   rewrite it into project prose; it is the one place on the site where a single voice belongs.
 - The acknowledgement names the Hermes SDK without linking it; do not add the link back.
+- The page may link the knowledge base's issue tracker and nothing else in the base, per the
+  website's [link rules](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links).
 - The heading is *Contribute*, so the full name opens the prose; the sidebar keeps the label
   *Contribute to CGP*.

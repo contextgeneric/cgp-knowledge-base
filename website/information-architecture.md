@@ -127,7 +127,8 @@ afterwards.
   - *Using CGP with coding agents*: the inlined skill, regenerated from `cgp-skills`; a **feature**.
   - *The knowledge base*: four pages. *How CGP's Documentation Is Written* is a **fact about the
     project**; *Using the Knowledge Base with Your Agent* and *Contributing to CGP with an Agent* are
-    **features**. They and the disclaimer are the only hand-written pages that link into this base.
+    **features**. They and the disclaimer are the only hand-written pages that link into this base,
+    apart from the Contribute page's link to its issue tracker.
   - *AI disclaimer*: the four levels of AI involvement, and the destination of every provenance note,
     so it closes the section. Specified in [ai-disclosure.md](../communication-strategy/ai-disclosure.md).
 

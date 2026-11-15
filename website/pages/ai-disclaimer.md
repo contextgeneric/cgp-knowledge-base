@@ -55,8 +55,8 @@ mechanics in
 
 The page is one of the two surfaces allowed to link into the knowledge base, with the
 [knowledge-base pages](knowledge-base.md), per
-[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links): the
-base is the subject it discloses. It links the repository's front door, never a path inside it, and
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links), which
+also lets the Contribute page link the base's issue tracker: the base is the subject it discloses. It links the repository's front door, never a path inside it, and
 links the [process page](knowledge-base.md) for the full account.
 
 ## Maintaining it
