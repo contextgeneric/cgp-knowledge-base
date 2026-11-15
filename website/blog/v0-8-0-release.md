@@ -17,10 +17,11 @@ and optional agent support, then develops namespace wiring and migration from v0
 
 ## What it covers
 
-The opening line names Context-Generic Programming, linked to the Introduction, and the opening ties
-the release to the author's aim of making CGP easier to debug, learn, and follow as an application
-grows; the orientation paragraph after the truncate marker describes CGP by its tag line. Short cargo-cgp and documentation sections come first; namespaces are the main
-technical deep dive; other improvements, migration, and a practical closing follow.
+The opening ties the release to the author's aim of making CGP easier to debug, learn, and follow as
+an application grows. Its first line names Context-Generic Programming, linked to the Introduction,
+and the orientation paragraph after the truncate marker describes CGP by its tag line. Short
+cargo-cgp and documentation sections come first; namespaces are the main technical deep dive; other
+improvements, migration, and a practical closing follow.
 
 **cargo-cgp.** The section restores the author's account of verbose diagnostics as a long-standing
 adoption barrier: a newcomer could need advanced Rust and CGP implementation knowledge to diagnose a
@@ -80,21 +81,29 @@ whereas an unprefixed local marker has different ownership rules. Structural pre
 base namespace and fixed choices in a configuration namespace, leaving varying paths unbound.
 
 **Other improvements, migration, and the closing.** Other improvements introduce `open`, table
-iteration, implementation-only generics, shape macros, and fieldless variants through concrete uses,
-then the `no_std` build with its `alloc` feature, the `&str` implicit read, and the generated doc
-lines, followed by the component key a provider header derives from its trait, with a compiled
-import, `CGP-E041` and `CGP-E070`, and the path form. The handler-macro fixes and the restrictions
-the release lifts follow: reserved variant names, another derive's helper attributes, async default
-bodies, and a provider's own const. Migration names every removed preset construct and works a
-user-group conversion with its filter dependency and component checks, stating the required
-component registrations before the migrated context and updating the earlier default-provider
-implementation explicitly. It then covers the trimmed prelude, with the modules the dropped names
-live in and the `cgp::macro_prelude` path in raw output, the empty default features and the `alloc`
-feature, the `use_type` separator and its `in Context` form, the `derive_delegate` attribute, direct
-macro-crate renames, changed validation, possible unused imports and macro-name ambiguity, the
-dropped `on_unimplemented` messages, and error-backend behavior. The closing invites a small wiring
-refactor or the Quickstart and asks for specific diagnostic and documentation feedback without
-promising a roadmap.
+iteration, implementation-only generics, shape macros, and fieldless variants through concrete uses.
+The `no_std` build with its `alloc` feature, the `&str` implicit read, and the generated doc lines
+follow, then a paragraph with a compiled import on the component key a provider header derives,
+naming `CGP-E041`, `CGP-E070`, and the path form. The section ends with the handler-macro fixes and
+the restrictions the release lifts: reserved variant names, another derive's helper attributes, async
+default bodies, and a provider's own const.
+
+Migration names every removed preset construct and works a user-group conversion with its filter
+dependency and component checks, stating the required component registrations before the migrated
+context and updating the earlier default-provider implementation explicitly. It then covers, in
+order:
+
+- **The trimmed prelude:** the modules the dropped names live in, and the `cgp::macro_prelude` path
+  in raw output.
+- **The default features:** empty, with the `alloc` feature for the formatting error providers.
+- **Attribute syntax:** the `use_type` separator and its `in Context` form, and the
+  `derive_delegate` attribute.
+- **Other changes:** direct macro-crate renames, changed validation, possible unused imports and
+  macro-name ambiguity, and the dropped `on_unimplemented` messages.
+- **Error backends:** their changed behavior.
+
+The closing invites a small wiring refactor or the Quickstart and asks for specific diagnostic and
+documentation feedback without promising a roadmap.
 
 ## How it relates to the knowledge base
 
@@ -147,10 +156,10 @@ temporary library target, taken on 2026-11-15 against the local `cgp` checkout: 
 body with stable Rust 1.99, its `cgp::macro_prelude::Chars` path included, and the `cargo cgp check`
 body with the local source-built driver. Both still need a capture against the released crates and
 tool before publication. The repaired program passes cargo-cgp, and a runtime test asserts that a
-three-by-four rectangle has area twelve. The historical preset and old attribute-separator listings
-are explicitly v0.7.0 input, not current examples to compile against v0.8.0. The proposed `???` keys
-and nested helper-macro form are labeled pseudocode in text fences, not presented as accepted Rust
-syntax.
+three-by-four rectangle has area twelve. The historical preset, attribute-separator, and
+`derive_delegate:` listings are explicitly v0.7.0 input, not current examples to compile against
+v0.8.0. The proposed `???` keys and nested helper-macro form are labeled pseudocode in text fences,
+not presented as accepted Rust syntax.
 
 The production site build passes without broken links or anchors, and the full example suite passes
 against the sibling `cgp` checkout. Every external link resolves except the web-app source link,
