@@ -138,7 +138,7 @@ recorded against the release it shipped in.
 
 Every claim in these documents is verified against the tag rather than taken from a summary, because
 the summaries disagree with the code in at least three places. The repository's
-[CHANGELOG.md](https://github.com/contextgeneric/cgp/blob/main/CHANGELOG.md) heads its most recent
+[CHANGELOG.md](https://github.com/contextgeneric/cgp/blob/v0.7.0/CHANGELOG.md), removed once the release notes replaced it, headed its most recent
 entry **"v0.6.2 (2026-03-01)"** for work that actually shipped as **v0.7.0 on 2026-02-28**: the
 release was renumbered when its breaking changes were counted, and the heading was never updated. And
 that same changelog credits v0.5.0 with a `MatchStr` trait that had already been deleted before the
