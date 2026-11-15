@@ -121,8 +121,8 @@ afterwards.
   front page's cost section states the maturity; and *Resources*, material about CGP beyond the
   documentation, one subpage per kind, starting with *Videos*.
 - **Project:** *Contribute*.
-- **Further depth:** links out to the repositories, never to the legacy book. No page links `cgp`'s
-  docs.rs entry.
+- **Further depth:** links out to the repositories, never to the legacy book. `cgp`'s docs.rs entry
+  is linked once, from the Resources index.
 - **Blog:** not planned in advance; a post is a dated statement rather than a page with a job.
 - **AI**, at `docs/ai/` labelled "AI-Assisted Development", in this order:
   - *Overview*: the section's landing page, one heading per direction.

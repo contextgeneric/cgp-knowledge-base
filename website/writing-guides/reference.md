@@ -20,9 +20,10 @@ the thing they need.
 **The site reference is the canonical place to look a construct up, complete enough that a reader
 never needs docs.rs.** CGP's constructs are procedural macros, and rustdoc cannot show what a reader
 needs: the trait pair a macro generates, the wiring it joins, and the code it desugars to. The
-crate's [docs.rs](https://docs.rs/cgp) entry has also never been filled in. So no page links it; a
-page never defers to rustdoc for anything a reader needs; and a construct that exists without a page
-is a defect. [information-architecture.md](../information-architecture.md) records the surface.
+crate's [docs.rs](https://docs.rs/cgp) entry has also never been filled in. So only the Resources
+index links it; a page never defers to rustdoc for anything a reader needs; and a construct that
+exists without a page is a defect. [information-architecture.md](../information-architecture.md)
+records the surface.
 
 ## Derived from the internal reference, and kept in step with it
 

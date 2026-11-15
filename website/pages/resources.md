@@ -21,7 +21,9 @@ level one of the four in [ai-disclosure.md](../../communication-strategy/ai-disc
 The index names Context-Generic Programming, links the Introduction, and relates the short form
 "CGP enables pluggable trait implementations in Rust" to the rest of the documentation. It says the
 section holds one page per kind, links *Videos*, and says that more kinds, such as events, will be
-added.
+added. A closing paragraph links `cgp`'s [docs.rs](https://docs.rs/cgp) entry for the API, the only
+link to it on the site, and the Reference for what each construct does and generates, following
+[the reference guide](../writing-guides/reference.md).
 
 *Videos* opens with the same short form and says what each entry gives. Its one entry, *RustLab
 2025: How to stop fighting with coherence*, embeds the talk in a player that scales to the column's
