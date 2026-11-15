@@ -40,7 +40,8 @@ Reference, Concepts, Comparisons, and Projects. The quality concern and the feed
 before the explanation of the iterative knowledge-base process and its review limits, so the
 explanation answers a question the reader already has. It links the public methodology, disclosure,
 and knowledge-base current-state pages, and no knowledge-base repository directly. The skill is
-optional learning and debugging help, not a proficiency guarantee.
+optional learning and debugging help, not a proficiency guarantee, and the section links the
+skill's installation page for setting it up.
 
 **Namespaces.** The section opens with the earlier wiring burden and the limits of provider bundles,
 states the practical payoff, and links ahead for readers who want the syntax or migration. The

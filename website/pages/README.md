@@ -36,5 +36,6 @@ Pages recorded elsewhere:
 - [cargo-cgp.md](cargo-cgp.md): the tool's nine pages and the facts behind their quoted output.
 - [ai-overview.md](ai-overview.md): the AI section's landing page and its two directions.
 - [ai-skills.md](ai-skills.md): the skill index and the skill served from the submodule.
+- [skill-installation.md](skill-installation.md): how to install the `/cgp` skill in each agent.
 - [knowledge-base.md](knowledge-base.md): the four pages that explain this base to a person.
 - [ai-disclaimer.md](ai-disclaimer.md): how the project uses AI, part by part.

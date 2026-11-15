@@ -829,6 +829,8 @@ it stale.
   directions.
 - [ai-skills.md](website/pages/ai-skills.md) — the skill index and the skill served from the
   submodule.
+- [skill-installation.md](website/pages/skill-installation.md) — how to install the `/cgp` skill in
+  each agent.
 - [knowledge-base.md](website/pages/knowledge-base.md) — the four pages that explain this base to a
   person.
 - [ai-disclaimer.md](website/pages/ai-disclaimer.md) — how the project uses AI, part by part.

@@ -1,8 +1,8 @@
 # AI skills
 
 The AI skills pages publish CGP's agent skills for readers who want to hand them to an agent: one
-index page for the section, then one directory per skill, today the `/cgp` skill, whose own files
-are served unedited.
+index page for the section, an installation page, then one directory per skill, today the `/cgp`
+skill, whose own files are served unedited.
 
 - **URL:** <https://contextgeneric.dev/docs/ai/skills/>
 - **Source:** [docs/ai/skills/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/ai/skills)
@@ -16,8 +16,8 @@ The index, *Agent Skills*, names Context-Generic Programming, says why an agent 
 macros generate code the agent cannot see, and its training may show syntax the library no longer
 accepts), and introduces the `/cgp` skill: what its main page covers, a few of its references, and
 the versions it describes. It says the skill does not make the agent's code correct and asks the
-reader to review what the agent writes, tells the reader how to install it, routes learners to the
-tutorials and Concepts, sends a reader whose question outgrows the skill to the
+reader to review what the agent writes, links [the installation page](skill-installation.md), routes
+learners to the tutorials and Concepts, sends a reader whose question outgrows the skill to the
 [knowledge-base using page](knowledge-base.md), and says the pages are a pinned snapshot. It carries
 no skill content of its own, and its foot carries the provenance line for documentation pages: level
 one of the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md).
