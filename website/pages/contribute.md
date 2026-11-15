@@ -59,5 +59,4 @@ more. The reporting route follows
 - The acknowledgement names the Hermes SDK without linking it; do not add the link back.
 - The page may link the knowledge base's issue tracker and nothing else in the base, per the
   website's [link rules](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links).
-- The heading is *Contribute*, so the full name opens the prose; the sidebar keeps the label
-  *Contribute to CGP*.
+- The heading and the sidebar label are both *Contribute*, so the full name opens the prose.
