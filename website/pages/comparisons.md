@@ -16,7 +16,7 @@ related-work document, plus an index that routes by background.
 
 ## What it covers
 
-The section is a top-level category at `docs/comparisons/`, labelled *Comparisons*, at position 6.
+The section is a top-level category at `docs/comparisons/`, labelled *Comparisons*, at position 8.
 Every page follows the shape [writing-guides/related-work.md](../writing-guides/related-work.md)
 specifies: an orientation paragraph that names Context-Generic Programming, links the Introduction,
 and relates a short form of the tag line; an *In your terms* table that glosses "context" on first

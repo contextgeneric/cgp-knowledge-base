@@ -4,7 +4,7 @@ The `cargo-cgp` section is the tool's own documentation: nine pages on installin
 reading its output, and fixing what it reports.
 
 - **URL:** <https://contextgeneric.dev/docs/cargo-cgp/>
-- **Source:** [docs/cargo-cgp/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/cargo-cgp)
+- **Source:** [docs/tooling/cargo-cgp/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/tooling/cargo-cgp)
 - **Status:** Current, written against `cargo-cgp` v0.1.0 ahead of its release, in
   natural-writing style
 - **How it was made:** written by an agent from [cargo-cgp/reference/](../../cargo-cgp/reference/README.md)
@@ -14,8 +14,9 @@ reading its output, and fixing what it reports.
 
 ## What it covers
 
-The section is a top-level category beside the reference rather than inside it, because a reference
-page answers "what does this construct mean" and these answer "how do I run this".
+The section is a category inside [Tooling](tooling.md), after the reference rather than inside it,
+because a reference page answers "what does this construct mean" and these answer "how do I run
+this".
 [writing-guides/tooling.md](../writing-guides/tooling.md) specifies its nine pages, in the order a
 reader needs them:
 
@@ -85,6 +86,10 @@ deliberate mistakes as fixtures under `tests/compile_fail/cargo_cgp/`, one per h
 programs the pages say compile under `tests/cargo_cgp/`.
 
 ## What a later revision must know
+
+- **The pages live under `docs/tooling/cargo-cgp/` but keep their `/docs/cargo-cgp/` URLs**: each
+  sets `slug` in its front matter, because `cargo-cgp`'s manifest and READMEs, `cgp`'s README, and
+  the agent skill link those URLs. A new page here sets its `slug` the same way.
 
 - **The quoted output comes from `cargo-cgp`'s `main`, the v0.1.0 release the pages document,**
   captured with the source-built tool on Linux against the sibling `cgp` checkout on the release

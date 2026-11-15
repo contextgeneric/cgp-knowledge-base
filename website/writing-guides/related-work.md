@@ -7,8 +7,8 @@ each costs, and says plainly where the reader's own tool is the better choice. T
 from the internal [related-work](../../related-work/README.md) comparisons, and this guide fixes what
 changes in the port.
 
-- **Where they live**: `docs/comparisons/`, a top-level category labelled **Comparisons**, directly
-  after Concepts in the sidebar
+- **Where they live**: `docs/comparisons/`, a top-level category labelled **Comparisons**, after
+  Tooling in the sidebar
 - **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Derived from**: [related-work/](../../related-work/README.md), one internal document per page,

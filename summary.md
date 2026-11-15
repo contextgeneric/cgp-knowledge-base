@@ -821,6 +821,8 @@ it stale.
   the `[CGP-Exxx]` code tables.
 - [glossary.md](website/pages/glossary.md) — the reference's term lookup and the rules for linking
   its terms.
+- [tooling.md](website/pages/tooling.md) — the Tooling section's index, which introduces the tools
+  beside the library and holds `cargo-cgp`'s pages.
 - [cargo-cgp.md](website/pages/cargo-cgp.md) — the tool's nine pages and the facts behind their
   quoted output.
 - [ai-overview.md](website/pages/ai-overview.md) — the AI section's landing page and its two

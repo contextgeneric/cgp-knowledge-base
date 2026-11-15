@@ -10,7 +10,7 @@ Pages recorded elsewhere:
 - **Blog posts:** one record each under [blog/](../blog/README.md).
 - **Tutorial series:** one record each under [tutorials/](../tutorials/README.md).
 - **Projects** ([docs/projects/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/projects),
-  position 8): ported from the base's [projects/](../../projects/README.md) sections, with the
+  position 9): ported from the base's [projects/](../../projects/README.md) sections, with the
   blueprint and one plan per project under [projects/](../projects/README.md) and the page type in
   [writing-guides/project.md](../writing-guides/project.md). Draft: the index, 21 Hypershell pages,
   49 cgp-serde pages, and 14 cgp-examples pages are written on `v0.8.0`; the error backends are
@@ -32,6 +32,7 @@ Pages recorded elsewhere:
 - [reference.md](reference.md): the construct reference, its groups, mapping, and port conventions.
 - [compile-errors.md](compile-errors.md): the reference's consolidated error page and code tables.
 - [glossary.md](glossary.md): the reference's term lookup and its linking rules.
+- [tooling.md](tooling.md): the Tooling section's index, which introduces the tools beside the library.
 - [cargo-cgp.md](cargo-cgp.md): the tool's nine pages and the facts behind their quoted output.
 - [ai-overview.md](ai-overview.md): the AI section's landing page and its two directions.
 - [ai-skills.md](ai-skills.md): the skill index and the skill served from the submodule.

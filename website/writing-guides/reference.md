@@ -108,7 +108,7 @@ update the counts in [pages/reference.md](../pages/reference.md) and
   exists is worse than none.
 
 **Three pages are not constructs.** [`cargo-cgp`](../../cgp/reference/cargo-cgp.md) documents the
-toolchain, so it gets its own top-level docs section beside the reference. The **error catalog**
+toolchain, so it gets its own section under Tooling, after the reference. The **error catalog**
 belongs inside the reference, because a reader with a wiring failure is looking something up by a
 name they have, an error code or a message shape. It consolidates the twenty-one class documents of
 the internal [errors catalog](../../cgp/errors/README.md) into one page, organized by its

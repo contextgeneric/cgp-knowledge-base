@@ -6,7 +6,7 @@ project, with each project's example programs expanded into short tutorials. Par
 the website's `v0.8.0` branch; each project's plan below says which pages.
 
 - **Location** — `https://contextgeneric.dev/docs/projects/` once the `v0.8.0` branch publishes, a
-  `Projects` category between Reference and `cargo-cgp` in the sidebar
+  `Projects` category between Comparisons and Resources in the sidebar
 - **Derived from** — [projects/](../../projects/README.md), which stays the source of truth
 - **Page-type spec** — [../writing-guides/project.md](../writing-guides/project.md), which holds the
   page kinds, the mapping from internal document to page, and the rules every page follows; read it

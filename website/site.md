@@ -128,9 +128,12 @@ GitHub Discussions, [Discord](https://discord.gg/Hgk3rCw6pQ), and the
 [r/cgp subreddit](https://www.reddit.com/r/cgp/). The site is licensed CC BY-SA 4.0.
 
 **The `docs/` sidebar order is settled:** Introduction, Quickstart, Overview, Tutorials, Concepts
-(5), Comparisons (6), Reference (7), Projects (8), `cargo-cgp` (9), Resources (10), Contribute (11),
-and AI (12), as
+(5), Reference (6), Tooling (7), Comparisons (8), Projects (9), Resources (10), Contribute (11), and
+AI (12), as
 [information-architecture.md](information-architecture.md#navigation-and-sidebar-order) wants.
+Tooling holds `cargo-cgp` (1) under `docs/tooling/cargo-cgp/`, whose pages set `slug` front matter
+so their URLs stay under `/docs/cargo-cgp/`, where `cargo-cgp`'s manifest and READMEs, `cgp`'s
+README, and the agent skill link them.
 
 **The announcement bar is hardcoded in `docusaurus.config.ts`,** so it is updated by hand with every
 release announcement. On `main` it promotes the v0.7.0 post; `v0.8.0` points it at the v0.8.0 post.

@@ -103,14 +103,15 @@ afterwards.
     application before their habits form.
   - *Area calculation*: the first-principles series, ending with *Checking and debugging*, which
     carries one mis-wiring through `check_components!` and `cargo cgp check`.
-- **Comparisons**, placed after Concepts: labelled *Comparisons* because "related work" is the
+- **Comparisons**, placed after Tooling: labelled *Comparisons* because "related work" is the
   internal directory's word, not a reader's.
 - **Reference**, grouped as `macros/`, `attributes/`, `derives/`, `components/`, `providers/`,
   `traits/`, and `types/`, with a hand-written index that names what a newcomer needs first and
   reaches every construct, an error catalog page, and a glossary.
-- **Tooling** at `docs/cargo-cgp/`, a sibling section rather than part of the reference, labelled for
-  the tool; its error-codes page is where the error catalog sends a reader holding a `[CGP-Exxx]`
-  code.
+- **Tooling** at `docs/tooling/`, a sibling section after the reference rather than part of it: an
+  index that introduces the programs a reader runs beside the library and says more will join, then
+  `cargo-cgp`'s pages, whose URLs stay under `/docs/cargo-cgp/`. The tool's error-codes page is where
+  the error catalog sends a reader holding a `[CGP-Exxx]` code.
 - **Projects**, after the release: the index, cgp-examples, Hypershell, and cgp-serde partly written,
   and the error backends **new**. It replaces three deep dives planned earlier, as
   [projects/README.md](projects/README.md#what-the-section-replaces) records.
@@ -149,16 +150,17 @@ the `docs/` tree, so a new category is a directory with a `_category_.json`, wit
 [stock-Docusaurus policy](site.md#how-the-site-is-built).
 
 **The sidebar follows the order a reader needs things:** Introduction, Quickstart, Overview,
-Tutorials, Concepts, Comparisons, Reference, Projects, Tooling, Resources, Contribute, and AI.
+Tutorials, Concepts, Reference, Tooling, Comparisons, Projects, Resources, Contribute, and AI.
 
 - **The Quickstart is second** because the Introduction is the docs root, and a reader who wants to
   see CGP run should meet it before any argument.
 - **Concepts follows Tutorials**, because a reader who meets eighteen idea pages before writing a line
   reads them as the theory CGP demands up front; after the tutorials, they are what a reader reaches
   for once a construct raises a question.
-- **Comparisons sits beside Concepts**, because both are read away from the keyboard, and a Concepts
-  page is where a reader with a prior model finds its comparison.
-- **Reference follows them**, because a reader reaches for it once writing code.
+- **Reference and Tooling follow Concepts**, at the author's request, so the construct reference and
+  the tool a reader runs while writing code sit together.
+- **Comparisons follows them**, and a reader with a prior model still finds a comparison from the
+  Concepts page that links it.
 
 **Name the category *Concepts*, never *Explanation* or *Understanding CGP***: "explanation" is the
 documentation organizer's word, which Diátaxis advises against exposing, and *Concepts* matches the

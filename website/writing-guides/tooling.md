@@ -4,8 +4,9 @@ A tooling page documents a **program the reader runs**, not a construct they wri
 such subject, [`cargo-cgp`](https://contextgeneric.dev/docs/cargo-cgp/), and its section is the model
 this guide describes.
 
-- **Where they live**: `docs/cargo-cgp/`, a top-level category beside the reference, recorded in
-  [pages/cargo-cgp.md](../pages/cargo-cgp.md)
+- **Where they live**: `docs/tooling/`, the Tooling section after the reference, with one category
+  per tool, such as `docs/tooling/cargo-cgp/`, recorded in [pages/tooling.md](../pages/tooling.md)
+  and [pages/cargo-cgp.md](../pages/cargo-cgp.md)
 - **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Derived from**: [cargo-cgp/reference/](../../cargo-cgp/reference/README.md) and
@@ -15,7 +16,7 @@ this guide describes.
 
 ## Writing style
 
-Write every page under `docs/cargo-cgp/` in **natural-writing**'s natural style: each sentence builds
+Write every page under `docs/tooling/` in **natural-writing**'s natural style: each sentence builds
 on the last, paragraphs connect the reasoning, and sentence lengths vary. A reader arrives to run a
 command or understand an error, so the opening names that task and why it matters, names
 Context-Generic Programming once beside a plain description of what the tool checks, and links the
@@ -42,6 +43,11 @@ failures happen before the tool does anything.
 ships, so treat every version-specific sentence as stale until re-checked.
 
 ## The section shape
+
+The section's index (`docs/tooling/index.md`, the Tooling category's link target) names
+Context-Generic Programming, says the tools are optional, gives each tool a short section that links
+its main pages, and says that more tooling will be added. A tool's own category follows the shape
+below, which `cargo-cgp`'s pages set.
 
 Nine pages, in the reader's order: the five a reader works through first, the editor page, the
 troubleshooting page, then the two lookup pages.

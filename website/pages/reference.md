@@ -14,7 +14,7 @@ the internal reference.
 
 The reference is the site's largest surface and is [canonical](../writing-guides/reference.md)
 rather than a supplement to docs.rs: the completeness obligation is against the index, so no
-construct is missing from the site. It is a top-level category at `docs/reference/`, position 7, with
+construct is missing from the site. It is a top-level category at `docs/reference/`, position 6, with
 a hand-written index as its category link and seven subdirectories by what a construct *is*, each of
 which links a written overview as its category page. Two pages document no construct:
 the [compile-errors page](compile-errors.md) and the [glossary](glossary.md).
