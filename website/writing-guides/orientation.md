@@ -153,9 +153,10 @@ instead, because a pin crates.io does not carry fails on the reader's first buil
 **A section for material about CGP beyond the documentation, with one subpage per kind.** It holds
 one kind today, videos, at `docs/resources/videos.md`; events and other kinds join as their own
 subpages, so each kind's URL stays stable as the section grows. The index
-(`docs/resources/index.md`, the category's link target) names Context-Generic Programming, links
-each subpage with what it holds, says that more kinds will be added, and links `cgp`'s docs.rs
-entry, which no other page links, naming the Reference as the fuller account of each construct. A
+(`docs/resources/index.md`, the category's link target) names Context-Generic Programming, then
+gives each kind of resource its own `##` section saying what it holds and linking where it lives:
+one per subpage, one for `cgp`'s docs.rs entry, which no other page links, naming the Reference as
+the fuller account of each construct, and a last one saying that more kinds will be added. A
 video entry gives the talk's title as its heading, the embedded player scaled to the column, a line
 on what the talk covers, and its transcript post where one exists.
 
