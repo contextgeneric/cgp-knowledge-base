@@ -170,10 +170,9 @@ crate in crates.io's and lib.rs's browse surfaces.
   [identity.md](../communication-strategy/identity.md#using-modular-as-a-supporting-word) retires. Its
   topics are `functional-programming`, `modular-programming`, and `rust`.
 - **`cargo-cgp`, `cgp-examples`, and `contextgeneric.dev` have no description.** `cgp-skills`
-  describes itself as "Prompts and instructions for LLM-assisted coding for CGP" rather than as CGP's
-  agent skill, the name
+  describes itself as "CGP's agent skill", the name
   [vocabulary.md](../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
-  gives it.
+  gives it, and says what the skill does.
 - **No member repository other than `cgp` has topics**, and of the others only `cgp-serde` sets a
   homepage, its release post rather than its Projects pages.
 
