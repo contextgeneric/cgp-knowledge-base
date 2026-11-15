@@ -85,6 +85,11 @@ argument is read by reference and cloned, a `&str` is read from a `String` field
 
 ## Maintaining it
 
+**The author wrote this page, so its content and example stay as written.** A revision is minor:
+front matter, the name in the opening, a short note, or a correction of a typo, link, or stale fact.
+The page carries a written `title` and `description`, its `sidebar_label` keeps the heading's text,
+and its opening names Context-Generic Programming.
+
 **Update the version pin, and resist additions.** The tutorial's value is that it is short enough to
 finish; anything larger belongs in the [area calculation series](area-calculation.md), which the
 closing paragraph points to, promising components and providers "in the next tutorials". Preserve the

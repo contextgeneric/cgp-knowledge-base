@@ -142,6 +142,13 @@ series omits both. Two smaller points:
 
 ## Maintaining it
 
+**The author wrote the index, Context-Generic Functions, and Static Dispatch, so their content and
+examples stay as written.** A revision to them is minor: front matter, the name in the opening, a
+short note such as Static Dispatch's on the idiomatic provider form, or a correction of a typo, link,
+or stale fact. Each carries a written `title` and `description`, with a `sidebar_label` keeping the
+heading's text, and names Context-Generic Programming where it first mentions the project. An agent
+wrote Checking and Debugging, which takes ordinary revisions.
+
 **Preserve the two orderings above all**; they make the series work, and they are what an unwary
 addition breaks.
 

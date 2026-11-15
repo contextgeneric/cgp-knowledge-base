@@ -775,8 +775,8 @@ it stale.
   that publishes with the release.
 - [website/seo.md](website/seo.md) — the site's search and agent discoverability strategy, written
   against a twelve-month Google Search Console export: the 1.09% click-through rate that reframes
-  the problem as presentation rather than rank, the derived descriptions behind it and the pages that
-  still render one, the dead pre-migration URLs the redirect stubs repair at the merge, the branded
+  the problem as presentation rather than rank, the derived descriptions behind it, now
+  replaced on every docs page, the dead pre-migration URLs the redirect stubs repair at the merge, the branded
   terms that already rank first and have no volume, the blanket-implementation family that is the
   project's one proven term, why the tag line orients rather than ranks, the map from the headline
   features to query families, the per-page title and description levers, why adding a page is almost
