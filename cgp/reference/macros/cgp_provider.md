@@ -55,8 +55,13 @@ The attribute takes one optional argument, the **component type** used in the ge
 `AreaCalculatorComponent`, and implementing `crate::shapes::AreaCalculator` targets
 `crate::shapes::AreaCalculatorComponent`, which the module need not import. The key carries the span
 of the trait's name, so a key that does not resolve is reported there, as for
-[`#[cgp_impl]`](cgp_impl.md#syntax). Pass the component explicitly when the component's marker does
-not follow that convention, as when the component renamed it with
+[`#[cgp_impl]`](cgp_impl.md#syntax).
+
+A provider in another module than its component therefore imports the key beside the provider
+trait, as `use crate::shapes::{AreaCalculator, AreaCalculatorComponent};` above the impl, or names the
+trait by its path in the header, and a module that re-exports the provider trait re-exports the key
+in the same `use`. Pass the component explicitly when the component's marker does not follow that
+convention, as when the component renamed it with
 [`#[cgp_component]`](cgp_component.md)'s `name:` key:
 
 ```rust

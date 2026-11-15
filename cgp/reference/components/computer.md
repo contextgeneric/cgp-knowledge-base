@@ -83,7 +83,9 @@ exports none of the handler family: the consumer traits `CanCompute`, `CanComput
 `AsyncComputer`, and `AsyncComputerRef`, their four keys, the one-step promotion providers
 (`Promote`, `PromoteAsync`, `PromoteRef`, `TryPromote`), and the promotion bundles such as
 `PromoteComputer`. A provider written with `#[cgp_impl]` or `#[cgp_provider]` on `Computer` also
-needs `ComputerComponent` in scope, because the macro names the key as `{Trait}Component`.
+needs `ComputerComponent` in scope, because the macro names the key as `{Trait}Component`, unless
+its header names the trait by path: `impl<Code> cgp::extra::handler::Computer<Code, u64>` derives
+`cgp::extra::handler::ComputerComponent`.
 
 The `#[prefix]` registration decides how a context that joins `DefaultNamespace` wires these
 components. It binds a provider at the prefixed path, as

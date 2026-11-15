@@ -84,6 +84,32 @@ A bare identifier is shorthand for setting `provider` alone.
   trait. It defaults to `__Context__`, a deliberately unusual name chosen to avoid clashing with the
   user's own type parameters.
 
+**The component key is declared beside the two traits, so code in other modules imports it with
+them.** A wiring table names the key, and a provider written with [`#[cgp_impl]`](cgp_impl.md) or
+[`#[cgp_provider]`](cgp_provider.md) names it implicitly, deriving it from the provider trait's
+name, so a provider in another module imports the key beside the provider trait or names the trait
+by its path. A module that re-exports the component's traits re-exports the key in the same `use`:
+
+```rust
+pub mod components {
+    use cgp::prelude::*;
+
+    #[cgp_component(AreaCalculator)]
+    pub trait CanCalculateArea {
+        fn area(&self) -> f64;
+    }
+}
+
+pub mod shapes {
+    pub use crate::components::{AreaCalculator, AreaCalculatorComponent, CanCalculateArea};
+}
+```
+
+A provider then writes `use crate::shapes::{AreaCalculator, AreaCalculatorComponent};`, or
+`impl crate::shapes::AreaCalculator`. A key that `name:` renames or gives parameters is not the
+name a provider header derives, so its providers name it in the attribute, as
+[Syntax Grammar](#syntax-grammar) shows.
+
 **The trait body may declare any number of items.** A component trait may carry any number of
 methods, associated types, and associated consts, and every one of them is reproduced on the
 generated provider trait, so a provider implements the whole set. CGP's own

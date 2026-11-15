@@ -134,7 +134,7 @@ cause or proves it absent:
 | a `#[use_type]` imported-name typo (`E0576`) | `grep -n 'cannot find associated type'` | the caret sits on the misspelled name |
 | a dependency a CGP definition uses without declaring it | `grep -n '__Context__'` | a headline on the generated context (an `E0599` on `&__Context__`, an `E0220` "not found for `__Context__`", an `E0277` on `__Context__: Trait`) means a `#[cgp_fn]`/`#[cgp_impl]` lacks the `#[uses]`, `#[use_type]`, or component requirement for the trait or type it names; see [undeclared dependency](../errors/lowering/undeclared-dependency.md) |
 | the wrong half of a component (`E0107`) | `grep -n 'E0107'` | the caret's trait is a consumer trait in a `#[cgp_impl]` header or a `#[use_provider]` bound, or a provider trait in `#[uses]`; name the other half, per [wrong component half](../errors/lowering/wrong-component-half.md) |
-| a name a macro lowered out of scope (`E0433`/`E0425`) | `grep -nE 'E0433\|E0425'` | grep the **codes**, not the message: both print "cannot find type", so a text search finds one and misses the other. `E0433` (`use of undeclared type`) means the caret is in your own signature, on an `#[impl_generics]` parameter named where only the generated impl declares it; `E0425` (`not found in this scope`) means a bare generated name, most often a `…Component` marker derived from a `#[cgp_impl]` header naming the wrong trait |
+| a name a macro lowered out of scope (`E0433`/`E0425`) | `grep -nE 'E0433\|E0425'` | grep the **codes**, not the message: both print "cannot find type", so a text search finds one and misses the other. `E0433` (`use of undeclared type`) means the caret is in your own signature, on an `#[impl_generics]` parameter named where only the generated impl declares it; `E0425` (`not found in this scope`) means a bare generated name, most often the `…Component` key a `#[cgp_impl]` or `#[cgp_provider]` header derives from its trait, not imported or derived from the wrong trait |
 | an abstract type shadowing its own bound (`E0404`) | `grep -n 'expected trait, found'` | a `#[cgp_type]` associated type named after the trait bounding it, so the bound resolved to the associated type; the paired "you might have meant to refer to this trait" note names the other half |
 | a field type disagreeing with a *wired* abstract type (`E0271`) | `grep -n 'type mismatch resolving'` | the required side is printed normalized, so a `Value == Pool<Postgres>` requirement may come from a wired `Db` rather than from anything written in the provider, so check the wiring before the provider |
 
@@ -337,11 +337,18 @@ this as a lookup once you have the error code and the trait it names.
   [`#[impl_generics]`](../reference/attributes/impl_generics.md) parameter named in the trait's
   *signature*, where only the generated impl declares it; promote the type to an
   [abstract type](../concepts/abstract-types.md), or keep it out of the signature. An `E0425`
-  (`not found in this scope`) names a bare generated identifier, most often a `…Component` marker
-  derived from a [`#[cgp_impl]`](../reference/macros/cgp_impl.md) header that names a component's
-  *consumer* trait, or a trait that is no component at all, where its *provider* trait belongs (see
-  [Wrong component half](../errors/lowering/wrong-component-half.md)). An `E0425` whose caret sits
-  on a key or a value inside `delegate_components!` is a wiring name that does not resolve: a
+  (`not found in this scope`) names a bare generated identifier, most often the `…Component` key
+  that a [`#[cgp_impl]`](../reference/macros/cgp_impl.md) or
+  [`#[cgp_provider]`](../reference/macros/cgp_provider.md) header derives from its trait, with the
+  caret on the trait's name. When that trait is a provider trait, the module lacks its key: import
+  the key beside the trait, as `use crate::components::{Greeter, GreeterComponent};`, or name the
+  trait by its path; for a trait imported under another name, or a key that `name:` renames or gives
+  parameters, name the key in the attribute, as `#[cgp_impl(new GreetHello: GreeterComponent)]`.
+  `cargo cgp check` reports these as `[CGP-E041]` and `[CGP-E070]`, with the edit as a fix (see
+  [Unresolved wiring name](../errors/wiring/unresolved-wiring-name.md)). When the trait is a
+  component's *consumer* trait, or a trait that is no component at all, its *provider* trait belongs
+  there (see [Wrong component half](../errors/lowering/wrong-component-half.md)). An `E0425` whose
+  caret sits on a key or a value inside `delegate_components!` is a wiring name that does not resolve: a
   component not imported, a key guessed from a trait's name, or a provider never declared (see
   [Unresolved wiring name](../errors/wiring/unresolved-wiring-name.md)). An `E0425` on a bare
   `Error` is an abstract type written without its `#[use_type(HasErrorType.Error)]` import, whatever

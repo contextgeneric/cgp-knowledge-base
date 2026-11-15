@@ -66,10 +66,38 @@ The attribute argument has three parts, of which only the provider name is requi
 `Component` to the trait's last segment and drops the trait's generic arguments. So
 `impl AreaCalculator` names `AreaCalculatorComponent`, which must be in scope beside the trait,
 while `impl crate::shapes::AreaCalculator` names `crate::shapes::AreaCalculatorComponent`, which the
-module need not import. The key carries the span of the trait's name, so when it does not resolve,
-the compiler reports ``cannot find type `AreaCalculatorComponent` in this scope`` on that name in
-the header. A header that reaches the trait through a module re-exporting the trait without its key
-fails the same way, as ``cannot find type `AreaCalculatorComponent` in module `crate::facade` ``.
+module need not import.
+
+**A provider in another module than its component therefore imports the key beside the provider
+trait, or names the trait by its path.** The import is one `use` line for both names:
+
+```rust
+mod providers {
+    use cgp::prelude::*;
+
+    use crate::components::{AreaCalculator, AreaCalculatorComponent};
+
+    #[cgp_impl(new RectangleAreaCalculator)]
+    impl AreaCalculator {
+        fn area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
+            width * height
+        }
+    }
+}
+```
+
+A module that re-exports a provider trait re-exports its key in the same line, as a `shapes` module
+writing `pub use crate::components::{AreaCalculator, AreaCalculatorComponent};`, so a provider can
+import both from it or write `impl crate::shapes::AreaCalculator`. The rule covers a key from a
+dependency too: a provider on `cgp`'s `Computer` imports `ComputerComponent` beside it from
+`cgp::extra::handler`. A component whose `name:` renames its key or gives it parameters has no key
+under the derived name, so its provider names the key with the `: ComponentType` suffix, as
+[`#[cgp_component]`](cgp_component.md#syntax-grammar) shows. The provider trait's generated doc
+names its key, so hovering the trait in the `use` line shows which key to import beside it.
+
+The key carries the span of the trait's name, so when it does not resolve, the compiler reports
+``cannot find type `AreaCalculatorComponent` in this scope`` on that name in the header. A header
+that reaches the trait through a module re-exporting the trait without its key fails the same way, as ``cannot find type `AreaCalculatorComponent` in module `crate::facade` ``.
 `cargo cgp check` reshapes both into
 [`[CGP-E041]`](../../errors/wiring/unresolved-wiring-name.md), naming the import or the module that
 defines the key, and a trait imported under another name, which derives a key nothing declares, into
