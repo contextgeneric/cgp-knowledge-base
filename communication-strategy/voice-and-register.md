@@ -141,8 +141,9 @@ contains the accuracy rules for terms such as “capability,” “zero-cost,”
 Improve unclear or inflated prose within the requested scope. Existing wording is not a reason to
 retain an unsupported claim, but a local revision is not permission to rewrite the whole site.
 
-Docs pages describe current behavior and can be corrected in place. Published blog posts are dated
-records and follow the separate restrictions in
+Docs pages describe current behavior and can be corrected in place, apart from the release notes,
+which describe one release each. Published blog posts are dated records and follow the separate
+restrictions in
 [website/AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts).
 Record drift in their internal documents rather than silently updating historical code or claims.
 

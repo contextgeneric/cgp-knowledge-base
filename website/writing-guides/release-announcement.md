@@ -37,7 +37,7 @@ reading about.** That does not require the longest explanation first: short anno
 tooling and documentation can come before a technical walkthrough readers may skip, as the v0.8.0 post
 does at the author's request, with namespaces still its main worked example. Connect several
 announcements through the release's purpose, focused on what readers gain and where they can try it,
-rather than giving every changelog entry an equal explanation.
+rather than giving every entry of the release notes an equal explanation.
 
 **Length follows the depth the main explanation needs, not the number of release entries.**
 
@@ -97,8 +97,9 @@ four of its habits matter most here:
 ## What must not be in a release announcement
 
 - **No re-introduction to CGP**: one paragraph of orientation and a link.
-- **No changelog dump.** The exhaustive list belongs in the repository's changelog and
-  [releases/](../../releases/README.md); a post that leads with a list has no lead.
+- **No changelog dump.** The exhaustive list belongs in the release's notes page, written to
+  [release-notes.md](release-notes.md), which the post links and which links the post back; a post
+  that leads with a list has no lead.
 - **No silent breakage**: every removal and rename is named with its replacement.
 - **No unbenchmarked performance claim.** "Faster" needs a citable number, and CGP's honest claim is
   almost always about compile-time-versus-runtime placement rather than speed.

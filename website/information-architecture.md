@@ -71,6 +71,10 @@ Each surface has one job, and a page that does two jobs is usually two pages:
 - **Orientation pages** (the Introduction, the Overview, the Quickstart, and Resources): route, or on
   the Overview tour the features, rather than teach, for readers already interested. Spec:
   [writing-guides/orientation.md](writing-guides/orientation.md).
+- **Release notes:** list everything one official release changed that a user can see, and how to
+  upgrade, one page per release of `cgp` and of `cargo-cgp`; the one dated surface under `docs/`,
+  leaving the story to the release post. Spec:
+  [writing-guides/release-notes.md](writing-guides/release-notes.md).
 - **Project pages** (Contribute and the AI disclosure page): speak about the project rather than
   about CGP. Contribute's sponsorship section is the one place the author's own voice stands on the
   site, and the disclosure page's sentence taking responsibility for what the project publishes is the
@@ -120,6 +124,10 @@ afterwards.
   *Introduction*, narrowed to the definition and the routing, with no maturity section, since the
   front page's cost section states the maturity; and *Resources*, material about CGP beyond the
   documentation, one subpage per kind, starting with *Videos*.
+- **Release notes** **new**, at `docs/release-notes/`: an index stating how CGP numbers its 0.x
+  releases, then `cgp/` with a page for every official release from v0.1.0 and `cargo-cgp/` with
+  one from v0.1.0, newest first. It replaces `cgp`'s `CHANGELOG.md` and the GitHub Release bodies,
+  which become one-line pointers.
 - **Project:** *Contribute*.
 - **Further depth:** links out to the repositories, never to the legacy book. `cgp`'s docs.rs entry
   is linked once, from the Resources index.
@@ -152,7 +160,8 @@ the `docs/` tree, so a new category is a directory with a `_category_.json`, wit
 [stock-Docusaurus policy](site.md#how-the-site-is-built).
 
 **The sidebar follows the order a reader needs things:** Introduction, Quickstart, Overview,
-Tutorials, Concepts, Reference, Tooling, Comparisons, Projects, AI, Resources, and Contribute.
+Tutorials, Concepts, Reference, Tooling, Comparisons, Projects, AI, Resources, Release notes, and
+Contribute.
 
 - **The Quickstart is second** because the Introduction is the docs root, and a reader who wants to
   see CGP run should meet it before any argument.
@@ -168,6 +177,9 @@ Tutorials, Concepts, Reference, Tooling, Comparisons, Projects, AI, Resources, a
   screen, where
   [message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)
   wants agent support kept out of the opening.
+- **Release notes follow Resources**, at the author's request, as a top-level category rather than
+  a Resources page, because Resources holds material about CGP beyond the site; an upgrader reaches
+  a page from the release post or the README more often than from the sidebar.
 
 **Name the category *Concepts*, never *Explanation* or *Understanding CGP***: "explanation" is the
 documentation organizer's word, which Diátaxis advises against exposing, and *Concepts* matches the
@@ -217,7 +229,9 @@ Three questions, asked in order, settle where a page goes:
    Projects when the subject is a program a project ships. Looking one thing up: the reference, or a
    project's reference when the name belongs to that project.
 2. **Is it dated?** A statement about a moment (a release, an announcement, a talk) is a blog post; a
-   statement about how things are is a docs page, corrected in place.
+   statement about how things are is a docs page, corrected in place. The list of what one release
+   changed is the exception: it is dated but a docs page, under Release notes, because an upgrader
+   looks it up rather than reads it as a story.
 3. **Whose voice?** The author's first person means the blog, with Contribute's sponsorship section
    as the one standing exception.
 
