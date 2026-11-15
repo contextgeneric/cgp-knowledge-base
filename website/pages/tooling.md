@@ -17,7 +17,9 @@ documentation pages: level one of the four in
 ## What it covers
 
 The opening names Context-Generic Programming beside the fact that CGP is a library built with
-ordinary cargo commands, and says the tools are optional. It leaves out the tag line, because the
+ordinary cargo commands, then names the two moments those commands give too little: an error whose
+cause the generated code hides, and a macro whose output the reader wants to see. It says the tools
+are optional. It leaves out the tag line, because the
 section's subject is not choosing an implementation. The *cargo-cgp* section describes the tool with
 the canonical sentence from
 [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
