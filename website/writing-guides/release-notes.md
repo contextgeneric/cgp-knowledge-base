@@ -12,9 +12,10 @@ with it, and not edited afterwards into agreement with later releases.
 - **Style**: point-first, the one page kind that names it, because a reader scans the page for the
   items that affect them
 - **Derived from**: the release's source diff and its document in [releases/](../../releases/README.md),
-  or for `cargo-cgp` the [cargo-cgp/](../../cargo-cgp/README.md) section, which stays the
-  finer-detail companion of the page
-- **Status once published**: a dated record; see [A dated page](#a-dated-page)
+  or for `cargo-cgp`'s first release the [cargo-cgp/](../../cargo-cgp/README.md) section, which stays
+  the finer-detail companion of the page
+- **Status once published**: a dated record, *Historical* in the record's
+  [status words](../README.md#status-words); see [A dated page](#a-dated-page)
 - **Reading**: the shared set and [the release-notes row](README.md#release-notes-pages) of the
   reading map
 
@@ -98,8 +99,11 @@ Every page has the parts below, in this order, and leaves out a section with not
 
 - **Front matter**: `title` as `<artifact> v<version> release notes`, such as
   `cgp v0.8.0 release notes`; `sidebar_label` as the bare version; the `sidebar_position` above; a
-  written `description` naming the release's two or three main changes, within about 155 characters;
-  and a `slug` giving the version with its dots, such as `v0.8.0`.
+  written `description` naming the release's two or three main changes, within about 155 characters
+  and with apostrophes escaped as the reference guide's
+  [conventions](reference.md#conventions-the-port-must-follow) give; and a `slug` giving the version
+  with its dots, such as `v0.8.0`. The title names the artifact, which for `cgp` is the crate's
+  name, so the rule against naming CGP in a page's title does not reach it.
 - **The heading and the opening**: the `#` heading names the artifact and version. The first sentence
   names Context-Generic Programming, linked to the Introduction, beside a plain description, and says
   what the release is for. A short form of the tag line appears only where the release's main change
@@ -119,7 +123,9 @@ Every page has the parts below, in this order, and leaves out a section with not
 - **Deprecated**, **New features**, **Improvements**, **Fixes**, and **Security**: one item per
   change; a long section is grouped under `###` headings by area, in the order the
   [reference](reference.md) groups its constructs.
-- **The provenance line** at the foot.
+- **The provenance line** at the foot. The page ends there: the previous and next links that
+  Docusaurus generates route a reader to the neighbouring releases, and the opening's links route to
+  the post and the crate.
 
 ### Writing an entry
 
@@ -152,10 +158,14 @@ inline only, because `example-code` builds against the current `cgp`.
 - **Every breaking change**: each removal ledger row that removes or renames, in this release,
   something an earlier release shipped appears under *Breaking changes*, because a reader who learns of a removal from a compiler error has been let down at the
   highest cost in trust.
-- **A provenance line** at the foot, linking the documentation section of the AI disclosure page, per
-  [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page), whose
-  wording follows the reference guide's footers and says the page was verified against the release's
-  source; the level is recorded in the category's record.
+- **A provenance line** at the foot, per
+  [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page), in
+  the reference guide's footer form, in italics after a `---` rule as the other docs pages set it:
+  "An AI agent wrote this page from the release's source changes
+  and the CGP knowledge base. Its content was verified against the library's source at the release's
+  tag. See How AI is used in this project.", the last phrase linking the disclosure page's
+  documentation section, and "the tool's source" on a `cargo-cgp` page. The level is recorded in the
+  category's record.
 
 ## What must not be on one
 

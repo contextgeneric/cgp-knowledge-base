@@ -157,6 +157,6 @@ Each release of `cgp` also gets its notes page, written to the
    sentence and a link to the page.
 4. **Register the page** in its record, [website/pages/release-notes.md](../website/pages/release-notes.md).
 
-A `cargo-cgp` release follows the same steps from the tool's own diff, and has no document here: its
-finer detail lives in the [cargo-cgp/](../cargo-cgp/README.md) section, which documents the tool as
-it is.
+A `cargo-cgp` release follows the same steps from the tool's own diff, and has no document here. For
+its first release, v0.1.0, the [cargo-cgp/](../cargo-cgp/README.md) section, which documents the
+tool as it is, holds the finer detail; where a later release's detail lives is not yet chosen.

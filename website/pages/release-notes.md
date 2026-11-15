@@ -60,3 +60,5 @@ sources, and what still stands. The category sits after Resources, per
   a later change goes on the later release's page.
 - Keep the newest-first order with each page's `sidebar_position`, as the guide's
   [section shape](../writing-guides/release-notes.md#the-section-shape) gives it.
+- Change the status to Historical once the pages publish: each is correct about its own release and
+  does not track the library.

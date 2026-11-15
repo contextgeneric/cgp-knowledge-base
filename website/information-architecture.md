@@ -126,8 +126,8 @@ afterwards.
   documentation, one subpage per kind, starting with *Videos*.
 - **Release notes** **new**, at `docs/release-notes/`: an index stating how CGP numbers its 0.x
   releases, then `cgp/` with a page for every official release from v0.1.0 and `cargo-cgp/` with
-  one from v0.1.0, newest first. It replaces `cgp`'s `CHANGELOG.md` and the GitHub Release bodies,
-  which become one-line pointers.
+  one from v0.1.0, newest first. It replaces `cgp`'s `CHANGELOG.md`, which is removed, and, from
+  v0.8.0, the GitHub Release bodies, which become one-line pointers to the pages.
 - **Project:** *Contribute*.
 - **Further depth:** links out to the repositories, never to the legacy book. `cgp`'s docs.rs entry
   is linked once, from the Resources index.
