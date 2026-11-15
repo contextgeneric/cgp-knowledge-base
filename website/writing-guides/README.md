@@ -27,7 +27,8 @@ wrong:
   [identity.md](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page)
   owns the rule and its short forms; each guide says where its kind carries them.
 - **Style:** every public page is written in natural-writing's natural style, unless its guide names
-  another, and none does; the guides themselves stay in point-first style.
+  another, which only [release-notes.md](release-notes.md) does, for pages a reader scans; the guides
+  themselves stay in point-first style.
 - **Offloading:** when a section outgrows its page, the explanation becomes a dedicated page that the
   shorter surface links, so each guide names the pages its subject offloads to.
 
@@ -75,6 +76,9 @@ Register a new guide here in the same change that adds it, and in [../../summary
   Diátaxis rules kept and rejected, and the teaching contract a record states.
 - [release-announcement.md](release-announcement.md): the release posts, in the author's voice: the
   two readers, the clear lead, the parts, the breaking-changes obligation, and what publication fixes.
+- [release-notes.md](release-notes.md): the dated release-notes pages, in point-first style: the two
+  layers with the release documents, the sources and which one decides, the page's parts in order,
+  the entry form, and the checks against the diff.
 - [project.md](project.md): the Projects section: the page kinds, the example page as a short
   tutorial, the reference and limitations pages, the link map, and verification against the
   project's repository.
@@ -279,6 +283,13 @@ the naming rule exempts them.
   and [revision of human-written drafts](../../communication-strategy/ai-disclosure.md#revision-of-human-written-drafts).
 - **SEO:** [the truncated titles](../seo.md#the-longest-titles-are-truncated-before-they-say-anything)
   and [the work, in order](../seo.md#the-work-in-order), for the relaunch-day submission.
+
+### Release-notes pages
+
+- **Guide:** [release-notes.md](release-notes.md), in point-first style.
+- **Strategy:** the shared set.
+- **SEO:** [the truncated titles](../seo.md#the-longest-titles-are-truncated-before-they-say-anything)
+  and [the derived descriptions](../seo.md#derived-descriptions-made-the-worst-snippets).
 
 ## Where a guide's authority stops
 
