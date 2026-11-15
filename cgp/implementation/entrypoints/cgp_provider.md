@@ -73,9 +73,10 @@ its `defaultness`/`unsafety` are dropped.
 
 ## Behavior and corner cases
 
-The **component type defaults** from the provider trait's identifier: `component_type()` reads the
-trait path, takes its identifier, and appends `Component`, so implementing `AreaCalculator` targets
-`AreaCalculatorComponent`. The optional attribute argument overrides this with an explicit type, the
+The **component type defaults** from the provider trait's path: `component_type()` reads the trait
+path, keeps its segments, and appends `Component` to the last one, which takes the span of the
+trait's identifier, so implementing `AreaCalculator` targets `AreaCalculatorComponent` and
+implementing `crate::shapes::AreaCalculator` targets `crate::shapes::AreaCalculatorComponent`. The optional attribute argument overrides this with an explicit type, the
 only thing the attribute changes.
 
 The **context is the first type argument** of the provider trait, and it must be present.

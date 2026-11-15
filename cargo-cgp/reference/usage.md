@@ -160,6 +160,13 @@ own Rust code (`E0277` here) is always kept, so `rustc --explain` still works an
 reclassified away from rustc; the CGP code rides inside the message as a tag on the sentence it
 classifies. Errors the tool does not recognize pass through as the compiler wrote them.
 
+Most rewritten errors name their fix in a `help` line. A few also attach it as an edit, which the
+terminal shows as the inserted line marked `+` and which an editor applies (and `cargo fix`, when
+the driver is set by hand as cargo's workspace wrapper, since `cargo cgp` has no `fix` subcommand):
+`CGP-E041`'s import of a component not in scope, and `CGP-E070`'s component named in a provider
+header's attribute. Each is machine-applicable only when the tool is sure of it, such as when one
+path imports the component; the [error-code catalog](../error-code.md) gives the conditions.
+
 Some mistakes keep rustc's own headline, and [issues/usability.md](../issues/usability.md) lists them.
 For example, a check on a context with a type parameter is not traced, because the resolver works
 without that context's bounds. Fix such an error from rustc's text, or check a concrete context.
@@ -180,7 +187,7 @@ The tool renders the transformed diagnostics as rustc JSON, which cargo wraps an
 the transforms appear inline: the `[CGP-Exxx]` headline, the `root cause:` line, and the dependency tree,
 the same text the terminal prints minus the code frame.
 
-Four consequences of the override are worth telling a user:
+Five consequences of the override are worth telling a user:
 
 - **Rust Analyzer runs the array exactly as written,** so its `check.features`, `check.allTargets`,
   `check.extraArgs`, and `check.workspace` settings do not reach the check, and any feature or target
@@ -190,6 +197,9 @@ Four consequences of the override are worth telling a user:
 - **The setting belongs in workspace settings** (VS Code's `.vscode/settings.json`), since a
   user-level override runs the tool on every Rust project, and a committed workspace file breaks the
   editor check for anyone without the tool.
+- **The tool's edits become quick fixes** where their parts sit, so `CGP-E041`'s and `CGP-E070`'s fixes
+  appear on a provider header's trait name and on a wiring key, while plain `cargo check` offers
+  rustc's import only on the module's first `use` line.
 - **The editor's `PATH` decides whether `cargo` finds the subcommand,** which matters when the tool is on
   `PATH` only through shell start-up files and the editor was launched from a desktop launcher.
 

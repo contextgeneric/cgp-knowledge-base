@@ -42,8 +42,8 @@ where
 As with `#[cgp_provider]`, the impl uses the native provider-trait shape: an explicit leading
 `Context` type parameter, the provider struct in the `Self` position, and methods taking
 `context: &Context` rather than `&self`. An optional argument overrides the component type used in
-the `IsProviderFor` impl, defaulting otherwise to the provider trait's name plus a `Component`
-suffix.
+the `IsProviderFor` impl, defaulting otherwise to the provider trait's path with `Component`
+appended to its last segment, as for `#[cgp_provider]`.
 
 ## Syntax Grammar
 

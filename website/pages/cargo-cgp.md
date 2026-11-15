@@ -36,7 +36,8 @@ reader needs them:
   section; and its boundary.
 - **Reading the output:** the parts of a rewritten error, then one real example per shape (two causes
   in one error, a component nothing is wired for, a field of the wrong type, an ordinary Rust trait
-  that does not hold, a two-caret conflict, a fix in a `help` line), and a selection of the errors
+  that does not hold, a two-caret conflict, a fix in a `help` line, with the import an editor can
+  apply), and a selection of the errors
   that pass through unchanged. The ordinary-trait shape keeps the compiler's headline at a check, so
   the page's test for a passed-through error is "no `[CGP-Exxx]` code anywhere"; reached through a
   method call, the same mistake gets a CGP headline.
