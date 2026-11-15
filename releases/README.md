@@ -76,6 +76,7 @@ the [`cgp`](https://github.com/contextgeneric/cgp) source at the relevant tag.
 | `cgp-component-macro`, `cgp-component-macro-lib`, `cgp-field-macro`, `cgp-field-macro-lib` | [v0.1.0](v0-1-0.md) | Replaced by `cgp-macro` and `cgp-macro-lib` in [v0.4.0](v0-4-0.md) |
 | Greek-letter type names (`π`, `ε`, `σ`, `θ`, `ω`, `δ`, then `ψ` and `ζ`) | [v0.4.0](v0-4-0.md), [v0.5.0](v0-5-0.md) | Removed in [v0.8.0](v0-8-0.md); the types keep only their English names |
 | `ProvideType` / `TypeComponent` | pre-[v0.7.0](v0-7-0.md) | Renamed `TypeProvider` / `TypeProviderComponent` in [v0.7.0](v0-7-0.md) |
+| `check_components! { Name for Context … }` and `delegate_and_check_components! { Name for Context; Table … }` | [v0.4.0](v0-4-0.md) | Changed in [v0.7.0](v0-7-0.md) to a bare context name with `#[check_trait(...)]`; the fused macro takes no separate table type |
 | `#[use_type(Trait::Type)]` separator | [v0.7.0](v0-7-0.md) | Changed to `#[use_type(Trait.Type)]` in [v0.8.0](v0-8-0.md) |
 | `#[use_type(@Context::Trait::Type)]` | [v0.7.0](v0-7-0.md) | Changed to `#[use_type(Trait.Type in Context)]` in [v0.8.0](v0-8-0.md) |
 | `#[use_namespace]`, then `#[namespace]` | never released | Both are mid-development names for [v0.8.0](v0-8-0.md)'s `#[prefix]` |
