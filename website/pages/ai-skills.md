@@ -14,8 +14,9 @@ skill, whose own files are served unedited.
 
 The index, *Agent Skills*, names Context-Generic Programming, says why an agent needs a skill (the
 macros generate code the agent cannot see, and its training may show syntax the library no longer
-accepts), and introduces the `/cgp` skill: what its main page covers, a few of its references, and
-the versions it describes. It says the skill does not make the agent's code correct and asks the
+accepts), and introduces the `/cgp` skill: what its main page covers, a few of its references, that
+it supports `cgp` v0.8.0 and later, and that it has the agent check for a newer skill when the
+project's `cgp` is newer. It says the skill does not make the agent's code correct and asks the
 reader to review what the agent writes, links [the installation page](skill-installation.md), routes
 learners to the tutorials and Concepts, sends a reader whose question outgrows the skill to the
 [knowledge-base using page](knowledge-base.md), and says the pages are a pinned snapshot. It carries

@@ -48,8 +48,8 @@ stays out of this repository under the rule in
   per-page figures the Pages table, and neither is reconciled.
 
 The site was checked against the repository and the live site on 2026-09-21. On 2026-11-15 the
-`v0.8.0` branch holds 381 Markdown sources under `docs/` and `blog/`, 17 of them symlinks to the
-published skill pages, and its build lists 396 sitemap URLs; the difference is the pages Docusaurus
+`v0.8.0` branch holds 382 Markdown sources under `docs/` and `blog/`, 18 of them symlinks to the
+published skill pages, and its build lists 397 sitemap URLs; the difference is the pages Docusaurus
 generates without a source.
 
 **Only Google is measured**, so every claim here is about Google unless it says otherwise; the

@@ -30,8 +30,8 @@ directions apart:
   how-to page: when the skill suffices, access, the instructions to give an agent with the section
   that owns each kind of question, the context cost of `summary.md`, and reviewing the answer, with
   problems filed on the issue tracker along with the prompt that surfaced them. Its first step sends
-  a reader whose agent cannot load skills to attach `SKILL.md` at the skill's release tag, as the
-  [installation page](skill-installation.md) describes.
+  a reader whose agent cannot load skills to attach `SKILL.md` from the skill's `main` branch, as
+  the [installation page](skill-installation.md) describes.
 - **Contributing to CGP with an Agent** (`contributing-with-an-agent.md`), the second how-to page:
   the light contribution policy (use the knowledge base, and include the prompts behind an
   AI-assisted pull request or issue), reporting problems in the base as a contribution, the
