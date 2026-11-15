@@ -91,7 +91,7 @@ before introducing another domain:
   `CanFetchStorageObject` component; a test context can wire a provider that reads a local folder.
   These are environmental contexts with a self-targeted component, and the methods are async and
   return `anyhow` errors. The [profile-picture example](../examples/profile-picture.md) holds the
-  full scenario, which the `cgp` README and the website's Overview use.
+  full scenario, which the `cgp` README, the website's Overview, and its applied tutorial use.
 
 Use the verified code in [examples/](../examples/README.md) and the website's `example-code` crate.
 When a different example is necessary, record why in the page's internal document and add it to this

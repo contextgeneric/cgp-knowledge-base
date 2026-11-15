@@ -17,12 +17,12 @@ context, component, provider, and wiring, each linked to its glossary entry; the
 to the routes below. It has no Rust listings. Its front matter sets a title without "CGP", the
 sidebar label "Introduction", and a written description.
 
-*Start here* lists the Quickstart, Hello World, and the area-calculation series in that order. *Find
-what you need* gives one line per question with the page that answers it: the Overview, Bypassing
-coherence and Consumer and provider traits, Modularity Hierarchy and the front page's costs, the
-Comparisons, the Reference and the Glossary, `cargo-cgp`, the Projects, the AI section, the Videos
-page in Resources for a talk, and Contribute for the community and helping. A closing line names the
-blog as a dated record.
+*Start here* lists the Quickstart, Hello World, the storage-backend tutorial, and the
+area-calculation series in that order. *Find what you need* gives one line per question with the
+page that answers it: the Overview, Bypassing coherence and Consumer and provider traits, Modularity
+Hierarchy and the front page's costs, the Comparisons, the Reference and the Glossary, `cargo-cgp`,
+the Projects, the AI section, the Videos page in Resources for a talk, and Contribute for the
+community and helping. A closing line names the blog as a dated record.
 
 The page has no maturity section, which belongs to the front page's cost section, per the
 [homepage guide](../writing-guides/homepage.md#below-the-fold-the-bounded-essay), and it leaves out
@@ -35,7 +35,8 @@ the CGP Patterns book, a
 [the message](../../communication-strategy/message.md) the adoption boundaries. The terms come from
 [vocabulary](../../communication-strategy/vocabulary.md) and
 [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md). The learning paths
-lead to the [Hello World](../tutorials/hello-world.md) and
+lead to the [Hello World](../tutorials/hello-world.md),
+[storage backend](../tutorials/storage-backend.md), and
 [area-calculation](../tutorials/area-calculation.md) teaching contracts.
 
 ## Maintaining it

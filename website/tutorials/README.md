@@ -28,22 +28,21 @@ not fit the ramp belongs in a new part or a new series, and the document says wh
 
 ## The catalog
 
-The two published series overlap deliberately: both teach `#[cgp_fn]` and `#[implicit]` to a reader
-new to CGP, one as a five-minute first contact and one as a multi-part progression. Read both
-documents before changing either.
+The two first-principles series overlap deliberately: both teach `#[cgp_fn]` and `#[implicit]` to a
+reader new to CGP, one as a five-minute first contact and one as a multi-part progression. Read both
+documents before changing either. The applied tutorial teaches the same constructs on an application
+context, in the Overview's scenario.
 
 - [Hello World](hello-world.md): the single-page first contact, a `greet` function with one implicit
   argument run on two context structs, plus an optional plain-Rust appendix; it gets a reader to a
   working program before any CGP vocabulary.
+- [Storage backend](storage-backend.md): the applied-register tutorial, second in the section, a
+  profile-picture lookup on an application context whose tests get their own storage backend through
+  a component and two providers; the section's first environmental context.
 - [Area calculation](area-calculation.md): the series from plain Rust functions to configurable static
   dispatch with higher-order providers, an index and two tutorials on the live site, and on to catching
   a mis-wiring in a third tutorial on the website's `v0.8.0` branch; where a reader goes after Hello
   World.
-
-**The section has no applied-register tutorial yet**, so no tutorial reader meets an environmental
-context, and the reader who evaluates by seeing a realistic system has nowhere to go. One is planned,
-second in the section, per
-[the guide](../writing-guides/tutorial.md#say-which-shape-the-tutorials-example-is-in).
 
 ## The document shape
 

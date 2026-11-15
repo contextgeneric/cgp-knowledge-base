@@ -97,10 +97,10 @@ afterwards.
   Hierarchy*.
 - **Tutorials**, in the order a reader meets them:
   - *Hello World*: first contact, one durable idea.
-  - *An applied tutorial*: **new**, and second on purpose. It builds something real from an
-    [example](../examples/README.md) and is the site's first **environmental context**, after a front
-    page and a Hello World that wire a value context, so a reader meets a type that stands for an
-    application before their habits form.
+  - *Swap a Storage Backend per Application*: the applied tutorial, second on purpose. It builds a
+    profile-picture lookup from an [example](../examples/profile-picture.md) and is the site's first
+    **environmental context**, after a front page and a Hello World that wire a value context, so a
+    reader meets a type that stands for an application before their habits form.
   - *Area calculation*: the first-principles series, ending with *Checking and debugging*, which
     carries one mis-wiring through `check_components!` and `cargo cgp check`.
 - **Comparisons**, placed after Tooling: labelled *Comparisons* because "related work" is the
@@ -197,9 +197,8 @@ where each should end up. A page that fits no path probably should not exist.
   *Bypassing coherence*, then the working developer's path from *Hello World*.
 - **Framework and library author:** the Overview's problems → the applied tutorial → the *Extensible
   records* and *Extensible variants* Concepts pages → the `builder` and `expression` example pages.
-  The example pages land after the release, so until then the tutorial and the two Concepts pages
-  carry this reader, which is a reason to draw the tutorial's scenario from an example that exercises
-  extensible data.
+  The tutorial gives this reader an application context and routes onward to the two Concepts pages,
+  which carry the reader until the example pages land after the release.
 - **Enthusiast:** the blog → Concepts → Contribute, whose top rung is publishing components of their
   own; one who wants to change CGP continues to *Contributing to CGP with an Agent*, the site's only
   guide to contributing code.

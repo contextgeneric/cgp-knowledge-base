@@ -960,10 +960,13 @@ it stale.
 
 ### `website/tutorials/`: one document per tutorial series
 
-- [README.md](website/tutorials/README.md) — what a tutorial's teaching contract fixes, the catalog
-  and the applied-register tutorial it still lacks, and the document shape.
+- [README.md](website/tutorials/README.md) — what a tutorial's teaching contract fixes, the catalog,
+  and the document shape.
 - [hello-world.md](website/tutorials/hello-world.md) — the single-page first contact: one CGP
   function, two contexts, and an optional desugaring appendix.
+- [storage-backend.md](website/tutorials/storage-backend.md) — the applied-register tutorial: a
+  profile-picture lookup on an application context, a test backend through a component and two
+  providers, a checked wiring, and how its code and quoted output are verified.
 - [area-calculation.md](website/tutorials/area-calculation.md) — the four-page series from plain
   functions to higher-order providers and on to catching a mis-wiring, its two load-bearing orderings,
   and the vocabulary extension its Checking and Debugging page makes.
