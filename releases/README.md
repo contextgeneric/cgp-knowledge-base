@@ -44,6 +44,9 @@ the [`cgp`](https://github.com/contextgeneric/cgp) source at the relevant tag.
 | `define_components!` | [v0.1.0](v0-1-0.md) | Renamed `cgp_preset!` in [v0.2.0](v0-2-0.md), removed in [v0.8.0](v0-8-0.md) |
 | `HasField::Field` | [v0.1.0](v0-1-0.md) | Renamed `HasField::Value` in [v0.2.0](v0-2-0.md) |
 | `HasInner` / `cgp-inner` | [v0.1.0](v0-1-0.md) | Removed in [v0.5.0](v0-5-0.md), superseded by `UseField` |
+| `DelegateErrorRaiser` | [v0.1.0](v0-1-0.md) | Replaced by `UseDelegate` in [v0.2.0](v0-2-0.md) |
+| `ProvideEyreError`, `RaiseStdError`, `RaiseDebugError`, `RaiseDisplayError` | [v0.1.0](v0-1-0.md) | Renamed `UseEyreError`, `RaiseEyreError`, `DebugEyreError`, `DisplayEyreError` in [v0.3.0](v0-3-0.md) |
+| `HandleErrorsWithStdError` | [v0.1.0](v0-1-0.md) | Split into `UseBoxedStdError` and `RaiseBoxedStdError` in [v0.3.0](v0-3-0.md) |
 | `Async`, `MaybeSend`, `MaybeSync`, `MaybeStatic` | [v0.2.0](v0-2-0.md) | `'static` dropped in [v0.4.0](v0-4-0.md); removed in [v0.5.0](v0-5-0.md) |
 | `DelegateTo` | [v0.2.0](v0-2-0.md) | Renamed `UseDelegate` within [v0.2.0](v0-2-0.md) |
 | `symbol!` (lowercase) | [v0.2.0](v0-2-0.md) | Renamed `Symbol!` in [v0.5.0](v0-5-0.md) |
