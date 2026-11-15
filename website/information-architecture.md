@@ -71,9 +71,9 @@ Each surface has one job, and a page that does two jobs is usually two pages:
 - **Orientation pages** (the Introduction, the Overview, the Quickstart, and Resources): route, or on
   the Overview tour the features, rather than teach, for readers already interested. Spec:
   [writing-guides/orientation.md](writing-guides/orientation.md).
-- **Release notes:** list everything one official release changed that a user can see, and how to
-  upgrade, one page per release of `cgp` and of `cargo-cgp`; the one dated surface under `docs/`,
-  leaving the story to the release post. Spec:
+- **Release notes:** lists what one official release changed that a user can see, and how to
+  upgrade, with one page per release of `cgp` and of `cargo-cgp`. It is the one dated surface under
+  `docs/`, and it leaves the story to the release post. Spec:
   [writing-guides/release-notes.md](writing-guides/release-notes.md).
 - **Project pages** (Contribute and the AI disclosure page): speak about the project rather than
   about CGP. Contribute's sponsorship section is the one place the author's own voice stands on the

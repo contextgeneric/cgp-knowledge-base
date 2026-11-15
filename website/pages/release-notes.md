@@ -1,7 +1,7 @@
 # Release notes
 
-The Release notes category lists what each official release of `cgp` and `cargo-cgp` changed, one
-dated page per release, and is drafted on the `v0.8.0` branch to publish with that release.
+The Release notes category lists what each official release of `cgp` and `cargo-cgp` changed, in one
+dated page per release; it is drafted on the `v0.8.0` branch and publishes with that release.
 
 - **URL:** <https://contextgeneric.dev/docs/release-notes/>
 - **Source:** [docs/release-notes/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/release-notes)

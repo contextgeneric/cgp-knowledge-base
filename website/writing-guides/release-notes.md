@@ -12,9 +12,9 @@ with it, and not edited afterwards into agreement with later releases.
 - **Style**: point-first, the one page kind that names it, because a reader scans the page for the
   items that affect them
 - **Derived from**: the release's source diff and its document in [releases/](../../releases/README.md),
-  or for `cargo-cgp`'s first release the [cargo-cgp/](../../cargo-cgp/README.md) section, which stays
-  the finer-detail companion of the page
-- **Status once published**: a dated record, *Historical* in the record's
+  which stays the page's finer-detail companion; for `cargo-cgp`'s first release, the companion is
+  the [cargo-cgp/](../../cargo-cgp/README.md) section
+- **Status once published**: a dated record, *Historical* in the records'
   [status words](../README.md#status-words); see [A dated page](#a-dated-page)
 - **Reading**: the shared set and [the release-notes row](README.md#release-notes-pages) of the
   reading map
@@ -22,18 +22,17 @@ with it, and not edited afterwards into agreement with later releases.
 ## Two layers, two readers
 
 **The page serves the upgrader; the release document serves an agent reading old code.** The page
-holds the user-visible changes and the steps to upgrade. The knowledge base's release document holds
-the rest: internal changes, names used and discarded during development, where the old changelog or
-an earlier post was wrong, why the release took its shape, and how much of it still stands today.
+holds the user-visible changes and the steps to upgrade. The release document holds the rest:
+internal changes, names used and discarded during development, where the old changelog or an earlier
+post was wrong, why the release took its shape, and how much of it still stands today.
 
 **Every finding of the diff review lands in one of the two.** A change too fine or too internal for
 the page goes into the release document's section for the changes the notes leave out, rather than
-being dropped. For `cargo-cgp`'s first release, the companion is the knowledge base's
-[cargo-cgp/](../../cargo-cgp/README.md) section.
+being dropped.
 
-**The page is not the announcement.** The release post tells the story of the release in the
-author's voice and teaches its main feature; the notes give every change, in the project voice, and
-teach nothing. Each links the other, and neither is trimmed to remove the overlap.
+**The page is not the announcement.** The release post tells the release's story in the author's
+voice and teaches its main feature; the notes give every change in the project voice and teach
+nothing. Each links the other, and neither is trimmed to remove the overlap.
 
 ## Sources, and which one decides
 
@@ -43,34 +42,35 @@ A page is written from four inputs, read together:
   time when the release is large. Tests, their snapshots, `Cargo.lock`, and the CI workflows are left
   out; a test is read only when the source leaves an item's user-visible effect unclear, such as the
   text of a new compile error.
-- **The release document** in [releases/](../../releases/README.md), and its rows in the removal
+- **The release document** in [releases/](../../releases/README.md), with its rows in the removal
   ledger.
 - **The old changelog entry**, from `cgp`'s `CHANGELOG.md` at the release's tag, for the releases
   it covered.
 - **The old release notes**: the GitHub Release body and the release post, where they exist.
 
 **The diff decides a disagreement, then the release document, then the other three.** A release
-document the diff contradicts is corrected in the same change as the page. The changelog and the old
-notes catch items the others leave implicit; they never outrank the code, because the changelog
-alone carried errors the [release history](../../releases/README.md#what-counts-as-a-release-and-where-the-facts-come-from)
+document that the diff contradicts is corrected in the same change as the page. The changelog and the
+old notes catch items the others leave implicit, but they never outrank the code: the changelog alone
+carried errors that the
+[release history](../../releases/README.md#what-counts-as-a-release-and-where-the-facts-come-from)
 records.
 
-**Some facts come from one source only:**
+**Three facts come from one source each:**
 
 - **The date** is the version's publish date on crates.io, in ISO 8601 form, even where the tag is a
   day apart; the release document records both.
 - **The minimum Rust version** is the `rust-version` in the release tag's `Cargo.toml`.
-- **The pull-request links** come from the Git log's first-parent commits, written as the
-  repository's `https://github.com/contextgeneric/<repository>/pull/<n>`.
+- **The pull-request links** come from the Git log's first-parent commits, written as
+  `https://github.com/contextgeneric/<repository>/pull/<n>`.
 
 ## A dated page
 
 **A page states what its release did, as of that release.** It is written on the website's release
-branch before the tag, as though the release had shipped, and its date and its tag, compare, and
-crates.io links are set on release day, when they first resolve. It publishes with the website, before
-the release's GitHub Release, which holds one sentence and a link to the page. A page for a release
-that predates the category is written afterwards, from the same sources, and states the same facts
-as of its release.
+branch before the tag, as though the release had shipped. Its date and its tag, compare, and
+crates.io links are set on release day, when they first resolve, and it publishes with the website,
+before the release's GitHub Release, which holds one sentence and a link to the page. A page for a
+release that predates the category is written afterwards from the same sources and states the same
+facts as of its release.
 
 **After publication, only a factual error against the tag is corrected.** A page is never updated to
 describe later behavior, never annotated with what a later release changed, and never given an
@@ -79,15 +79,15 @@ category from the rule that a page under `docs/` describes the present.
 
 ## The section shape
 
-**The category's index** (`docs/release-notes/index.md`, the category's link target) names
-Context-Generic Programming beside a plain description, says what the notes are and that each release
-has its own page, states how CGP numbers its 0.x releases, and links each artifact's newest page and
-sub-category. The versioning statement is written only from the checked diffs of the releases it
-describes, such as whether a patch release ever broke code.
+**The category's index**, `docs/release-notes/index.md`, is the category's link target. It names
+Context-Generic Programming beside a plain description, says what the notes are and that each
+release has its own page, and links each artifact's sub-category and newest page.
+
+**The index also states how CGP numbers its 0.x releases**, written only from the checked diffs of
+the releases it describes, such as whether a patch release ever broke code.
 
 **Each sub-category** has a `_category_.json` with its label (`cgp` or `cargo-cgp`), its position
-(`cgp` first, then `cargo-cgp`), a generated index, and a `description` that names Context-Generic
-Programming.
+(`cgp` first), a generated index, and a `description` that names Context-Generic Programming.
 
 **Pages sort newest first.** Docusaurus sorts by `sidebar_position`, ascending, so each page sets it
 to 100000 minus its version read as `major × 10000 + minor × 100 + patch`: v0.8.0 is 99200 and v0.7.0
@@ -97,13 +97,14 @@ is 99300. A later release never renumbers an earlier page.
 
 Every page has the parts below, in this order, and leaves out a section with nothing in it:
 
-- **Front matter**: `title` as `<artifact> v<version> release notes`, such as
-  `cgp v0.8.0 release notes`; `sidebar_label` as the bare version; the `sidebar_position` above; a
-  written `description` naming the release's two or three main changes, within about 155 characters
-  and with apostrophes escaped as the reference guide's
-  [conventions](reference.md#conventions-the-port-must-follow) give; and a `slug` giving the version
-  with its dots, such as `v0.8.0`. The title names the artifact, which for `cgp` is the crate's
-  name, so the rule against naming CGP in a page's title does not reach it.
+- **Front matter**:
+  - `title`: `<artifact> v<version> release notes`, such as `cgp v0.8.0 release notes`. It names the
+    artifact, which for `cgp` is the crate, so the rule against naming CGP in a title does not apply.
+  - `sidebar_label`: the bare version, and `sidebar_position` as above.
+  - `description`: the release's two or three main changes, within about 155 characters, with
+    apostrophes escaped as the reference guide's
+    [conventions](reference.md#conventions-the-port-must-follow) give.
+  - `slug`: the version with its dots, such as `v0.8.0`.
 - **The heading and the opening**: the `#` heading names the artifact and version. The first sentence
   names Context-Generic Programming, linked to the Introduction, beside a plain description, and says
   what the release is for. A short form of the tag line appears only where the release's main change
@@ -112,20 +113,19 @@ Every page has the parts below, in this order, and leaves out a section with not
   crate on crates.io, and the compare view from the previous tag, or the tag itself for an artifact's
   first release.
 - **The summary**: two to four sentences on the release's main changes, each named once.
-- **Compatibility**: the minimum Rust version, the versions released with it, such as the
-  workspace's other crates and any `cargo-cgp` release made beside it, renamed or added crates, and
-  changed Cargo features.
+- **Compatibility**: the minimum Rust version; the versions released with it, such as the workspace's
+  other crates and any `cargo-cgp` release made beside it; renamed or added crates; and changed Cargo
+  features.
 - **Upgrading**: the ordered steps for a project moving from the previous release, each linking the
-  breaking change it carries out. A release without a breaking change says, in one sentence, that
+  breaking change it carries out. A release without a breaking change says in one sentence that
   changing the version is enough, and only when the diff check supports it.
 - **Breaking changes**: one `###` heading per change, so *Upgrading* can link it, since a heading is
   the only anchor the site generates.
 - **Deprecated**, **New features**, **Improvements**, **Fixes**, and **Security**: one item per
-  change; a long section is grouped under `###` headings by area, in the order the
+  change. A long section is grouped under `###` headings by area, in the order the
   [reference](reference.md) groups its constructs.
-- **The provenance line** at the foot. The page ends there: the previous and next links that
-  Docusaurus generates route a reader to the neighbouring releases, and the opening's links route to
-  the post and the crate.
+- **The provenance line**, where the page ends. The previous and next links that Docusaurus generates
+  take a reader to the neighbouring releases, and the opening's links lead to the post and the crate.
 
 ### Writing an entry
 
@@ -136,8 +136,8 @@ condition, or the consequence follows in the next sentence.
 - **A breaking change** gives the old form, the new form, and what a project does to move, in that
   order.
 - **A deprecation** names its replacement and its planned removal, and lists only what the code marks
-  with `#[deprecated]`. A form the documentation calls legacy, such as `UseDelegate` dispatch, stays out
-  until the code marks it.
+  with `#[deprecated]`. A form the documentation calls legacy, such as `UseDelegate` dispatch, stays
+  out until the code marks it.
 - **A removal** names what replaces it, or says that nothing does.
 - **Every entry links** the construct's reference page where the site has one, and the pull request
   that introduced the change where one did.
@@ -153,19 +153,18 @@ inline only, because `example-code` builds against the current `cgp`.
   [identity.md](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
 - **The title and description levers**, per
   [seo.md](../seo.md#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them):
-  the version first and under about 60 characters, and a description written for this page, not a
-  template.
-- **Every breaking change**: each removal ledger row that removes or renames, in this release,
-  something an earlier release shipped appears under *Breaking changes*, because a reader who learns of a removal from a compiler error has been let down at the
-  highest cost in trust.
-- **A provenance line** at the foot, per
+  the artifact and version first, under about 60 characters, and a description written for this
+  page rather than a template.
+- **Every breaking change**: each removal-ledger row in which this release removes or renames
+  something an earlier release shipped appears under *Breaking changes*. A reader who learns of a
+  removal from a compiler error has been let down at the highest cost in trust.
+- **A provenance line**, per
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page), in
-  the reference guide's footer form, in italics after a `---` rule as the other docs pages set it:
-  "An AI agent wrote this page from the release's source changes
-  and the CGP knowledge base. Its content was verified against the library's source at the release's
-  tag. See How AI is used in this project.", the last phrase linking the disclosure page's
-  documentation section, and "the tool's source" on a `cargo-cgp` page. The level is recorded in the
-  category's record.
+  italics after a `---` rule, as the other docs pages set it. It reads "An AI agent wrote this page
+  from the release's source changes and the CGP knowledge base. Its content was verified against the
+  library's source at the release's tag. See How AI is used in this project.", with the last phrase
+  linking the disclosure page's documentation section; a `cargo-cgp` page says "the tool's source".
+  The category's record holds the level.
 
 ## What must not be on one
 
@@ -174,12 +173,12 @@ inline only, because `example-code` builds against the current `cgp`.
 - **No pre-release.** No page names an alpha, beta, or prerelease version, or says how one behaved,
   per the base's [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases).
 - **No history of the documentation.** Where the old changelog was wrong, the page states what
-  shipped and the release document records the error.
+  shipped, and the release document records the error.
 - **No knowledge-base links**, per the
   [one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links), and
   no link to or recommendation of a
   [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources).
-- **No unbenchmarked performance claim**, and no promotional wording, per the
+- **No unbenchmarked performance claim** and no promotional wording, per the
   [avoid list](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid).
 
 ## Checking a draft
@@ -192,7 +191,7 @@ inline only, because `example-code` builds against the current `cgp`.
   release's own development, or a name never released, stays off the page.
 - **Check the facts at their sources**: the date on crates.io, the minimum Rust version in the tag's
   `Cargo.toml`, and each pull-request number in the Git log.
-- **Read the first sentence of each entry in order**; they state the changes without the rest.
+- **Read the first sentence of each entry in order**; together they state the changes.
 - **Build the site**, which fails on a broken link or anchor, and check that every external link
   answers, apart from the tag, compare, and crates.io links that resolve on release day.
 - **Compile any code block** in `example-code`, and check its old form against the previous tag.

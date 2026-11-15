@@ -6,14 +6,14 @@ that shipped in v0.3.0 may be current, may have been renamed twice, or may have 
 outright, and an agent reading old code, an old blog post, or an old book chapter needs to know which
 before it can interpret what it is looking at.
 
-Each release also has a page on the website's
-[Release notes](https://contextgeneric.dev/docs/release-notes/), and the two are layers of one
-history. The page lists the user-visible changes and the steps to upgrade, for a reader moving to
-the release; it is dated and not rewritten. The document here is its finer-detail companion and stays
-current: it keeps the internal changes, the names discarded during development, where the old
-changelog or a post was wrong, why the release took its shape, and how much of it still stands. Every
-finding of a release's diff review lands in one of the two, and the
-[release-notes guide](../website/writing-guides/release-notes.md) says which.
+**Each release's history has two layers: this document and a page on the website's
+[Release notes](https://contextgeneric.dev/docs/release-notes/).** The page lists the user-visible
+changes and the steps to upgrade, for a reader moving to the release, and is dated and never
+rewritten. This document is its finer-detail companion and stays current: it keeps the internal
+changes, the names discarded during development, where the old changelog or a post was wrong, why
+the release took its shape, and how much of it still stands. Every finding of a release's diff review
+lands in one of the two, and the [release-notes guide](../website/writing-guides/release-notes.md)
+says which.
 
 ## Why a release history is worth keeping
 
