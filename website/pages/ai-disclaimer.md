@@ -53,11 +53,11 @@ disposition behind it is in
 mechanics in
 [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page).
 
-The page is one of the two surfaces allowed to link into the knowledge base, with the
-[knowledge-base pages](knowledge-base.md), per
-[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links), which
-also lets the Contribute page link the base's issue tracker: the base is the subject it discloses. It links the repository's front door, never a path inside it, and
-links the [process page](knowledge-base.md) for the full account.
+The page is one of the surfaces allowed to link into the knowledge base, with the
+[knowledge-base pages](knowledge-base.md) and the [Contribute page](contribute.md)'s link to the
+issue tracker, per [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links),
+because the base is the subject it discloses. It links the repository's front door, never a path
+inside it, and links the [process page](knowledge-base.md) for the full account.
 
 ## Maintaining it
 

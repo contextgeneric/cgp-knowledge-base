@@ -61,9 +61,9 @@ every deeper path in prose. The base's [README](../../README.md#reading-it-from-
 carries the matching section for an outside agent, which the using page relies on.
 
 Pages outside the subsection link in with one line beside the reader's task: the skill index to the
-using page, the Contribute page's *Change CGP itself* section to the contributing
-page, and the disclaimer's documentation section to the process page. The v0.8.0 release draft's
-placeholder knowledge-base link is recorded in
+using page, the Contribute page's *Report a problem* and *Change CGP itself* sections to the
+contributing page, and the disclaimer's documentation section to the process page. The v0.8.0
+release draft's placeholder knowledge-base link is recorded in
 [its post record](../blog/v0-8-0-release.md#maintaining-it), since setting it is the author's call.
 
 ## Maintaining it
