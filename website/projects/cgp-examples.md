@@ -24,7 +24,7 @@ service, a wiring study at four scales, and the smallest possible greeting.
 ## What is written
 
 Fourteen pages, all those nothing blocks, with cgp-examples in the section index's project list,
-pattern table, and routes, and on Resources beside the repository. The site build passes with them.
+pattern table, and routes. The site build passes with them.
 
 - **Crate index** — `cgp-examples/index.md`, with a table of the five crates that links the two with
   pages and names the other three without a link.

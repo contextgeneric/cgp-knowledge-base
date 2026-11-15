@@ -6,7 +6,7 @@ reader has already decided CGP is worth a few minutes and wants the shortest rou
 proof.
 
 - **Where they live**: `docs/index.md`, `docs/overview.md`, `docs/quickstart.md`,
-  `docs/resources.md`, and `docs/contribute.md`, each with its record under
+  the `docs/resources/` section, and `docs/contribute.md`, each with its record under
   [pages/](../pages/README.md); the AI section's overview, `docs/ai/index.md`, follows the same
   rules, as [its record](../pages/ai-overview.md) states
 - **Voice**: project voice, per
@@ -150,14 +150,19 @@ instead, because a pin crates.io does not carry fails on the reader's first buil
 
 ## Resources
 
-**The ecosystem index, for a reader who wants something that is not on this site.** It is a list,
-and each entry says in one line what the thing is and who it is for. The entries are the crates, the
-toolchain, the talks, and the projects built with CGP, leaving out the CGP Patterns book and the
-Hermes SDK, which are
-[legacy resources](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources).
-A link to another page of this site belongs in the Introduction's routing list instead. Every entry
-is checked when the page is touched: the crate exists under the name given, the link resolves, and
-anything version-specific holds, since this page ages by accumulation.
+**A section for material about CGP beyond the documentation, with one subpage per kind.** It holds
+one kind today, videos, at `docs/resources/videos.md`; events and other kinds join as their own
+subpages, so each kind's URL stays stable as the section grows. The index (`docs/resources/index.md`,
+the category's link target) names Context-Generic Programming, links each subpage with what it holds,
+and says that more kinds will be added. A video entry gives the talk's title as its heading, the
+embedded player scaled to the column, a line on what the talk covers, and its transcript post where
+one exists.
+
+The section is not an index of the crates, tools, or projects: Tooling, the AI section, and Projects
+cover those, and a link to another page of this site belongs in the Introduction's routing list.
+Leave out the CGP Patterns book and the Hermes SDK, which are
+[legacy resources](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources),
+and check every entry's link when a page is touched.
 
 ## The Contribute page
 

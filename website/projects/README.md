@@ -87,7 +87,6 @@ A section nobody links to is found only from the sidebar, so these onward links 
   list, where it adds something the page's own example does not.
 - **The applied tutorial** ends by routing to the project example that develops its scenario, where
   one does.
-- **Resources** lists each project's section beside its repository.
 - **The posts that present a project** carry a notice pointing to its section, and the example pages
   link them back; each plan names the posts.
 

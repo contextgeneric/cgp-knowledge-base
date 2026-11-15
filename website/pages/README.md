@@ -22,7 +22,7 @@ Pages recorded elsewhere:
 - [introduction.md](introduction.md): the docs root, which defines CGP briefly and routes by question.
 - [quickstart.md](quickstart.md): the install, one program, and its output.
 - [overview.md](overview.md): the feature tour with compiled examples and the problems table.
-- [resources.md](resources.md): the ecosystem's link directory.
+- [resources.md](resources.md): the Resources section's index and its Videos page.
 - [contribute.md](contribute.md): the contribution paths and the acknowledgement.
 
 ## Docs sections

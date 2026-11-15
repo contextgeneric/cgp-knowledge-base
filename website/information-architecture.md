@@ -118,10 +118,11 @@ afterwards.
 - **Orientation:** the *Quickstart*, which only proves CGP runs and stays smaller than Hello World,
   with its boundary in [writing-guides/orientation.md](writing-guides/orientation.md); the
   *Introduction*, narrowed to the definition and the routing, with no maturity section, since the
-  front page's cost section states the maturity; and *Resources*, the ecosystem index.
+  front page's cost section states the maturity; and *Resources*, material about CGP beyond the
+  documentation, one subpage per kind, starting with *Videos*.
 - **Project:** *Contribute*.
-- **Further depth:** links out to the repositories, never to the legacy book. docs.rs is linked once,
-  from Resources.
+- **Further depth:** links out to the repositories, never to the legacy book. No page links `cgp`'s
+  docs.rs entry.
 - **Blog:** not planned in advance; a post is a dated statement rather than a page with a job.
 - **AI**, at `docs/ai/` labelled "AI-Assisted Development", in this order:
   - *Overview*: the section's landing page, one heading per direction.
@@ -176,8 +177,8 @@ where each should end up. A page that fits no path probably should not exist.
 - **Working developer:** front page → *Bypassing coherence* → *Hello World* → *Area calculation* →
   *Checking and debugging* → the reference, where they live once writing code. The checking tutorial
   is where this reader learns to read a CGP error or gives up.
-- **Evaluator:** the front page's cost section → *Modularity Hierarchy* → Resources → the Projects
-  index and the libraries' limitations pages. Candour and the Projects section, real systems the
+- **Evaluator:** the front page's cost section → *Modularity Hierarchy* → the Projects index and the
+  libraries' limitations pages. Candour and the Projects section, real systems the
   site hosts, persuade them; the [Hermes SDK](https://github.com/informalsystems/hermes-sdk/) is a
   [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources)
   the site leaves out.

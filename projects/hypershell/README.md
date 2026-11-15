@@ -180,8 +180,7 @@ The [shell-scripting DSL example](../../examples/shell-scripting-dsl.md) develop
 scenario as a teaching progression, building on these crates, and is the source other documents
 quote. The [announcement post](../../website/blog/hypershell-release.md) is the fullest published
 account, but its wiring code predates four breaking releases; its document records what has drifted.
-**Do not take current syntax from it.** The project also appears on the website's
-[Resources page](../../website/pages/resources.md), and the
+**Do not take current syntax from it.** The
 [communication strategy](../../communication-strategy/evidence.md) counts it as social proof for the
 evaluator profile.
 

@@ -131,9 +131,9 @@ subproject's directory in the repository; each subproject follows this shape at 
 ## Adding a project
 
 Create a directory named for the project with a `README.md` following the front-door shape in
-[Section shape](#section-shape): what it is, which revision is documented, how
-it is organized, what CGP it uses, how it relates to the rest of the base, and its current status.
-Register it in the catalog above and in [../summary.md](../summary.md) in the same change, add it to
-[../sibling-projects.md](../sibling-projects.md) so its checkout and repository are findable, and
-check whether the website's Resources page should list it. The section then follows [Section shape](#section-shape), with [cgp-serde/](cgp-serde/README.md) as
-the worked instance.
+[Section shape](#section-shape): what it is, which revision is documented, how it is organized, what
+CGP it uses, how it relates to the rest of the base, and its current status. Register it in the
+catalog above and in [../summary.md](../summary.md) in the same change, and add it to
+[../sibling-projects.md](../sibling-projects.md) so its checkout and repository are findable. The
+section then follows [Section shape](#section-shape), with [cgp-serde/](cgp-serde/README.md) as the
+worked instance.

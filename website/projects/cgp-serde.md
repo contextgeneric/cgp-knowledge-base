@@ -24,7 +24,7 @@ coherence bypass on a trait every Rust developer already knows.
 ## What is written
 
 Forty-nine pages, all those the code prerequisites do not block, with cgp-serde in the section index's
-project list, pattern table, and evaluator route, and on Resources beside the crate. The site build
+project list, pattern table, and evaluator route. The site build
 passes with them.
 
 - **Project** — `cgp-serde/index.md`.

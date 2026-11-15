@@ -82,10 +82,10 @@ same version, so the pages are written against the source and published once 0.8
 ## Links into the section
 
 When the section publishes, the *Modular error handling* Concepts page, the reference pages for
-`HasErrorType`, `CanRaiseError`, and `CanWrapError`, the error providers overview, and Resources each
-link the section index or the matching walkthrough, per the
-[project README](../../projects/error/README.md#public-material-derived-from-these-documents). There is
-no source post.
+`HasErrorType`, `CanRaiseError`, and `CanWrapError`, and the error providers overview each link the
+section index or the matching walkthrough, per the
+[project README](../../projects/error/README.md#public-material-derived-from-these-documents). There
+is no source post.
 
 ## Maintaining it
 
