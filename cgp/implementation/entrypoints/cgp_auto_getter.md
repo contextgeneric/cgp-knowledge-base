@@ -57,20 +57,20 @@ where
     __Context__: HasField<Symbol!("foo"), Value = String>,
 {
     fn foo(&self) -> &str {
-        self.get_field(PhantomData::<Symbol!("foo")>).as_str()
+        ::core::convert::AsRef::as_ref(self.get_field(PhantomData::<Symbol!("foo")>))
     }
 }
 ```
 
 The conversions are exactly those `#[cgp_getter]` uses, because both macros share the
-[getter-field parsing](../asts/cgp_getter.md). A `&str` return reads a `String` field and appends
-`.as_str()`, `Option<&T>` reads `Option<T>` and appends `.as_ref()`, `&[T]` reads an `AsRef<[T]>`
-field, `MRef<'_, T>` wraps the borrow in `MRef::Ref`, an owned return appends `.clone()`, and a
-plain `&T` is taken by reference. A `&mut self` receiver selects the mutable mirrors: a plain
-`&mut T` is a bare `get_field_mut`, `&mut str` appends `.as_mut_str()`, `&mut [T]` reads an
-`AsMut<[T]>` field via `.as_mut()`, `Option<&mut T>` appends `.as_mut()`, and `Option<&mut str>`
-appends `.as_deref_mut()`. The difference is only that `#[cgp_auto_getter]` emits a blanket impl on
-`__Context__` while `#[cgp_getter]` emits provider impls.
+[getter-field parsing](../asts/cgp_getter.md). A `&str` return reads a `String` field through
+`AsRef::as_ref`, `Option<&T>` reads `Option<T>` through `Option::as_ref`, `&[T]` reads an
+`AsRef<[T]>` field, `MRef<'_, T>` wraps the borrow in `MRef::Ref`, an owned return appends
+`.clone()`, and a plain `&T` is taken by reference. A `&mut self` receiver selects the mutable
+mirrors: a plain `&mut T` is a bare `get_field_mut`, `&mut str` goes through `AsMut::as_mut`,
+`&mut [T]` reads an `AsMut<[T]>` field via `.as_mut()`, `Option<&mut T>` appends `.as_mut()`, and
+`Option<&mut str>` appends `.as_deref_mut()`. The difference is only that `#[cgp_auto_getter]` emits
+a blanket impl on `__Context__` while `#[cgp_getter]` emits provider impls.
 
 ## Behavior and corner cases
 
@@ -157,7 +157,7 @@ Every `snapshot_cgp_auto_getter!` invocation across the suite is indexed here, s
 all belong to this entrypoint:
 
 - [getters/string_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/string_auto.rs):
-  the canonical plain case: a `&str` getter over a `String` field, `.as_str()` applied, no wiring.
+  the canonical plain case: a `&str` getter over a `String` field, `AsRef::as_ref` applied, no wiring.
 - [getters/clone_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/clone_auto.rs):
   an owned return `.clone()`d out by value.
 - [getters/mref_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/mref_auto.rs):
@@ -165,13 +165,13 @@ all belong to this entrypoint:
 - [getters/option_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/option_auto.rs):
   an `Option<&String>` return reading an `Option<String>` field via `.as_ref()`.
 - [getters/option_str_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/option_str_auto.rs):
-  an `Option<&str>` return reading an `Option<String>` field via `.as_deref()`, composing the `&str`
-  and option cases.
+  an `Option<&str>` return reading an `Option<String>` field via `OptionAsRef::option_as_ref`,
+  composing the `&str` and option cases.
 - [getters/slice_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/slice_auto.rs):
   a `&[u8]` return reading an `AsRef<[u8]> + 'static` field via `.as_ref()`.
 - [getters/mut_str_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/mut_str_auto.rs):
   a `&mut self` getter returning `&mut str`, reading the `String` field through
-  `HasFieldMut`/`get_field_mut` and calling `.as_mut_str()`.
+  `HasFieldMut`/`get_field_mut` and calling `AsMut::as_mut`.
 - [getters/mut_slice_auto.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/getters/mut_slice_auto.rs):
   a `&mut self` getter returning `&mut [u32]`, bounding the field by `AsMut<[u32]> + 'static` and
   calling `.as_mut()`.

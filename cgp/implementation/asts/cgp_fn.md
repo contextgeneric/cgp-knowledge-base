@@ -64,7 +64,7 @@ argument is paired with a `&mut self` receiver.
 
 ```rust
 // for `#[implicit] name: &str` on `&self`, to_statement produces:
-let name: &str = self.get_field(PhantomData::<Symbol!("name")>).as_str();
+let name: &str = ::core::convert::AsRef::as_ref(self.get_field(PhantomData::<Symbol!("name")>));
 ```
 
 `ImplicitArgFields` also carries `extract_from_impl_items`, used by `#[cgp_impl]` to collect

@@ -27,9 +27,9 @@ through the shared `parse_field_type`:
 
 | Return type | Field type | `FieldMode` | Conversion |
 |---|---|---|---|
-| `&str` | `String` | `Str` | `.as_str()` |
+| `&str` | `String` | `Str` | `AsRef::as_ref` |
 | `Option<&T>` | `Option<T>` | `OptionRef` | `.as_ref()` |
-| `Option<&str>` | `Option<String>` | `OptionStr` | `.as_deref()` |
+| `Option<&str>` | `Option<String>` | `OptionStr` | `OptionAsRef::option_as_ref` |
 | `&[T]` | any `AsRef<[T]>` | `Slice` | `.as_ref()` |
 | `MRef<'_, T>` | `T` | `MRef` | `MRef::Ref(...)` |
 | `&T` | `T` | `Reference` | none |
@@ -37,7 +37,7 @@ through the shared `parse_field_type`:
 
 `parse_field_type` also returns an `Option<Mut>` taken from a `&mut` in the type itself (the outer
 reference of `&mut T` or `&mut [T]`, or the inner one of `Option<&mut T>`), which selects the
-`HasFieldMut`/`get_field_mut` read and the mutable conversions (`.as_mut_str()`, `.as_mut()`,
+`HasFieldMut`/`get_field_mut` read and the mutable conversions (`AsMut::as_mut`, `Option::as_mut`,
 `.as_deref_mut()`, or an `AsMut<[T]>` bound). A mutable return requires a `&mut self` receiver. The
 `#[implicit]` extraction in the [`cgp_fn` stack](cgp_fn.md) keeps that type-derived mutability, but
 a getter discards it and keys the read off its receiver, which is the source of the
@@ -49,9 +49,9 @@ present, the trait has exactly one method whose return type is that type.
 The getter-method body itself is built by `derive_getter_method` from the `types/getter/` module,
 which emits `receiver.get_field(PhantomData::<Tag>) <conversion>` for the field's mode. The
 conversion suffix is chosen by `FieldMode::apply`, the single function that maps a field mode and
-mutability to the trailing `.as_str()`/`.as_ref()`/`MRef::Ref(...)`/etc.; the `#[implicit]` bindings
-in the [`cgp_fn` stack](cgp_fn.md) reach the same function through `GetFieldWithModeExpr`, which is
-why the two families convert fields identically.
+mutability to its fully qualified conversion (`AsRef::as_ref`, `Option::as_ref`, `MRef::Ref(...)`,
+and the rest); the `#[implicit]` bindings in the [`cgp_fn` stack](cgp_fn.md) reach the same function
+through `GetFieldWithModeExpr`, which is why the two families convert fields identically.
 
 ## `ItemCgpAutoGetter`
 

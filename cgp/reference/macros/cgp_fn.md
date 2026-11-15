@@ -188,7 +188,8 @@ where
 shorthand stands for the type-level string the macro actually emits (for `width`,
 `Symbol<5, Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>>`). Each implicit binding
 follows the same conversion rules as [`#[cgp_auto_getter]`](cgp_auto_getter.md): an owned value gets
-a trailing `.clone()`, an argument typed `&str` reads a `String` field through `.as_str()`, and a
+a trailing `.clone()`, an argument typed `&str` borrows any field implementing `AsRef<str>` through
+`.as_ref()`, and a
 borrowed `&Name` is taken by reference with no conversion. The full set of forms, including options,
 slices, and mutable borrows, is in [`#[implicit]`](../attributes/implicit.md).
 
@@ -235,8 +236,9 @@ Two further placements are decided by the macro rather than written by the autho
   emitted with inherited visibility. So `pub fn rectangle_area` yields `pub trait RectangleArea`,
   while a private `fn` yields a trait visible only in its own module.
 - **An attribute the macro does not recognize is copied onto both generated items**, which is what
-  lets `#[allow(...)]`, `#[doc]`, and a doc comment on the function apply to the trait and its impl
-  alike.
+  lets `#[allow(...)]` on the function apply to the trait and its impl alike. A doc comment on the
+  function documents the trait's method instead, and the trait gets a generated line naming the
+  operation.
 
 ## Examples
 

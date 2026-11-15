@@ -69,7 +69,7 @@ recognized forms are these:
 | `&T` | `T` | none |
 | `&str` | `String` | `.as_ref()` |
 | `Option<&T>` | `Option<T>` | `.as_ref()` |
-| `Option<&str>` | `Option<String>` | `.as_deref()` |
+| `Option<&str>` | `Option<String>` | `.option_as_ref()` |
 | `&[T]` | any `'static` value implementing `AsRef<[T]>` | `.as_ref()` |
 | [`MRef<'_, T>`](../types/mref.md) | `T` | wrapped as `MRef::Ref(…)` |
 | an owned type (a path, tuple, or array) | the same type | `.clone()` |

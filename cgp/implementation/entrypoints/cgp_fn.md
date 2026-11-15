@@ -197,7 +197,7 @@ belong to this entrypoint:
 
 - [implicit_arguments/cgp_fn_greet.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_greet.rs):
   the canonical plain case: one `#[implicit]` `&str` argument dropped from the signature and read
-  via `HasField` with `.as_str()` applied.
+  via `HasField` with `AsRef::as_ref` applied.
 - [implicit_arguments/cgp_fn_custom_trait_name.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_custom_trait_name.rs):
   `#[cgp_fn(CanCalculateRectangleArea)]` overrides the generated trait name; two owned `f64`
   implicits each `.clone()`d.
@@ -223,8 +223,8 @@ belong to this entrypoint:
   an owned, non-path implicit (a tuple) read by value with `.clone()` and a `Value = (f64, f64)`
   bound, showing owned types beyond path types are accepted.
 - [implicit_arguments/cgp_fn_option_str.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_option_str.rs):
-  an `Option<&str>` implicit backed by an `Option<String>` field and read with `.as_deref()`,
-  composing the `&str` and option modes.
+  an `Option<&str>` implicit backed by an `Option<String>` field and read with
+  `OptionAsRef::option_as_ref`, composing the `&str` and option modes.
 - [implicit_arguments/cgp_fn_calling_fn.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_calling_fn.rs):
   one `#[cgp_fn]` trait depending on another through an explicit `where Self:` bound.
 - [implicit_arguments/cgp_fn_multi_and_use_type.rs](https://github.com/contextgeneric/cgp/blob/main/crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_multi_and_use_type.rs):

@@ -71,7 +71,7 @@ where
     __Context__: HasField<__Tag__, Value = String>,
 {
     fn foo(__context__: &__Context__) -> &str {
-        __context__.get_field(PhantomData::<__Tag__>).as_str()
+        ::core::convert::AsRef::as_ref(__context__.get_field(PhantomData::<__Tag__>))
     }
 }
 ```

@@ -110,7 +110,7 @@ it stale.
 - [impl_generics.md](cgp/reference/attributes/impl_generics.md) — declare a generic parameter on a
   `#[cgp_fn]` impl alone, inferred from the field an implicit argument reads.
 - [implicit.md](cgp/reference/attributes/implicit.md) — source a function argument from a same-named
-  context field, with the clone/`as_str`/option/slice/`MRef`/mutable access rules.
+  context field, with the clone/`as_ref`/option/slice/`MRef`/mutable access rules.
 - [prefix.md](cgp/reference/attributes/prefix.md) — register a component into a namespace under a
   type-level path prefix, from the component's own trait.
 - [use_provider.md](cgp/reference/attributes/use_provider.md) — complete an inner provider's bound in

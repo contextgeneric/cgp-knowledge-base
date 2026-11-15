@@ -67,7 +67,7 @@ trait (and its mutable and provider-side mirrors) that all value injection stand
 type-level numbers for tuple fields. The default way to read such a field is an
 [`#[implicit]`](attributes/implicit.md) argument, which looks like an ordinary function parameter
 but is sourced from a same-named context field, and whose access rules (`.clone()` for owned,
-`.as_str()` for `&str`, and the option/slice/mutable forms) live in its document.
+`.as_ref()` for `&str`, and the option/slice/mutable forms) live in its document.
 
 A getter trait is the sparing alternative for the cases an implicit argument cannot reach: a field
 on another type, a named accessor other code requires, or a getter carrying an inferred associated
