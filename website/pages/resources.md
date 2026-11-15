@@ -1,7 +1,7 @@
 # Resources
 
-Resources is the site's index of what exists around CGP outside its documentation: crates, tools,
-a recorded talk, and projects, each with a line on what it is and who it is for.
+Resources is the site's index of what exists around CGP outside its documentation: crates, tools, a
+recorded talk, and projects, each with a line on what it is and who it is for.
 
 - **URL:** <https://contextgeneric.dev/docs/resources>
 - **Source:** [docs/resources.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/resources.md)
