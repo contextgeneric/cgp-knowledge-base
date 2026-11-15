@@ -195,10 +195,9 @@ his first-person account, per
 under its own heading, with nothing before it speaking as "I"; a revision fixes a broken link and
 changes anything else only at his request. The acknowledgement records where CGP came from, which
 [the website repository's rules](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources)
-leave to the author: keep its text under a `##` heading, so the page has one `h1`, and raise its
-Hermes SDK link, the only one outside the dated posts to that
-[legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources),
-with the author rather than editing it.
+leave to the author: keep its text under a `##` heading, so the page has one `h1`, and keep its
+mention of the Hermes SDK without a link, as the author chose for that
+[legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources).
 
 **Elsewhere the page is in project voice**: the reader is "you" and the project is "CGP", never "we"
 or "our" for a project with one author, per

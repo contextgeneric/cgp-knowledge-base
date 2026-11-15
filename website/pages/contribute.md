@@ -12,7 +12,7 @@ closes with the author's sponsorship section and the project's acknowledgement.
 An agent rewrote the page to [the orientation guide](../writing-guides/orientation.md#the-contribute-page),
 which the author allowed in full, and its foot carries the provenance line for documentation pages.
 The sponsorship section and the acknowledgement are the author's text, unchanged apart from the
-acknowledgement's heading level.
+acknowledgement's heading level and its Hermes SDK link, which the author removed.
 
 ## What it covers
 
@@ -33,14 +33,12 @@ largest and that each helps on its own. Five routes follow in project voice:
 
 *Sponsor Me* is the author's first-person account, and the acknowledgement credits Soares Chen as
 CGP's creator, names Haskell typeclasses as the primary inspiration, and records that CGP was
-developed at [Informal Systems](https://informal.systems/) as part of the
-[Hermes SDK](https://github.com/informalsystems/hermes-sdk/).
+developed at [Informal Systems](https://informal.systems/) as part of the Hermes SDK, which it names
+without a link, since the SDK is a
+[legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources).
 
 ## Where it diverges from the guide
 
-- The acknowledgement links the Hermes SDK, a
-  [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources);
-  the guide leaves the link to the author.
 - The page links the knowledge base's issue tracker only through the contributing page, although
   the guide says to link it: the website's
   [link rules](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links) let
@@ -61,7 +59,6 @@ more. The reporting route follows
 
 - The sponsorship section is in the author's first-person voice and candid about finances. Do not
   rewrite it into project prose; it is the one place on the site where a single voice belongs.
-- The acknowledgement's Hermes SDK link is a legacy resource; raise it with the author rather than
-  editing it.
+- The acknowledgement names the Hermes SDK without linking it; do not add the link back.
 - The heading is *Contribute*, so the full name opens the prose; the sidebar keeps the label
   *Contribute to CGP*.
