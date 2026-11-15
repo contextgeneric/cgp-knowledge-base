@@ -54,6 +54,9 @@ Hypershell.
   [dispatching-per-type](../../cgp/guides/dispatching-per-type.md).
 - **`Char` is now [`Chars`](../../cgp/reference/types/chars.md)**, renamed in v0.5.0 because it is a
   list rather than a single character.
+- **Its closing link to `CHANGELOG.md` on `main` stops resolving** once `cgp` drops the file. The
+  [release notes](https://contextgeneric.dev/docs/release-notes/cgp/v0.4.1) hold the release's changes
+  now, and the post, a dated artifact, keeps the link.
 - **Every provider snippet is in the inside-out `#[cgp_provider]` form** that
   [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md) replaced in v0.6.0.
 
