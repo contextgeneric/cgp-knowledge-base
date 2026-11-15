@@ -46,7 +46,10 @@ reader needs them:
 - **Editor integration:** VS Code with the rust-analyzer extension only. The setting in the workspace
   `.vscode/settings.json`, and why not user settings and when not to commit it; each part of the
   command; why `check.overrideCommand` rather than `check.command`; what the editor shows for the
-  check page's call-site `Rectangle` program; what the switch changes (a slow first save,
+  check page's call-site `Rectangle` program; importing a component key (the import and attribute
+  fixes on a provider trait's name and a wiring key under the tool, rustc's fix on the first `use`
+  line under the plain check, rust-analyzer's own import assist on a key written in the source, and
+  the provider trait's hover); what the switch changes (a slow first save,
   rust-analyzer's own check options dropped, as-you-type errors not rewritten, the pinned nightly
   disagreeing with the reader's toolchain); turning it off; when it does not work (the
   `cargo check failed to start` warning carrying the tool's message, the same command in a terminal,
@@ -97,12 +100,13 @@ programs the pages say compile under `tests/cargo_cgp/`.
   check page's program, and printed what the server published and every `window/showMessage`. Every
   quoted editor output comes from it: the rewritten error, the `cargo check failed to start` warning
   (provoked with an unknown `CARGO_CGP_TOOLCHAIN`, then quoted with the pinned nightly's name), and
-  cargo's `no such command` naming `cgp` with the tool off `PATH`. A bogus `check.extraArgs` and
-  `check.features` beside the override still checked cleanly, while the same `extraArgs` without it
-  broke the check, which is the evidence that the override drops those options. The settings and
-  command-palette names come from VS Code's and rust-analyzer's documentation, and the restart
-  command's name from the extension's `package.json`. How VS Code renders the error in its window is
-  unverified.
+  cargo's `no such command` naming `cgp` with the tool off `PATH`. The import fixes come from the
+  same server's code actions on a probe crate whose providers omit their keys. A bogus
+  `check.extraArgs` and `check.features` beside the override still checked cleanly, while the same
+  `extraArgs` without it broke the check, which is the evidence that the override drops those
+  options. The settings and command-palette names come from VS Code's and rust-analyzer's
+  documentation, and the restart command's name from the extension's `package.json`. How VS Code
+  renders the error in its window is unverified.
 - **The `example-code` crate patches `cgp` to the sibling checkout,** and its `.stderr` snapshots are
   blessed against it; before the branch merges, the patch goes and the snapshots are re-blessed
   against the release.

@@ -48,6 +48,20 @@ These behaviors are easy to break:
 - **An explicit `--target-dir` is taken as given.** One after a `--` is rustc's, so it does not
   count.
 
+## Quick fixes from the check
+
+Rust Analyzer turns a check's suggestion into a quick fix anchored at the suggestion's own spans,
+whether the suggestion is machine-applicable or maybe correct, and marks a machine-applicable one as
+the preferred fix. So a fix appears in the menu only where one of its parts sits. `CGP-E041`'s import
+and `CGP-E070`'s attribute each carry an unchanged part over the name the error points at, which
+puts them on a provider header's trait name and on a wiring key, as
+[Diagnostic reshapes](../driver/diagnostic-reshapes.md) records. The fix's title is its message
+followed by every replacement, so it shows the inserted `use` line and the unchanged name. Under
+plain `cargo check`, rustc's own import suggestion has a part only on the module's first `use` line,
+so its fix appears there alone, while Rust Analyzer's own import assist works on a key written in the
+source, such as a wiring key or a `#[cgp_impl(... : Key)]` attribute, but not on a key a header
+derives, which has no token of its own.
+
 ## When the editor and the check disagree
 
 Rust Analyzer's inline analysis uses the project's toolchain and default solver, while the check
