@@ -37,7 +37,8 @@ passes without the disk, with `get_user_profile_picture` unchanged.
 `App`'s `local_dir` field, and shows the raw error's first lines, then the `cargo cgp check` report
 naming the missing field, with the canonical qualification. **Where to go next** routes to the
 area-calculation series, two Concepts pages, the Overview's abstract error type, and, for the
-framework author, the extensible-data Concepts pages.
+framework author, the extensible-data Concepts pages. The Overview's *Where to go next* and the
+area-calculation series' Checking and Debugging page link it back.
 
 ## The teaching contract
 

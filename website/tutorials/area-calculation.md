@@ -156,7 +156,8 @@ addition breaks.
 of the program Static Dispatch ends with, and the line numbers in its quoted errors refer to that file,
 which the page says in its opening. The [tutorial guide](../writing-guides/tutorial.md) asks tutorials
 to stand alone; this series does not. The index describes all three tutorials, and Static Dispatch
-routes forward to Checking and Debugging.
+routes forward to Checking and Debugging, whose summary routes on to the
+[storage-backend tutorial](storage-backend.md) for the same constructs on an application context.
 
 **Checking and Debugging's diagnostics are quoted output.** A revision that changes its program re-runs
 all three rather than editing the text: `cargo check` at the call site, `cargo check` with the assertion,
