@@ -41,9 +41,14 @@ Markdown with no scripts, and says every route takes the `v0.8.0` tag, the versi
 
 The page and the `cgp-skills` README give the same routes and directories, and a rule in
 `cgp-skills`' `AGENTS.md` keeps them in agreement. The commands come from each tool's help,
-documentation, or source. The Cursor, GitHub Copilot, and Gemini CLI sections and the
-`$skill-installer` route rest on those tools' documentation alone, since none of them was available
-to test. The release post and *Using the Knowledge Base with Your Agent* link it.
+documentation, or source. Before the tag existed, each route that runs on the maintainer's machine
+was installed from a local clone into a scratch project: the copy for Claude Code, Codex, OpenCode,
+and Pi, `npx skills`, `gh skill`, both plugins, and Pi's package each loaded one skill, and the
+ask-your-agent request led Claude Code and Codex to the README's folder for a project, where each
+harness refused the copy in a non-interactive run, as it would ask the user to approve it in an
+interactive one. The Cursor, GitHub Copilot, and Gemini CLI sections and the `$skill-installer`
+route rest on those tools' documentation alone, since none of them was available to test. The
+release post and *Using the Knowledge Base with Your Agent* link it.
 
 ## Where it diverges
 
