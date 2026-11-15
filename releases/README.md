@@ -47,11 +47,12 @@ the [`cgp`](https://github.com/contextgeneric/cgp) source at the relevant tag.
 | `DelegateErrorRaiser` | [v0.1.0](v0-1-0.md) | Replaced by `UseDelegate` in [v0.2.0](v0-2-0.md) |
 | `ProvideEyreError`, `RaiseStdError`, `RaiseDebugError`, `RaiseDisplayError` | [v0.1.0](v0-1-0.md) | Renamed `UseEyreError`, `RaiseEyreError`, `DebugEyreError`, `DisplayEyreError` in [v0.3.0](v0-3-0.md) |
 | `HandleErrorsWithStdError` | [v0.1.0](v0-1-0.md) | Split into `UseBoxedStdError` and `RaiseBoxedStdError` in [v0.3.0](v0-3-0.md) |
-| `Async`, `MaybeSend`, `MaybeSync`, `MaybeStatic` | [v0.2.0](v0-2-0.md) | `'static` dropped in [v0.4.0](v0-4-0.md); removed in [v0.5.0](v0-5-0.md) |
+| `Async`, `MaybeSend`, `MaybeSync`, `MaybeStatic` | [v0.2.0](v0-2-0.md) | `MaybeStatic` and the `'static` bound dropped in [v0.4.0](v0-4-0.md); the rest removed in [v0.5.0](v0-5-0.md) |
 | `DelegateTo` | [v0.2.0](v0-2-0.md) | Renamed `UseDelegate` within [v0.2.0](v0-2-0.md) |
 | `symbol!` (lowercase) | [v0.2.0](v0-2-0.md) | Renamed `Symbol!` in [v0.5.0](v0-5-0.md) |
 | `cgp_type!` (function macro) | [v0.3.0](v0-3-0.md) | Became the `#[cgp_type]` attribute in [v0.4.0](v0-4-0.md) |
 | `ErrorTypeComponent` / `ProvideErrorType` | [v0.3.0](v0-3-0.md) | Renamed `ErrorTypeProviderComponent` / `ErrorTypeProvider` in [v0.4.0](v0-4-0.md) |
+| `RuntimeTypeComponent` / `ProvideRuntimeType` | [v0.3.0](v0-3-0.md) | Renamed `RuntimeTypeProviderComponent` / `RuntimeTypeProvider` in [v0.4.0](v0-4-0.md) |
 | `HasAsyncErrorType`, `CanRaiseAsyncError`, `CanWrapAsyncError` | [v0.3.0](v0-3-0.md)/[v0.3.1](v0-3-1.md) | Removed in [v0.5.0](v0-5-0.md) with `Async` |
 | `HasComponents` | pre-[v0.4.0](v0-4-0.md) | Renamed `HasProvider` then `HasCgpProvider` in [v0.4.0](v0-4-0.md), removed in [v0.6.0](v0-6-0.md) |
 | `#[trait_alias]` | [v0.4.0](v0-4-0.md) | Renamed `#[blanket_trait]` within [v0.4.0](v0-4-0.md) |
@@ -66,7 +67,10 @@ the [`cgp`](https://github.com/contextgeneric/cgp) source at the relevant tag.
 | `#[cgp_dispatch]` | [v0.5.0](v0-5-0.md) | Renamed `#[cgp_auto_dispatch]` within [v0.5.0](v0-5-0.md) |
 | `PartialFoo` generated types | [v0.4.2](v0-4-2.md) | Prefixed to `__PartialFoo` in [v0.5.0](v0-5-0.md) |
 | `#[cgp_inherit]` | [v0.6.0](v0-6-0.md) | Removed in [v0.8.0](v0-8-0.md) with the presets it inherited from |
+| `for_each_replace!` | [v0.2.0](v0-2-0.md) | Removed in [v0.4.0](v0-4-0.md) |
 | `replace_with!` | [v0.2.0](v0-2-0.md) | Removed in [v0.8.0](v0-8-0.md) with the presets that expanded through it |
+| A preset's struct `{Preset}` and traits `Is{Preset}`, `DelegatesTo{Preset}` | [v0.2.0](v0-2-0.md) | Replaced by the module `{Preset}` with `Provider` and `IsPreset` in [v0.4.0](v0-4-0.md) |
+| `cgp-component-macro`, `cgp-component-macro-lib`, `cgp-field-macro`, `cgp-field-macro-lib` | [v0.1.0](v0-1-0.md) | Replaced by `cgp-macro` and `cgp-macro-lib` in [v0.4.0](v0-4-0.md) |
 | Greek-letter type names (`π`, `ε`, `σ`, `θ`, `ω`, `δ`, then `ψ` and `ζ`) | [v0.4.0](v0-4-0.md), [v0.5.0](v0-5-0.md) | Removed in [v0.8.0](v0-8-0.md); the types keep only their English names |
 | `ProvideType` / `TypeComponent` | pre-[v0.7.0](v0-7-0.md) | Renamed `TypeProvider` / `TypeProviderComponent` in [v0.7.0](v0-7-0.md) |
 | `#[use_type(Trait::Type)]` separator | [v0.7.0](v0-7-0.md) | Changed to `#[use_type(Trait.Type)]` in [v0.8.0](v0-8-0.md) |
