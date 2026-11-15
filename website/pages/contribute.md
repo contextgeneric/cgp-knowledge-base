@@ -12,9 +12,10 @@ closes with the author's sponsorship section and the project's acknowledgement.
 An agent rewrote the page to [the orientation guide](../writing-guides/orientation.md#the-contribute-page),
 which the author allowed in full, and its foot carries the provenance line for documentation pages:
 level one of the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md).
-The sponsorship section and the acknowledgement are the author's text, unchanged apart from the
-acknowledgement's heading level, its Hermes SDK link, and the sponsorship section's Patreon and
-Ko-Fi links, which the author removed, leaving GitHub Sponsors as the one sponsorship page.
+The sponsorship section and the acknowledgement are the author's text. They differ from it only in
+the acknowledgement's heading level and in links the author removed: the acknowledgement's Hermes
+SDK link, and the sponsorship section's Patreon and Ko-Fi links, which leaves GitHub Sponsors as the
+one sponsorship page.
 
 ## What it covers
 
@@ -23,12 +24,13 @@ Introduction, without the tag line, then says the routes run from the smallest c
 largest and that each helps on its own. Five routes follow in project voice:
 
 - **Join the discussion:** asking questions and suggesting what the documentation should cover,
-  linking the [Resources](resources.md) section's Community page for the channels.
+  with a link to the [Resources](resources.md) section's Community page for the channels, and why a
+  question shows which page needs work.
 - **Report a problem:** a confusing or wrong page goes to GitHub Discussions or the website
   repository's issue tracker; a problem in the knowledge base goes to the base's issue tracker, with
   the reporting section of *Contributing to CGP with an Agent* for what to include.
 - **Write about CGP and share it:** independent posts, tutorials, and talks, and following CGP on
-  Bluesky to share them, through the Community page's link.
+  Bluesky to share them, with the account linked from the Community page.
 - **Publish reusable components:** the aim of an ecosystem where most users write only the wiring
   that selects published components and providers, stated as an aim that does not exist yet.
 - **Change CGP itself:** one paragraph routing to *Contributing to CGP with an Agent*, the site's

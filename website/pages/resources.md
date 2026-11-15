@@ -13,10 +13,10 @@ recorded talks, and *Community* holds the discussion channels and the social acc
 
 ## How the page was made
 
-An agent wrote the pages to [the orientation guide](../writing-guides/orientation.md#resources),
-when the author kept Resources for material beyond the documentation and asked for a subpage per
-kind, starting with videos, and approved a Community page for the discussion channels and the
-social account. Each page's foot carries the provenance line for documentation pages: level one of
+An agent wrote the pages to [the orientation guide](../writing-guides/orientation.md#resources).
+The author kept Resources for material beyond the documentation, asked for a subpage per kind
+starting with videos, and approved a Community page for the discussion channels and the social
+account. Each page's foot carries the provenance line for documentation pages: level one of
 the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md).
 
 ## What it covers
@@ -33,17 +33,17 @@ each kind of resource its own section:
 - **More to come:** more kinds, such as events, will be added, each with a page of its own.
 
 *Videos* opens by saying its talks introduce CGP, with the short form beside the name, and says what
-each entry gives. Its one entry, *RustLab
-2025: How to stop fighting with coherence*, embeds the talk in a player that scales to the column's
-width and links its [transcript post](../blog/rustlab-2025-coherence.md).
+each entry gives. Its one entry, *RustLab 2025: How to stop fighting with coherence*, embeds the
+talk in a player that scales to the column's width and links its
+[transcript post](../blog/rustlab-2025-coherence.md).
 
 *Community* opens with the name and the short form beside a reader's unanswered question, then gives
 two sections and a closing route. *Ask a question or start a discussion* lists the Discord server
 for quick and beginner questions, GitHub Discussions for threads others find later, and the r/cgp
-subreddit for public discussion, then sends a reader with a wrong page to Contribute's *Report a
-problem*. *Follow CGP's news* links the Bluesky account `@contextgeneric.dev`, the blog, and its RSS
-feed. *Help with CGP* routes to Contribute. It is the one page that lists every channel; Contribute
-and the Introduction link it.
+subreddit for public discussion, then sends a reader with a confusing or wrong page to Contribute's
+*Report a problem*. *Follow CGP's news* links the Bluesky account `@contextgeneric.dev`, the blog,
+and its RSS feed. *Help with CGP* routes to Contribute. It is the one page that lists every channel;
+Contribute and the Introduction link it.
 
 The section lists no crates, tools, or projects, which the Tooling, AI, and Projects sections cover,
 and leaves out the CGP Patterns book and the Hermes SDK, which are

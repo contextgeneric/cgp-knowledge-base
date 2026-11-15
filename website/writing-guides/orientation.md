@@ -150,9 +150,9 @@ instead, because a pin crates.io does not carry fails on the reader's first buil
 
 ## Resources
 
-**A section for material about CGP beyond the documentation, and the places where people discuss it,
-with one subpage per kind.** It holds two kinds today, videos at `docs/resources/videos.md` and the
-community channels at `docs/resources/community.md`; events and other kinds join as their own
+**A section for material about CGP beyond the documentation and for the places where people discuss
+it, with one subpage per kind.** It holds two kinds today: videos at `docs/resources/videos.md`, and
+the community channels at `docs/resources/community.md`; events and other kinds join as their own
 subpages, so each kind's URL stays stable as the section grows. The index
 (`docs/resources/index.md`, the category's link target) names Context-Generic Programming, then
 gives each kind of resource its own `##` section saying what it holds and linking where it lives:
@@ -161,12 +161,12 @@ the fuller account of each construct, and a last one saying that more kinds will
 video entry gives the talk's title as its heading, the embedded player scaled to the column, a line
 on what the talk covers, and its transcript post where one exists.
 
-The Community page is the one page that lists every channel: the discussion channels (the Discord
-server, GitHub Discussions, and the subreddit), each with the kind of conversation it suits, then
-the project's social accounts, today Bluesky alone, beside the blog and its feed. Contribute's
-discussion and writing routes and the Introduction link the page rather than list the channels, so
-a new channel joins this page and the footer only. Like Contribute, the page makes no claim about
-the community's size.
+**The Community page is the one page that lists every channel.** It gives the discussion channels
+(the Discord server, GitHub Discussions, and the subreddit), each with the kind of conversation it
+suits, then the project's social accounts, today Bluesky alone, beside the blog and its feed.
+Contribute's discussion and writing routes and the Introduction link the page rather than list the
+channels, so a new channel joins this page and the footer only. Like Contribute, the page makes no
+claim about the community's size.
 
 The section is not an index of the crates, tools, or projects: Tooling, the AI section, and Projects
 cover those, and a link to another page of this site belongs in the Introduction's routing list.
@@ -195,8 +195,8 @@ first that fits. The routes may be grouped or renamed, and one with nowhere to l
   [contributions from outside the project](../../communication-strategy/ai-disclosure.md#contributions-from-outside-the-project).
   Link the knowledge base's issue tracker and the section on reporting problems in *Contributing to
   CGP with an Agent*, which [knowledge-base.md](knowledge-base.md#the-section-shape) specifies.
-- **Writing and sharing:** an independent post, tutorial, or talk, and following and sharing it
-  through the project's social accounts, which the Community page links.
+- **Writing and sharing:** an independent post, tutorial, or talk, and the project's social
+  accounts for sharing it, linked through the Community page.
 - **Publishing reusable components:** the aim of an ecosystem of published components and providers,
   so most users write only the wiring that selects them; state it as an aim, never as an ecosystem
   that exists, and without "modular" as the lead, per
