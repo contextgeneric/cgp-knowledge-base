@@ -11,5 +11,5 @@ maintainer's bump, and the editor.
   under the pinned nightly.
 - [Bumping the pinned nightly](pinned-nightly-bump.md): every consumer of the pin, and what a bump must do
   in the same change.
-- [Rust Analyzer integration](rust-analyzer-integration.md): running the check on save, and the
-  `target/cgp` directory that keeps it off cargo's build lock.
+- [Rust Analyzer integration](rust-analyzer-integration.md): running the check on save, where its quick
+  fixes appear, and the `target/cgp` directory that keeps it off cargo's build lock.

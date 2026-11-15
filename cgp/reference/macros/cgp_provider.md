@@ -60,8 +60,9 @@ of the trait's name, so a key that does not resolve is reported there, as for
 A provider in another module than its component therefore imports the key beside the provider
 trait, as `use crate::shapes::{AreaCalculator, AreaCalculatorComponent};` above the impl, or names the
 trait by its path in the header, and a module that re-exports the provider trait re-exports the key
-in the same `use`. Pass the component explicitly when the component's marker does not follow that
-convention, as when the component renamed it with
+in the same `use`. Pass the component explicitly when the header's trait name does not give the
+component's marker: a trait imported under another name, or a component that renamed its marker
+with
 [`#[cgp_component]`](cgp_component.md)'s `name:` key:
 
 ```rust

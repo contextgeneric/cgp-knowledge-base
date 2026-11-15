@@ -97,7 +97,8 @@ names its key, so hovering the trait in the `use` line shows which key to import
 
 The key carries the span of the trait's name, so when it does not resolve, the compiler reports
 ``cannot find type `AreaCalculatorComponent` in this scope`` on that name in the header. A header
-that reaches the trait through a module re-exporting the trait without its key fails the same way, as ``cannot find type `AreaCalculatorComponent` in module `crate::facade` ``.
+that reaches the trait through a module re-exporting the trait without its key fails the same way,
+as ``cannot find type `AreaCalculatorComponent` in module `crate::facade` ``.
 `cargo cgp check` reshapes both into
 [`[CGP-E041]`](../../errors/wiring/unresolved-wiring-name.md), naming the import or the module that
 defines the key, and a trait imported under another name, which derives a key nothing declares, into

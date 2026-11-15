@@ -746,7 +746,7 @@ it stale.
 - [distribution/pinned-nightly-bump.md](cargo-cgp/implementation/distribution/pinned-nightly-bump.md) — every consumer of the
   pin, and what a nightly bump must do in the same change.
 - [distribution/rust-analyzer-integration.md](cargo-cgp/implementation/distribution/rust-analyzer-integration.md) — running the
-  check on save, and the `target/cgp` directory that keeps it off cargo's build lock.
+  check on save, where its quick fixes appear, and the `target/cgp` directory that keeps it off cargo's build lock.
 
 ### `cargo-cgp/issues/`: the gaps still open
 
