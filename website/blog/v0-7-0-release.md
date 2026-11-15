@@ -76,6 +76,9 @@ Less than any other release note, but one gap is easy to miss:
   everything around it still compiles. See [`#[use_type]`](../../cgp/reference/attributes/use_type.md)
   for the grammar, including the equality form `#[use_type(HasErrorType.{Error = AppError})]`, which
   this release shipped with the `::` separator but the post does not show.
+- **The post presents the ambiguity of a static call as a consequence of the simplified blanket impl.**
+  A probe against `cgp` 0.6.0, 0.6.1, and 0.7.0 shows `App::make()` failing with `E0034` at all three
+  when both traits are in scope, so the release did not introduce it.
 - **Namespaces did not exist yet.** Its wiring examples show flat `delegate_components!` tables, where
   a real application would now group them per [namespaces](../../cgp/concepts/namespaces.md) and the
   [namespaces-and-prefixes guide](../../cgp/guides/namespaces-and-prefixes.md).
