@@ -13,7 +13,8 @@ An agent rewrote the page to [the orientation guide](../writing-guides/orientati
 which the author allowed in full, and its foot carries the provenance line for documentation pages:
 level one of the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md).
 The sponsorship section and the acknowledgement are the author's text, unchanged apart from the
-acknowledgement's heading level and its Hermes SDK link, which the author removed.
+acknowledgement's heading level, its Hermes SDK link, and the sponsorship section's Patreon and
+Ko-Fi links, which the author removed, leaving GitHub Sponsors as the one sponsorship page.
 
 ## What it covers
 
