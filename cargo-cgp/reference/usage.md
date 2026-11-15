@@ -160,12 +160,13 @@ own Rust code (`E0277` here) is always kept, so `rustc --explain` still works an
 reclassified away from rustc; the CGP code rides inside the message as a tag on the sentence it
 classifies. Errors the tool does not recognize pass through as the compiler wrote them.
 
-Most rewritten errors name their fix in a `help` line. A few also attach it as an edit, which the
-terminal shows as the inserted line marked `+` and which an editor applies (and `cargo fix`, when
-the driver is set by hand as cargo's workspace wrapper, since `cargo cgp` has no `fix` subcommand):
-`CGP-E041`'s import of a component not in scope, and `CGP-E070`'s component named in a provider
-header's attribute. Each is machine-applicable only when the tool is sure of it, such as when one
-path imports the component; the [error-code catalog](../error-code.md) gives the conditions.
+A rewritten error that can name its fix does so in a `help` line, and two codes also attach the fix
+as an edit: `CGP-E041`'s import of a component not in scope, and `CGP-E070`'s component named in a
+provider header's attribute. The terminal shows the edit as the inserted line marked `+`, and an
+editor running the check offers it as a quick fix. Each is marked machine-applicable only under
+conditions the [error-code catalog](../error-code.md) gives, such as one path importing the
+component. `cargo fix` applies the edits only with the driver set by hand as cargo's workspace
+wrapper, since `cargo cgp` has no `fix` subcommand.
 
 Some mistakes keep rustc's own headline, and [issues/usability.md](../issues/usability.md) lists them.
 For example, a check on a context with a type parameter is not traced, because the resolver works
