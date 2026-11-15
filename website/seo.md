@@ -478,8 +478,8 @@ merge fixes its first impression.
 change. The crate manifests are set, and the redirect stubs, `robots.txt`, and the site and
 front-page titles reach readers at the merge.
 
-**The agent surfaces and the hand check follow, and neither blocks anything**: a `context7.json` in
-the `cgp` repository, an optional `llms.txt`, and the hand check on Bing and Kagi.
+**The hand check on Bing and Kagi follows, and it blocks nothing**: six queries, recorded as
+[Repeating the hand check](#repeating-the-hand-check) describes.
 
 **The relaunch-day submission is the only item that cannot be done early**: confirming that the live
 sitemap lists every URL and taking a Search Console export as the baseline, which belongs on the
