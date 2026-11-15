@@ -132,18 +132,19 @@ implementation or a complete web service.
 
 The missing-height program is a
 [compile-fail fixture](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/example-code/tests/compile_fail/blog/v0_8_0_missing_height.rs).
-Both quoted diagnostic bodies were captured from that program in a temporary library target as
-`src/lib.rs`, using cargo with stable Rust 1.99 and the local source-built cargo-cgp driver. The
-`cargo check` body's `help:` line was later edited by hand to the `cgp::macro_prelude::Chars` path
-that rustc prints once the prelude no longer carries `Chars`, matching the fixture's blessed output,
-so both bodies are recaptured against the released tool. The repaired program passes cargo-cgp, and
-a runtime test asserts that a three-by-four rectangle has area twelve. The historical preset and old
-attribute-separator listings are explicitly v0.7.0 input, not current examples to compile against
-v0.8.0. The proposed `???` keys and nested helper-macro form are labeled pseudocode in text fences,
-not presented as accepted Rust syntax.
+Both quoted diagnostic bodies match a capture from the post's own listing as `src/lib.rs` in a
+temporary library target, taken on 2026-11-15 against the local `cgp` checkout: the `cargo check`
+body with stable Rust 1.99, its `cgp::macro_prelude::Chars` path included, and the `cargo cgp check`
+body with the local source-built driver. Both still need a capture against the released crates and
+tool before publication. The repaired program passes cargo-cgp, and a runtime test asserts that a
+three-by-four rectangle has area twelve. The historical preset and old attribute-separator listings
+are explicitly v0.7.0 input, not current examples to compile against v0.8.0. The proposed `???` keys
+and nested helper-macro form are labeled pseudocode in text fences, not presented as accepted Rust
+syntax.
 
 The production site build passes without broken links or anchors, and the full example suite passes
-against the sibling `cgp` checkout.
+against the sibling `cgp` checkout. Every external link resolves except the web-app source link,
+which names `cgp-examples`' `main` and resolves once that repository's `v0.8.0` branch merges.
 
 The narrative revision preserves all 36 fenced listings verbatim, including the diagnostics and
 historical input, and preserves every heading and anchor. The namespace application table moves
@@ -162,7 +163,7 @@ headings. The original material remains represented as follows:
 | Difficult diagnostics and the Rust/CGP knowledge needed to read them | The cargo-cgp motivation, exact missing-height example, diagnostic comparison, and compiler-API explanation |
 | Documentation gaps, reliance on blog posts, limited personal time, and months of manual work | The documentation introduction, retaining the author's capacity argument |
 | Claude Code, iterative planning and revision, reader skepticism, and a request for quality feedback | The documentation process and invitation to assess the actual explanations |
-| Word/page-count placeholders | Measured documentation scale: about 330,000 prose words across more than 340 pages, plus an explicitly qualified printed-page equivalent |
+| Word/page-count placeholders | Measured documentation scale: about 340,000 prose words across more than 340 pages, plus an explicitly qualified printed-page equivalent |
 | Further methodology writing | The author's interest in a dedicated follow-up, alongside the existing process page |
 | All six documentation/agent resources and the skill's learning and diagnostic roles | The expanded resource list and skill subsection |
 | Complete database-only managers, alternative SQLite managers, and initial two-entry wiring | The restored first stage, compiled separately in the blog example file |
@@ -183,8 +184,8 @@ It qualifies claims that diagnostics are solved, broad macro impossibility claim
 single-crate trade-offs. Those corrections preserve the argument without teaching invalid behavior.
 
 The scale estimate counts regular Markdown/MDX files under the website's `docs/`, excluding symlinked
-skill files, front matter, and fenced code. At the audit there were 343 files and approximately
-330,600 whitespace-separated prose words. The printed equivalent assumes 300 words per page and is
+skill files, front matter, and fenced code. On 2026-11-15 there were 348 files and approximately
+343,900 whitespace-separated prose words. The printed equivalent assumes 300 words per page and is
 explicitly a layout-dependent estimate rather than a measured PDF length.
 
 ## Maintaining it
