@@ -187,11 +187,11 @@ where
 `#[cgp_component]` uses, and references to it inside the impl appear as `Self`. The `Symbol!("...")`
 shorthand stands for the type-level string the macro actually emits (for `width`,
 `Symbol<5, Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>>`). Each implicit binding
-follows the same conversion rules as [`#[cgp_auto_getter]`](cgp_auto_getter.md): an owned value gets
-a trailing `.clone()`, an argument typed `&str` borrows any field implementing `AsRef<str>` through
-`.as_ref()`, and a
-borrowed `&Name` is taken by reference with no conversion. The full set of forms, including options,
-slices, and mutable borrows, is in [`#[implicit]`](../attributes/implicit.md).
+applies the conversion [`#[cgp_auto_getter]`](cgp_auto_getter.md) applies to the same type: an owned
+value gets a trailing `.clone()`, an argument typed `&str` goes through `.as_ref()`, and a borrowed
+`&Name` is taken by reference with no conversion. The `&str` argument is wider than the getter,
+which reads a `String` field: it borrows any field implementing `AsRef<str>`. The full set of forms,
+including options, slices, and mutable borrows, is in [`#[implicit]`](../attributes/implicit.md).
 
 Generics and the `where` clause expand according to the split described above. Given the `Scalar`
 example, the generic goes on both trait and impl, while the function's `where` bound stays on the
