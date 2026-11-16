@@ -224,8 +224,9 @@ read off each diagnostic's primary span:
   map whenever a span from it is first decoded, which under threads happens in any order.
 - **Then the code, then the message,** for reports at one span, and then the rest of the
   diagnostic: its span labels, its children, its suggestions, its message arguments, its level and
-  lint, its children's span labels, and its suggestions' styles and applicability, each with its
-  spans read within their files. Two reports at one span with one code and message, such
+  lint, its children's span labels, its suggestions' styles, applicability, and variants, every
+  part of its main message with its style, its children's message styles, and the emission site
+  and long-type file rustc can print, each with its spans read within their files. Two reports at one span with one code and message, such
   as two `E0207`s of which only one carries the macro's span label, then still have one order, and
   only reports that print the same tie.
 - **No span last:** a diagnostic without a span comes after those with one. Within a batch of the
