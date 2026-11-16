@@ -55,7 +55,12 @@ Expand mode adds none of the three, because it stops before analysis.
 
 **Transform** runs in
 [`CgpEmitter`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs),
-which receives each diagnostic before any inner emitter sees it. It tries an ordered list of stages,
+which receives each diagnostic before any inner emitter sees it. A diagnostic that arrives during
+rustc's `analysis` query, where the crate is type-checked, is queued and transformed once the query
+ends, with no compiler lock held; one that arrives before or after it, such as name resolution's,
+is transformed as it arrives
+([transforming at the end of `analysis`](driver/program.md#transforming-at-the-end-of-analysis)).
+It tries an ordered list of stages,
 each recognizing one class of mistake or its consequence and returning a `Verdict`: continue, drop the
 diagnostic, or reshape it ([Diagnostic reshapes](driver/diagnostic-reshapes.md)). A diagnostic no stage
 claims goes to the [typed resolver](typed-resolution/README.md), which replaces a wiring failure with
@@ -157,6 +162,8 @@ The crates are listed above, and these are the entry points into the flow:
   the driver's entry point, with its flags.
 - [`crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs):
   the stage list and the buffering.
+- [`crates/cargo-cgp-driver/src/emitter/deferred.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/deferred.rs):
+  the queue of `analysis`'s diagnostics and the wrapper that transforms it.
 - [`crates/cargo-cgp-driver/src/emitter/flush/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter/flush):
   the flush.
 - [`crates/cargo-cgp-driver/src/resolve/anchors.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/anchors.rs):

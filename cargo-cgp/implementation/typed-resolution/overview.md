@@ -127,20 +127,25 @@ extensible-data operation can fail with either before its bounds are checked, as
 finalized too early has no `finalize_build`. An `E0308` is taken only when the walk finds the field
 or variant state the operation rejects, since it is otherwise a plain type error.
 
-## Why it runs in the emitter
+## When it runs
 
-The resolver runs inside the diagnostic emitter because no later hook sees a failing crate. The
-natural home would be an `after_analysis` callback, but the `analysis` query raises a fatal error
-once type checking reports any non-lint error, before `after_analysis` runs. A crate with a CGP
-failure has an error by definition, the same reason Clippy's late passes run only on code that
-type-checks.
+The resolver runs at the end of rustc's `analysis` query, through the emitter, because no
+compiler callback sees a failing crate. The natural home would be an `after_analysis` callback, but
+the `analysis` query raises a fatal error once type checking reports any non-lint error, before
+`after_analysis` runs. A crate with a CGP failure has an error by definition, the same reason
+Clippy's late passes run only on code that type-checks.
 
-The emitter executes while the error exists and before that fatal unwind, with a `TyCtxt` in
-thread-local scope. So the resolver re-enters the trait solver from within a diagnostic being
-emitted. A fresh `InferCtxt` per query makes this work, and the whole approach assumes it. Every
-fixture the resolver reshapes exercises that assumption.
+So the driver wraps the `analysis` provider: the emitter queues each diagnostic the query emits,
+and the wrapper catches the fatal unwind, transforms the queue with a `TyCtxt` in thread-local scope,
+and resumes it ([the driver](../driver/program.md#transforming-at-the-end-of-analysis)). Type
+checking has finished there and no diagnostic lock is held, so a query the resolver forces that
+emits queues its diagnostic rather than re-entering the lock. The resolver still re-enters the trait
+solver after the compiler has stopped expecting it, and a fresh `InferCtxt` per query makes this
+work. Every fixture the resolver reshapes exercises that assumption.
 
-This position is also the source of every panic risk the tool faces.
+This position is also the source of every panic risk the tool faces. A diagnostic outside
+`analysis` is still transformed under rustc's lock, and the resolver keeps the rules that path
+needs for every diagnostic.
 [rustc diagnostic internals](../rustc-diagnostic-internals.md#panic-hazards-running-compiler-code-inside-the-emitter)
 catalogs the constraints: never force a query that emits (so `tcx.typeck` is off limits),
 instantiate a binder before relating it, and keep each `InferCtxt`'s variables to itself.

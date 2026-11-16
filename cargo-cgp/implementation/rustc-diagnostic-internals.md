@@ -6,8 +6,8 @@ the emitter. CGP errors are unusually exposed to the first, because their types 
 lists and rustc compresses those on the assumption that a human does not want them in full, which
 can erase the one fact that matters.
 
-The second subject is the more dangerous. The driver re-runs the trait solver from inside
-`emit_diagnostic`, a place rustc never expected such work, and the panics there are real. The
+The second subject is the more dangerous. The driver re-runs the trait solver from inside its
+emitter, a place rustc never expected such work, and the panics there are real. The
 emitter [contains them](driver/program.md#containing-the-drivers-own-panics), so the user keeps their errors
 but loses the reshaping, and a panic inside a query also poisons it, so a later use raises a fatal
 error that ends the compilation early.
@@ -152,7 +152,15 @@ defect. Check a new compiler interaction against every hazard below before trust
 
 ### Re-entering the diagnostic context (`lock was already held`)
 
-**The `DiagCtxt` is guarded by a non-reentrant lock, and the emitter runs with that lock held, so
+**The hazard binds the diagnostics transformed as they arrive, outside the `analysis` query.** A
+diagnostic `analysis` emits is transformed once the query ends, with no lock held, so a query its
+transform forces that emits is queued instead
+([the driver](driver/program.md#transforming-at-the-end-of-analysis)). Name resolution's errors and
+anything after the query still stream through the emitter under the lock, and the resolver keeps
+every rule below for all diagnostics; lifting a rule for the deferred ones, such as the ban on
+forcing `tcx.typeck`, is separate work.
+
+**The `DiagCtxt` is guarded by a non-reentrant lock, and the streaming emitter runs with that lock held, so
 any compiler operation the resolver triggers that *emits a diagnostic* re-enters the lock and aborts
 the compiler.** `DiagCtxt::emit_diagnostic` in
 [`rustc_errors/src/lib.rs`](../../../external/rust/compiler/rustc_errors/src/lib.rs) is

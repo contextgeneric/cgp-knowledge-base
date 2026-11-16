@@ -55,7 +55,9 @@ unexpected flags also poisons cargo's cache.
 `catch_with_exit_code` runs the compiler and returns what plain `rustc` would. `CgpCallbacks` adds
 two hooks:
 
-- **`config`** installs the emitter and turns on `trimmed_def_paths`, as rustc's own driver does. A
+- **`config`** installs the emitter, wraps the `analysis` query in a check
+  ([transforming at the end of `analysis`](#transforming-at-the-end-of-analysis)), and turns on
+  `trimmed_def_paths`, as rustc's own driver does. A
   compiler run through `rustc_driver` leaves it off, so every diagnostic the tool leaves alone would
   print paths plain rustc shortens, suggestions included
   ([`suggestion_full_paths`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/pass-through/suggestion_full_paths.rs)).
@@ -166,6 +168,36 @@ suggests, and that count would bring the hazards to the check. So `force_flags` 
 appending the flag. rustc rejects `--jobs-frontend` beside `-Zthreads`, so leaving the user's would
 end the compilation.
 
+## Transforming at the end of `analysis`
+
+**The emitter transforms the diagnostics of rustc's `analysis` query once the query ends, outside
+the diagnostic lock.** rustc emits each diagnostic while it holds its `DiagCtxt`'s lock, and a
+transform forces queries, so a query that emits would re-enter that lock
+([the hazard](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held)).
+`analysis` is where the crate is type-checked, and where nearly every diagnostic the tool rewrites
+arrives. So the `config` hook replaces the query's provider through `Config::override_queries`, and
+the session's emitter, a `DeferringEmitter`, queues every diagnostic that arrives while the wrapper
+runs the original provider.
+
+**The wrapper catches the fatal stop.** `analysis` ends a failing crate by raising a
+`FatalErrorMarker` itself once type checking has reported an error, which is why no
+`after_analysis` callback sees one. The wrapper catches that unwind, transforms the queue in arrival
+order with the compiler still usable, and resumes it. A crate that compiles returns normally and is
+processed the same way. Any other unwind is a crash, which the panic hook has already handled, so it
+resumes at once.
+
+**The processing runs in batches.** A query a transform forces may emit; that diagnostic finds the
+emitter locked, is queued, and is transformed in the next batch. After eight batches (`MAX_ROUNDS`)
+the rest is buffered untransformed, so a transform whose queries keep emitting cannot loop. An
+unwind out of a transform, such as a fatal error from a query it forced, stops the transforms: that
+diagnostic and everything after it are buffered as rustc built them, and the unwind resumes once the
+queue is buffered.
+
+**Outside `analysis`, diagnostics stream.** Name resolution's errors, which the `after_expansion`
+passes reshape, and anything after the query are transformed as they arrive, under rustc's lock, so
+the lock hazards still bind them. Nothing queued is lost: the panic hook and the emitter's `Drop`
+buffer the queue untransformed before they flush.
+
 ## De-duplicating and coalescing
 
 One mistake surfaces at many sites because CGP wiring is lazy, so the emitter removes repeats in two
@@ -231,7 +263,7 @@ CGP keeps both
 ## Containing the driver's own panics
 
 **A panic in the driver's own code never costs the user their diagnostics.** The emitter runs
-compiler code inside `emit_diagnostic` and renders from `Drop`, while the thread unwinds from
+compiler code as a diagnostic arrives or at the end of `analysis`, and renders from `Drop`, while the thread unwinds from
 rustc's fatal-error abort, so a bug in either would lose the output or abort the process. So both
 run under `catch_unwind`:
 
@@ -246,8 +278,8 @@ run under `catch_unwind`:
 **A crash elsewhere in the compiler keeps rustc's output order.** Plain rustc prints errors before a
 later ICE report, and the emitter's buffer would put them after it. So the driver wraps rustc's ICE
 hook, installed with cargo-cgp's tracker as the bug-report URL: a panic the emitter is containing is
-recorded for the note and printed nowhere, and any other first has the emitter emit its buffer,
-untransformed, then hands over. They go out untransformed because a second panic inside a panic hook
+recorded for the note and printed nowhere, and any other first has the emitter emit its buffer, and
+the diagnostics still queued during `analysis` after it, untransformed, then hands over. They go out untransformed because a second panic inside a panic hook
 aborts the process, so a crash is no time to run the flush's rendering
 ([`ice_after_buffered_diagnostic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/robustness/ice_after_buffered_diagnostic.rs)).
 
@@ -332,6 +364,9 @@ The remaining differences are where the driver is simpler than Clippy, or does m
 - [`tests/driver/containment.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/containment.rs):
   `contain`, both fallbacks with a panicking step, and the recognition of a closed stdout's
   panic.
+- [`tests/driver/deferred.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/deferred.rs):
+  the processing of the queue: arrival order, the next batch, the cap, and an unwind out of a
+  transform.
 - [`tests/driver/footers.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/footers.rs):
   the `rustc --explain` footer naming only the codes still shown.
 - [`tests/driver/pipeline.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/pipeline.rs):
@@ -369,7 +404,8 @@ The remaining differences are where the driver is simpler than Clippy, or does m
 - [`src/lib.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/lib.rs):
   the feature gate and the `extern crate` lines.
 - [`src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
-  `install.rs` and `cgp_emitter.rs` for the wrapper and its orchestration, `stage/` and `pipeline/`
+  `install.rs` and `cgp_emitter.rs` for the wrapper and its orchestration, `deferred.rs` for the
+  queue of `analysis`'s diagnostics, `stage/` and `pipeline/`
   for the stages, `flush/` for the rendering, `containment.rs`, `fallback.rs`, and `output.rs` for
   panics, `repeats.rs` for repeated errors, and `edit/` for the `DiagInner` edits, with the rustc
   phrasings they key on in the rustc-free

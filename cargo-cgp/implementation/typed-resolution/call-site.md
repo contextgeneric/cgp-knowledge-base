@@ -77,9 +77,10 @@ on.
 ## What the call still knows
 
 The anchor reads only HIR and the queries the failing code already cached (`type_of`, `fn_sig`,
-`generics_of`). `tcx.typeck` would answer every question, but it would check a body not yet checked
-and emit from inside the emitter, which
-[aborts the compiler](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held).
+`generics_of`). `tcx.typeck` would answer every question, but on the streaming path it would check a body not yet
+checked and emit from inside the emitter, which
+[aborts the compiler](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held),
+and the anchor keeps that rule for every diagnostic.
 
 **The receiver names the context,** since a consumer is implemented on it. The anchor follows the
 receiver syntactically: a binding to its annotation, initializer, or parameter type, a struct

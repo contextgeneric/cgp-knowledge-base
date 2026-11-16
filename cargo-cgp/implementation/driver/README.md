@@ -5,7 +5,8 @@ The two documents answer different questions: read the first when debugging a la
 driver runs the compiler, and the second when changing what the tool says about one class of mistake.
 
 - [The driver as a program](program.md): how cargo invokes it, argument preparation, compiler-API access,
-  the three argument levers, de-duplication and coalescing, and panic containment.
+  the three argument levers, the transforms at the end of `analysis`, de-duplication and coalescing,
+  and panic containment.
 - [Diagnostic reshapes](diagnostic-reshapes.md): the emitter's stages in order, and what each does to its
   class of CGP mistake.
 

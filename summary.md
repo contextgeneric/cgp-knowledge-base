@@ -701,7 +701,8 @@ it stale.
 - [driver/README.md](cargo-cgp/implementation/driver/README.md) — the driver's documents and which to read
   for which question.
 - [driver/program.md](cargo-cgp/implementation/driver/program.md) — the rustc wrapper as a program: argument preparation, compiler-API access, the
-  injected flags, the emitter's rendering, de-duplication and coalescing, and panic containment.
+  injected flags, the transforms at the end of `analysis`, the emitter's rendering, de-duplication
+  and coalescing, and panic containment.
 - [driver/diagnostic-reshapes.md](cargo-cgp/implementation/driver/diagnostic-reshapes.md) — what the emitter's stages do to each class of CGP mistake: the
   wiring-note rename, the conflict, structural, orphan, and macro-lowering reshapes, and the dropped
   suggestions.

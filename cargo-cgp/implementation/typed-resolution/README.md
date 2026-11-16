@@ -6,7 +6,7 @@ rather than parsing rustc's text. Start with the overview, which holds the worke
 resolver declines and why, its boundaries, and the test and source catalogs for the whole directory. The
 other documents each cover one stage, in the order a failure passes through them.
 
-- [Overview](overview.md): the worked example, the candidate gate, why the resolver runs in the emitter,
+- [Overview](overview.md): the worked example, the candidate gate, when the resolver runs,
   the anchor order, and the boundaries.
 - [Anchoring the starting obligation](anchors.md): the eight anchors that recover the failing obligation
   from a diagnostic's spans.
