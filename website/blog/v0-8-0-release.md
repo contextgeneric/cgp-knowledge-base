@@ -89,13 +89,13 @@ the restrictions the release lifts: reserved variant names, another derive's hel
 default bodies, and a provider's own const.
 
 Migration opens by linking the [release notes page](../pages/release-notes.md), which lists every
-change, then names every removed preset construct and works a user-group conversion with its filter
-dependency and component checks, stating the required component registrations before the migrated
-context and updating the earlier default-provider implementation explicitly. It then covers, in
-order:
+change, then names every removed preset construct, `replace_with!` included, and works a user-group
+conversion with its filter dependency and component checks, stating the required component
+registrations before the migrated context and updating the earlier default-provider implementation
+explicitly. It then covers, in order:
 
-- **The trimmed prelude:** the modules the dropped names live in, and the `cgp::macro_prelude` path
-  in raw output.
+- **The trimmed prelude:** the modules the dropped names live in, the `cgp::macro_prelude` path in
+  raw output, and the removed Greek-letter names of the type-level types.
 - **The default features:** empty, with the `alloc` feature for the formatting error providers.
 - **Attribute syntax:** the `use_type` separator and its `in Context` form, and the
   `derive_delegate` attribute.
