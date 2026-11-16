@@ -162,9 +162,11 @@ from the kind of leaf.
 
 **A `help` appears only when its premise holds, because a fix that does not compile is worse than
 none.** A resolved block ends with a `help` for each fix, after the note, and the fixes of one kind
-on one owner merge into one `help` with no cap. `fix_help_messages` builds them, for the per-block
-plan and for the emitter's coalesced block alike, so a merged block carries the same fixes. These
-premises guard them:
+on one owner merge into one `help` with no cap: the fields one struct lacks, the derive it needs,
+the components one context does not wire, the entries one table lacks, and the data derives one type
+needs. Every other fix is worded whole. `fix_help_messages` builds them in the order the causes are
+listed, for the per-block plan and for the emitter's coalesced block alike, so a merged block
+carries the same fixes. These premises guard them:
 
 - **A missing field** gets a `help` only when its struct has named fields and derives `HasField` for
   another field. A tuple struct cannot gain a named field, and a struct with no `HasField` impl may

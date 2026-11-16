@@ -270,6 +270,9 @@ keys:
   and the flush drops it once a resolved report recorded its headline, so the two show one block in
   either order.
 
+A headline counts as a key only with a `[CGP-E0` prefix, a main-message code, so a header rustc kept
+is never a key. The rendered-text key is computed only for a report with no recovered cause.
+
 **The emitter holds every diagnostic and flushes from `Drop`,** because stating a shared cause needs
 all its sites and the `Emitter` trait has no end-of-compilation hook. `Drop` runs in the
 `DiagCtxt`'s teardown, while the inner emitter is still alive. The diagnostics were counted as they
@@ -285,7 +288,9 @@ already drawn. Transitivity makes this a partition, with the invariant that **no
 blocks share a root cause**. Each cause is keyed on its `Leaf` structurally, so rewording a lead
 shifts nothing. A leaf names its owner, so failures on different contexts can group, while an
 ordinary bound names none and is keyed with its context. Only a failure whose rewritten headline
-gives way to its cause coalesces, so a type mismatch does not.
+gives way to its cause coalesces, so a type mismatch does not. Grouping keeps the order the flush's
+sort gave the failures, ordering the groups by their first members, and a failure with no causes
+forms a group alone.
 
 **A group of several becomes one block.** Its members are in source order, the first entry takes the
 one caret, and the others are labelled "also required here". Its headline states the shared cause

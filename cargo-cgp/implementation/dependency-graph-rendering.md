@@ -66,6 +66,11 @@ Coalescing several underived fields on one struct is the one case where a headin
 from its paths' last entries: the heading reads as one fix, and the graph still branches to each
 field
 ([`coalesce_underived_fields`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/diagnosis/coalesce.rs)).
+`#[derive(HasField)]` derives an impl for every field, so several fields present but underived on
+one struct are one mistake, headed by one `[CGP-E111]` lead naming each field. Only a present field
+merges: an absent field is its own fix, so a struct missing several keeps several causes, and a
+fieldless struct's derive, which emits no impls, reads as absent fields. Fields on different structs
+stay apart, and a lone underived field keeps its single-field wording.
 
 ## Roots and rendering
 
@@ -76,7 +81,8 @@ inside the longer one
 If every head is a child, an all-cyclic input the resolver should never emit, every head becomes a
 root, so rendering never yields nothing.
 
-The renderer walks depth-first from each root in first-seen order, and these rules shape what a
+The renderer walks depth-first from each root in first-seen order into a `DependencyTree`, whose
+box drawing is the `termtree` crate's, the renderer `cargo tree` uses. These rules shape what a
 reader sees:
 
 - **A node with children is expanded once** and `(*)`-referenced after that, across all the note's
