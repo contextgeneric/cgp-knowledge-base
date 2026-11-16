@@ -161,21 +161,18 @@ impression total overstates the site's reach.
 `rust-patterns` and `no-std` categories, inherited from `[workspace.package]`, place every publishable
 crate in crates.io's and lib.rs's browse surfaces.
 
-**What remains needs repository settings, which only the author can change.** Read on GitHub on
-2026-11-08:
+**The repository settings name the project, read on GitHub on 2026-11-16.** The eight repositories
+the release announces each describe themselves with the full name, Context-Generic Programming:
 
-- **The `cgp` repository's description reads "Context-Generic Programming: modular programming
-  paradigm for Rust"**, the framing
-  [identity.md](../communication-strategy/identity.md#using-modular-as-a-supporting-word) retires. Its
-  topics are `functional-programming`, `modular-programming`, and `rust`.
-- **`cargo-cgp`, `cgp-examples`, and `contextgeneric.dev` have no description.** `cgp-skills`
-  describes itself as "CGP's agent skill", the name
-  [vocabulary.md](../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
-  gives it, and says what the skill does.
-- **Only `cgp` and `cgp-skills` have topics**: `cgp-skills` carries `agent-skills`, which
-  `gh skill search` finds, beside `rust`, `cgp`, `context-generic-programming`, `claude-code`, and
-  `codex`. Of the members other than `cgp`, only `cgp-serde` sets a homepage, its release post
-  rather than its Projects pages.
+- **The `cgp` repository's description is the settled tag line**, after the name. Neither the
+  description nor the topics use "modular", which
+  [identity.md](../communication-strategy/identity.md#using-modular-as-a-supporting-word) keeps out
+  of the lead description.
+- **Every member carries the topics `rust`, `cgp`, and `context-generic-programming`**, beside a few
+  of its own, such as `cargo-subcommand` on `cargo-cgp` and `serde` on `cgp-serde`. `cgp-skills`
+  keeps `agent-skills`, which `gh skill search` finds.
+- **Only `cgp` and `cgp-serde` set a homepage**, the site and `cgp-serde`'s release post. Each
+  member's homepage moves to its page on the site once the relaunch publishes those pages.
 
 **The front page names the project first, at the author's decision.** Its title is
 *Context-Generic Programming (CGP) - Pluggable trait implementations for Rust*, with no site-name
@@ -470,9 +467,10 @@ page under `docs/` and every blog post carries a written description, each docs 
 [named opening](#own-the-name-by-saying-it-where-it-means-something), and every construct's
 reference page and both concept pages that needed one carry a search-facing title.
 
-**The metadata repairs are done except the GitHub repository settings**, which only the author can
-change. The crate manifests are set, and the redirect stubs, `robots.txt`, and the site and
-front-page titles reach readers at the merge.
+**The metadata repairs are done except the members' GitHub homepages**, which move to their pages on
+the site once the relaunch publishes them. The crate manifests and the repository descriptions and
+topics are set, and the redirect stubs, `robots.txt`, and the site and front-page titles reach
+readers at the merge.
 
 **The hand check on Bing and Kagi follows, and it blocks nothing**: six queries, recorded as
 [Repeating the hand check](#repeating-the-hand-check) describes.
