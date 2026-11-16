@@ -31,10 +31,10 @@ The steps run in an order that matters:
    hook reads `env::args` itself when `RUST_BACKTRACE` is unset. The direct-query checks use a lossy
    copy, in which such an argument matches no flag.
 2. **Expand `@file` arguments before reading any flag.** Cargo moves a long command line into a
-   file, so `--cgp-expand=` and a user's `-Znext-solver`, `--verbose`, `--sysroot`, or thread
-   count may sit inside it. An unreadable file ends the compilation with rustc's own fatal error.
+   file, so `--cgp-expand=` and a user's `-Znext-solver`, `--verbose`, or `--sysroot` may sit
+   inside it. An unreadable file ends the compilation with rustc's own fatal error.
 3. **Take out the expand request,** since it is no rustc flag. Expand mode also leaves the
-   diagnostic flags and the thread count off, because it stops before analysis.
+   diagnostic flags off, because it stops before analysis.
 4. **Drop the compiler path in wrapper mode** (the second argument's file stem is `rustc`).
    `compiler_entrypoint` ignores the first element and reads the rest as flags, so the path would
    become an input file.
@@ -43,10 +43,11 @@ The steps run in an order that matters:
    toolchain cannot find `std`, then [`-Znext-solver=globally`](#choosing-the-trait-solver) and
    [`--verbose`](#un-eliding-the-diagnostic). Absence is checked in every spelling rustc accepts:
    `key`, `key=value`, `-Z key=value` as two arguments, and `-v` for `--verbose`.
-6. **Replace any thread count with `-Zthreads=1`,** the one flag the invocation's own choice does
-   not override ([running the front end on one thread](#running-the-front-end-on-one-thread)).
 
-**The diagnostic flags and the thread count are skipped for cargo's info queries,** `-vV` and
+**A thread count is left as the invocation set it** ([running the front end on
+threads](#running-the-front-end-on-threads)).
+
+**The diagnostic flags are skipped for cargo's info queries,** `-vV` and
 `--print`. `-vV` already implies `-v`, so a second one makes rustc reject the invocation, and a
 query carrying unexpected flags also poisons cargo's cache.
 
@@ -149,25 +150,31 @@ Without the flag, a diagnostic the resolver declines loses its field names. Re-e
 afterward cannot work, because the text does not record which arguments the two compared types
 shared.
 
-### Running the front end on one thread
+### Running the front end on threads
 
-**`-Zthreads=1` keeps the front end on one thread until a run under threads has shown the same
-output.** From `nightly-2026-11-14`, rustc type-checks items on several threads unless
-`-Zthreads` or `--jobs-frontend` says otherwise, so errors from different items arrive in a
-different order on each run. The rules that pair two diagnostics decide the same way in either order
-([diagnostic reshapes](diagnostic-reshapes.md)), and the emitter decides and prints in one
-[canonical order](#deciding-and-emitting-in-one-order), so the output is meant to be the same with
-any thread count, but no run under threads has yet shown it. Threads would also turn the
-[lock hazards](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held)
-of the diagnostics transformed outside `analysis` into hangs, because rustc's lock blocks on
-re-entry once the compiler runs thread-safe, instead of panicking.
+**The driver sets no thread count, so a check type-checks on as many threads as plain `cargo check`
+would.** From `nightly-2026-11-14`, rustc runs its front end on several threads unless `-Zthreads`
+or `--jobs-frontend` says otherwise, and a user's own count, such as a `-Z threads=8` set in a cargo
+configuration, reaches rustc unchanged. Errors from different items then arrive in a different
+order on each run, and the output stays the same for three reasons:
 
-**Unlike the other injected flags, the thread count overrides the invocation's own.** A user may set
-`-Z threads=8` in a cargo configuration for every build, as the parallel front end's announcement
-suggests, and that count would bring the hazards to the check. So `force_flags` removes every
-`-Zthreads` and `--jobs-frontend` the invocation carries, in each spelling rustc accepts, before
-appending the flag. rustc rejects `--jobs-frontend` beside `-Zthreads`, so leaving the user's would
-end the compilation.
+- **One order:** the emitter decides and prints in one
+  [canonical order](#deciding-and-emitting-in-one-order), so no choice follows rustc's.
+- **Order-free rules:** the rules that relate two diagnostics collect over the whole queue before
+  they decide ([diagnostic reshapes](diagnostic-reshapes.md)).
+- **One thread for the transforms:** the diagnostics of `analysis` are transformed once the query
+  ends, after every thread has joined
+  ([transforming at the end of `analysis`](#transforming-at-the-end-of-analysis)).
+
+The UI suite checks the claim in each mode: every snapshot must hold on one thread, with eight,
+and with rustc's default ([parallel runs](../testing.md#parallel-runs)).
+
+**The streaming path keeps the lock hazards, in a form that hangs.** Once the compiler runs
+thread-safe, rustc's diagnostic lock blocks on re-entry instead of panicking, so a
+[re-entry](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held)
+from a diagnostic transformed as it arrives, outside `analysis`, would hang the compilation where
+one thread would end it with a contained panic. The resolver's rules against forcing a query that
+emits apply to that path as before, and the suite's timeout check fails a fixture that hangs.
 
 ## Transforming at the end of `analysis`
 
@@ -214,7 +221,11 @@ read off each diagnostic's primary span:
 - **Otherwise the source:** the file's name, then the offset within that file. The offsets are the
   file's own, never the source map's global positions, because a dependency's file enters the source
   map whenever a span from it is first decoded, which under threads happens in any order.
-- **Then the code, then the message,** for reports at one span.
+- **Then the code, then the message,** for reports at one span, and then the rest of the
+  diagnostic: its span labels, its children, its suggestions, and its message arguments, each
+  with its spans read within their files. Two reports at one span with one code and message, such
+  as two `E0207`s of which only one carries the macro's span label, then still have one order, and
+  only reports that print the same tie.
 - **No span last:** a diagnostic without a span comes after those with one, in the order it
   arrived, as rustc's closing "For more information" footer does.
 
@@ -395,7 +406,7 @@ The remaining differences are where the driver is simpler than Clippy, or does m
 
 - [`tests/driver/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/args.rs):
   wrapper-mode stripping, flag injection in each spelling, the info-query skips, `@file`
-  expansion, and a thread count replaced in each spelling.
+  expansion, and a thread count kept in each spelling.
 - [`tests/driver/run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/run.rs):
   a non-Unicode argument exits with rustc's error rather than a panic, and a closed stdout ends
   the driver without a panic or an ICE file.
@@ -413,8 +424,8 @@ The remaining differences are where the driver is simpler than Clippy, or does m
 - [`tests/driver/order.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/order.rs)
   and
   [`tests/error_processing/order.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/order.rs):
-  the canonical order's key, read within a span's file, and its comparison, exhaustively over small
-  spans.
+  the canonical order's key, read within a span's file, the detail that breaks a tie, in either
+  arrival order, and the comparison, exhaustively over small spans.
 - [`tests/driver/footers.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/footers.rs):
   the `rustc --explain` footer naming only the codes still shown.
 - [`tests/driver/pending.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/pending.rs):

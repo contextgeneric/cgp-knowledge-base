@@ -251,10 +251,10 @@ parallel runs whatever the tool does. Such a fixture declares
 comparisons while keeping every check; the one-thread run still compares them.
 `robustness/fatal_after_buffered_diagnostic` is the one such fixture.
 
-**The driver still forces one thread**
-([running the front end on one thread](driver/program.md#running-the-front-end-on-one-thread)),
-so until it stops, a parallel mode runs the tool on one thread too. CI runs the suite on one thread
-in its UI job, and with `--threads default --iterations 3` in a second job.
+The driver sets no thread count of its own
+([running the front end on threads](driver/program.md#running-the-front-end-on-threads)), so the
+harness's flag decides. CI runs the suite on one thread in its UI job, and with
+`--threads default --iterations 3` in a second job.
 
 ## Comparison with Clippy
 

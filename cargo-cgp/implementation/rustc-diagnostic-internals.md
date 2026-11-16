@@ -162,11 +162,13 @@ forcing `tcx.typeck`, is separate work.
 
 **The `DiagCtxt` is guarded by a non-reentrant lock, and the streaming emitter runs with that lock
 held, so any compiler operation the resolver triggers that *emits a diagnostic* re-enters the lock
-and aborts the compiler.** `DiagCtxt::emit_diagnostic` in
+and stops the compiler.** `DiagCtxt::emit_diagnostic` in
 [`rustc_errors/src/lib.rs`](../../../external/rust/compiler/rustc_errors/src/lib.rs) is
-`self.inner.borrow_mut()`: a plain `Lock`, single-entry, which panics with `lock was already held`
-on re-entry rather than blocking. rustc holds that borrow across the whole emitter call, so a nested
-emission from within the resolver is fatal. There is no escape valve: `make_silent` and
+`self.inner.borrow_mut()`: a single-entry `Lock`. On one thread it panics with
+`lock was already held` on re-entry; once the compiler runs thread-safe, under the parallel front
+end, it is a `parking_lot` mutex that blocks instead, so the same re-entry hangs
+(`rustc_data_structures/src/sync/lock.rs`). rustc holds that borrow across the whole emitter call,
+so a nested emission from within the resolver is fatal either way. There is no escape valve: `make_silent` and
 `set_emitter` would swap in a no-op emitter, but they *also* take `inner.borrow_mut()`, so they
 cannot even be called while the lock is held. Swapping the emitter would not matter anyway, because
 the panic is the borrow, not the emitter behind it.

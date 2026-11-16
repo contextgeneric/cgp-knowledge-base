@@ -33,7 +33,7 @@ reader needs them:
   agent skill.
 - **Check:** running it from the root; a pasteable `area-demo` package with the deliberate mistake;
   the same mistake pinned to the wiring by `check_components!`, with the raw `help` line it replaces;
-  the four settings a check changes; the order it prints errors in; where `target/cgp` goes;
+  the three settings a check changes; the order it prints errors in; where `target/cgp` goes;
   forwarded flags; a short editor
   section; and its boundary.
 - **Reading the output:** the parts of a rewritten error, then one real example per shape (two causes

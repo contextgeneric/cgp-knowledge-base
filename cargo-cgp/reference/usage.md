@@ -37,15 +37,13 @@ cargo's own error (`error: unexpected argument '--nope' found`). `cargo cgp chec
 to inject its own default, and `--manifest-path` and `--config`, to ask cargo for that default, and it
 passes all three through.
 
-A check differs from a plain `cargo check` in four deliberate ways, so it is a diagnostic pass rather
+A check differs from a plain `cargo check` in three deliberate ways, so it is a diagnostic pass rather
 than a reproduction of your project's own check:
 
 - **The pinned nightly:** it compiles under the tool's own nightly, so the embedded compiler matches
   the driver. Your project's toolchain is left alone for its ordinary builds.
 - **The next-generation trait solver:** `-Znext-solver` surfaces the dependency errors the default
   solver hides, reporting the real missing bound, such as `HasField<Symbol!("name")>`.
-- **One front-end thread:** it runs rustc's front end on one thread, replacing any thread count your
-  configuration sets, so the errors come out in the same order on every run.
 - **An isolated `target/cgp` directory:** cargo locks a target directory while it builds there, so a
   shared one would make each check wait for your other cargo runs and the editor's, and the reverse.
 
@@ -175,6 +173,8 @@ error on an expression ahead of one on the expression around it, and errors with
 last. Plain `cargo check` prints them in the order the compiler finds them, so beside its output the
 same untouched error can sit in another place
 ([the canonical order](../implementation/driver/program.md#deciding-and-emitting-in-one-order)).
+The compiler type-checks on several threads, or on the count your configuration sets, and can find
+the errors in a different order on each run, but the check's output is the same on every run.
 
 Some mistakes keep rustc's own headline, and [issues/usability.md](../issues/usability.md) lists them.
 For example, a check on a context with a type parameter is not traced, because the resolver works
