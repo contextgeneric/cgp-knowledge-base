@@ -152,7 +152,7 @@ defect. Check a new compiler interaction against every hazard below before trust
 
 ### Re-entering the diagnostic context (`lock was already held`)
 
-**The hazard binds the diagnostics transformed as they arrive, outside the `analysis` query.** A
+**The hazard applies to the diagnostics transformed as they arrive, outside the `analysis` query.** A
 diagnostic `analysis` emits is transformed once the query ends, with no lock held, so a query its
 transform forces that emits is queued instead
 ([the driver](driver/program.md#transforming-at-the-end-of-analysis)). Name resolution's errors and

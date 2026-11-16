@@ -139,9 +139,9 @@ So the driver wraps the `analysis` provider: the emitter queues each diagnostic 
 and the wrapper catches the fatal unwind, transforms the queue with a `TyCtxt` in thread-local scope,
 and resumes it ([the driver](../driver/program.md#transforming-at-the-end-of-analysis)). Type
 checking has finished there and no diagnostic lock is held, so a query the resolver forces that
-emits queues its diagnostic rather than re-entering the lock. The resolver still re-enters the trait
-solver after the compiler has stopped expecting it, and a fresh `InferCtxt` per query makes this
-work. Every fixture the resolver reshapes exercises that assumption.
+emits queues its diagnostic rather than re-entering the lock. The resolver still runs the trait
+solver again after rustc's own type checking has finished, and a fresh `InferCtxt` per query makes
+this work. Every fixture the resolver reshapes exercises that assumption.
 
 This position is also the source of every panic risk the tool faces. A diagnostic outside
 `analysis` is still transformed under rustc's lock, and the resolver keeps the rules that path

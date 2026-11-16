@@ -72,9 +72,10 @@ reported is dropped here, which is why one wiring mistake surfacing at many site
 `check_components!` entry when it has one
 ([one order](driver/program.md#deciding-and-emitting-in-one-order)).
 
-The name-resolution errors of a wiring entry are the exception to reshaping on arrival. They arrive
-before the compiler can read the entries they sit in, so the emitter buffers them as rustc wrote them,
-and the driver's `after_expansion` callback rewrites them in the buffer once resolution is over.
+The name-resolution errors of a wiring entry are the exception to reshaping them as they arrive.
+They arrive before the compiler can read the entries they sit in, so the emitter buffers them as
+rustc wrote them, and the driver's `after_expansion` callback rewrites them in the buffer once
+resolution is over.
 
 **Render** happens at the end of the compilation, because deciding a block's final form needs every
 diagnostic. The emitter buffers each result, and its `Drop` flushes the buffer: it puts the buffer

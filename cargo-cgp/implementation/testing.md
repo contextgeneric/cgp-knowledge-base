@@ -233,7 +233,7 @@ the tool's to fix.
 The tool decides and prints in one
 [canonical order](driver/program.md#deciding-and-emitting-in-one-order), so its output is meant
 not to depend on how many threads rustc used. `--threads` sets the thread count of the tool's
-passes, which share one `RUSTFLAGS` value so cargo does not rebuild `cgp` between them: the ambient
+passes. They share one `RUSTFLAGS` value, so cargo does not rebuild `cgp` between them: the ambient
 value, or a fixture's own `//@env: RUSTFLAGS=…` in its place, followed by the thread flag.
 
 - **No `--threads`:** `-Zthreads=1`, the suite as `cargo test` runs it.

@@ -85,9 +85,10 @@ crate:
 
 ## The driver's diagnostic transformations
 
-The driver changes diagnostics in two ways. Three **argument levers** change how the compiler produces
-them and need no parsing. Everything else runs in a **custom emitter**, on diagnostics already
-built, using facts only the live compiler holds. Its stages run in order, as
+The driver changes diagnostics in two ways. Two **argument levers**, the trait solver and
+`--verbose`, change how the compiler produces them and need no parsing; the front end's thread count
+is left as the invocation set it. Everything else runs in a **custom emitter**, on diagnostics
+already built, using facts only the live compiler holds. Its stages run in order, as
 [Architecture](../architecture.md#the-flow-of-a-diagnostic) describes, and
 [Diagnostic reshapes](diagnostic-reshapes.md) covers each. A diagnostic no stage claims goes to the
 [typed resolver](../typed-resolution/overview.md), then to the
@@ -222,13 +223,14 @@ read off each diagnostic's primary span:
 - **Otherwise the source:** the file's name, then the offset within that file. The offsets are the
   file's own, never the source map's global positions, because a dependency's file enters the source
   map whenever a span from it is first decoded, which under threads happens in any order.
-- **Then the code, then the message,** for reports at one span, and then the rest of the
-  diagnostic: its span labels, its children, its suggestions, its message arguments, its level and
-  lint, its children's span labels, its suggestions' styles, applicability, and variants, every
-  part of its main message with its style, its children's message styles, and the emission site
-  and long-type file rustc can print, each with its spans read within their files. Two reports at one span with one code and message, such
-  as two `E0207`s of which only one carries the macro's span label, then still have one order, and
-  only reports that print the same tie.
+- **Then the code, then the message,** for reports at one span, and then every other part the
+  diagnostic prints: its labels, notes, suggestions, arguments, level, and message styles, each span
+  read within its file
+  (the driver's
+  [`emitter/order.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/order.rs)
+  lists them). Two reports at one span with one code and message, such as two `E0207`s of which only
+  one carries the macro's span label, then still have one order, and only reports that print the
+  same tie.
 - **No span last:** a diagnostic without a span comes after those with one. Within a batch of the
   queue, where rustc's threads produce such diagnostics in any order, they are ordered by their
   code, message, and the rest of their content; the flush keeps the order they reached its buffer
@@ -248,7 +250,7 @@ untouched errors in another order than plain `cargo check` does.
 ## De-duplicating and coalescing
 
 One mistake surfaces at many sites because CGP wiring is lazy, so the emitter removes repeats in two
-steps: de-duplication on arrival, and coalescing at the flush. **No trait's failure is ever
+steps: de-duplication as each diagnostic is transformed, and coalescing at the flush. **No trait's failure is ever
 hidden:** the first step removes only re-reports of one failure, and the second states a shared
 cause once while naming every site.
 
