@@ -175,8 +175,8 @@ crate it is only reading would cost a full type-check for no output. A failed wr
 warning, so a bad path does not look like a crate that would not expand.
 
 The diagnostic flags are left off, since `-Znext-solver=globally` and `--verbose` shape analysis,
-which never runs. The CGP emitter stays installed, so an
-expansion-time error still passes through it.
+which never runs. The CGP emitter stays installed, so an expansion-time error still passes through
+it.
 
 ## The rustc-free resugaring
 

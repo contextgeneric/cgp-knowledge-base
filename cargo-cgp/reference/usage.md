@@ -37,8 +37,8 @@ cargo's own error (`error: unexpected argument '--nope' found`). `cargo cgp chec
 to inject its own default, and `--manifest-path` and `--config`, to ask cargo for that default, and it
 passes all three through.
 
-A check differs from a plain `cargo check` in three deliberate ways, so it is a diagnostic pass rather
-than a reproduction of your project's own check:
+A check differs from a plain `cargo check` in three deliberate ways, so it is a diagnostic pass
+rather than a reproduction of your project's own check:
 
 - **The pinned nightly:** it compiles under the tool's own nightly, so the embedded compiler matches
   the driver. Your project's toolchain is left alone for its ordinary builds.

@@ -131,7 +131,8 @@ The seven are `//@aux-build: <crate>`, `//@rewrites-falsely: <reason>`,
 `//@env: <KEY>=<VALUE>` (which a `robustness/` fixture uses to crash the compiler on purpose),
 `//@quality:`, and `//@codes:`. A misspelled directive would silently do nothing, so the parser
 rejects an unknown name, a known name in another comment form such as `// @json`, and a second
-`//@codes:`, `//@quality:`, `//@rewrites-falsely:`, or `//@varies-under-threads:`. Commented-out `@`-path wiring stays legal.
+`//@codes:`, `//@quality:`, `//@rewrites-falsely:`, or `//@varies-under-threads:`. Commented-out
+`@`-path wiring stays legal.
 
 ### How a fixture is compiled
 
@@ -167,9 +168,10 @@ thread id, host triple, and driver version with `$TID`, `$HOST`, and `$VERSION`,
 prints, since it lacks `--verbose`. It also drops two flags from a crash report's compiler flags
 that record how the harness ran: `incremental=…`, because whether cargo passes it depends on the
 caller's `CARGO_INCREMENTAL`, which the workspace's CI sets to `0`, and `threads=…`, which the
-[parallel mode](#parallel-runs) sets. The crash report keeps rustc's own version, so a toolchain bump
-still re-blesses it. The baseline alone also collapses each `Chars<…>` spine to `Chars<..>`, because
-plain rustc truncates it at a depth that varies between runs. `--print` shows the raw output.
+[parallel mode](#parallel-runs) sets. The crash report keeps rustc's own version, so a toolchain
+bump still re-blesses it. The baseline alone also collapses each `Chars<…>` spine to `Chars<..>`,
+because plain rustc truncates it at a depth that varies between runs. `--print` shows the raw
+output.
 
 ### Running and blessing
 

@@ -168,10 +168,10 @@ and stops the compiler.** `DiagCtxt::emit_diagnostic` in
 `lock was already held` on re-entry; once the compiler runs thread-safe, under the parallel front
 end, it is a `parking_lot` mutex that blocks instead, so the same re-entry hangs
 (`rustc_data_structures/src/sync/lock.rs`). rustc holds that borrow across the whole emitter call,
-so a nested emission from within the resolver is fatal either way. There is no escape valve: `make_silent` and
-`set_emitter` would swap in a no-op emitter, but they *also* take `inner.borrow_mut()`, so they
-cannot even be called while the lock is held. Swapping the emitter would not matter anyway, because
-the panic is the borrow, not the emitter behind it.
+so a nested emission from within the resolver is fatal either way. There is no escape valve:
+`make_silent` and `set_emitter` would swap in a no-op emitter, but they *also* take
+`inner.borrow_mut()`, so they cannot even be called while the lock is held. Swapping the emitter
+would not matter anyway, because the failure is the borrow, not the emitter behind it.
 
 The trap is indirect, because the resolver does not emit diagnostics itself. It forces a **query**,
 and the query emits. Two query paths are known to do this. Forcing `clauses_of` on an impl whose
