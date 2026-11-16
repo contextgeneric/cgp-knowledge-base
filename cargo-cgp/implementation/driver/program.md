@@ -151,15 +151,15 @@ shared.
 
 ### Running the front end on one thread
 
-**`-Zthreads=1` keeps the emitter on the one thread it was built for.** From `nightly-2026-11-14`,
-rustc type-checks items on several threads unless `-Zthreads` or `--jobs-frontend` says otherwise,
-so errors from different items arrive in a different order on each run. The emitter decides as each
-diagnostic arrives: the de-duplication ledger keeps the first re-report of a failure, and several
-[stages](diagnostic-reshapes.md) assume one error arrives before another, so under threads the
-output would vary between runs. Threads would also turn the
+**`-Zthreads=1` keeps the output in one order.** From `nightly-2026-11-14`, rustc type-checks items
+on several threads unless `-Zthreads` or `--jobs-frontend` says otherwise, so errors from different
+items arrive in a different order on each run. The rules that pair two diagnostics decide the same
+way in either order ([diagnostic reshapes](diagnostic-reshapes.md)), but the queue is processed in
+arrival order, so which copy of a re-reported failure the de-duplication ledger keeps, and where
+each block sits, would still vary between runs. Threads would also turn the
 [lock hazards](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held)
-into hangs, because rustc's lock blocks on re-entry once the compiler runs thread-safe, instead of
-panicking.
+of the diagnostics transformed outside `analysis` into hangs, because rustc's lock blocks on
+re-entry once the compiler runs thread-safe, instead of panicking.
 
 **Unlike the other injected flags, the thread count overrides the invocation's own.** A user may set
 `-Z threads=8` in a cargo configuration for every build, as the parallel front end's announcement
