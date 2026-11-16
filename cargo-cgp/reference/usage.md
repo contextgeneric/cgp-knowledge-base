@@ -174,7 +174,9 @@ last. Plain `cargo check` prints them in the order the compiler finds them, so b
 same untouched error can sit in another place
 ([the canonical order](../implementation/driver/program.md#deciding-and-emitting-in-one-order)).
 The compiler type-checks on several threads, or on the count your configuration sets, and can find
-the errors in a different order on each run, but the check's output is the same on every run.
+the errors in a different order on each run, but the check's output is the same on every run. When
+one mistake surfaces at several sites, the check shows it once, at its `check_components!` entry
+when it has one, and otherwise at the first of its sites.
 
 Some mistakes keep rustc's own headline, and [issues/usability.md](../issues/usability.md) lists them.
 For example, a check on a context with a type parameter is not traced, because the resolver works

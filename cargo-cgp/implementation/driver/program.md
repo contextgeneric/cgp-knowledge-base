@@ -229,8 +229,13 @@ read off each diagnostic's primary span:
 - **No span last:** a diagnostic without a span comes after those with one, in the order it
   arrived, as rustc's closing "For more information" footer does.
 
-**The order applies twice.** Each batch of the queue is sorted before it is transformed, so a rule
-that keeps the first report keeps the one the order puts first. The flush then sorts its whole
+**The order applies twice.** Each batch of the queue is sorted before it is transformed, and the
+diagnostics at a `check_components!` entry are then moved ahead of the rest, each part keeping its
+order ([`preferred_first`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/order.rs)).
+So of the copies of one mistake, the ledger keeps the check entry's when there is one, since the
+check is where the user declared what the context must support, and otherwise the one the order puts
+first; being a check entry is a fact about the diagnostic, so the choice is the same in every run.
+The flush then sorts its whole
 buffer, the diagnostics transformed as they arrived included, so the blocks, the elision across
 them, and the merged repeats follow it too. The cost is that the tool's output can list the same
 untouched errors in another order than plain `cargo check` does.
