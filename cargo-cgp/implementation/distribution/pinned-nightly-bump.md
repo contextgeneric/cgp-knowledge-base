@@ -23,6 +23,9 @@ affect the installer's toolchain, since
   why the pin is an exact date ([The driver](../driver/program.md#accessing-the-rust-compiler-api)).
 - **Re-bless the UI snapshots and review the diffs,** since a new rustc can reword a diagnostic or
   move a span ([Testing](../testing.md)).
+- **Run the suite under threads,** with `--threads default --iterations 3` and `--threads 8`, since
+  a new rustc can change how its front end splits work between threads, and with it the order
+  diagnostics arrive in ([parallel runs](../testing.md#parallel-runs)).
 - **Refresh the flake,** as below.
 
 A released tool reaches users through `setup` and `update`, which install whatever nightly the
