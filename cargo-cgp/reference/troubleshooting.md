@@ -257,33 +257,23 @@ which provisions the toolchain at build time and needs no rustup.
 ## A check hangs or its output varies between runs
 
 **Run the check on one thread to rule out rustc's parallel front end.** From `nightly-2026-11-14`,
-rustc type-checks on several threads by default, which the Rust project explains in
-[Enabling the parallel frontend on nightly](https://blog.rust-lang.org/2026/11/16/enabling-parallel-frontend-on-nightly/). The check
-is built to print the same output under any thread count
+rustc type-checks on several threads by default
+([Enabling the parallel frontend on nightly](https://blog.rust-lang.org/2026/11/16/enabling-parallel-frontend-on-nightly/)).
+The check prints the same output under any thread count
 ([running the front end on threads](../implementation/driver/program.md#running-the-front-end-on-threads)),
-so a check that hangs, or prints different errors between runs, is a bug in the driver or in rustc's
-parallel code, apart from the one variation rustc's own text carries, below. The driver passes a thread count through unchanged, so this runs the front end on one
-thread:
+so a hang, or errors that change between runs, is a bug in the driver or in rustc's parallel code,
+apart from the expected variations below. The driver passes a thread count through unchanged:
 
 ```sh
 RUSTFLAGS="-Zunstable-options --jobs-frontend=1" cargo cgp check
 ```
 
-Set it in the environment rather than in a project's `.cargo/config.toml`, whose `build.rustflags`
-also reaches the project's stable builds, which reject `-Z` flags. Changing `RUSTFLAGS` rebuilds the
-dependencies under `target/cgp` once. `-Zthreads=1` works too, but rustc's option list marks
-`-Zthreads` as replaced by `--jobs-frontend`.
+**Set the flags in the environment, not in a project's `.cargo/config.toml`.** A `build.rustflags`
+there also reaches the project's stable builds, which reject `-Z` flags. Changing `RUSTFLAGS`
+rebuilds the dependencies under `target/cgp` once. `-Zthreads=1` works too, but rustc's option list
+marks `-Zthreads` as replaced by `--jobs-frontend`.
 
-When the problem goes away on one thread, run plain `cargo +<pinned nightly> check` without the
-flags to tell whose bug it is:
-
-- **The plain check hangs or crashes too:** the bug is rustc's, and the blog post says where to
-  report it.
-- **It does not:** report it on
-  [cargo-cgp's issue tracker](https://github.com/contextgeneric/cargo-cgp/issues) with the output of
-  both runs and of `cargo cgp check -v`.
-
-Two variations are expected and are not bugs:
+**Two variations are expected and are not bugs:**
 
 - **The plain check's order:** plain `cargo check` prints its errors in an order that varies between
   runs, which the blog post lists as a known effect of the parallel front end.
@@ -291,6 +281,15 @@ Two variations are expected and are not bugs:
   the check's output as in rustc's; the UI suite marks
   [`fatal_after_buffered_diagnostic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/robustness/fatal_after_buffered_diagnostic.rs)
   with `//@varies-under-threads:` for it.
+
+**When the problem goes away on one thread, run plain `cargo +<pinned nightly> check` without the
+flags to tell whose bug it is:**
+
+- **The plain check hangs or crashes too:** the bug is rustc's, and the blog post says where to
+  report it.
+- **It does not:** report it on
+  [cargo-cgp's issue tracker](https://github.com/contextgeneric/cargo-cgp/issues) with the output of
+  both runs and of `cargo cgp check -v`.
 
 ## Symptom index
 
