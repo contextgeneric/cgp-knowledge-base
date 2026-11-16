@@ -73,8 +73,9 @@ what the macros *generate*.
   It shows the generated code beside the error about it, and it is the end-to-end coverage of
   [the expand command](expand-command.md) and its [resugaring](resugaring.md).
 
-Four checks hold each fixture to more than its snapshots, because a snapshot alone cannot catch a
-crash that prints nothing or a rewrite of an error the tool should leave alone:
+Five checks hold each fixture to more than its snapshots, because a snapshot alone cannot catch a
+crash that prints nothing, a compiler that hangs, or a rewrite of an error the tool should leave
+alone:
 
 - **The status check** requires the tool and plain `cargo check` to agree on whether the fixture
   compiles. The known case of the next solver accepting a mistake, a namespace inheritance cycle,
@@ -93,6 +94,10 @@ crash that prints nothing or a rewrite of an error the tool should leave alone:
 - **The header check**, for every fixture outside `ok/`, `pass-through/`, and `robustness/`,
   requires a `//@quality:` and a `//@codes:` list equal to the codes in the output, so a fixture
   that gains or loses a code fails instead of being re-blessed unnoticed.
+- **The timeout check** requires every command to finish within its deadline, ten minutes unless
+  `--timeout` sets another. A command past it is killed with its process group, since cargo's rustc
+  child would otherwise keep the output pipes open, and the fixture fails naming the command. A
+  compiler that hangs under threads would otherwise stall the whole run.
 
 A fixture that declares `//@json` also runs **the JSON pass**, which compares the compiler messages
 of `cargo cgp check --message-format=json` with `<name>.cgp.json`. Editors and agents read this
@@ -121,11 +126,12 @@ whose `ui` target sets `harness = false` and provides its own `fn main`, the sam
 checkout at `../cgp`.
 
 A fixture states what the harness must do through **directives**: line comments starting with `//@`.
-The six are `//@aux-build: <crate>`, `//@rewrites-falsely: <reason>`, `//@json`,
+The seven are `//@aux-build: <crate>`, `//@rewrites-falsely: <reason>`,
+`//@varies-under-threads: <reason>` (see [parallel runs](#parallel-runs)), `//@json`,
 `//@env: <KEY>=<VALUE>` (which a `robustness/` fixture uses to crash the compiler on purpose),
 `//@quality:`, and `//@codes:`. A misspelled directive would silently do nothing, so the parser
 rejects an unknown name, a known name in another comment form such as `// @json`, and a second
-`//@codes:`, `//@quality:`, or `//@rewrites-falsely:`. Commented-out `@`-path wiring stays legal.
+`//@codes:`, `//@quality:`, `//@rewrites-falsely:`, or `//@varies-under-threads:`. Commented-out `@`-path wiring stays legal.
 
 ### How a fixture is compiled
 
@@ -158,9 +164,10 @@ Normalization makes output independent of the machine. The `-q` flag removes car
 The `normalize` module rewrites paths to `$CGP`, `$DIR`, and `$SYSROOT`, replaces a crash report's
 thread id, host triple, and driver version with `$TID`, `$HOST`, and `$VERSION`, and drops cargo's
 `could not compile` summary and the note about a long type's temp file, which only the baseline
-prints, since it lacks `--verbose`. It also drops the `incremental=…` flag from a crash report's
-compiler flags, because whether cargo passes it depends on the caller's `CARGO_INCREMENTAL`, which
-the workspace's CI sets to `0`. The crash report keeps rustc's own version, so a toolchain bump
+prints, since it lacks `--verbose`. It also drops two flags from a crash report's compiler flags
+that record how the harness ran: `incremental=…`, because whether cargo passes it depends on the
+caller's `CARGO_INCREMENTAL`, which the workspace's CI sets to `0`, and `threads=…`, which the
+[parallel mode](#parallel-runs) sets. The crash report keeps rustc's own version, so a toolchain bump
 still re-blesses it. The baseline alone also collapses each `Chars<…>` spine to `Chars<..>`, because
 plain rustc truncates it at a depth that varies between runs. `--print` shows the raw output.
 
@@ -174,6 +181,9 @@ cargo test -p cargo-cgp-ui-tests                             # only the suite
 cargo test -p cargo-cgp-ui-tests --test ui -- wiring/        # fixtures whose path contains "wiring/"
 cargo test -p cargo-cgp-ui-tests --test ui -- --bless        # rewrite the snapshots
 cargo test -p cargo-cgp-ui-tests --test ui -- -j 4           # at most 4 fixtures at once
+cargo test -p cargo-cgp-ui-tests --test ui -- --threads 8    # the tool's front end on 8 threads
+cargo test -p cargo-cgp-ui-tests --test ui -- --threads default --iterations 3  # rustc's default, 3 runs
+cargo test -p cargo-cgp-ui-tests --test ui -- --timeout 120  # kill a command after 2 minutes
 cargo test -q -p cargo-cgp-ui-tests --test ui -- --list      # every fixture, its quality and codes
 cargo test -q -p cargo-cgp-ui-tests --test ui -- --print foo # raw output of each pass, with its status
 ```
@@ -208,14 +218,43 @@ when that component is present, so `pass-through/local_blanket_trait` renders di
 it. `cargo cgp setup` deliberately does not install it, since a user of the tool never runs this
 suite.
 
-**Both compilers run their front end on one thread, so a snapshot keeps one order.** From
+**The baseline runs its front end on one thread, so `.rust.stderr` keeps one order.** From
 `nightly-2026-11-14`, rustc type-checks items on several threads by default, and errors from
-different items then arrive in a different order on each run. The driver forces `-Zthreads=1` on
-the tool's passes
+different items then arrive in a different order on each run. The rust-stderr pass appends
+`-Zthreads=1` to the ambient `RUSTFLAGS`, since setting the variable replaces the ambient value, in
+every mode of the harness: the baseline records rustc's output, whose order under threads is not
+the tool's to fix.
+
+### Parallel runs
+
+**Every snapshot of the tool must hold with any thread count, and the harness's modes check it.**
+The tool decides and prints in one
+[canonical order](driver/program.md#deciding-and-emitting-in-one-order), so its output is meant
+not to depend on how many threads rustc used. `--threads` sets the thread count of the tool's
+passes, which share one `RUSTFLAGS` value so cargo does not rebuild `cgp` between them: the ambient
+value, or a fixture's own `//@env: RUSTFLAGS=…` in its place, followed by the thread flag.
+
+- **No `--threads`:** `-Zthreads=1`, the suite as `cargo test` runs it.
+- **`--threads N`:** `-Zthreads=N`.
+- **`--threads default`:** no thread count, so rustc takes its built-in default, as a user's check
+  does.
+
+`--iterations K` runs each fixture's passes up to K times and reports the first iteration that
+fails, because output that depends on thread timing may differ on only some runs; a bless runs
+once. A parallel run also needs the [timeout check](#three-passes-per-fixture), since a compiler
+that deadlocks under threads would otherwise stall every worker.
+
+**A fixture whose own compiler output varies under threads says so.** rustc reports an `E0391`
+query cycle from whichever item a thread reached first, so the cycle's text differs between
+parallel runs whatever the tool does. Such a fixture declares
+`//@varies-under-threads: <reason>`, and a parallel run skips its `.cgp.stderr` and `.cgp.json`
+comparisons while keeping every check; the one-thread run still compares them.
+`robustness/fatal_after_buffered_diagnostic` is the one such fixture.
+
+**The driver still forces one thread**
 ([running the front end on one thread](driver/program.md#running-the-front-end-on-one-thread)),
-and the rust-stderr pass appends the same flag to the ambient `RUSTFLAGS`, since setting the
-variable replaces the ambient value. A fixture's `//@env:` reaches only the tool's passes, whose
-driver forces the flag whatever `RUSTFLAGS` it sets.
+so until it stops, a parallel mode runs the tool on one thread too. CI runs the suite on one thread
+in its UI job, and with `--threads default --iterations 3` in a second job.
 
 ## Comparison with Clippy
 
@@ -266,14 +305,16 @@ The harness's own library has these tests, under
 
 - [`aux.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/aux.rs): a fixture's declared auxiliary crates.
 - [`baseline.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/baseline.rs): the rust-stderr pass's one-thread `RUSTFLAGS`.
+- [`capture.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/capture.rs): a command's output and status, and a timeout that ends the command and its children.
 - [`cgp_code.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/cgp_code.rs): the form of a `CGP-Exxx` code.
-- [`directives.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/directives.rs): reading each directive, and rejecting the malformed ones.
+- [`directives.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/directives.rs): reading each directive, and rejecting the malformed and repeated ones.
 - [`fixtures.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/fixtures.rs): discovery, and the no-expansion marker.
-- [`normalize.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/normalize.rs): the rewrites, the dropped lines, and the spine collapse.
-- [`options.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/options.rs): option and filter parsing.
-- [`passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/passes.rs): the header, status, expand status, and pass-through checks, the pass-through's blocks in any order, and the JSON reduction.
+- [`normalize.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/normalize.rs): the rewrites, the dropped lines and flags, and the spine collapse.
+- [`options.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/options.rs): option and filter parsing, the thread modes, and the rejected values.
+- [`passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/passes.rs): the header, status, expand status, timeout, and pass-through checks, the pass-through's blocks in any order, and the JSON reduction.
 - [`paths.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/paths.rs): the upward search for the built front-end.
 - [`snapshot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/snapshot.rs): a missing snapshot, blessing, and the line diff.
+- [`tool_env.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/tool_env.rs): the tool passes' `RUSTFLAGS` in each thread mode, beside a fixture's own.
 
 ## Source
 

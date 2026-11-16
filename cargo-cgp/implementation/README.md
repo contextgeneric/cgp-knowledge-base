@@ -84,8 +84,8 @@ own `README.md` lists its documents. When you add a document, register it in the
 - [Testing](testing.md): how the tool is tested: the unit tests, one test target per crate, and the
   UI snapshot suite. The suite is a custom Rust test harness (like Clippy's `compile-test`) that
   compiles fixtures under `tests/ui/` through the tool and diffs committed `.cgp.stderr`,
-  `.rust.stderr`, and `.expand.rs` snapshots. The document also covers the bless workflow and how
-  the harness compares to Clippy's.
+  `.rust.stderr`, and `.expand.rs` snapshots. The document also covers the bless workflow, the runs
+  under threads, and how the harness compares to Clippy's.
 - [Distribution](distribution/README.md): how the tool reaches a machine that has only stable Rust and
   stays in step with its pinned nightly: provisioning through cargo and rustup, the Nix package, the
   nightly bump, and Rust Analyzer integration.

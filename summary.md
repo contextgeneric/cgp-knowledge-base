@@ -737,7 +737,8 @@ it stale.
 - [rustc-diagnostic-internals.md](cargo-cgp/implementation/rustc-diagnostic-internals.md) — where the
   compiler builds and *suppresses* diagnostic information, and the panic hazards of re-entering it.
 - [testing.md](cargo-cgp/implementation/testing.md) — the unit tests (one target per crate) and the
-  UI snapshot suite, its three passes and bless workflow, and how it compares to Clippy's harness.
+  UI snapshot suite, its three passes, parallel runs, and bless workflow, and how it compares to
+  Clippy's harness.
 - [distribution/README.md](cargo-cgp/implementation/distribution/README.md) — how the tool reaches a
   machine and stays in step with its pinned nightly.
 - [distribution/provisioning.md](cargo-cgp/implementation/distribution/provisioning.md) — packaging both binaries with a pinned
