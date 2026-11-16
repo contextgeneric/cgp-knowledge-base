@@ -199,7 +199,8 @@ emitter locked, is queued, and is transformed in the next batch. After eight bat
 the rest is buffered untransformed, so a transform whose queries keep emitting cannot loop. An
 unwind out of a transform, such as a fatal error from a query it forced, stops the transforms: that
 diagnostic and everything after it are buffered as rustc built them, and the unwind resumes once the
-queue is buffered.
+queue is buffered. A fatal error from a query forced outside the transforms, by the check-entry
+lookup or the first batch's read, is kept and stops them the same way, before the next diagnostic.
 
 **Outside `analysis`, diagnostics stream.** Name resolution's errors, which the `after_expansion`
 passes reshape, and anything after the query are transformed as they arrive, under rustc's lock, so
@@ -428,7 +429,8 @@ The remaining differences are where the driver is simpler than Clippy, or does m
   panic.
 - [`tests/driver/deferred.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/deferred.rs):
   the processing of the queue: the order taken, the next batch, the cap, an unwind out of a
-  transform, and the check-entry lookup, whose panic answers no and whose fatal error is kept until
+  transform, a fatal error kept outside the transforms, which stops them, and the check-entry
+  lookup and the first batch's read, whose panic is contained and whose fatal error is kept until
   the queue is buffered.
 - [`tests/driver/order.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/order.rs)
   and
