@@ -160,9 +160,9 @@ anything after the query still stream through the emitter under the lock, and th
 every rule below for all diagnostics; lifting a rule for the deferred ones, such as the ban on
 forcing `tcx.typeck`, is separate work.
 
-**The `DiagCtxt` is guarded by a non-reentrant lock, and the streaming emitter runs with that lock held, so
-any compiler operation the resolver triggers that *emits a diagnostic* re-enters the lock and aborts
-the compiler.** `DiagCtxt::emit_diagnostic` in
+**The `DiagCtxt` is guarded by a non-reentrant lock, and the streaming emitter runs with that lock
+held, so any compiler operation the resolver triggers that *emits a diagnostic* re-enters the lock
+and aborts the compiler.** `DiagCtxt::emit_diagnostic` in
 [`rustc_errors/src/lib.rs`](../../../external/rust/compiler/rustc_errors/src/lib.rs) is
 `self.inner.borrow_mut()`: a plain `Lock`, single-entry, which panics with `lock was already held`
 on re-entry rather than blocking. rustc holds that borrow across the whole emitter call, so a nested

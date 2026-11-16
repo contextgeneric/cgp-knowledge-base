@@ -31,8 +31,8 @@ The steps run in an order that matters:
    hook reads `env::args` itself when `RUST_BACKTRACE` is unset. The direct-query checks use a lossy
    copy, in which such an argument matches no flag.
 2. **Expand `@file` arguments before reading any flag.** Cargo moves a long command line into a
-   file, so `--cgp-expand=` and a user's `-Znext-solver`, `--verbose`, `--sysroot`, or thread count may
-   sit inside it. An unreadable file ends the compilation with rustc's own fatal error.
+   file, so `--cgp-expand=` and a user's `-Znext-solver`, `--verbose`, `--sysroot`, or thread
+   count may sit inside it. An unreadable file ends the compilation with rustc's own fatal error.
 3. **Take out the expand request,** since it is no rustc flag. Expand mode also leaves the
    diagnostic flags and the thread count off, because it stops before analysis.
 4. **Drop the compiler path in wrapper mode** (the second argument's file stem is `rustc`).
@@ -46,9 +46,9 @@ The steps run in an order that matters:
 6. **Replace any thread count with `-Zthreads=1`,** the one flag the invocation's own choice does
    not override ([running the front end on one thread](#running-the-front-end-on-one-thread)).
 
-**The diagnostic flags and the thread count are skipped for cargo's info queries,** `-vV` and `--print`. `-vV`
-already implies `-v`, so a second one makes rustc reject the invocation, and a query carrying
-unexpected flags also poisons cargo's cache.
+**The diagnostic flags and the thread count are skipped for cargo's info queries,** `-vV` and
+`--print`. `-vV` already implies `-v`, so a second one makes rustc reject the invocation, and a
+query carrying unexpected flags also poisons cargo's cache.
 
 ## Running the compiler
 
@@ -253,10 +253,11 @@ is the emission order known for
 [eliding against earlier blocks](../dependency-graph-rendering.md#eliding-across-blocks).
 
 **An untouched error is merged only when rustc reports it twice.** In a crate that uses CGP,
-`merge_repeats` merges two diagnostics with the same level, code, and message, and a primary caret on
-the same line, into one block at the earlier one's position, written as the block with more notes,
-the earlier on a tie, so the fuller notes survive whichever arrived first. rustc repeats an error that way when it checks one
-requirement per generated item, or a call's bound for the call and an argument
+`merge_repeats` merges two diagnostics with the same level, code, and message, and a primary caret
+on the same line, into one block at the earlier one's position, written as the block with more
+notes, the earlier on a tie, so the fuller notes survive whichever arrived first. rustc repeats an
+error that way when it checks one requirement per generated item, or a call's bound for the call and
+an argument
 ([`implicit_conflicting_types`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/implicit-arguments/implicit_conflicting_types.rs),
 [`transform_map_fields_missing_marker`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/transform_map_fields_missing_marker.rs)).
 A caret the earlier block does not cover is kept, labelled, so no location is lost. A crate without
@@ -266,9 +267,9 @@ CGP keeps both
 ## Containing the driver's own panics
 
 **A panic in the driver's own code never costs the user their diagnostics.** The emitter runs
-compiler code as a diagnostic arrives or at the end of `analysis`, and renders from `Drop`, while the thread unwinds from
-rustc's fatal-error abort, so a bug in either would lose the output or abort the process. So both
-run under `catch_unwind`:
+compiler code as a diagnostic arrives or at the end of `analysis`, and renders from `Drop`, while
+the thread unwinds from rustc's fatal-error abort, so a bug in either would lose the output or abort
+the process. So both run under `catch_unwind`:
 
 - **A panic in a transform** buffers that diagnostic as rustc built it, with a note naming the panic
   and the issue tracker, and the compilation goes on.
@@ -282,8 +283,9 @@ run under `catch_unwind`:
 later ICE report, and the emitter's buffer would put them after it. So the driver wraps rustc's ICE
 hook, installed with cargo-cgp's tracker as the bug-report URL: a panic the emitter is containing is
 recorded for the note and printed nowhere, and any other first has the emitter emit its buffer, and
-the diagnostics still queued during `analysis` after it, untransformed, then hands over. They go out untransformed because a second panic inside a panic hook
-aborts the process, so a crash is no time to run the flush's rendering
+the diagnostics still queued during `analysis` after it, untransformed, then hands over. They go out
+untransformed because a second panic inside a panic hook aborts the process, so a crash is no time
+to run the flush's rendering
 ([`ice_after_buffered_diagnostic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/robustness/ice_after_buffered_diagnostic.rs)).
 
 **A closed stdout ends the driver quietly, with rustc's code for a failed print.** Some of rustc's

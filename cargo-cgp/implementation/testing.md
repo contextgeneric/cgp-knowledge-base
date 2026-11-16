@@ -67,7 +67,8 @@ what the macros *generate*.
 - **The cgp-stderr pass** runs `cargo-cgp check` end to end and compares its stderr with
   `<name>.cgp.stderr`.
 - **The rust-stderr pass** runs plain `cargo check`, with `-Zthreads=1` appended to the ambient
-  `RUSTFLAGS`, and compares its stderr with `<name>.rust.stderr`. It records the "before", so nothing cross-checks it.
+  `RUSTFLAGS`, and compares its stderr with `<name>.rust.stderr`. It records the "before", so
+  nothing cross-checks it.
 - **The expand pass** runs `cargo cgp expand` and compares its **stdout** with `<name>.expand.rs`.
   It shows the generated code beside the error about it, and it is the end-to-end coverage of
   [the expand command](expand-command.md) and its [resugaring](resugaring.md).

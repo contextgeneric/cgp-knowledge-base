@@ -77,8 +77,8 @@ on.
 ## What the call still knows
 
 The anchor reads only HIR and the queries the failing code already cached (`type_of`, `fn_sig`,
-`generics_of`). `tcx.typeck` would answer every question, but on the streaming path it would check a body not yet
-checked and emit from inside the emitter, which
+`generics_of`). `tcx.typeck` would answer every question, but on the streaming path it would check a
+body not yet checked and emit from inside the emitter, which
 [aborts the compiler](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held),
 and the anchor keeps that rule for every diagnostic.
 

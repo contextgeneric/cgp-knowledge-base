@@ -174,9 +174,9 @@ preamble. It then resugars, writes the file, and returns `Compilation::Stop`, be
 crate it is only reading would cost a full type-check for no output. A failed write is a compiler
 warning, so a bad path does not look like a crate that would not expand.
 
-The diagnostic flags and the thread count are left off, since `-Znext-solver=globally`,
-`--verbose`, and `-Zthreads=1` shape analysis, which never runs. The CGP emitter stays installed, so an expansion-time error still passes through
-it.
+The diagnostic flags and the thread count are left off, since `-Znext-solver=globally`, `--verbose`,
+and `-Zthreads=1` shape analysis, which never runs. The CGP emitter stays installed, so an
+expansion-time error still passes through it.
 
 ## The rustc-free resugaring
 

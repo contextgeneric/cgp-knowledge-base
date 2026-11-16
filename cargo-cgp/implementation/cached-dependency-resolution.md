@@ -20,10 +20,10 @@ this cache adds only that layer.
 
 Writing the cache also forces each question the resolver asks the compiler to be either provably
 pure or explicitly stateful. Purity rests on one invariant: the resolver runs once the crate is
-lowered, over frozen state. The trait set, the impls, the clauses, and the ADT fields are fixed once the crate is
-lowered, and trait solving does not change them
-([when the resolver runs](typed-resolution/overview.md#when-it-runs)).
-So a subtree resolved once stays valid for the rest of the crate's compilation.
+lowered, over frozen state. The trait set, the impls, the clauses, and the ADT fields are fixed once
+the crate is lowered, and trait solving does not change them
+([when the resolver runs](typed-resolution/overview.md#when-it-runs)). So a subtree resolved once
+stays valid for the rest of the crate's compilation.
 
 ## What is cached
 
