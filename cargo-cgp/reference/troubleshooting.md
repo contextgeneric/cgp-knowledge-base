@@ -262,7 +262,7 @@ rustc type-checks on several threads by default, which the Rust project explains
 is built to print the same output under any thread count
 ([running the front end on threads](../implementation/driver/program.md#running-the-front-end-on-threads)),
 so a check that hangs, or prints different errors between runs, is a bug in the driver or in rustc's
-parallel code. The driver passes a thread count through unchanged, so this runs the front end on one
+parallel code, apart from the one variation rustc's own text carries, below. The driver passes a thread count through unchanged, so this runs the front end on one
 thread:
 
 ```sh
@@ -274,11 +274,23 @@ also reaches the project's stable builds, which reject `-Z` flags. Changing `RUS
 dependencies under `target/cgp` once. `-Zthreads=1` works too, but rustc's option list marks
 `-Zthreads` as replaced by `--jobs-frontend`.
 
-- **The problem goes away on one thread:** report it on
+When the problem goes away on one thread, run plain `cargo +<pinned nightly> check` without the
+flags to tell whose bug it is:
+
+- **The plain check hangs or crashes too:** the bug is rustc's, and the blog post says where to
+  report it.
+- **It does not:** report it on
   [cargo-cgp's issue tracker](https://github.com/contextgeneric/cargo-cgp/issues) with the output of
   both runs and of `cargo cgp check -v`.
-- **Plain `cargo +<pinned nightly> check` fails the same way without the flags:** the bug is rustc's,
-  and the blog post says where to report it.
+
+Two variations are expected and are not bugs:
+
+- **The plain check's order:** plain `cargo check` prints its errors in an order that varies between
+  runs, which the blog post lists as a known effect of the parallel front end.
+- **A query cycle's text:** an `E0391` cycle starts from whichever item a thread reached first, in
+  the check's output as in rustc's; the UI suite marks
+  [`fatal_after_buffered_diagnostic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/robustness/fatal_after_buffered_diagnostic.rs)
+  with `//@varies-under-threads:` for it.
 
 ## Symptom index
 
