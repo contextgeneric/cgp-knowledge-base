@@ -67,7 +67,9 @@ part of that second command has a reason:
 
 Each published crate's `LICENSE` is a symlink to the workspace file, as each binary's
 `pinned-toolchain.toml` is to `rust-toolchain.toml`, and cargo packages the file it points to. So
-keep them symlinks rather than copies.
+keep them symlinks rather than copies. The front-end's `README.md` is a symlink to the repository's
+for the same reason, since its crate documentation includes the file and a package has no
+repository above it.
 
 ## Provisioning: `setup` does the work, `check` only verifies
 
@@ -114,7 +116,8 @@ self-replacing installer, so it stays a thin layer over cargo. These details are
   reading follows the `crates-index` crate's shape, written over `ureq` and `serde_json` rather than
   adding that dependency.
 - **A failed reinstall prints the manual commands,** whatever its cause. They exist for Windows,
-  where a running executable is locked.
+  where a running executable is locked; on Unix, `cargo install` replaces the running binary
+  atomically.
 - **An interrupted update degrades safely,** since a new front-end against an old driver is the
   mismatch the preflight catches.
 - **Network access stays on this path.** The check and the driver never use `ureq`.
