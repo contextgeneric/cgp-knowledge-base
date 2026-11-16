@@ -154,12 +154,20 @@ These constraints shape the harness and are easy to break:
 - **Auxiliary crates:** a cross-crate scenario such as the orphan rule declares
   `//@aux-build: <crate>`. The harness copies the crate from
   [`auxiliary/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-ui-tests/auxiliary)
-  into `target/ui-harness/aux/` once per run and rewrites a worker's manifest only when its
-  dependency set changes, so ordinary fixtures never disturb the cached `cgp` build. The rejection
+  into `target/ui-harness/aux/` once per run, writing its manifest from a template whose `cgp`
+  dependency is a placeholder for the sibling checkout's path, and rewrites a worker's manifest
+  only when its dependency set changes, so ordinary fixtures never disturb the cached `cgp` build.
+  A fixture lists only the crates it uses directly, since cargo reaches an auxiliary crate's own
+  auxiliary dependency through the materialized sibling it names by path. The rejection
   of `// @aux-build:` matters here: a dropped directive leaves a fixture that fails on an unresolved
   import instead of its scenario, which reads as ordinary staleness.
 - **The built front-end:** the harness walks up from its own test binary until an ancestor holds
-  `cargo-cgp`, because cargo versions put test executables in different places.
+  `cargo-cgp`, because cargo versions put test executables in different places. It sets
+  `CARGO_CGP_NO_MANAGE`, since it drives the freshly built driver under the toolchain `cargo test`
+  selected, which the preflight would otherwise look for as an installed, matching driver.
+- **The baseline's compiler:** the rust-stderr pass runs plain `cargo check`, so it records rustc's
+  own output under the default trait solver, without the driver's `-Znext-solver=globally` or
+  `--verbose`.
 
 Normalization makes output independent of the machine. The `-q` flag removes cargo's progress lines.
 The `normalize` module rewrites paths to `$CGP`, `$DIR`, and `$SYSROOT`, replaces a crash report's
