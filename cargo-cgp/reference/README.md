@@ -35,4 +35,5 @@ document, register it here in the same change.
   failures with the exact error each prints (command and cargo-project errors, the front-end failing
   to find the driver, the driver failing to load `librustc_driver` (unset library path or a
   toolchain mismatch), the managed preflight's toolchain/driver/version verdicts, and a missing
-  rustup) plus a symptom-to-section index.
+  rustup), running the check on one thread when it hangs or varies between runs, and a
+  symptom-to-section index.

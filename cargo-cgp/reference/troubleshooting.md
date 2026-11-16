@@ -254,6 +254,32 @@ help: install rustup, or install cargo-cgp through its Nix flake, which needs no
 On such a machine, install through the [Nix flake](installation.md#installing-with-nix) instead,
 which provisions the toolchain at build time and needs no rustup.
 
+## A check hangs or its output varies between runs
+
+**Run the check on one thread to rule out rustc's parallel front end.** From `nightly-2026-11-14`,
+rustc type-checks on several threads by default, which the Rust project explains in
+[Enabling the parallel frontend on nightly](https://blog.rust-lang.org/2026/11/16/enabling-parallel-frontend-on-nightly/). The check
+is built to print the same output under any thread count
+([running the front end on threads](../implementation/driver/program.md#running-the-front-end-on-threads)),
+so a check that hangs, or prints different errors between runs, is a bug in the driver or in rustc's
+parallel code. The driver passes a thread count through unchanged, so this runs the front end on one
+thread:
+
+```sh
+RUSTFLAGS="-Zunstable-options --jobs-frontend=1" cargo cgp check
+```
+
+Set it in the environment rather than in a project's `.cargo/config.toml`, whose `build.rustflags`
+also reaches the project's stable builds, which reject `-Z` flags. Changing `RUSTFLAGS` rebuilds the
+dependencies under `target/cgp` once. `-Zthreads=1` works too, but rustc's option list marks
+`-Zthreads` as replaced by `--jobs-frontend`.
+
+- **The problem goes away on one thread:** report it on
+  [cargo-cgp's issue tracker](https://github.com/contextgeneric/cargo-cgp/issues) with the output of
+  both runs and of `cargo cgp check -v`.
+- **Plain `cargo +<pinned nightly> check` fails the same way without the flags:** the bug is rustc's,
+  and the blog post says where to report it.
+
 ## Symptom index
 
 This table maps the distinctive fragment of each error to the section that covers it. Match the text
@@ -273,6 +299,7 @@ you see, then read the section for the fix.
 | `out of lockstep` / `was built against` | front-end and driver versions/builds differ | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `could not parse the` … `--version` output | an old or foreign driver binary | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
 | `rustup was not found on PATH` | no rustup for the preflight or `setup` | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup), [Provisioning fails](#provisioning-fails) |
+| no error: a check hangs, or its errors change between runs | a bug under rustc's parallel front end | [A check hangs or its output varies between runs](#a-check-hangs-or-its-output-varies-between-runs) |
 
 ## Further reading
 

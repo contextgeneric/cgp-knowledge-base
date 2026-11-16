@@ -58,8 +58,10 @@ reader needs them:
   VS Code's `PATH`); and its boundary. It links rust-analyzer's configuration manual and VS Code's
   settings documentation.
 - **Troubleshooting:** the symptom index, then sections ordered by how often a reader meets them,
-  including the check disagreeing with `cargo check`, a slow first check, and an overridden
-  `RUSTC_WORKSPACE_WRAPPER`.
+  including the check disagreeing with `cargo check`, a slow first check, an overridden
+  `RUSTC_WORKSPACE_WRAPPER`, and a check that hangs or varies between runs, with the one-thread
+  `RUSTFLAGS` command and a link to the Rust blog's announcement of the parallel front end. The
+  check page's order paragraph links the same post and that section.
 - **Error codes:** one heading per code, so `#cgp-e001` resolves, each with the message form, the
   mistake, the fix, and the compile-errors section that explains the class; then the rewrites with no
   code. The compile-errors page keeps a short section pointing here.

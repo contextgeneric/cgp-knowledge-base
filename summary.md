@@ -684,7 +684,7 @@ it stale.
 - [installation.md](cargo-cgp/reference/installation.md) — every install, update, and uninstall path,
   through cargo or Nix, the pinned nightly each needs, and the Linux-only testing and the `cgp` v0.8 line the driver reads.
 - [troubleshooting.md](cargo-cgp/reference/troubleshooting.md) — diagnosing a tool that will not run,
-  seam by seam, with the exact message each failure prints.
+  seam by seam, with the exact message each failure prints, and running the check on one thread.
 - [usage.md](cargo-cgp/reference/usage.md) — running `check` and `expand`, reading the output and its
   codes, editor integration, and the environment variables that override behavior.
 
