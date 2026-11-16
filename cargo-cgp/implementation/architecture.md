@@ -68,7 +68,9 @@ its root-cause tree. When the resolver declines, a text rewrite names the traits
 notes it recognizes. Either way the [post-processing chain](error-processing.md) then runs, so in a
 crate that loads CGP a diagnostic the tool did not rewrite still shows the constructs the chain
 recognizes in [their surface spelling](resugaring.md). A rewritten diagnostic that repeats one already
-reported is dropped here, which is why one wiring mistake surfacing at many sites shows once.
+reported is dropped here, which is why one wiring mistake surfacing at many sites shows once, at its
+`check_components!` entry when it has one
+([one order](driver/program.md#deciding-and-emitting-in-one-order)).
 
 The name-resolution errors of a wiring entry are the exception to reshaping on arrival. They arrive
 before the compiler can read the entries they sit in, so the emitter buffers them as rustc wrote them,

@@ -424,13 +424,15 @@ The remaining differences are where the driver is simpler than Clippy, or does m
   `contain`, both fallbacks with a panicking step, and the recognition of a closed stdout's
   panic.
 - [`tests/driver/deferred.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/deferred.rs):
-  the processing of the queue: the order taken, the next batch, the cap, and an unwind out of a
-  transform.
+  the processing of the queue: the order taken, the next batch, the cap, an unwind out of a
+  transform, and the check-entry lookup, whose panic answers no and whose fatal error is kept until
+  the queue is buffered.
 - [`tests/driver/order.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/order.rs)
   and
   [`tests/error_processing/order.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/order.rs):
   the canonical order's key, read within a span's file, the detail that breaks a tie, in either
-  arrival order, and the comparison, exhaustively over small spans.
+  arrival order, the comparison, exhaustively over small spans, and the check entries moved ahead
+  of the rest.
 - [`tests/driver/footers.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/footers.rs):
   the `rustc --explain` footer naming only the codes still shown.
 - [`tests/driver/pending.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/pending.rs):
