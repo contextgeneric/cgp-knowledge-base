@@ -35,7 +35,9 @@ passes without the disk, and `get_user_profile_picture` is unchanged.
 
 **Check the wiring** says wiring is lazy, adds `check_components!` for both contexts, deletes
 `App`'s `local_dir` field, and shows a shortened raw error, then the `cargo cgp check` report
-naming the missing field, with the canonical qualification. **Where to go next** routes to the
+naming the missing field, with the canonical qualification. The tool reports the mistake once, at
+the first site in the file, which is the call in `main`, so the report's code is `E0599`, and the
+page says why it differs from the raw `E0277`. **Where to go next** routes to the
 area-calculation series, two Concepts pages, the Overview's abstract error type, and, for the
 framework author, the extensible-data Concepts pages. The Overview's *Where to go next* and the
 area-calculation series' Checking and Debugging page link it back.
