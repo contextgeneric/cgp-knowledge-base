@@ -11,11 +11,12 @@ Both crates' build scripts bake the channel into `PINNED_TOOLCHAIN`, the driver 
 that actually built it, and the Nix flake reads the same file. A test fails when the constant drifts
 from the file.
 
-One detail is easy to break. A build script searches *upward* for the file, because a package
-tarball has no workspace above it, and each binary crate carries a symlink that cargo dereferences
-into the tarball. A workspace-relative path would break `cargo install`. The bundled file does not
-affect the installer's toolchain, since
-[`cargo install` ignores it](https://github.com/rust-lang/cargo/issues/11036).
+One detail is easy to break. Each build script reads the pin from a copy in its own crate, never
+through a workspace-relative path, because `cargo install` builds from a package tarball with no
+workspace above it. The copy is `pinned-toolchain.toml`, a symlink to the workspace file that cargo
+packages as a regular file. It is not named `rust-toolchain.toml`, because docs.rs deletes a crate's
+`rust-toolchain.toml` before building it. Rustup reads only a file of that name or
+`rust-toolchain`, so the copy selects no toolchain either.
 
 ## What a bump must do by hand
 

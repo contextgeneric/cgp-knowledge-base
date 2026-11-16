@@ -66,8 +66,8 @@ part of that second command has a reason:
 - **`--root` places the driver beside the front-end,** where the lookup finds it.
 
 Each published crate's `LICENSE` is a symlink to the workspace file, as each binary's
-`rust-toolchain.toml` is, and cargo packages the file it points to. So keep them symlinks rather
-than copies.
+`pinned-toolchain.toml` is to `rust-toolchain.toml`, and cargo packages the file it points to. So
+keep them symlinks rather than copies.
 
 ## Provisioning: `setup` does the work, `check` only verifies
 
