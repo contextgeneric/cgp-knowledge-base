@@ -49,7 +49,7 @@ compressing the deep `Symbol` and `Cons` types a CGP error carries
 ([un-eliding the diagnostic](driver/program.md#un-eliding-the-diagnostic),
 [rustc diagnostic internals](rustc-diagnostic-internals.md)). A flag the invocation already sets wins
 for these two. The third, `-Zthreads=1`, runs the front end on one thread and replaces any thread
-count the invocation sets, because the emitter's choices follow the order diagnostics arrive in
+count the invocation sets, until a run under threads has shown that the output is the same
 ([running the front end on one thread](driver/program.md#running-the-front-end-on-one-thread)).
 Expand mode adds none of the three, because it stops before analysis.
 
@@ -75,12 +75,14 @@ before the compiler can read the entries they sit in, so the emitter buffers the
 and the driver's `after_expansion` callback rewrites them in the buffer once resolution is over.
 
 **Render** happens at the end of the compilation, because deciding a block's final form needs every
-diagnostic. The emitter buffers each result, and its `Drop` flushes the buffer: it coalesces
-failures that share a root cause, renders each `root cause:` note against what earlier blocks drew,
-and rebuilds the "detailed explanations" footer. The result goes to the inner emitter, the one the
-compiler's `default_emitter` would build for the active error format, so JSON and human output both
-come from the compiler's own renderers. A fixture's `.cgp.stderr` and its plain `.rust.stderr` share
-a renderer for that reason, and their difference is purely the tool's work.
+diagnostic. The emitter buffers each result, and its `Drop` flushes the buffer: it puts the buffer
+in one canonical order, by each diagnostic's primary span, so the output does not depend on the
+order rustc produced it in ([one order](driver/program.md#deciding-and-emitting-in-one-order)),
+coalesces failures that share a root cause, renders each `root cause:` note against what earlier
+blocks drew, and rebuilds the "detailed explanations" footer. The result goes to the inner emitter,
+the one the compiler's `default_emitter` would build for the active error format, so JSON and human
+output both come from the compiler's own renderers. A fixture's `.cgp.stderr` and its plain
+`.rust.stderr` share a renderer for that reason, and their difference is purely the tool's work.
 
 A panic in the transform or the flush falls back to the diagnostics rustc built, so a panic in the
 tool does not lose an error

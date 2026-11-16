@@ -151,12 +151,13 @@ shared.
 
 ### Running the front end on one thread
 
-**`-Zthreads=1` keeps the output in one order.** From `nightly-2026-11-14`, rustc type-checks items
-on several threads unless `-Zthreads` or `--jobs-frontend` says otherwise, so errors from different
-items arrive in a different order on each run. The rules that pair two diagnostics decide the same
-way in either order ([diagnostic reshapes](diagnostic-reshapes.md)), but the queue is processed in
-arrival order, so which copy of a re-reported failure the de-duplication ledger keeps, and where
-each block sits, would still vary between runs. Threads would also turn the
+**`-Zthreads=1` keeps the front end on one thread until a run under threads has shown the same
+output.** From `nightly-2026-11-14`, rustc type-checks items on several threads unless
+`-Zthreads` or `--jobs-frontend` says otherwise, so errors from different items arrive in a
+different order on each run. The rules that pair two diagnostics decide the same way in either order
+([diagnostic reshapes](diagnostic-reshapes.md)), and the emitter decides and prints in one
+[canonical order](#deciding-and-emitting-in-one-order), so the output is meant to be the same with
+any thread count, but no run under threads has yet shown it. Threads would also turn the
 [lock hazards](../rustc-diagnostic-internals.md#re-entering-the-diagnostic-context-lock-was-already-held)
 of the diagnostics transformed outside `analysis` into hangs, because rustc's lock blocks on
 re-entry once the compiler runs thread-safe, instead of panicking.
@@ -181,10 +182,10 @@ runs the original provider.
 
 **The wrapper catches the fatal stop.** `analysis` ends a failing crate by raising a
 `FatalErrorMarker` itself once type checking has reported an error, which is why no
-`after_analysis` callback sees one. The wrapper catches that unwind, transforms the queue in arrival
-order with the compiler still usable, and resumes it. A crate that compiles returns normally and is
-processed the same way. Any other unwind is a crash, which the panic hook has already handled, so it
-resumes at once.
+`after_analysis` callback sees one. The wrapper catches that unwind, transforms the queue in the
+[canonical order](#deciding-and-emitting-in-one-order) with the compiler still usable, and resumes
+it. A crate that compiles returns normally and is processed the same way. Any other unwind is a
+crash, which the panic hook has already handled, so it resumes at once.
 
 **The processing runs in batches.** A query a transform forces may emit; that diagnostic finds the
 emitter locked, is queued, and is transformed in the next batch. After eight batches (`MAX_ROUNDS`)
@@ -197,6 +198,31 @@ queue is buffered.
 passes reshape, and anything after the query are transformed as they arrive, under rustc's lock, so
 the lock hazards still bind them. Nothing queued is lost: the panic hook and the emitter's `Drop`
 buffer the queue untransformed before they flush.
+
+## Deciding and emitting in one order
+
+**The emitter decides and prints in one canonical order, whatever order rustc produced the
+diagnostics in.** Under threads, errors from different items arrive in a different order on each
+run, and several choices keep the first of several reports: which copy of a re-reported failure the
+ledger keeps, which block a repeat merges into, and which subtrees a note elides against the blocks
+before it. The order is
+[`OrderKey`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/order.rs),
+read off each diagnostic's primary span:
+
+- **An inner span first:** of two overlapping spans, the one inside the other leads, because it is
+  the more specific report, such as the failing call inside the expression that uses it.
+- **Otherwise the source:** the file's name, then the offset within that file. The offsets are the
+  file's own, never the source map's global positions, because a dependency's file enters the source
+  map whenever a span from it is first decoded, which under threads happens in any order.
+- **Then the code, then the message,** for reports at one span.
+- **No span last:** a diagnostic without a span comes after those with one, in the order it
+  arrived, as rustc's closing "For more information" footer does.
+
+**The order applies twice.** Each batch of the queue is sorted before it is transformed, so a rule
+that keeps the first report keeps the one the order puts first. The flush then sorts its whole
+buffer, the diagnostics transformed as they arrived included, so the blocks, the elision across
+them, and the merged repeats follow it too. The cost is that the tool's output can list the same
+untouched errors in another order than plain `cargo check` does.
 
 ## De-duplicating and coalescing
 
@@ -225,7 +251,8 @@ keys:
 all its sites and the `Emitter` trait has no end-of-compilation hook. `Drop` runs in the
 `DiagCtxt`'s teardown, while the inner emitter is still alive. The diagnostics were counted as they
 arrived, so cargo's summary and the visible blocks agree. An untouched `rustc` error stays a plain
-entry, emitted at its arrival position, so a CGP block beside an unrelated `E0308` keeps its order.
+entry, emitted at its place in the [canonical order](#deciding-and-emitting-in-one-order) beside the
+CGP blocks.
 
 **Failures group by sharing any root cause, transitively, not by an equal cause set.** The depths
 one mistake surfaces at see different subsets: a check entry stops at the first unmet leaf on its
@@ -274,7 +301,7 @@ the process. So both run under `catch_unwind`:
 - **A panic in a transform** buffers that diagnostic as rustc built it, with a note naming the panic
   and the issue tracker, and the compilation goes on.
 - **A panic in the flush** emits every buffered diagnostic as rustc built it, each resolution with
-  the same note, in arrival order.
+  the same note, in the canonical order.
 - **A `FatalErrorMarker` unwind** is rustc aborting rather than a panic of the driver's, so
   containment lets it continue
   ([`fatal_after_buffered_diagnostic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/robustness/fatal_after_buffered_diagnostic.rs)).
@@ -370,8 +397,13 @@ The remaining differences are where the driver is simpler than Clippy, or does m
   `contain`, both fallbacks with a panicking step, and the recognition of a closed stdout's
   panic.
 - [`tests/driver/deferred.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/deferred.rs):
-  the processing of the queue: arrival order, the next batch, the cap, and an unwind out of a
+  the processing of the queue: the order taken, the next batch, the cap, and an unwind out of a
   transform.
+- [`tests/driver/order.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/order.rs)
+  and
+  [`tests/error_processing/order.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/order.rs):
+  the canonical order's key, read within a span's file, and its comparison, exhaustively over small
+  spans.
 - [`tests/driver/footers.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/footers.rs):
   the `rustc --explain` footer naming only the codes still shown.
 - [`tests/driver/pending.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/pending.rs):
@@ -412,7 +444,7 @@ The remaining differences are where the driver is simpler than Clippy, or does m
   the feature gate and the `extern crate` lines.
 - [`src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   `install.rs` and `cgp_emitter.rs` for the wrapper and its orchestration, `deferred.rs` for the
-  queue of `analysis`'s diagnostics, `stage/` and `pipeline/`
+  queue of `analysis`'s diagnostics, `order.rs` for the canonical order, `stage/` and `pipeline/`
   for the stages, `flush/` for the rendering, `containment.rs`, `fallback.rs`, and `output.rs` for
   panics, `repeats.rs` for repeated errors, and `edit/` for the `DiagInner` edits, with the rustc
   phrasings they key on in the rustc-free

@@ -170,6 +170,12 @@ conditions the [error-code catalog](../error-code.md) gives, such as one path im
 component. `cargo fix` applies the edits only with the driver set by hand as cargo's workspace
 wrapper, since `cargo cgp` has no `fix` subcommand.
 
+**The errors come in the order of the code they point at:** by file, then by position, with an
+error on an expression ahead of one on the expression around it, and errors without a location
+last. Plain `cargo check` prints them in the order the compiler finds them, so beside its output the
+same untouched error can sit in another place
+([the canonical order](../implementation/driver/program.md#deciding-and-emitting-in-one-order)).
+
 Some mistakes keep rustc's own headline, and [issues/usability.md](../issues/usability.md) lists them.
 For example, a check on a context with a type parameter is not traced, because the resolver works
 without that context's bounds. Fix such an error from rustc's text, or check a concrete context.

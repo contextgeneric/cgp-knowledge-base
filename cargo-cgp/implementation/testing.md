@@ -84,9 +84,12 @@ crash that prints nothing or a rewrite of an error the tool should leave alone:
   error. Expansion stops before type-checking, so its status differs from `cargo check`'s, and a
   compile error ending in exit 0 would otherwise pass.
 - **The pass-through check**, for fixtures under `pass-through/`, requires the tool's stderr to
-  equal plain `cargo check`'s, both normalized as the baseline is. A fixture whose output still
-  differs declares `//@rewrites-falsely: <reason>`, and the check reports the marker once the
-  outputs agree.
+  hold the same diagnostics as plain `cargo check`'s, each as many times, in any order, both
+  normalized as the baseline is. The tool prints in its own
+  [canonical order](driver/program.md#deciding-and-emitting-in-one-order) while the baseline keeps
+  rustc's, so the check compares the blocks between blank lines as a multiset. A fixture whose
+  output still differs declares `//@rewrites-falsely: <reason>`, and the check reports the marker
+  once the outputs agree.
 - **The header check**, for every fixture outside `ok/`, `pass-through/`, and `robustness/`,
   requires a `//@quality:` and a `//@codes:` list equal to the codes in the output, so a fixture
   that gains or loses a code fails instead of being re-blessed unnoticed.
@@ -268,7 +271,7 @@ The harness's own library has these tests, under
 - [`fixtures.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/fixtures.rs): discovery, and the no-expansion marker.
 - [`normalize.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/normalize.rs): the rewrites, the dropped lines, and the spine collapse.
 - [`options.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/options.rs): option and filter parsing.
-- [`passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/passes.rs): the header, status, expand status, and pass-through checks, and the JSON reduction.
+- [`passes.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/passes.rs): the header, status, expand status, and pass-through checks, the pass-through's blocks in any order, and the JSON reduction.
 - [`paths.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/paths.rs): the upward search for the built front-end.
 - [`snapshot.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/snapshot.rs): a missing snapshot, blessing, and the line diff.
 

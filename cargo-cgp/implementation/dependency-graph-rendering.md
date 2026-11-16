@@ -111,7 +111,10 @@ The diamond shows the shared subtree expanded under its first branch
 One `seen` set threaded through a compilation's blocks lets a later block truncate at a subtree an
 earlier one drew. It exists because one mistake surfaces in several diagnostics that legitimately do
 not de-duplicate: a wrapper trait keeps its own block, and its chain can share everything below its
-first few hops. Three rules keep this honest, each protecting against a specific wrong result:
+first few hops. The blocks come in the driver's
+[canonical order](driver/program.md#deciding-and-emitting-in-one-order), so which block draws a
+shared subtree in full and which elides it is the same on every run. Three rules keep this honest,
+each protecting against a specific wrong result:
 
 - **An elided branch still ends at the root cause.** A cross-block `(*)` points into another block
   the reader may not have to hand, so it keeps the marker and appends the distinct leaves beneath it

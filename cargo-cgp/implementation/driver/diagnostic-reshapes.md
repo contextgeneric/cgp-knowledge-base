@@ -327,7 +327,10 @@ an `E0277` on `__Context__`. The detector finds the provider impl holding the ca
 method bodies, since a body's errors are not about what the impl declares, and evaluates each clause
 in the impl's own `param_env`. The first report per impl is reworded, with the caret moved to the
 macro's call site, and the later ones dropped. Each report lists every unmet clause, which the
-detector evaluates itself, so the message is the same whichever report arrives first.
+detector evaluates itself, so the message is the same whichever report arrives first. An abstract
+type an `E0220` reports as unimported is collected from the queue of `analysis` before any of it is
+transformed, so the requirement its import satisfies is left out even when the requirement's
+`E0277` comes first.
 
 **The two abstract-type paths meet.** A bare `Error` in a provider of a component that imports it is
 an `E0425` from name resolution, before anything can say which trait declares it, so the emitter
