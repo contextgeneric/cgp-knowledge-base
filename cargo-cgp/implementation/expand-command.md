@@ -88,8 +88,10 @@ a second marker flag, `--cgp-expand-item=<path>`. It is a flag rather than the b
 `cargo-expand` accepts, because a bare word cannot be told from the value of a cargo flag
 (`--bin my_module`) without re-declaring cargo's whole grammar, which forwarding exists to avoid.
 The front-end checks the path's shape before anything compiles, so a typo costs nothing, and the
-driver parses it again for real. A leading `crate::`, `self::`, or `::` is dropped, since `crate::…`
-is how a reader spells a module.
+driver parses it again for real. A path is plain identifiers joined by `::`, and anything else is
+rejected as malformed rather than matched against nothing, so a typo such as `shapes:Rectangle`
+reports itself instead of passing for an item that does not exist. A leading `crate::`, `self::`,
+or `::` is dropped, since `crate::…` is how a reader spells a module.
 
 Three rules decide what a path selects, and the third is the CGP-shaped one:
 
@@ -98,6 +100,9 @@ Three rules decide what a path selects, and the third is the CGP-shaped one:
   impls and its wiring;
 - an `impl` whose **trait** is that path, so `--item AreaCalculator` shows a component's provider
   trait with the blanket impls and each provider's impl.
+
+A path is matched against each item's own written path, qualified by the module it sits in, so
+`shapes::Rectangle` finds a `Rectangle` declared or implemented inside `mod shapes`.
 
 A CGP component's generated items are almost all impls, which have no names of their own, so a filter on
 declarations alone would answer "what does this component generate?" with just the trait. The impl rules
@@ -210,8 +215,12 @@ than failing.
 - **The printer's spacing is corrected afterward.** The printer lays a macro body out token by
   token, so it prints `Product![Multiply < Symbol!("foo") >]` and breaks a brace-delimited body onto
   its own lines. One narrow text pass removes the spaces inside the bodies of the macros the crate
-  emits and joins `Struct!` and `Enum!` bodies back onto the macro's line. Its search steps over
-  literals and comments.
+  emits, the ones `SUGAR_MACROS` names, and joins `Struct!` and `Enum!` bodies back onto the macro's
+  line. It only ever removes whitespace, replacing each line break of a joined body with one space,
+  so it cannot change meaning, and its search steps over literals and comments, so a macro named in a
+  string or a comment is left alone. A `Product![…]` the programmer wrote is tightened the same way.
+  A decoded path is written as the `Path!(…)` call, the form source spells a path type in, with its
+  `@` and `.` joined to their neighbors so the printer lays the path out as one word.
 - **Sugar the user wrote needs no attention,** because the CGP macro that copied it never expanded it.
 - **Stripping the prelude must move a qualified path's index.** A qualified path
   (`<__Provider__ as DelegateComponent<C>>::Delegate`) records where its qualifier ends. Dropping

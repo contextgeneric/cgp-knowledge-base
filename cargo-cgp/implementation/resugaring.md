@@ -450,7 +450,10 @@ pins for a qualifier.
   the syntax-tree implementation through the driver's whole pipeline, including both `Nil` overlap
   hazards.
 - [`tests/expand/agreement.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-expand/tests/expand/agreement.rs):
-  the text and syntax-tree implementations compared on the same constructs.
+  the text and syntax-tree implementations compared on the same constructs. They share spelling
+  rules but walk different inputs, so only this test keeps their results in step: each case feeds
+  one type to the text pass through the chain an untransformed diagnostic runs, which spells a path
+  in its `Path!(@…)` form, and to the syntax-tree pass as a type alias's right-hand side.
 - Each fixture's `.expand.rs` in the [UI suite](testing.md#three-passes-per-fixture): the
   syntax-tree pass over real macro output, the widest coverage of the three.
 - [`base_area_1`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.rs),
