@@ -365,7 +365,10 @@ Each stage's modules import only the layers below them, in the order `resolve/mo
   stages and the class detectors in
   [`detect/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/detect)
   import it and it imports none of them. `query/cgp_item/` holds the structural trait recognition,
-  and `impl_match.rs` the one impl match.
+  and `impl_match.rs` the one impl match. The rest are the solver queries the walk and the
+  classifiers ask, the readers of an impl's clauses, the unification of a call's arguments with its
+  callee's inputs, the renderings of a wiring key, the syntactic type reads, the source ranges, and
+  the lookups several stages make.
 - [`resolve/cache.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/cache.rs):
   the walk's memo ([Cached dependency resolution](../cached-dependency-resolution.md)).
 - [`resolve/overflow.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/overflow.rs):

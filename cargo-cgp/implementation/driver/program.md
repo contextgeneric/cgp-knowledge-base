@@ -49,7 +49,8 @@ threads](#running-the-front-end-on-threads)).
 
 **The diagnostic flags are skipped for cargo's info queries,** `-vV` and
 `--print`. `-vV` already implies `-v`, so a second one makes rustc reject the invocation, and a
-query carrying unexpected flags also poisons cargo's cache.
+query carrying unexpected flags also poisons cargo's cache
+([rust-lang/cargo#14385](https://github.com/rust-lang/cargo/issues/14385)).
 
 ## Running the compiler
 
@@ -480,7 +481,8 @@ The remaining differences are where the driver is simpler than Clippy, or does m
 - [`src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs):
   `expand_arg_files`, `rustc_args`, and `is_wrapper_mode`.
 - [`src/config/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/config):
-  the injected flags and the names the recognition anchors to, each with its rationale.
+  the injected flags, whose reasons [the argument levers](#the-drivers-diagnostic-transformations)
+  give, and the names the recognition anchors to.
 - [`src/callbacks.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/callbacks.rs):
   the two hooks.
 - [`src/lib.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/lib.rs):
@@ -489,7 +491,7 @@ The remaining differences are where the driver is simpler than Clippy, or does m
   `install.rs` and `cgp_emitter.rs` for the wrapper and its orchestration, `deferred.rs` for the
   queue of `analysis`'s diagnostics, `order.rs` for the canonical order, `stage/` and `pipeline/`
   for the stages, `flush/` for the rendering, `containment.rs`, `fallback.rs`, `output.rs`, and
-  `registry.rs` for panics, `repeats.rs` for repeated errors, and `edit/` for the `DiagInner`
-  edits, with the rustc phrasings they key on in the rustc-free
-  [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
+  `registry.rs` for panics, `repeats.rs` for repeated errors, `buffer.rs` for the diagnostics held
+  until the flush, and `edit/` for the `DiagInner` edits, with the rustc phrasings they key on in
+  the rustc-free [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
   module.
