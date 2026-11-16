@@ -80,12 +80,14 @@ mutates.
 
 The preflight answers two questions, the cheap one first, so that a driver failure can be attributed
 correctly. Each failure of its checks directs the user to `setup`, except a missing rustup, which
-`setup` cannot repair. Messages about the driver name its path and origin, so a stale driver on
+`setup` cannot repair, so that message names the two ways forward instead: install rustup, or
+install the tool through its Nix flake, which needs no rustup. Messages about the driver name its path and origin, so a stale driver on
 `PATH` is not mistaken for the one `setup` placed.
 
-**Is the pinned toolchain installed?** It asks rustup directly. Only rustup's shim honors
-`RUSTUP_TOOLCHAIN`, so on a machine without rustup another `rustc` on `PATH` would answer for a
-toolchain that is not there.
+**Is the pinned toolchain installed?** It asks rustup directly, with
+`rustup run <toolchain> rustc --version`, which installs nothing without `--install`. Only rustup's
+shim honors `RUSTUP_TOOLCHAIN`, so on a machine without rustup another `rustc` on `PATH` would
+answer for a toolchain that is not there.
 
 **Does the driver run and match?** It runs `cargo-cgp-driver --version` under the check's exact
 environment, which is both a load test and a handshake. A driver from another nightly fails in the
@@ -108,7 +110,9 @@ self-replacing installer, so it stays a thin layer over cargo. These details are
   replaced binary `<path> (deleted)`.
 - **It reads the crates.io index rather than asking cargo,** because `cargo search` and `cargo info`
   report a max version that includes pre-releases. A stable install takes only stable versions; a
-  pre-release install takes any newer one, so it can reach the release it previewed.
+  pre-release install takes any newer one, so it can reach the release it previewed. The index
+  reading follows the `crates-index` crate's shape, written over `ureq` and `serde_json` rather than
+  adding that dependency.
 - **A failed reinstall prints the manual commands,** whatever its cause. They exist for Windows,
   where a running executable is locked.
 - **An interrupted update degrades safely,** since a new front-end against an old driver is the

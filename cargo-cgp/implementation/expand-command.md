@@ -88,7 +88,8 @@ a second marker flag, `--cgp-expand-item=<path>`. It is a flag rather than the b
 `cargo-expand` accepts, because a bare word cannot be told from the value of a cargo flag
 (`--bin my_module`) without re-declaring cargo's whole grammar, which forwarding exists to avoid.
 The front-end checks the path's shape before anything compiles, so a typo costs nothing, and the
-driver parses it again for real. A path is plain identifiers joined by `::`, and anything else is
+driver parses it again for real; the driver's parser owns the matching, so the front-end's check
+need only be no stricter. A path is plain identifiers joined by `::`, and anything else is
 rejected as malformed rather than matched against nothing, so a typo such as `shapes:Rectangle`
 reports itself instead of passing for an item that does not exist. A leading `crate::`, `self::`,
 or `::` is dropped, since `crate::…` is how a reader spells a module.

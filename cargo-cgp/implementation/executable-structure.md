@@ -48,14 +48,20 @@ The wrapped command differs from a plain cargo run in these ways:
   the user had set, as in `cargo clippy`, and the front-end warns that it did not run.
 - **The target directory:** the `cgp` subdirectory of the directory cargo would use, unless the caller
   forwards `--target-dir`, so a check does not wait on the lock other cargo runs hold
-  ([why](distribution/rust-analyzer-integration.md)).
+  ([why](distribution/rust-analyzer-integration.md)). The front-end asks
+  `cargo metadata --no-deps`, which reads manifests and configuration without resolving dependencies,
+  so the directory follows `CARGO_TARGET_DIR` and `build.target-dir`. The query runs under the
+  wrapped command's `RUSTUP_TOOLCHAIN`, so rustup never resolves, or installs, the toolchain the
+  project pins. When cargo cannot answer, as with no package or a broken manifest, the relative
+  `target/cgp` is used, and the wrapped command reports the problem itself.
 - **The toolchain and the environment:** the [contract below](#the-environment-contract).
 
 The front-end never sees a diagnostic. It inherits cargo's stdio, so progress lines and the compiler's
 diagnostics appear live, and every CGP transform happens inside the driver's emitter, which renders in
 whatever format the invocation asks for ([the flow](architecture.md#the-flow-of-a-diagnostic)). It
 propagates cargo's exit code, so a failed check fails the command. A signal leaves `cargo` without a
-code, so on Unix the front-end exits with 128 plus the signal number, as a shell reports it.
+code, so on Unix the front-end exits with 128 plus the signal number, as a shell reports it; elsewhere,
+and for a status that is neither, it exits with 1.
 
 The front-end's own messages take cargo's forms on stderr, so they read as part of cargo's output:
 `error:` with each cause under a `Caused by:`, `help:`, `warning:`, and right-aligned status lines.
