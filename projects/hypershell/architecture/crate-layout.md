@@ -69,7 +69,7 @@ adapter syntax. The macro depends on the prelude being in scope; see
 other crates use `std`. The workspace uses edition 2024 and declares a minimum Rust version of 1.90.
 
 **The workspace pins the nightly toolchain and enables the next-generation trait solver.** Its
-`rust-toolchain.toml` selects a dated nightly, `nightly-2026-11-07`, and `.cargo/config.toml` passes
+`rust-toolchain.toml` selects a dated nightly, `nightly-2026-11-15`, and `.cargo/config.toml` passes
 `-Z next-solver=globally`. Probes show the setting matters for the largest programs. On stable Rust
 1.98.1 without the new solver, the library crates and most examples check, but `parallel_compare`
 and `compare_and_branch` grew `rustc` to about 7 GB and were killed after roughly 90 seconds on an
