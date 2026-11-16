@@ -66,8 +66,8 @@ what the macros *generate*.
 
 - **The cgp-stderr pass** runs `cargo-cgp check` end to end and compares its stderr with
   `<name>.cgp.stderr`.
-- **The rust-stderr pass** runs plain `cargo check` and compares its stderr with
-  `<name>.rust.stderr`. It records the "before", so nothing cross-checks it.
+- **The rust-stderr pass** runs plain `cargo check`, with `-Zthreads=1` appended to the ambient
+  `RUSTFLAGS`, and compares its stderr with `<name>.rust.stderr`. It records the "before", so nothing cross-checks it.
 - **The expand pass** runs `cargo cgp expand` and compares its **stdout** with `<name>.expand.rs`.
   It shows the generated code beside the error about it, and it is the end-to-end coverage of
   [the expand command](expand-command.md) and its [resugaring](resugaring.md).
@@ -204,6 +204,15 @@ when that component is present, so `pass-through/local_blanket_trait` renders di
 it. `cargo cgp setup` deliberately does not install it, since a user of the tool never runs this
 suite.
 
+**Both compilers run their front end on one thread, so a snapshot keeps one order.** From
+`nightly-2026-11-14`, rustc type-checks items on several threads by default, and errors from
+different items then arrive in a different order on each run. The driver forces `-Zthreads=1` on
+the tool's passes
+([running the front end on one thread](driver/program.md#running-the-front-end-on-one-thread)),
+and the rust-stderr pass appends the same flag to the ambient `RUSTFLAGS`, since setting the
+variable replaces the ambient value. A fixture's `//@env:` reaches only the tool's passes, whose
+driver forces the flag whatever `RUSTFLAGS` it sets.
+
 ## Comparison with Clippy
 
 The suite follows Clippy's approach: a custom harness with `harness = false`, driving a tree of
@@ -252,6 +261,7 @@ The harness's own library has these tests, under
 [`crates/cargo-cgp-ui-tests/tests/harness/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-ui-tests/tests/harness):
 
 - [`aux.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/aux.rs): a fixture's declared auxiliary crates.
+- [`baseline.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/baseline.rs): the rust-stderr pass's one-thread `RUSTFLAGS`.
 - [`cgp_code.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/cgp_code.rs): the form of a `CGP-Exxx` code.
 - [`directives.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/directives.rs): reading each directive, and rejecting the malformed ones.
 - [`fixtures.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-ui-tests/tests/harness/fixtures.rs): discovery, and the no-expansion marker.

@@ -41,14 +41,17 @@ live `TyCtxt`. A front-end that saw only cargo's serialized output could not nam
 a component marker or re-run a check obligation, so the front-end plays no part beyond launching
 cargo and letting its output stream through.
 
-**Configure** adds two flags to each workspace crate's check, each changing how the compiler
+**Configure** adds three flags to each workspace crate's check, each changing how the compiler
 produces diagnostics rather than rewriting what it built. `-Znext-solver=globally` reaches the
 missing leaf bound the default solver may stop short of
 ([choosing the trait solver](driver/program.md#choosing-the-trait-solver)), and `--verbose` stops rustc
 compressing the deep `Symbol` and `Cons` types a CGP error carries
 ([un-eliding the diagnostic](driver/program.md#un-eliding-the-diagnostic),
-[rustc diagnostic internals](rustc-diagnostic-internals.md)). A flag the invocation already sets wins,
-and expand mode adds neither, because it stops before analysis.
+[rustc diagnostic internals](rustc-diagnostic-internals.md)). A flag the invocation already sets wins
+for these two. The third, `-Zthreads=1`, runs the front end on one thread and replaces any thread
+count the invocation sets, because the emitter's choices follow the order diagnostics arrive in
+([running the front end on one thread](driver/program.md#running-the-front-end-on-one-thread)).
+Expand mode adds none of the three, because it stops before analysis.
 
 **Transform** runs in
 [`CgpEmitter`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/cgp_emitter.rs),

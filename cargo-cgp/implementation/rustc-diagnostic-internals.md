@@ -323,7 +323,7 @@ that as a known limitation.
 ## Source
 
 - [`config/rustc_flags.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/config/rustc_flags.rs):
-  the two injected flags.
+  the injected flags.
 - [`emitter/stage/resolver.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/stage/resolver.rs):
   the gate that declines a collection-phase `E0599`.
 - [`resolve/query/cgp_item/cgp_crates.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/query/cgp_item/cgp_crates.rs):
