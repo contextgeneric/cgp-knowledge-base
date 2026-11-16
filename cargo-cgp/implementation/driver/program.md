@@ -315,6 +315,14 @@ untransformed because a second panic inside a panic hook aborts the process, so 
 to run the flush's rendering
 ([`ice_after_buffered_diagnostic`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/robustness/ice_after_buffered_diagnostic.rs)).
 
+**The hook finds the buffer from whichever thread crashes.** Under the parallel front end, a crash
+can come on any of rustc's threads, while the emitter is installed on one. So the emitter registers
+its output, and the transforming half the `analysis` wrapper uses, in a
+[`Registry`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/emitter/registry.rs):
+process-wide while rustc runs thread-safe, through rustc's `FromDyn`, which makes a value its
+threads share sendable only in that mode, and in a thread-local slot otherwise, when the compiler
+runs on the one thread that registered it.
+
 **A closed stdout ends the driver quietly, with rustc's code for a failed print.** Some of rustc's
 output goes through `println!`, such as the LLVM line of `-vV`, which panics when stdout's reader is
 gone, as in `cargo-cgp-driver <rustc> -vV | head -1`. rustc's own build keeps the default `SIGPIPE`
@@ -393,6 +401,9 @@ The remaining differences are where the driver is simpler than Clippy, or does m
   the driver without a panic or an ICE file.
 - [`tests/driver/help.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/help.rs):
   the help flags and text.
+- [`tests/driver/registry.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/registry.rs):
+  a registration found from another thread while rustc runs thread-safe, replaced by a later one,
+  and gone once its owner drops it.
 - [`tests/driver/containment.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/containment.rs):
   `contain`, both fallbacks with a panicking step, and the recognition of a closed stdout's
   panic.
@@ -445,8 +456,8 @@ The remaining differences are where the driver is simpler than Clippy, or does m
 - [`src/emitter/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/emitter):
   `install.rs` and `cgp_emitter.rs` for the wrapper and its orchestration, `deferred.rs` for the
   queue of `analysis`'s diagnostics, `order.rs` for the canonical order, `stage/` and `pipeline/`
-  for the stages, `flush/` for the rendering, `containment.rs`, `fallback.rs`, and `output.rs` for
-  panics, `repeats.rs` for repeated errors, and `edit/` for the `DiagInner` edits, with the rustc
-  phrasings they key on in the rustc-free
+  for the stages, `flush/` for the rendering, `containment.rs`, `fallback.rs`, `output.rs`, and
+  `registry.rs` for panics, `repeats.rs` for repeated errors, and `edit/` for the `DiagInner`
+  edits, with the rustc phrasings they key on in the rustc-free
   [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs)
   module.
