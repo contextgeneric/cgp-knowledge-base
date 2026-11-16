@@ -125,9 +125,9 @@ with no cycle. When the name is a wiring entry's, the emitter drops the overflow
 Once a consumer call fails and its result meets `?`, the type of `expr?` cannot be resolved, so
 rustc adds a `Try` or `FromResidual` error that restates the failure and dumps the unresolved
 projection. The emitter records the primary span of every CGP failure it recognizes, before
-de-duplication so a dropped re-report still anchors its cascade, and drops a later `?` error whose
-span overlaps one. rustc emits the failure before its cascade, so the span is always recorded in
-time.
+de-duplication so a dropped re-report still anchors its cascade, and drops a `?` error whose span
+overlaps one. A `?` error that arrives before its failure is held, and the flush drops it once every
+span is recorded, so the drop does not depend on which of the two arrives first.
 
 The scope is deliberately tight: a `?` misuse elsewhere stays, and the resolver declines every `?`
 error, since it would otherwise re-anchor one onto the call it overlaps. Only the `?` cascade is
@@ -237,8 +237,9 @@ These corners need care:
   detector declines. It runs before the resolver, which declines the unit-parameter obligation
   ([`generic_component_unit_params`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/checks/generic_component_unit_params.rs)).
 - **`CGP-E061` needs both errors.** The helper's caret comes from the macro's expansion but sits on
-  the attribute, and the computer's sits on the method name with no trace of the macro. The macro
-  defines the helper first, so the computer's arrival finds the buffered helper
+  the attribute, and the computer's sits on the method name with no trace of the macro. Whichever
+  arrives second finds the other buffered, and the pair is worded on the computer's, whose carets are
+  the method names
   ([`auto_dispatch_shared_method_name`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/wiring/conflicting-wiring/auto_dispatch_shared_method_name.rs)).
 - **`CGP-E019` tells a namespace entry from a registration,** since a `#[default_impl]` copies its
   provider impl's parameters: an entry is the only impl declaring its parameter. An entry bounded by
@@ -325,7 +326,8 @@ which puts a `where` clause on the provider trait, so a provider that does not d
 an `E0277` on `__Context__`. The detector finds the provider impl holding the caret outside its
 method bodies, since a body's errors are not about what the impl declares, and evaluates each clause
 in the impl's own `param_env`. The first report per impl is reworded, with the caret moved to the
-macro's call site, and the later ones dropped.
+macro's call site, and the later ones dropped. Each report lists every unmet clause, which the
+detector evaluates itself, so the message is the same whichever report arrives first.
 
 **The two abstract-type paths meet.** A bare `Error` in a provider of a component that imports it is
 an `E0425` from name resolution, before anything can say which trait declares it, so the emitter
@@ -402,8 +404,10 @@ A provider trait has `IsProviderFor` as a supertrait, and `#[cgp_provider]` writ
 hand-written provider-trait impl has none, so the compiler rejects it with an `E0277` at the impl's
 `Self` and lists every unrelated implementor. The detector confirms the caret is the `Self` of a
 local impl of a CGP provider trait the user named, on a struct, enum, or union with no
-`IsProviderFor` impl for that marker. It words `[CGP-E039]` and remembers the provider, so a later
-failing check of a context wiring it is dropped as the same mistake
+`IsProviderFor` impl for that marker. It words `[CGP-E039]`, and a failing check of a context wiring
+the provider is dropped as the same mistake. Before the queue of `analysis` is transformed, a collect
+pass records every such provider, so the check is dropped whether it arrives before or after the
+impl's error
 ([`provider_impl_without_macro`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_without_macro.rs),
 [`provider_impl_without_macro_wired`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/provider-impl-without-macro/provider_impl_without_macro_wired.rs)).
 

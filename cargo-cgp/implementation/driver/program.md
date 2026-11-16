@@ -217,7 +217,9 @@ keys:
   it, and a declined report is suppressed when a resolved one recorded its headline. So a declined
   fallback that arrived first never hides the resolved tree, and two resolved reports with different
   causes both reach the flush. A resolved report records its class headline rather than the cause it
-  displays, since the text rewrite words only the class.
+  displays, since the text rewrite words only the class. A declined report that arrived first is held,
+  and the flush drops it once a resolved report recorded its headline, so the two show one block in
+  either order.
 
 **The emitter holds every diagnostic and flushes from `Drop`,** because stating a shared cause needs
 all its sites and the `Emitter` trait has no end-of-compilation hook. `Drop` runs in the
@@ -251,8 +253,9 @@ is the emission order known for
 [eliding against earlier blocks](../dependency-graph-rendering.md#eliding-across-blocks).
 
 **An untouched error is merged only when rustc reports it twice.** In a crate that uses CGP,
-`merge_repeats` folds a later diagnostic with the same level, code, and message, and a primary caret
-on the same line, into the earlier block. rustc repeats an error that way when it checks one
+`merge_repeats` merges two diagnostics with the same level, code, and message, and a primary caret on
+the same line, into one block at the earlier one's position, written as the block with more notes,
+the earlier on a tie, so the fuller notes survive whichever arrived first. rustc repeats an error that way when it checks one
 requirement per generated item, or a call's bound for the call and an argument
 ([`implicit_conflicting_types`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/uncataloged/implicit-arguments/implicit_conflicting_types.rs),
 [`transform_map_fields_missing_marker`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/data/extensible-data/transform_map_fields_missing_marker.rs)).
@@ -369,6 +372,8 @@ The remaining differences are where the driver is simpler than Clippy, or does m
   transform.
 - [`tests/driver/footers.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/footers.rs):
   the `rustc --explain` footer naming only the codes still shown.
+- [`tests/driver/pending.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/pending.rs):
+  the flush's drop of a `?` cascade and of a declined report, in either arrival order.
 - [`tests/driver/pipeline.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/pipeline.rs):
   `apply_reshape`'s span policies, and a verdict ending the stage chain.
 - [`tests/driver/repeats.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/repeats.rs):
