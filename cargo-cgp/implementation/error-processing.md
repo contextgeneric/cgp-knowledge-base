@@ -21,6 +21,7 @@ elsewhere:
 | [`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs) | The `cargo tree`-style renderer the graph expands into | [Dependency-graph rendering](dependency-graph-rendering.md) |
 | [`dedup`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/dedup.rs) | The `DedupLedger` | [The driver](driver/program.md#de-duplicating-and-coalescing) |
 | [`byte_range`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/byte_range.rs) | The anchors' span decisions over plain ranges | [The anchors](typed-resolution/anchors.md) |
+| [`order`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/order.rs) | The canonical order the emitter decides and prints diagnostics in | [The driver](driver/program.md#deciding-and-emitting-in-one-order) |
 | [`signals`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/signals.rs) | The stable rustc phrasings the emitter keys on, reads names out of, or writes back | Here |
 | [`candidates`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/candidates.rs) | The implementor list cut back to rustc's length | [The driver](driver/program.md#un-eliding-the-diagnostic) |
 | [`syntax`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/syntax) | Telling a string literal from code, and spelling a name | [Resugaring](resugaring.md) |
@@ -197,6 +198,7 @@ rendered after applying them.
   [`signals.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/signals.rs),
   [`candidates.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/candidates.rs),
   [`byte_range.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/byte_range.rs),
+  [`order.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/order.rs),
   and
   [`internal_error.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/internal_error.rs):
   the smaller modules. `signals.rs` includes the near-miss each phrasing must not match, and a
