@@ -226,8 +226,10 @@ read off each diagnostic's primary span:
   with its spans read within their files. Two reports at one span with one code and message, such
   as two `E0207`s of which only one carries the macro's span label, then still have one order, and
   only reports that print the same tie.
-- **No span last:** a diagnostic without a span comes after those with one, in the order it
-  arrived, as rustc's closing "For more information" footer does.
+- **No span last:** a diagnostic without a span comes after those with one. Within a batch of the
+  queue, where rustc's threads produce such diagnostics in any order, they are ordered by their
+  code, message, and the rest of their content; the flush keeps the order they reached its buffer
+  in, so rustc's closing lines, such as the "For more information" footer, stay last in theirs.
 
 **The order applies twice.** Each batch of the queue is sorted before it is transformed, and the
 diagnostics at a `check_components!` entry are then moved ahead of the rest, each part keeping its
@@ -431,8 +433,9 @@ The remaining differences are where the driver is simpler than Clippy, or does m
   and
   [`tests/error_processing/order.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/tests/error_processing/order.rs):
   the canonical order's key, read within a span's file, the detail that breaks a tie, in either
-  arrival order, the comparison, exhaustively over small spans, and the check entries moved ahead
-  of the rest.
+  arrival order, the comparison, exhaustively over small spans, the diagnostics without a span
+  ordered by content in a batch and kept in their order at the flush, and the check entries moved
+  ahead of the rest.
 - [`tests/driver/footers.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/footers.rs):
   the `rustc --explain` footer naming only the codes still shown.
 - [`tests/driver/pending.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/tests/driver/pending.rs):
