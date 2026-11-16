@@ -470,7 +470,7 @@ The remaining differences are where the driver is simpler than Clippy, or does m
 - [`src/run.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/run.rs):
   the entrypoint, in the order this document gives.
 - [`src/args.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/args.rs):
-  `expand_arg_files`, `rustc_args`, and `force_flags`.
+  `expand_arg_files`, `rustc_args`, and `is_wrapper_mode`.
 - [`src/config/`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-driver/src/config):
   the injected flags and the names the recognition anchors to, each with its rationale.
 - [`src/callbacks.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/callbacks.rs):
