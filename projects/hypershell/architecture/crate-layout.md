@@ -74,10 +74,12 @@ other crates use `std`. The workspace uses edition 2024 and declares a minimum R
 1.98.1 without the new solver, the library crates and most examples check, but `parallel_compare`
 and `compare_and_branch` grew `rustc` to about 7 GB and were killed after roughly 90 seconds on an
 11 GB machine. With nightly and the new solver, a fresh check of `parallel_compare` took about 9
-seconds and 460 MB. In
-a full-workspace stable check `http_checksum_native` also failed, but it passed when checked alone,
-which points to memory pressure from the concurrent compare examples rather than a type error. The
-cause of the difference was not investigated further.
+seconds and 460 MB. In a full-workspace stable check `http_checksum_native` also failed, but it
+passed when checked alone, which points to memory pressure from the concurrent compare examples
+rather than a type error. The cause of the difference was not investigated further. Small programs
+need no nightly: a crate outside the workspace that depends on `hypershell` and `cgp` builds and
+runs the `hello` program on stable Rust 1.98.1 without the new solver. It must depend on `cgp`
+itself, because the expansion of `hypershell!` names the `cgp` crate.
 
 Several example files and the test crate set `#![recursion_limit = "256"]` or `"512"`. Under the
 pinned toolchain they are not needed: the examples check and build without them.

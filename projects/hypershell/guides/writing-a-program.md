@@ -142,12 +142,13 @@ check.
 
 The Hypershell workspace pins nightly Rust with the new trait solver (`-Z next-solver=globally`). A
 crate whose programs nest sub-programs should do the same. On stable Rust the simpler examples
-check, but the two largest exhausted memory while type-checking; see
+check, and a crate of its own that runs `hello` builds on stable, but the two largest examples
+exhausted memory while type-checking; see
 [crate layout](../architecture/crate-layout.md#build-facts). The `recursion_limit` attributes some
 examples carry are not needed with the pinned toolchain.
 
 ## Public material derived from this
 
 The `guides/writing-a-program` page of the
-[Hypershell project section](../../../website/projects/hypershell.md), and the getting-started
-section of the repository README.
+[Hypershell project section](../../../website/projects/hypershell.md), and the installation section
+of the repository README.
