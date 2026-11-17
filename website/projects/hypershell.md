@@ -73,10 +73,11 @@ shell scripts for the *shell scripting vs rust* queries.
 
 **The index says on its first screen that Hypershell is an experimental proof of concept, not a shell
 replacement**, as the project says of itself, and that its largest programs need nightly Rust with
-the new trait solver, while the library and small programs build on stable. It shows the one-line context, `namespace HypershellNamespace;` inside the wiring of
-`HypershellCli`, near the top, as the section's strongest single demonstration. Every context in the
-project is environmental; the interpreting component is parameter-targeted, with the program as a
-`Code` selector and the stage's input as the target, and the example pages say so where the first
+the new trait solver, while the library and small programs build on stable. It shows the one-line
+context, `namespace HypershellNamespace;` inside the wiring of `HypershellCli`, near the top, as the
+section's strongest single demonstration. Every context in the project is environmental; the
+interpreting component is parameter-targeted, with the program as a `Code` selector and the stage's
+input as the target, and the example pages say so where the first
 input dispatch appears.
 
 ## The pages still to write
