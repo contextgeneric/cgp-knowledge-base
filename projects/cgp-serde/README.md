@@ -7,7 +7,7 @@ deserializer can draw services such as an arena allocator from the context it ru
 
 - **Repository**: <https://github.com/contextgeneric/cgp-serde>
 - **Local checkout**: `../cgp-serde`, per [sibling-projects.md](../../sibling-projects.md)
-- **Branch documented**: `v0.8.0`
+- **Branch documented**: `main`
 - **Crates**: `cgp-serde`, `cgp-serde-extra`, `cgp-serde-json`, `cgp-serde-alloc`,
   `cgp-serde-typed-arena`, all at 0.3.0
 - **Tracks**: `cgp` 0.8.0, from crates.io
@@ -40,12 +40,12 @@ yet, because the record and sequence providers do not declare a length. The desi
 
 ## Which revision these documents describe
 
-These documents describe the `v0.8.0` branch, the 0.3.0 release on crates.io, built on `cgp` 0.8.0.
-The repository's `main` branch is the 0.2.0 release, built against `cgp` 0.7.0. The library crates
+These documents describe the `main` branch, the 0.3.0 release on crates.io, built on `cgp` 0.8.0.
+The 0.2.0 release (tag `v0.2.0`) was built against `cgp` 0.7.0. The library crates
 of the two releases offer the same components and providers and differ only in attribute syntax that
 `cgp` 0.8.0 changed, while the tests of 0.3.0 wire per-type dispatch with the `open` statement where
 0.2.0 builds `UseDelegate` tables. So what these documents say a provider does holds for both, but
-code quoted from them compiles only against 0.3.0. Source links point at the `v0.8.0` branch, per
+code quoted from them compiles only against 0.3.0. Source links point at `main`, per
 [../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
 
 ## How it is organized
@@ -75,7 +75,7 @@ The layout is worked through in [architecture/crate-layout.md](architecture/crat
 
 The library handles named-field structs, enums whose variants each hold one payload or none, the
 common scalar and collection types, and any type that already implements Serde's traits, but it is a
-proof of concept with gaps that have each been confirmed against the `v0.8.0` branch.
+proof of concept with gaps that have each been confirmed against `main`.
 [issues.md](issues.md) records them in full, together with the defects and housekeeping items this
 summary leaves out:
 

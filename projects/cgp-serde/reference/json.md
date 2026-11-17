@@ -236,15 +236,15 @@ No serializing counterpart. Serializing to a string is done with `SerializeToJso
 
 ## Source
 
-- [`crates/cgp-serde-json/src/code/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-json/src/code):
+- [`crates/cgp-serde-json/src/code/`](https://github.com/contextgeneric/cgp-serde/tree/main/crates/cgp-serde-json/src/code):
   `SerializeJson` and `DeserializeJson`.
-- [`crates/cgp-serde-json/src/providers/to_string.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-json/src/providers/to_string.rs):
+- [`crates/cgp-serde-json/src/providers/to_string.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-json/src/providers/to_string.rs):
   `SerializeToJsonString`.
-- [`crates/cgp-serde-json/src/providers/from_reader.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-json/src/providers/from_reader.rs):
+- [`crates/cgp-serde-json/src/providers/from_reader.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-json/src/providers/from_reader.rs):
   `DeserializeFromJsonReader`.
-- [`crates/cgp-serde-json/src/providers/from_str.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-json/src/providers/from_str.rs):
+- [`crates/cgp-serde-json/src/providers/from_str.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-json/src/providers/from_str.rs):
   `DeserializeFromJsonString`.
-- [`crates/cgp-serde-json/src/impls/deserialize.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-json/src/impls/deserialize.rs):
+- [`crates/cgp-serde-json/src/impls/deserialize.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-json/src/impls/deserialize.rs):
   `CanDeserializeJsonString`.
 
 ## Public material derived from this

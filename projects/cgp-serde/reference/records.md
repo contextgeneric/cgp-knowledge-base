@@ -221,9 +221,9 @@ value. The providers come from `cgp_serde::providers`, except `SerializeHex`, wh
 
 ## Source
 
-- [`crates/cgp-serde/src/providers/fields.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/fields.rs):
+- [`crates/cgp-serde/src/providers/fields.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/fields.rs):
   `SerializeRecordFields` and `FieldsSerializer`.
-- [`crates/cgp-serde/src/providers/record.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/record.rs):
+- [`crates/cgp-serde/src/providers/record.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/record.rs):
   `DeserializeRecordFields`, `MapVisitor`, and `HandleMapEntry`.
 
 ## Public material derived from this

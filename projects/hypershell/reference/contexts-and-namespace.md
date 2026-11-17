@@ -13,7 +13,7 @@ are defined in the backend crates and listed here for completeness. How the laye
 
 The namespace is defined with [`cgp_namespace!`](../../../cgp/reference/macros/cgp_namespace.md),
 inheriting `DefaultNamespace`, in
-[`namespaces/handlers.rs`](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/namespaces/handlers.rs).
+[`namespaces/handlers.rs`](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell/src/namespaces/handlers.rs).
 Its entries, grouped by the provider they route to, are:
 
 | Route | Keys | Provider |
@@ -165,10 +165,10 @@ It does not re-export `HypershellNamespace`, which a custom context imports from
 
 ## Source
 
-- [crates/hypershell/src/namespaces/handlers.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/namespaces/handlers.rs)
-- [crates/hypershell/src/providers/error.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/providers/error.rs)
-- [crates/hypershell/src/contexts/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell/src/contexts)
-- [crates/hypershell/src/prelude.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/prelude.rs)
+- [crates/hypershell/src/namespaces/handlers.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell/src/namespaces/handlers.rs)
+- [crates/hypershell/src/providers/error.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell/src/providers/error.rs)
+- [crates/hypershell/src/contexts/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell/src/contexts)
+- [crates/hypershell/src/prelude.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell/src/prelude.rs)
 
 ## Public material derived from this
 

@@ -216,13 +216,13 @@ layered crates exist to avoid.
 
 ## Source
 
-- [`crates/cgp-serde-alloc/src/traits/alloc.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-alloc/src/traits/alloc.rs):
+- [`crates/cgp-serde-alloc/src/traits/alloc.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-alloc/src/traits/alloc.rs):
   `CanAlloc`.
-- [`crates/cgp-serde-alloc/src/providers/alloc_deserialize.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-alloc/src/providers/alloc_deserialize.rs):
+- [`crates/cgp-serde-alloc/src/providers/alloc_deserialize.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-alloc/src/providers/alloc_deserialize.rs):
   `DeserializeAndAllocate`.
-- [`crates/cgp-serde-typed-arena/src/traits/has_arena.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-typed-arena/src/traits/has_arena.rs):
+- [`crates/cgp-serde-typed-arena/src/traits/has_arena.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-typed-arena/src/traits/has_arena.rs):
   `HasArena`.
-- [`crates/cgp-serde-typed-arena/src/providers/alloc.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-typed-arena/src/providers/alloc.rs):
+- [`crates/cgp-serde-typed-arena/src/providers/alloc.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-typed-arena/src/providers/alloc.rs):
   `AllocateWithArena`.
 
 ## Public material derived from this

@@ -382,7 +382,7 @@ as a type parameter. That difference, the field type carried as a *type* rather 
 ### `cgp-serde`: reflection-driven serialization in the trait system
 
 The `cgp-serde` crate's
-[`SerializeRecordFields`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/fields.rs)
+[`SerializeRecordFields`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/fields.rs)
 provider is a complete, working example of compile-time reflection expressed entirely through
 traits: one generic serializer that works over any `HasFields` type, the CGP counterpart of the Zig
 `jsonStringify` above. It serializes any value whose shape is known to the type system as a map,
@@ -440,7 +440,7 @@ by-name field access, resolved statically through [`HasField`](../cgp/reference/
 rather than by a runtime lookup or a `@field` builtin. And `Context: CanSerializeValue<FieldValue>`
 is the *recursive* step: serializing each field's value by dispatching on the field's *type*, which
 routes back through the context's own serialization wiring. The deserialization dual,
-[`DeserializeRecordFields`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/record.rs),
+[`DeserializeRecordFields`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/record.rs),
 is even more visibly reflective. It reads a field name as a runtime `String` from the input map and
 compares it against each field's compile-time `Tag::VALUE`, routing the value into a `SetOptional`
 builder: reflection reading names in both directions.
@@ -701,9 +701,9 @@ snippet, whose paths follow the library source; the CGP snippets are taken from 
   and [`dtolnay/reflect`](https://github.com/dtolnay/reflect): facet's derive-generates-data
   approach (a `const Shape` walked by runtime reflection) and its motivation in serde's
   monomorphization cost, and a compile-time reflection API for proc-macro authors.
-- [`cgp-serde` `SerializeRecordFields`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/fields.rs)
+- [`cgp-serde` `SerializeRecordFields`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/fields.rs)
   and
-  [`DeserializeRecordFields`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/record.rs):
+  [`DeserializeRecordFields`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/record.rs):
   the worked CGP example: a generic serializer and deserializer that recurse over a type's
   `HasFields` shape through trait resolution, recovering field names through `StaticString` and
   dispatching each field through the context's `CanSerializeValue` wiring.

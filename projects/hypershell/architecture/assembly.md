@@ -106,7 +106,7 @@ Nothing in the repository checks them at all; see [testing.md](../testing.md).
 components that need no bundle directly.** It inherits CGP's `DefaultNamespace`, which carries the
 `#[prefix]` routes, and its body is a list of `:` entries whose keys use `[…]` groups for sets of
 syntax and `{…}` groups for sets of whole path tails. This is abridged from
-[`hypershell/src/namespaces/handlers.rs`](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/namespaces/handlers.rs):
+[`hypershell/src/namespaces/handlers.rs`](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell/src/namespaces/handlers.rs):
 
 ```rust
 cgp_namespace! {
@@ -242,18 +242,18 @@ line; see [debugging](../guides/debugging.md).
 ## Source
 
 - The bundles: `providers/combined.rs` in
-  [hypershell-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/combined.rs),
-  [hypershell-tokio-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/combined.rs),
-  [hypershell-reqwest-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/providers/combined.rs),
-  [hypershell-json-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-json-components/src/providers/combined.rs),
+  [hypershell-components](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/providers/combined.rs),
+  [hypershell-tokio-components](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/combined.rs),
+  [hypershell-reqwest-components](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-reqwest-components/src/providers/combined.rs),
+  [hypershell-json-components](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-json-components/src/providers/combined.rs),
   and
-  [hypershell-tungstenite-components](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tungstenite-components/src/providers/combined.rs)
+  [hypershell-tungstenite-components](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tungstenite-components/src/providers/combined.rs)
 - The namespace:
-  [crates/hypershell/src/namespaces/handlers.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/namespaces/handlers.rs)
+  [crates/hypershell/src/namespaces/handlers.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell/src/namespaces/handlers.rs)
 - The contexts:
-  [crates/hypershell/src/contexts/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell/src/contexts)
+  [crates/hypershell/src/contexts/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell/src/contexts)
 - The extension namespaces:
-  [crates/hypershell-examples/src/namespaces/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-examples/src/namespaces)
+  [crates/hypershell-examples/src/namespaces/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-examples/src/namespaces)
 
 ## Public material derived from this
 

@@ -33,8 +33,8 @@ is in play and links to it:
   [`CanRaiseError`](../cgp/reference/components/can_raise_error.md) error components wired through
   [modular error handling](../cgp/concepts/modular-error-handling.md)
 
-The snippets assume `use cgp::prelude::*;` and compile against the `v0.8.0` branch of
-[cgp-serde](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0), using its `cgp-serde`,
+The snippets assume `use cgp::prelude::*;` and compile against the `main` branch of
+[cgp-serde](https://github.com/contextgeneric/cgp-serde/tree/main), using its `cgp-serde`,
 `cgp-serde-extra`, `cgp-serde-json`, `cgp-serde-alloc`, and `cgp-serde-typed-arena` crates. The
 imports each section needs are shown where it first needs them. The two applications and the layered
 arena context are re-derived from the repository's own examples, which are documented as they stand

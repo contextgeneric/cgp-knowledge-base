@@ -14,7 +14,7 @@ kinds. The CGP mechanisms are the `open` statement of
 wrapper types.** The simple stages (`SimpleExec`, `SimpleHttpRequest`, `EncodeJson`, `BytesToHex`)
 produce or consume bytes: a `Vec<u8>`, a `String`, or anything `AsRef<[u8]>`. The streaming stages
 produce a stream, and Hypershell wraps each kind of stream in a newtype defined in
-[`hypershell-tokio-components/src/types/`](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/types):
+[`hypershell-tokio-components/src/types/`](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-tokio-components/src/types):
 
 | Wrapper | Wraps | Produced by |
 |---|---|---|
@@ -171,15 +171,15 @@ the examples use `#[tokio::main]`.
 ## Source
 
 - The wrapper types:
-  [crates/hypershell-tokio-components/src/types/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/types)
+  [crates/hypershell-tokio-components/src/types/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-tokio-components/src/types)
 - The dispatchers:
-  [async_read.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/async_read.rs)
+  [async_read.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/async_read.rs)
   and
-  [futures_stream.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/futures_stream.rs)
+  [futures_stream.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/futures_stream.rs)
 - The adapter providers:
-  [crates/hypershell-tokio-components/src/providers/stream.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/stream.rs)
+  [crates/hypershell-tokio-components/src/providers/stream.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/stream.rs)
 - The per-input WebSocket wiring:
-  [crates/hypershell-tungstenite-components/src/providers/combined.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tungstenite-components/src/providers/combined.rs)
+  [crates/hypershell-tungstenite-components/src/providers/combined.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tungstenite-components/src/providers/combined.rs)
 
 ## Public material derived from this
 

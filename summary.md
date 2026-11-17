@@ -1020,7 +1020,7 @@ it stale.
   shape, one subdirectory per subproject where a project has several, and how each connects to an
   example, a published post, a set of constructs, and its section of the website's Projects pages.
 - [projects/hypershell/README.md](projects/hypershell/README.md) — the type-level shell-scripting
-  DSL: what it is, which revision the documents describe (the `v0.8.0` branch, the only one
+  DSL: what it is, which revision the documents describe (`main`, the 0.2.0 release
   built on namespaces), the crate split, the confirmed gaps, the section catalog, and the public
   material the documents feed.
 - [projects/hypershell/architecture/README.md](projects/hypershell/architecture/README.md) — the whole
@@ -1120,7 +1120,7 @@ it stale.
   project's source, probes rather than reading alone, leaving CGP itself to `cgp/`, the section shape,
   reference entries, public material, and registration.
 - [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components: what
-  it is, which revision the documents describe (the `v0.8.0` branch against the published
+  it is, which revision the documents describe (`main`, the 0.3.0 release, against
   0.2.0), the crate split, the confirmed gaps, the section catalog, and the public material the
   documents feed.
 - [projects/cgp-serde/architecture/README.md](projects/cgp-serde/architecture/README.md) — the whole

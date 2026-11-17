@@ -18,8 +18,8 @@ this side in `website/`, because a published page may not link back here; and th
 | `cargo-cgp` | <https://github.com/contextgeneric/cargo-cgp> | `main` | CGP's first-class toolchain: the cargo subcommand that makes CGP compile errors readable and expands CGP macros. |
 | `cgp-skills` | <https://github.com/contextgeneric/cgp-skills> | `main` | The agent skills for CGP, deployed on their own, the `/cgp` skill among them. |
 | `cgp-website` | <https://github.com/contextgeneric/contextgeneric.dev> | `main` (published); the redesign is written on `v0.8.0`, which documents `cgp` v0.8.0 and `cargo-cgp` v0.1.0 and merges once both are published | The public website at <https://contextgeneric.dev>: a Docusaurus site holding the docs, tutorials, and blog. Documented in [website/](website/README.md). |
-| `hypershell` | <https://github.com/contextgeneric/hypershell> | `v0.8.0` | A modular type-level DSL for shell-script-like programs, built with CGP. Documented in [projects/hypershell/](projects/hypershell/README.md). |
-| `cgp-serde` | <https://github.com/contextgeneric/cgp-serde> | `v0.8.0` | Serde's `Serialize` and `Deserialize` rebuilt as CGP components. Documented in [projects/cgp-serde/](projects/cgp-serde/README.md). |
+| `hypershell` | <https://github.com/contextgeneric/hypershell> | `main` | A modular type-level DSL for shell-script-like programs, built with CGP. Documented in [projects/hypershell/](projects/hypershell/README.md). |
+| `cgp-serde` | <https://github.com/contextgeneric/cgp-serde> | `main` | Serde's `Serialize` and `Deserialize` rebuilt as CGP components. Documented in [projects/cgp-serde/](projects/cgp-serde/README.md). |
 | `cgp-examples` | <https://github.com/contextgeneric/cgp-examples> | `v0.8.0` | Runnable example crates (`builder`, `expression`, `greet`, `transfer`, `web-app`), each documented as a subproject in [projects/cgp-examples/](projects/cgp-examples/README.md), and several the origin of the scenarios in [examples/](examples/README.md). |
 | `cgp-error-*` | <https://github.com/contextgeneric/cgp>, under `crates/standalone/error/` | `main` | The error backends `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`: opt-in crates in the `cgp` repository that are not part of the `cgp` crate. Found locally at `../cgp/crates/standalone/error`. Documented in [projects/error/](projects/error/README.md). |
 | `cgp-example-profile-picture` | <https://github.com/contextgeneric/cgp-example-profile-picture> | `main` | A single worked tutorial evolving one real application from a monolithic function to a modular CGP design; the origin of [examples/profile-picture.md](examples/profile-picture.md). |
@@ -64,8 +64,8 @@ A bare mention of a checkout's location, like the path `../cgp`, is a filesystem
 than a link and stays relative.
 
 One exception applies to the projects documented under [projects/](projects/README.md). When the
-table records a branch other than `main` for one of them, as it does for `hypershell`, `cgp-serde`,
-and `cgp-examples`, whose current development lives on `v0.8.0`, its documents link to that branch,
+table records a branch other than `main` for one of them, as it does for `cgp-examples`, whose
+current development lives on `v0.8.0`, its documents link to that branch,
 per
 [projects/writing-guide.md](projects/writing-guide.md#a-project-section-documents-its-project-in-depth),
 because `main` holds different code from the code they describe.
@@ -74,7 +74,7 @@ because `main` holds different code from the code they describe.
 
 The branch or tag recorded above changes **only on explicit instruction**, such as when a project
 cuts an official release the ecosystem should pin, or when a project's current development lives on
-a release branch, as it does on `v0.8.0` for `hypershell`, `cgp-serde`, and `cgp-examples`. An entry
+a release branch, as it does on `v0.8.0` for `cgp-examples`. An entry
 does *not* otherwise track a feature branch in progress: work in flight is read from the local
 sibling checkout, not from a revision recorded here. The same rule governs the `main` in a
 cross-project link: update it only when told to, as part of a release.

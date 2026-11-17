@@ -6,7 +6,7 @@ each wire one scenario end to end and carry their assertions as tests. The **pro
 The **compile-fail tests**, also in `cgp-serde-tests`, pin wiring the providers reject, with its
 exact diagnostics. This
 document records what each pins, which tests pin a known issue, and which parts of the library no
-test exercises. On the `v0.8.0` branch, `cargo test --workspace` passes every test. The library
+test exercises. On the `main` branch, `cargo test --workspace` passes every test. The library
 crates carry no tests of their own, and their one doc test is the `cgp-serde` crate's README, which
 is also its crate documentation: two contexts serialize one struct and assert each JSON string.
 
@@ -169,11 +169,11 @@ how they went unnoticed.
 
 ## Source
 
-- [`crates/cgp-serde-examples/examples/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-examples/examples):
+- [`crates/cgp-serde-examples/examples/`](https://github.com/contextgeneric/cgp-serde/tree/main/crates/cgp-serde-examples/examples):
   the five examples.
-- [`crates/cgp-serde-tests/src/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/src/tests):
+- [`crates/cgp-serde-tests/src/tests/`](https://github.com/contextgeneric/cgp-serde/tree/main/crates/cgp-serde-tests/src/tests):
   the `records/` and `variants/` suites, and the `support/` helpers.
-- [`crates/cgp-serde-tests/tests/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates/cgp-serde-tests/tests):
+- [`crates/cgp-serde-tests/tests/`](https://github.com/contextgeneric/cgp-serde/tree/main/crates/cgp-serde-tests/tests):
   the compile-fail runner and its cases.
 
 ## Public material derived from this

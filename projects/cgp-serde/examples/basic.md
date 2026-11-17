@@ -4,7 +4,7 @@ One struct serialized to a JSON string and read back through the same context, s
 round trip in which the struct derives only `CgpData` and its bytes are encoded as hex by wiring.
 
 - **Source**:
-  [crates/cgp-serde-examples/examples/basic.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-examples/examples/basic.rs)
+  [crates/cgp-serde-examples/examples/basic.rs](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-examples/examples/basic.rs)
 - **Run**: `cargo run -p cgp-serde-examples --example basic`; its test runs with
   `cargo test -p cgp-serde-examples --example basic`
 - **Needs**: nothing beyond the build

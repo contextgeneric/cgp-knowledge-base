@@ -4,7 +4,7 @@ The checksum pipeline with both commands replaced by the checksum extension, run
 joins an extension namespace instead of the base one.
 
 - **Source**:
-  [crates/hypershell-examples/examples/http_checksum_native.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/http_checksum_native.rs)
+  [crates/hypershell-examples/examples/http_checksum_native.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-examples/examples/http_checksum_native.rs)
 - **Run**: `cargo run --example http_checksum_native`
 - **Needs**: network
 - **Result**: prints the same digest as `http_checksum_cli`

@@ -6,7 +6,7 @@ announcement post shows, and the post's "Full Example" link leads to the `main` 
 a test that wires the same choices through a `UseDelegate` table.
 
 - **Source**:
-  [crates/cgp-serde-examples/examples/arena_simplified.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-examples/examples/arena_simplified.rs)
+  [crates/cgp-serde-examples/examples/arena_simplified.rs](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-examples/examples/arena_simplified.rs)
 - **Run**: `cargo run -p cgp-serde-examples --example arena_simplified`; its test runs with
   `cargo test -p cgp-serde-examples --example arena_simplified`
 - **Needs**: nothing beyond the build

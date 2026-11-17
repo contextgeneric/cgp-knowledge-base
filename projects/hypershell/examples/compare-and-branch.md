@@ -4,7 +4,7 @@ A comparison of two checksum sub-pipelines used as the condition of `If`, which 
 `echo` commands.
 
 - **Source**:
-  [crates/hypershell-examples/examples/compare_and_branch.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/compare_and_branch.rs)
+  [crates/hypershell-examples/examples/compare_and_branch.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-examples/examples/compare_and_branch.rs)
 - **Run**: `cargo run --example compare_and_branch`
 - **Needs**: network, `echo`
 - **Result**: compiles; no run is confirmed. It fetches the same two URLs as

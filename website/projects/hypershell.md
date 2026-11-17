@@ -11,8 +11,8 @@ account of what the proof of concept does not do. The project with measured sear
   written on the website's `v0.8.0` branch and not yet published
 - **Ports** — [projects/hypershell/](../../projects/hypershell/README.md)
 - **Repository** — [`hypershell`](https://github.com/contextgeneric/hypershell), documented on its
-  `v0.8.0` branch, the only branch built on `HypershellNamespace`
-- **Verified against** — `hypershell` `v0.8.0` at commit `f55415a`, and `cargo-cgp` built from its
+  `main` branch, the 0.2.0 code built on `HypershellNamespace`
+- **Verified against** — `hypershell` at commit `f55415a`, and `cargo-cgp` built from its
   source at commit `b6a6323`
 - **Status** — Draft: 21 Hypershell pages and the section index written, listed in [What is
   written](#what-is-written); the reference, the comparison, and the pages that quote providers wait
@@ -47,11 +47,8 @@ A revision must respect these facts:
   re-check them against the tagged release.
 - **The *Try a change* results** are recorded in the example records for `hello_name`,
   `http_checksum_native`, and `bluesky_websocket`.
-- **Source links point at `main`**, so until the `v0.8.0` branch merges they show the older
-  preset-based code.
-- **The pages publish when the website's `v0.8.0` branch merges**, which depends on Hypershell's own
-  `v0.8.0` branch merging by then; moving them off the release branch instead is the author's
-  decision.
+- **Source links point at `main`**, which holds the namespace-based code the pages describe.
+- **The pages publish when the website's `v0.8.0` branch merges.**
 - **The install instructions name the crates.io release**: the index's *Running it* adds `cgp`
   0.8.0, `hypershell` 0.2.0, and Tokio, and says a small program builds on stable Rust while a crate
   whose programs nest others copies the repository's toolchain files. A probe built and ran `hello`
@@ -175,8 +172,8 @@ Each is recorded in the project's [housekeeping](../../projects/hypershell/issue
 ### Release conditions
 
 **Hypershell 0.2.0, built on `cgp` 0.8.0 and `HypershellNamespace`, is the release the pages
-install.** The pages' source links read the repository's `main`, so they show the code the pages
-describe once the `v0.8.0` branch merges into it.
+install.** The pages' source links read the repository's `main`, which holds the code the pages
+describe.
 
 ## The source post
 

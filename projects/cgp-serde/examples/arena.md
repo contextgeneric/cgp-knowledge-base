@@ -4,7 +4,7 @@ Borrowed `&'a Coord` values deserialized from JSON into an arena, through the li
 allocation crates, so that the allocator is a wiring entry rather than code inside the deserializer.
 
 - **Source**:
-  [crates/cgp-serde-examples/examples/arena.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-examples/examples/arena.rs)
+  [crates/cgp-serde-examples/examples/arena.rs](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-examples/examples/arena.rs)
 - **Run**: `cargo run -p cgp-serde-examples --example arena`; its test runs with
   `cargo test -p cgp-serde-examples --example arena`
 - **Needs**: nothing beyond the build

@@ -305,12 +305,12 @@ with a dependency chain through each variant of `Enum! { … }`.
 
 ## Source
 
-- [`crates/cgp-serde/src/providers/variant_fields.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/variant_fields.rs):
+- [`crates/cgp-serde/src/providers/variant_fields.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/variant_fields.rs):
   `SerializeVariantFields` and `VariantsSerializer`.
-- [`crates/cgp-serde/src/providers/variant.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/variant.rs):
+- [`crates/cgp-serde/src/providers/variant.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/variant.rs):
   `DeserializeVariantFields`, its visitor and identifier seed, `VariantsDeserializer`, and the enum
   name helper.
-- [`crates/cgp-serde/src/providers/unit.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/unit.rs):
+- [`crates/cgp-serde/src/providers/unit.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/unit.rs):
   `SerializeUnit`.
 
 ## Public material derived from this

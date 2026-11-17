@@ -199,14 +199,14 @@ entry. The `ReturnInput` here is Hypershell's own provider, documented in
 
 ## Source
 
-- [crates/hypershell-components/src/dsl/convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/convert.rs),
-  [file.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/file.rs),
+- [crates/hypershell-components/src/dsl/convert.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/convert.rs),
+  [file.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/file.rs),
   and
-  [out.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/out.rs)
-- [crates/hypershell-components/src/providers/convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/convert.rs)
-- [crates/hypershell-tokio-components/src/dsl/stream.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/dsl/stream.rs)
-- [crates/hypershell-tokio-components/src/types/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/types)
-- [crates/hypershell-tokio-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/providers):
+  [out.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/out.rs)
+- [crates/hypershell-components/src/providers/convert.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/providers/convert.rs)
+- [crates/hypershell-tokio-components/src/dsl/stream.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/dsl/stream.rs)
+- [crates/hypershell-tokio-components/src/types/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-tokio-components/src/types)
+- [crates/hypershell-tokio-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-tokio-components/src/providers):
   `stream.rs`, `file.rs`, `out.rs`, `line.rs`, `async_read.rs`, `futures_stream.rs`
 
 ## Public material derived from this

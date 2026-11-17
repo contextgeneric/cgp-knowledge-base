@@ -4,7 +4,7 @@
 reads a runtime value it cannot hold itself.
 
 - **Source**:
-  [crates/hypershell-examples/examples/hello_name.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/hello_name.rs)
+  [crates/hypershell-examples/examples/hello_name.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-examples/examples/hello_name.rs)
 - **Run**: `cargo run --example hello_name`
 - **Needs**: `echo`
 - **Result**: prints `Hello, Alice`

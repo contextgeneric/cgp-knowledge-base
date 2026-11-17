@@ -26,7 +26,7 @@ trait and a `…Component` wiring key.
 | `HasArena<'a, T>` / `ArenaGetter` / `ArenaGetterComponent` | getter component | `cgp_serde_typed_arena::traits` |
 
 Both serialization components and `HasArena` also carry `#[derive_delegate(UseDelegate<…>)]`, which
-generates the legacy `UseDelegate` dispatch impl. Contexts on the `v0.8.0` branch dispatch with the
+generates the legacy `UseDelegate` dispatch impl. Contexts on the `main` branch dispatch with the
 `open` statement instead, which needs no attribute, per
 [dispatching per type](../../../cgp/guides/dispatching-per-type.md).
 

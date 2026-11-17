@@ -179,13 +179,13 @@ and the two share a name; see [issues.md](../issues.md#housekeeping).
 
 ## Source
 
-- [crates/hypershell-components/src/dsl/pipe.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/pipe.rs),
-  [use.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/use.rs),
+- [crates/hypershell-components/src/dsl/pipe.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/pipe.rs),
+  [use.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/use.rs),
   and
-  [convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/convert.rs)
-- [crates/hypershell-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/providers):
+  [convert.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/convert.rs)
+- [crates/hypershell-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-components/src/providers):
   `pipe.rs`, `call.rs`, `use.rs`, `convert.rs`, `box_async.rs`, `return.rs`
-- [crates/hypershell-components/src/traits/wrap_call.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/traits/wrap_call.rs)
+- [crates/hypershell-components/src/traits/wrap_call.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/traits/wrap_call.rs)
 
 ## Public material derived from this
 

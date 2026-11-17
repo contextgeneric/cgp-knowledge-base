@@ -12,8 +12,8 @@ coherence bypass on a trait every Rust developer already knows.
   written on the website's `v0.8.0` branch and not yet published
 - **Ports** — [projects/cgp-serde/](../../projects/cgp-serde/README.md)
 - **Repository** — [`cgp-serde`](https://github.com/contextgeneric/cgp-serde), documented on its
-  `v0.8.0` branch
-- **Verified against** — `cgp-serde` `v0.8.0` at commit `d89ee05`, with `cgp` `main` at `adc616c`
+  `main` branch
+- **Verified against** — `cgp-serde` at commit `d89ee05`, with `cgp` `main` at `adc616c`
   through the workspace's patch, and at `bcc9fcc` for the `SerializeRecordFields` rename and the two
   variant provider pages, and `cargo-cgp` built from its source at commit `b6a6323`
 - **Status** — Draft: 49 of 54 pages written, listed in [What is written](#what-is-written); the two
@@ -65,9 +65,8 @@ A revision must respect these facts:
   `serialize_variant_fields` and `deserialize_variant_fields` present the `'static` limit and the
   single enum form as limits a reader must know before choosing them. `serialize_unit` came with the
   empty-variant support, and the `events` page's *Try a change* diagnostic was re-run then.
-- **Source links point at `main`**, so until the `v0.8.0` branch merges they show the release's
-  `UseDelegate` tables, and links to files only on `v0.8.0` do not resolve: the two variant provider
-  pages' sources and the example pages' sources under `crates/cgp-serde-examples/`.
+- **Source links point at `main`**, which holds the code the pages describe, the two variant provider
+  pages' sources and the example pages' sources under `crates/cgp-serde-examples/` included.
 - **The install instructions name the crates.io release**: the index's *Running it* adds `cgp`
   0.8.0, `cgp-serde` 0.3.0, `cgp-serde-extra` 0.3.0, and `serde_json`, the dependencies the
   repository README's example builds with.
@@ -136,8 +135,7 @@ page is the evaluator's destination from the index.
 ### Release conditions
 
 **cgp-serde 0.3.0, built on `cgp` 0.8.0, is the release the pages install.** The pages' source links
-read the repository's `main`, so they show the code the pages describe once the `v0.8.0` branch
-merges into it.
+read the repository's `main`, which holds the code the pages describe.
 
 ## The source post
 

@@ -93,13 +93,13 @@ the other eight.
 ## Source
 
 - The workspace manifest:
-  [Cargo.toml](https://github.com/contextgeneric/hypershell/blob/v0.8.0/Cargo.toml)
+  [Cargo.toml](https://github.com/contextgeneric/hypershell/blob/main/Cargo.toml)
 - The toolchain:
-  [rust-toolchain.toml](https://github.com/contextgeneric/hypershell/blob/v0.8.0/rust-toolchain.toml)
+  [rust-toolchain.toml](https://github.com/contextgeneric/hypershell/blob/main/rust-toolchain.toml)
   and
-  [.cargo/config.toml](https://github.com/contextgeneric/hypershell/blob/v0.8.0/.cargo/config.toml)
+  [.cargo/config.toml](https://github.com/contextgeneric/hypershell/blob/main/.cargo/config.toml)
 - The prelude:
-  [crates/hypershell/src/prelude.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/prelude.rs)
+  [crates/hypershell/src/prelude.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell/src/prelude.rs)
 
 ## Public material derived from this
 

@@ -5,7 +5,7 @@ applications that encode bytes and dates differently, then read by each with the
 show that an encoding lives in the wiring rather than in the data.
 
 - **Source**:
-  [crates/cgp-serde-examples/examples/events.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-examples/examples/events.rs)
+  [crates/cgp-serde-examples/examples/events.rs](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-examples/examples/events.rs)
 - **Run**: `cargo run -p cgp-serde-examples --example events`; its test runs with
   `cargo test -p cgp-serde-examples --example events`
 - **Needs**: nothing beyond the build

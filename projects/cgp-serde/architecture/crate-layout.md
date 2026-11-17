@@ -70,9 +70,9 @@ on `cgp` 0.8.0 and `cgp-error-anyhow` from crates.io. All seven crates carry ver
 
 ## Source
 
-- [`Cargo.toml`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/Cargo.toml): the workspace
+- [`Cargo.toml`](https://github.com/contextgeneric/cgp-serde/blob/main/Cargo.toml): the workspace
   members and shared dependencies.
-- [`crates/`](https://github.com/contextgeneric/cgp-serde/tree/v0.8.0/crates): one directory per
+- [`crates/`](https://github.com/contextgeneric/cgp-serde/tree/main/crates): one directory per
   crate, each with its own `Cargo.toml`.
 
 ## Public material derived from this

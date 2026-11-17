@@ -1,6 +1,6 @@
 # Issues
 
-This document records the open problems in Hypershell's `v0.8.0` branch, found while documenting it
+This document records the open problems in Hypershell's `main` branch, found while documenting it
 and each confirmed by a probe unless it says otherwise. They are grouped as defects, missing
 features, and housekeeping. Per
 [../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth), each is
@@ -103,9 +103,6 @@ pages explain the constructs and not the layout.
 
 ## Housekeeping
 
-- **The branches diverge from the published crate.** The crates.io release, 0.1.0 (tag `v0.1.0`),
-  was built against `cgp` 0.4.1, and `main` tracks `cgp` 0.7.0 at the same version, while `v0.8.0`
-  tracks `cgp` 0.8.0 at version 0.2.0.
 - **Providers use the explicit form.** Almost every provider names the context and lists `Context:`
   bounds, and none uses [`#[uses]`](../../cgp/reference/attributes/uses.md). This is the form the
   [declaring-dependencies](../../cgp/guides/declaring-dependencies.md) guide replaces.

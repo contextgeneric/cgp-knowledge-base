@@ -66,8 +66,8 @@ The crate's bundle maps `EncodeJson` to `HandleEncodeJson` and `DecodeJson<Value
 
 ## Source
 
-- [crates/hypershell-components/src/dsl/json.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/json.rs)
-- [crates/hypershell-json-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-json-components/src/providers)
+- [crates/hypershell-components/src/dsl/json.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/json.rs)
+- [crates/hypershell-json-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-json-components/src/providers)
 
 ## Public material derived from this
 

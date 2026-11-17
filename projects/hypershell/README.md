@@ -6,7 +6,7 @@ syntax and its meaning can be extended without touching the core crates.
 
 - **Repository**: <https://github.com/contextgeneric/hypershell>
 - **Local checkout**: `../hypershell`, per [sibling-projects.md](../../sibling-projects.md)
-- **Branch documented**: `v0.8.0`
+- **Branch documented**: `main`
 - **Crates**: `hypershell`, `hypershell-components`, `hypershell-tokio-components`,
   `hypershell-reqwest-components`, `hypershell-json-components`, `hypershell-hash-components`,
   `hypershell-tungstenite-components`, `hypershell-macro`, all at 0.2.0, plus the unpublished
@@ -48,13 +48,12 @@ extended by anyone without upstream coordination.
 
 ## Which revision these documents describe
 
-These documents describe the `v0.8.0` branch, the 0.2.0 release on crates.io, built on `cgp` 0.8.0.
-The repository's `main` branch tracks `cgp` 0.7.0, and the 0.1.0 release (tag `v0.1.0`) was built
-against `cgp` 0.4.1; both carry version 0.1.0. They differ from 0.2.0 in architecture, not only in
-syntax: 0.1.0 and `main` both assemble the language from `cgp_preset!` presets, and 0.2.0 is the
-only one built on `HypershellNamespace`. It is also the only one that dispatches on the input type
-with path keys, where `main` uses `UseInputDelegate`. So code quoted from these documents compiles
-only against 0.2.0. Source links point at the `v0.8.0` branch, per
+These documents describe the `main` branch, the 0.2.0 release on crates.io, built on `cgp` 0.8.0.
+The 0.1.0 release (tag `v0.1.0`) was built against `cgp` 0.4.1 and differs from 0.2.0 in
+architecture, not only in syntax: 0.1.0 assembles the language from `cgp_preset!` presets, where
+0.2.0 is built on `HypershellNamespace`, and 0.1.0 dispatches on the input type with
+`UseInputDelegate`, where 0.2.0 uses path keys. So code quoted from these documents compiles only
+against 0.2.0. Source links point at `main`, per
 [../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
 
 ## How it is organized
@@ -82,7 +81,7 @@ crate compiles only the libraries it interprets. The layout is worked through in
 Every example with a confirmed run works. `rust_playground` was not run, because running it
 publishes a public gist, and `compare_and_branch` has no confirmed run; see
 [the examples](examples/README.md). The source is a reliable reference for current CGP, but the
-library is a proof of concept with gaps, each confirmed against the `v0.8.0` branch.
+library is a proof of concept with gaps, each confirmed against `main`.
 [issues.md](issues.md) records them in full, together with the housekeeping items this summary
 leaves out:
 

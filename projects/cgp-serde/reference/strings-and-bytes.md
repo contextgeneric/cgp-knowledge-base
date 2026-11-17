@@ -150,9 +150,9 @@ No serializing counterpart. A value that is `AsRef<[u8]>` serializes through
 
 ## Source
 
-- [`crates/cgp-serde/src/providers/string.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/string.rs):
+- [`crates/cgp-serde/src/providers/string.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/string.rs):
   `SerializeString` and its visitor.
-- [`crates/cgp-serde/src/providers/bytes.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/bytes.rs):
+- [`crates/cgp-serde/src/providers/bytes.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/bytes.rs):
   `SerializeBytes`, `TryDeserializeBytes`, and the byte visitor.
 
 ## Public material derived from this

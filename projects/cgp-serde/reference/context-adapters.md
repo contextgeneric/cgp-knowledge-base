@@ -109,9 +109,9 @@ The serializing counterpart is [`SerializeWithContext`](#serializewithcontext).
 
 ## Source
 
-- [`crates/cgp-serde/src/types/serialize_with_context.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/types/serialize_with_context.rs):
+- [`crates/cgp-serde/src/types/serialize_with_context.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/types/serialize_with_context.rs):
   `SerializeWithContext`.
-- [`crates/cgp-serde/src/types/deserialize_with_context.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/types/deserialize_with_context.rs):
+- [`crates/cgp-serde/src/types/deserialize_with_context.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/types/deserialize_with_context.rs):
   `DeserializeWithContext`.
 
 ## Public material derived from this

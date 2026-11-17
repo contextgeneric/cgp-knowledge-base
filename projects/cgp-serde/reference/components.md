@@ -121,7 +121,7 @@ can also dispatch per value type through a nested `UseDelegate<new … { … }>`
 the published 0.2.0 release and the announcement post use. The `open` statement dispatches through
 the `RedirectLookup` impl every component already has and needs no attribute, per
 [dispatching per type](../../../cgp/guides/dispatching-per-type.md), and every context on the
-`v0.8.0` branch uses it. The attribute therefore serves only downstream code that still builds
+`main` branch uses it. The attribute therefore serves only downstream code that still builds
 `UseDelegate` tables.
 
 ## Calling the components
@@ -135,9 +135,9 @@ nested values, as [re-entrant providers](../architecture/reentrant-providers.md)
 
 ## Source
 
-- [`crates/cgp-serde/src/components/serialize.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/components/serialize.rs):
+- [`crates/cgp-serde/src/components/serialize.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/components/serialize.rs):
   `CanSerializeValue`.
-- [`crates/cgp-serde/src/components/deserialize.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/components/deserialize.rs):
+- [`crates/cgp-serde/src/components/deserialize.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/components/deserialize.rs):
   `CanDeserializeValue`.
 
 ## Public material derived from this

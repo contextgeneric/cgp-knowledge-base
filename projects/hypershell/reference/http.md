@@ -306,12 +306,12 @@ field.
 
 ## Source
 
-- [crates/hypershell-components/src/dsl/http.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/http.rs)
-- [crates/hypershell-components/src/components/method_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/components/method_arg.rs)
+- [crates/hypershell-components/src/dsl/http.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/http.rs)
+- [crates/hypershell-components/src/components/method_arg.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/components/method_arg.rs)
   and
-  [providers/method_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/method_arg.rs)
-- [crates/hypershell-reqwest-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-reqwest-components/src/components)
-- [crates/hypershell-reqwest-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-reqwest-components/src/providers)
+  [providers/method_arg.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/providers/method_arg.rs)
+- [crates/hypershell-reqwest-components/src/components/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-reqwest-components/src/components)
+- [crates/hypershell-reqwest-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-reqwest-components/src/providers)
 
 ## Public material derived from this
 

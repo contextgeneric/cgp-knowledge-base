@@ -133,9 +133,9 @@ and `BytesToHex`, and `HypershellChecksumNamespace` routes both; see the
 
 ## Source
 
-- [crates/hypershell-hash-components/src/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-hash-components/src)
-- [crates/hypershell-tungstenite-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tungstenite-components/src/providers)
-- [crates/hypershell-components/src/dsl/http.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/http.rs)
+- [crates/hypershell-hash-components/src/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-hash-components/src)
+- [crates/hypershell-tungstenite-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-tungstenite-components/src/providers)
+- [crates/hypershell-components/src/dsl/http.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/http.rs)
   (the `WebSocket` syntax)
 
 ## Public material derived from this

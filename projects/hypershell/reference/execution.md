@@ -313,14 +313,14 @@ to `ExtractFieldArgs` under `CommandUpdaterComponent`; and `CommandArgTypeProvid
 
 ## Source
 
-- [crates/hypershell-components/src/dsl/exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/exec.rs)
-- [crates/hypershell-components/src/dsl/args.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/args.rs)
-- [crates/hypershell-tokio-components/src/dsl/exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/dsl/exec.rs)
-- [crates/hypershell-tokio-components/src/components/update_command.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/components/update_command.rs)
-- [crates/hypershell-tokio-components/src/providers/simple_exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/simple_exec.rs)
-- [crates/hypershell-tokio-components/src/providers/streaming_exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/streaming_exec.rs)
-- [crates/hypershell-tokio-components/src/providers/core_exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/core_exec.rs)
-- [crates/hypershell-tokio-components/src/providers/update_command.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/update_command.rs)
+- [crates/hypershell-components/src/dsl/exec.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/exec.rs)
+- [crates/hypershell-components/src/dsl/args.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/args.rs)
+- [crates/hypershell-tokio-components/src/dsl/exec.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/dsl/exec.rs)
+- [crates/hypershell-tokio-components/src/components/update_command.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/components/update_command.rs)
+- [crates/hypershell-tokio-components/src/providers/simple_exec.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/simple_exec.rs)
+- [crates/hypershell-tokio-components/src/providers/streaming_exec.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/streaming_exec.rs)
+- [crates/hypershell-tokio-components/src/providers/core_exec.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/core_exec.rs)
+- [crates/hypershell-tokio-components/src/providers/update_command.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/update_command.rs)
 
 ## Public material derived from this
 

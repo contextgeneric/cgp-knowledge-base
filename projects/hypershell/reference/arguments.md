@@ -269,15 +269,15 @@ command argument or a URL.
 
 ## Source
 
-- [crates/hypershell-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/components)
-- [crates/hypershell-components/src/dsl/arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/arg.rs)
+- [crates/hypershell-components/src/components/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-components/src/components)
+- [crates/hypershell-components/src/dsl/arg.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/arg.rs)
   and
-  [args.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/dsl/args.rs)
-- [crates/hypershell-components/src/providers/string_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/string_arg.rs)
+  [args.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/dsl/args.rs)
+- [crates/hypershell-components/src/providers/string_arg.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/providers/string_arg.rs)
   and
-  [url_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/url_arg.rs)
-- [crates/hypershell-tokio-components/src/providers/join_args.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/join_args.rs)
-- [crates/hypershell-reqwest-components/src/providers/url_encode.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/providers/url_encode.rs)
+  [url_arg.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/providers/url_arg.rs)
+- [crates/hypershell-tokio-components/src/providers/join_args.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/join_args.rs)
+- [crates/hypershell-reqwest-components/src/providers/url_encode.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-reqwest-components/src/providers/url_encode.rs)
 
 ## Public material derived from this
 

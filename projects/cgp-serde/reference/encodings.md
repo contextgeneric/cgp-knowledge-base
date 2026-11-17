@@ -174,13 +174,13 @@ part.
 
 ## Source
 
-- [`crates/cgp-serde-extra/src/providers/hex.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/hex.rs):
+- [`crates/cgp-serde-extra/src/providers/hex.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-extra/src/providers/hex.rs):
   `SerializeHex`.
-- [`crates/cgp-serde-extra/src/providers/base64.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/base64.rs):
+- [`crates/cgp-serde-extra/src/providers/base64.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-extra/src/providers/base64.rs):
   `SerializeBase64`.
-- [`crates/cgp-serde-extra/src/providers/date.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/date.rs):
+- [`crates/cgp-serde-extra/src/providers/date.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-extra/src/providers/date.rs):
   `SerializeRfc3339Date`.
-- [`crates/cgp-serde-extra/src/providers/timestamp.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-extra/src/providers/timestamp.rs):
+- [`crates/cgp-serde-extra/src/providers/timestamp.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-extra/src/providers/timestamp.rs):
   `SerializeTimestamp`.
 
 ## Public material derived from this

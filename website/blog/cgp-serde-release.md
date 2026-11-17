@@ -43,7 +43,7 @@ Demonstration first, mechanism second:
 - **The source to quote:** the [modular serialization example](../../examples/modular-serialization.md).
   The project is [projects/cgp-serde/](../../projects/cgp-serde/README.md), whose
   [issues](../../projects/cgp-serde/issues.md) record that all five future-work items remain open on
-  the `v0.8.0` branch, the JSON-helper item narrower, since the reader provider accepts slices and
+  `main`, the JSON-helper item narrower, since the reader provider accepts slices and
   `io::Read` and only the convenience method is limited to strings.
 - **Concepts:** [coherence](../../cgp/concepts/coherence.md), which uses
   `UseSerde`/`SerializeBytes`/`SerializeWithDisplay` to illustrate incoherent implementations;
@@ -76,10 +76,12 @@ Demonstration first, mechanism second:
   `DelegateComponent` lookup; v0.7.0 simplified that to `Context: ValueSerializer<Context, Value>`.
 - **One inconsistency to not copy:** the lookup-table section shows a `#[cgp_impl(Provider)]` block
   whose body uses the inside-out `Provider::Delegate::serialize` form, mixing the two styles.
-- **The two "Full Example" links point at the `main` branch**, whose `messages.rs` and
-  `arena_simplified.rs` are the 0.2.0 tests wired with `UseDelegate` tables. The `v0.8.0` versions,
-  wired with `open`, are in [projects/cgp-serde/examples/](../../projects/cgp-serde/examples/README.md).
-- **The record serializer is named `SerializeFields` in the post.** On the `v0.8.0` branch it is
+- **The two "Full Example" links no longer resolve.** They name `messages.rs` and
+  `arena_simplified.rs` under `crates/cgp-serde-tests/src/tests/` on `main`, where 0.3.0 moved both
+  to `crates/cgp-serde-examples/examples/` and wired them with `open`; the 0.2.0 tests the post
+  showed, wired with `UseDelegate` tables, stay at tag `v0.2.0`. The current versions are in
+  [projects/cgp-serde/examples/](../../projects/cgp-serde/examples/README.md).
+- **The record serializer is named `SerializeFields` in the post.** In 0.3.0 it is
   `SerializeRecordFields`, matching `DeserializeRecordFields`.
 - **`cgp-serde` has moved on.** Its 0.3.0 release builds on `cgp` 0.8.0, so the post describes the
   0.1 release.

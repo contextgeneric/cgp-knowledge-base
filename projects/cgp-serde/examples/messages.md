@@ -5,7 +5,7 @@ differ in three wiring entries, producing JSON with hex bytes and RFC 3339 dates
 bytes and Unix timestamps from the other.
 
 - **Source**:
-  [crates/cgp-serde-examples/examples/messages.rs](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde-examples/examples/messages.rs)
+  [crates/cgp-serde-examples/examples/messages.rs](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde-examples/examples/messages.rs)
 - **Run**: `cargo run -p cgp-serde-examples --example messages`; its test runs with
   `cargo test -p cgp-serde-examples --example messages`
 - **Needs**: nothing beyond the build

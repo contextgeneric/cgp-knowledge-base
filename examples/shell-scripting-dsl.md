@@ -15,8 +15,8 @@ to carry the wiring and a few runtime values, holding no program data. The handl
 the `Input`, and the wiring dispatches on both. See the
 [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) for what that arrangement buys.
 
-The snippets use the Hypershell crates at their
-[`v0.8.0` branch](https://github.com/contextgeneric/hypershell/tree/v0.8.0): `hypershell`,
+The snippets use the Hypershell 0.2.0 crates on the repository's
+[`main` branch](https://github.com/contextgeneric/hypershell/tree/main): `hypershell`,
 `hypershell-components`, `hypershell-tokio-components`, and `hypershell-hash-components`, plus
 `hex`, `sha2`, `tokio`, and `cgp-error-anyhow`. Every snippet was compiled and run against that
 branch in one crate. All snippets assume `use hypershell::prelude::*;`, which re-exports

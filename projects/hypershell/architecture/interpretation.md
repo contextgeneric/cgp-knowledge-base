@@ -73,7 +73,7 @@ modernization is tracked in [issues.md](../issues.md#housekeeping).
 **Argument syntax is interpreted by four extractor components, not by `Handler`.** An argument is
 not a pipeline stage: it has no input and produces a value synchronously. Each extractor is a
 component generic over the argument syntax `Arg`, defined in
-[`hypershell-components/src/components/`](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/components):
+[`hypershell-components/src/components/`](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-components/src/components):
 
 | Consumer trait | Produces | Used for |
 |---|---|---|
@@ -210,16 +210,16 @@ whose `Handler` impl requires one, makes that a `Handler`. See
 ## Source
 
 - The components:
-  [crates/hypershell-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/components),
-  [crates/hypershell-tokio-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/components),
+  [crates/hypershell-components/src/components/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-components/src/components),
+  [crates/hypershell-tokio-components/src/components/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-tokio-components/src/components),
   and
-  [crates/hypershell-reqwest-components/src/components/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-reqwest-components/src/components)
+  [crates/hypershell-reqwest-components/src/components/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-reqwest-components/src/components)
 - The control providers:
-  [crates/hypershell-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/providers)
+  [crates/hypershell-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-components/src/providers)
 - `WrapCall`:
-  [crates/hypershell-components/src/traits/wrap_call.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/traits/wrap_call.rs)
+  [crates/hypershell-components/src/traits/wrap_call.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/traits/wrap_call.rs)
 - `HandleSimpleExec` and `ExtractArgs`:
-  [crates/hypershell-tokio-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/providers)
+  [crates/hypershell-tokio-components/src/providers/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-tokio-components/src/providers)
 
 ## Public material derived from this
 

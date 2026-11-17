@@ -53,12 +53,12 @@ expecting: the project moves with the library while the post that announced it d
 - [hypershell/](hypershell/README.md): a modular, type-level DSL for shell-script-like programs
   written as Rust types and interpreted at compile time. The project that drove the handler family
   into existence, and the reference implementation of the type-level DSL technique. Documented in
-  the full project shape, with one document per runnable example, against its `v0.8.0` branch.
+  the full project shape, with one document per runnable example, against its `main` branch.
 - [cgp-serde/](cgp-serde/README.md): Serde's `Serialize` and `Deserialize` rebuilt as CGP
   components, so that how each value type is encoded becomes a per-context wiring choice. The
   clearest demonstration of CGP's coherence workaround on a library every Rust developer already
   knows. Documented in the full project shape, with one document per runnable example in its
-  `cgp-serde-examples` crate, against its `v0.8.0` branch.
+  `cgp-serde-examples` crate, against its `main` branch.
 - [cgp-examples/](cgp-examples/README.md): a repository of five independent example crates, each
   documented as its own subproject: an HTTP money-transfer service, a modular interpreter, an
   application builder, a web-app wiring study, and a greeting program. Documented against its

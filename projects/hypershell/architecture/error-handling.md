@@ -92,15 +92,15 @@ already has; see [execution](../reference/execution.md#streamingexec-and-handles
 ## Source
 
 - The error wiring:
-  [crates/hypershell/src/namespaces/handlers.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/namespaces/handlers.rs)
+  [crates/hypershell/src/namespaces/handlers.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell/src/namespaces/handlers.rs)
   and
-  [crates/hypershell/src/providers/error.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell/src/providers/error.rs)
+  [crates/hypershell/src/providers/error.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell/src/providers/error.rs)
 - The error types and details:
-  [crates/hypershell-tokio-components/src/providers/core_exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/core_exec.rs),
-  [simple_exec.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-tokio-components/src/providers/simple_exec.rs),
-  [crates/hypershell-reqwest-components/src/providers/simple_request.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/providers/simple_request.rs),
+  [crates/hypershell-tokio-components/src/providers/core_exec.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/core_exec.rs),
+  [simple_exec.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-tokio-components/src/providers/simple_exec.rs),
+  [crates/hypershell-reqwest-components/src/providers/simple_request.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-reqwest-components/src/providers/simple_request.rs),
   and
-  [crates/hypershell-components/src/providers/convert.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/providers/convert.rs)
+  [crates/hypershell-components/src/providers/convert.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/providers/convert.rs)
 
 ## Public material derived from this
 

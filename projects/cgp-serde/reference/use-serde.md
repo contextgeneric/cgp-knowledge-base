@@ -61,7 +61,7 @@ The same struct implements both directions.
 
 ## Source
 
-- [`crates/cgp-serde/src/providers/serde.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/serde.rs):
+- [`crates/cgp-serde/src/providers/serde.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/serde.rs):
   `UseSerde`.
 
 ## Public material derived from this

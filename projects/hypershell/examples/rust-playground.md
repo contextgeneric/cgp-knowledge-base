@@ -4,11 +4,11 @@ A Rust value encoded to JSON, posted to the Rust Playground's gist API, and the 
 decoded back into a Rust type, on the predefined `HypershellHttp` context.
 
 - **Source**:
-  [crates/hypershell-examples/examples/rust_playground.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/rust_playground.rs)
+  [crates/hypershell-examples/examples/rust_playground.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-examples/examples/rust_playground.rs)
 - **Run**: `cargo run --example rust_playground`
 - **Needs**: network
 - **Result**: not run while documenting, because running it publishes a public GitHub gist of the
-  snippet. It compiles against the `v0.8.0` branch.
+  snippet. It compiles against the `main` branch.
 
 ## The program
 

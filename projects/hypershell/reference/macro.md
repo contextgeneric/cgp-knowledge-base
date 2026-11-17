@@ -65,8 +65,8 @@ Four edges were confirmed by probes, and each is recorded in
 
 ## Source
 
-- [crates/hypershell-macro/src/lib.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-macro/src/lib.rs)
-- [crates/hypershell-macro/src/expand.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-macro/src/expand.rs)
+- [crates/hypershell-macro/src/lib.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-macro/src/lib.rs)
+- [crates/hypershell-macro/src/expand.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-macro/src/expand.rs)
 
 ## Public material derived from this
 

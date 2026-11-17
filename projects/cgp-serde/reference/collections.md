@@ -113,9 +113,9 @@ The serializing counterpart is [`SerializeIterator`](#serializeiterator).
 
 ## Source
 
-- [`crates/cgp-serde/src/providers/iterator.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/iterator.rs):
+- [`crates/cgp-serde/src/providers/iterator.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/iterator.rs):
   `SerializeIterator`.
-- [`crates/cgp-serde/src/providers/extend.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/extend.rs):
+- [`crates/cgp-serde/src/providers/extend.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/extend.rs):
   `DeserializeExtend`, its visitor, and its seed.
 
 ## Public material derived from this

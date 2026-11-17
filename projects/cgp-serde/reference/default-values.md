@@ -57,7 +57,7 @@ any other.
 
 ## Source
 
-- [`crates/cgp-serde/src/providers/default.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/default.rs):
+- [`crates/cgp-serde/src/providers/default.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/default.rs):
   `DeserializeDefault` and `DefaultVisitor`.
 
 ## Public material derived from this

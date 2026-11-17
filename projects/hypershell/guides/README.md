@@ -3,7 +3,7 @@
 The guides are prescriptive: each says how to do one job with Hypershell and which mistakes to
 avoid, where the [architecture](../architecture/README.md) explains why the design is as it is and
 the [reference](../reference/README.md) says what each item does. Every code snippet in them was
-compiled against the `v0.8.0` branch, and every diagnostic was produced by a probe.
+compiled against the `main` branch, and every diagnostic was produced by a probe.
 
 ## The catalog
 

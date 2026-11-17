@@ -3,7 +3,7 @@
 A streaming HTTP request written straight to a file whose path comes from a context field.
 
 - **Source**:
-  [crates/hypershell-examples/examples/save_webpage.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-examples/examples/save_webpage.rs)
+  [crates/hypershell-examples/examples/save_webpage.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-examples/examples/save_webpage.rs)
 - **Run**: `cargo run --example save_webpage`, from a directory where it may write
 - **Needs**: network
 - **Result**: writes the Nixpkgs manual to `nix_manual.html` in the working directory and prints

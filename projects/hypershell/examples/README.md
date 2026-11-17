@@ -18,9 +18,9 @@ explanation and a document here links to it.
 ## Running an example
 
 Examples run from the repository root with `cargo run --example <name>`. The workspace takes `cgp`
-from its git repository's `main` branch, and uses the pinned nightly toolchain; see
+from crates.io, and uses the pinned nightly toolchain; see
 [crate layout](../architecture/crate-layout.md#build-facts). The table records what each example
-needs beyond that, and what happened when it was run against the `v0.8.0` branch:
+needs beyond that, and what happened when it was run against the `main` branch:
 
 | Example | Needs | Result |
 |---|---|---|

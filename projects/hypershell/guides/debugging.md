@@ -3,7 +3,7 @@
 A mistake in a Hypershell program or its wiring is a compile error, and the raw `rustc` output for
 one spans every layer of wiring between the context and the provider that failed. This guide shows
 the common mistakes, each with the code that triggers it, the root cause `cargo cgp check` reports,
-and the fix. Every output below was produced by a probe against the `v0.8.0` branch and trimmed to
+and the fix. Every output below was produced by a probe against the `main` branch and trimmed to
 its headline, its root cause, and the part of the tree that locates it. The general technique is in
 the CGP [debugging guide](../../../cgp/guides/debugging.md).
 

@@ -10,7 +10,7 @@ them. The per-item detail is in the [reference](../reference/README.md); the gen
 
 **Each syntax type is a struct holding only `PhantomData` over its parameters, with no methods and
 no trait impls.** The definitions in
-[`hypershell-components/src/dsl/`](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/dsl)
+[`hypershell-components/src/dsl/`](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-components/src/dsl)
 are all of this shape:
 
 ```rust
@@ -128,15 +128,15 @@ extension adds syntax without touching it, and it never needs to know what a pie
 ## Source
 
 - The syntax types:
-  [crates/hypershell-components/src/dsl/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-components/src/dsl)
+  [crates/hypershell-components/src/dsl/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-components/src/dsl)
 - `WrapStaticArg`:
-  [crates/hypershell-components/src/traits/wrap_static_arg.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-components/src/traits/wrap_static_arg.rs)
+  [crates/hypershell-components/src/traits/wrap_static_arg.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-components/src/traits/wrap_static_arg.rs)
 - The core syntax:
-  [crates/hypershell-tokio-components/src/dsl/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-tokio-components/src/dsl)
+  [crates/hypershell-tokio-components/src/dsl/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-tokio-components/src/dsl)
   and
-  [crates/hypershell-reqwest-components/src/dsl/mod.rs](https://github.com/contextgeneric/hypershell/blob/v0.8.0/crates/hypershell-reqwest-components/src/dsl/mod.rs)
+  [crates/hypershell-reqwest-components/src/dsl/mod.rs](https://github.com/contextgeneric/hypershell/blob/main/crates/hypershell-reqwest-components/src/dsl/mod.rs)
 - The macro:
-  [crates/hypershell-macro/src/](https://github.com/contextgeneric/hypershell/tree/v0.8.0/crates/hypershell-macro/src)
+  [crates/hypershell-macro/src/](https://github.com/contextgeneric/hypershell/tree/main/crates/hypershell-macro/src)
 
 ## Public material derived from this
 

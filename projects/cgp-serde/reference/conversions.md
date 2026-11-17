@@ -214,13 +214,13 @@ from the input directly.
 
 ## Source
 
-- [`crates/cgp-serde/src/providers/display.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/display.rs):
+- [`crates/cgp-serde/src/providers/display.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/display.rs):
   `SerializeWithDisplay` and `DeserializeWithFromStr`.
-- [`crates/cgp-serde/src/providers/from.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/from.rs):
+- [`crates/cgp-serde/src/providers/from.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/from.rs):
   `SerializeFrom`.
-- [`crates/cgp-serde/src/providers/try_from.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/try_from.rs):
+- [`crates/cgp-serde/src/providers/try_from.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/try_from.rs):
   `TrySerializeFrom`.
-- [`crates/cgp-serde/src/providers/deref.rs`](https://github.com/contextgeneric/cgp-serde/blob/v0.8.0/crates/cgp-serde/src/providers/deref.rs):
+- [`crates/cgp-serde/src/providers/deref.rs`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/deref.rs):
   `SerializeDeref`.
 
 ## Public material derived from this

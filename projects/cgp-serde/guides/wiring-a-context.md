@@ -129,7 +129,7 @@ share, and the demo's `AppA` and `AppB` repeat every entry but the three that di
 can define a namespace of its own with
 [`cgp_namespace!`](../../../cgp/reference/macros/cgp_namespace.md), put the shared `@` entries in
 it, and have each context join it and add only its differences. A probe confirmed this form against
-the `v0.8.0` branch, with the demo reduced to `EncryptedMessage` and `MessagesByTopic`:
+the `main` branch, with the demo reduced to `EncryptedMessage` and `MessagesByTopic`:
 
 ```rust
 cgp_namespace! {
