@@ -252,9 +252,9 @@ become components with shared, context-generic providers, and they are where the
 a provider would only ever be used by one context, implement the consumer trait directly on that
 context and skip the provider entirely.
 
-Worked on a service whose production and test contexts share a database but differ in their outbound
-integrations, the split falls out of step two. Both contexts hold the same `PostgresDb`, so the user
-operations are shared, while the object storage genuinely differs:
+Worked on a service whose production and test contexts share a database but differ in where they
+store objects, the split falls out of step two. Both contexts hold the same `PostgresDb`, so the
+user operations are shared, while fetching an object genuinely differs:
 
 ```rust
 #[derive(HasField)]

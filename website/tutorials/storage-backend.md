@@ -85,7 +85,9 @@ The scenario is the [profile-picture example](../../examples/profile-picture.md)
 or cloud account: a `HashMap` stands in for the database, the storage step reads a local folder and
 memory rather than S3 and Google Cloud, and the lookup returns the picture's bytes rather than
 decoding an image. No project ships the scenario, so the page routes to the Overview's S3 and Google
-Cloud providers rather than to a Projects example page.
+Cloud providers rather than to a Projects example page. The page keeps the async methods, while the
+Overview writes the same component synchronously, so its two links to the Overview call that code a
+synchronous version of this component.
 
 The constructs are [`#[cgp_fn]`](../../cgp/reference/macros/cgp_fn.md),
 [`#[implicit]`](../../cgp/reference/attributes/implicit.md),

@@ -89,12 +89,14 @@ before introducing another domain:
   `CanFetchStorageObject` component; `TestApp` wires `FetchLocalObject`, which reads a local
   folder. These are environmental contexts with a self-targeted component whose method returns
   `anyhow` errors. It is the example for test and production implementations.
-  - **Synchronous by default:** the website's Overview, Concepts, reference, and comparison pages
-    write `fetch_storage_object` as a synchronous method, so a beginner meets one idea at a time,
-    and say once that a real storage client would be async.
-  - **Async where it runs:** the [profile-picture example](../examples/profile-picture.md), the
-    `cgp` README, and the website's storage tutorial keep the async method, because they run
-    against real clients.
+  - **Synchronous by default:** pages that teach a CGP idea through the example write
+    `fetch_storage_object` as a synchronous method, so a beginner meets one idea at a time. The
+    website's Overview and *Consumer and provider traits* page each say once that a real storage
+    client would be async.
+  - **Async where async is the point or the scenario:** the
+    [profile-picture example](../examples/profile-picture.md), the `cgp` README, the website's
+    storage tutorial, and the `#[async_trait]` reference page keep the async method, as a real
+    storage client needs.
 
 Use the verified code in [examples/](../examples/README.md) and the website's `example-code` crate.
 When a different example is necessary, record why in the page's internal document and add it to this
