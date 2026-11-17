@@ -9,9 +9,9 @@ syntax and its meaning can be extended without touching the core crates.
 - **Branch documented**: `v0.8.0`
 - **Crates**: `hypershell`, `hypershell-components`, `hypershell-tokio-components`,
   `hypershell-reqwest-components`, `hypershell-json-components`, `hypershell-hash-components`,
-  `hypershell-tungstenite-components`, `hypershell-macro`, all at 0.1.0, plus the unpublished
+  `hypershell-tungstenite-components`, `hypershell-macro`, all at 0.2.0, plus the unpublished
   `hypershell-examples`
-- **Tracks**: `cgp` 0.8.0, through a git patch to the `cgp` repository's `main` branch
+- **Tracks**: `cgp` 0.8.0, from crates.io
 - **Status**: Experimental proof of concept, stated as such by the project itself; see
   [Status and gaps](#status-and-gaps)
 
@@ -166,8 +166,8 @@ They feed three artifacts:
   written from this README and the architecture, with one sentence from the testing document; the
   issues document feeds no page. A comparison with shell scripts, which that plan also calls for,
   has no document here yet.
-- **The repository README**, which names the crates, the `cgp` 0.8.0 dependency and the git patch,
-  the build and test commands CI runs, and the examples.
+- **The repository README**, which names the crates, the `cgp` 0.8.0 dependency, the build and test
+  commands CI runs, and the examples.
 - **Rustdoc for the constructs.** Every component, provider, and provider struct carries a
   one-sentence doc condensed from its reference entry, so the docs.rs pages explain what each
   construct is for. Modules and struct fields carry none, and the tables and namespaces that

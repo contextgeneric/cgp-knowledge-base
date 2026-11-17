@@ -65,10 +65,7 @@ the file, as in `cgp_serde::providers::SerializeRecordFields`.
 Every library crate declares `#![no_std]`. All but `cgp-serde-alloc` and `cgp-serde-typed-arena`
 also link `alloc`, for `String` and `Vec`. The workspace uses edition 2024 with a minimum Rust
 version of 1.90, pins its development toolchain to Rust 1.98.1 in `rust-toolchain.toml`, and depends
-on `cgp` 0.8.0 through a `[patch.crates-io]` section that overrides `cgp` and `cgp-error-anyhow`
-with the `cgp` repository's `main` branch by git URL, pinned to a commit in the lockfile. So the
-workspace builds against the `cgp` source on `main`, and its first build fetches that repository. To test against a local change to `cgp`, the same entries switch to
-the commented-out paths into `../cgp`. All five crates carry version 0.2.0.
+on `cgp` 0.8.0 and `cgp-error-anyhow` from crates.io. All seven crates carry version 0.3.0.
 
 ## Source
 

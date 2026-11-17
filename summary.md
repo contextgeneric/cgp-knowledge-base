@@ -1044,7 +1044,7 @@ it stale.
   doubly listed error types, and a streamed stage's failure arriving as an I/O error.
 - [projects/hypershell/architecture/crate-layout.md](projects/hypershell/architecture/crate-layout.md)
   — the nine crates and their dependency graph, module layout and the prelude, and the build facts:
-  nightly with the new trait solver, and the git patch to `cgp` `main`.
+  nightly with the new trait solver, and `cgp` from crates.io.
 - [projects/hypershell/reference/README.md](projects/hypershell/reference/README.md) — the catalog,
   the two template adaptations, and tables of every syntax type, component, provider, bundle, and
   context with its crate, interpreter, route, and import path.

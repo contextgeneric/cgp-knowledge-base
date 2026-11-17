@@ -43,8 +43,7 @@ Each example runs from the repository root with `cargo run -p cgp-serde-examples
 which prints its result. Each example also carries its assertions as a `#[test]` function, and its
 Cargo target sets `test = true`, so `cargo test -p cgp-serde-examples` runs all four and
 `cargo test -p cgp-serde-examples --example <name>` runs one. The workspace pins Rust 1.98.1 in
-`rust-toolchain.toml` and overrides `cgp` and `cgp-error-anyhow` with the `cgp` repository's `main`
-branch through `[patch.crates-io]`, which the first build fetches; see [crate
+`rust-toolchain.toml` and takes `cgp` from crates.io; see [crate
 layout](../architecture/crate-layout.md#build-facts). Once built, no example needs a network or any
 program outside the build. The table records what each did when run against the `v0.8.0` branch:
 

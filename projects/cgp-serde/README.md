@@ -9,8 +9,8 @@ deserializer can draw services such as an arena allocator from the context it ru
 - **Local checkout**: `../cgp-serde`, per [sibling-projects.md](../../sibling-projects.md)
 - **Branch documented**: `v0.8.0`
 - **Crates**: `cgp-serde`, `cgp-serde-extra`, `cgp-serde-json`, `cgp-serde-alloc`,
-  `cgp-serde-typed-arena`, all at 0.2.0
-- **Tracks**: `cgp` 0.8.0, through a git patch to the `cgp` repository's `main` branch
+  `cgp-serde-typed-arena`, all at 0.3.0
+- **Tracks**: `cgp` 0.8.0, from crates.io
 - **Status**: Proof of concept; see [Status and gaps](#status-and-gaps)
 
 ## What it is
