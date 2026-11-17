@@ -837,7 +837,8 @@ it stale.
   person.
 - [ai-disclaimer.md](website/pages/ai-disclaimer.md) — how the project uses AI, part by part.
 - [release-notes.md](website/pages/release-notes.md) — the Release notes category: one dated page per
-  official release of `cgp` and `cargo-cgp`, how each is made, and the release document behind each.
+  official release of `cgp`, `cargo-cgp`, `cgp-serde`, and Hypershell, how each is made, and the
+  document behind each.
 
 ### `website/writing-guides/`: how new pages should be written
 
@@ -863,10 +864,11 @@ it stale.
   clear lead, the placement of short announcements before a long walkthrough, the announcement's
   parts, the breaking-changes obligation from the removal ledger, and the publication mechanics.
 - [release-notes.md](website/writing-guides/release-notes.md) — the dated release-notes pages under
-  `docs/release-notes/`, one per official release of `cgp` and `cargo-cgp`, in point-first style: the
-  page as the upgrader's layer and the release document as the finer-detail one, the four sources with
-  the diff deciding, the page's parts from Compatibility and Upgrading to Security, the entry form for
-  breaking changes and deprecations, the newest-first ordering, and the checks against the diff.
+  `docs/release-notes/`, one per official release of `cgp`, `cargo-cgp`, `cgp-serde`, and
+  Hypershell, in point-first style: the page as the upgrader's layer and the release document as the
+  finer-detail one, the four sources with the diff deciding, the page's parts from Compatibility and
+  Upgrading to Security, the entry form for breaking changes and deprecations, the newest-first
+  ordering, and the checks against the diff.
 - [project.md](website/writing-guides/project.md) — the Projects section ported from the internal
   project sections: the seven page kinds and the internal document behind each, the example page as a
   short applied-register tutorial (*New to CGP?*, the problem and its cost without CGP, a run, a
