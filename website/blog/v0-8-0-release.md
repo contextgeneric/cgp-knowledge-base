@@ -183,7 +183,7 @@ headings. The original material remains represented as follows:
 | Difficult diagnostics and the Rust/CGP knowledge needed to read them | The cargo-cgp motivation, exact missing-height example, diagnostic comparison, and compiler-API explanation |
 | Documentation gaps, reliance on blog posts, limited personal time, and months of manual work | The documentation introduction, retaining the author's capacity argument |
 | Claude Code, iterative planning and revision, reader skepticism, and a request for quality feedback | The documentation process and invitation to assess the actual explanations |
-| Word/page-count placeholders | Measured documentation scale: about 340,000 prose words across more than 340 pages, plus an explicitly qualified printed-page equivalent |
+| Word/page-count placeholders | Measured documentation scale: about 365,000 prose words across more than 360 pages, plus an explicitly qualified printed-page equivalent |
 | Further methodology writing | The author's interest in a dedicated follow-up, alongside the existing process page |
 | All six documentation/agent resources and the skill's learning and diagnostic roles | The expanded resource list and skill subsection |
 | Complete database-only managers, alternative SQLite managers, and initial two-entry wiring | The restored first stage, compiled separately in the blog example file |
@@ -204,8 +204,8 @@ It qualifies claims that diagnostics are solved, broad macro impossibility claim
 single-crate trade-offs. Those corrections preserve the argument without teaching invalid behavior.
 
 The scale estimate counts regular Markdown/MDX files under the website's `docs/`, excluding symlinked
-skill files, front matter, and fenced code. On 2026-11-15 there were 348 files and approximately
-343,900 whitespace-separated prose words. The printed equivalent assumes 300 words per page and is
+skill files, front matter, and fenced code. On 2026-11-18 there were 368 files and approximately
+364,900 whitespace-separated prose words. The printed equivalent assumes 300 words per page and is
 explicitly a layout-dependent estimate rather than a measured PDF length.
 
 ## Maintaining it
