@@ -144,8 +144,8 @@ Each page records which of CGP's three context shapes its code is in, since no s
 
 - **Consumer and provider traits:** **environmental, self-targeted** throughout, the `App`/`TestApp`
   object-storage swap from
-  [message.md](../../communication-strategy/message.md#the-problems-cgp-removes), `FetchS3Object`
-  against `FetchLocalObject` with a synchronous method, one of the first places a reader meets a
+  [message.md](../../communication-strategy/message.md#the-problems-cgp-removes) (`FetchS3Object`
+  against `FetchLocalObject`, with a synchronous method), one of the first places a reader meets a
   type that stands for an application, described without the qualifiers. It draws on
   [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md),
   [coherence](../../cgp/concepts/coherence.md), and the

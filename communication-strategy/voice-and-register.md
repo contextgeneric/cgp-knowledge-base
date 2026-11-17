@@ -84,19 +84,19 @@ before introducing another domain:
   context. Hello World uses `#[cgp_fn]`; component examples introduce `CanGreet` and a provider.
 - **Area calculation:** `Rectangle`, `Circle`, area providers, and a scaling wrapper introduce
   provider reuse and higher-order composition.
-- **Object storage:** `App` fetches stored files from Amazon S3 through `FetchS3Object`, and
-  `GCloudApp` from Google Cloud Storage through `FetchGCloudObject`, behind one
-  `CanFetchStorageObject` component; `TestApp` wires `FetchLocalObject`, which reads a local
-  folder. These are environmental contexts with a self-targeted component whose method returns
-  `anyhow` errors. It is the example for test and production implementations.
+- **Object storage:** the example for test and production implementations. `App` fetches stored
+  files from Amazon S3 through `FetchS3Object`, `GCloudApp` from Google Cloud Storage through
+  `FetchGCloudObject`, and `TestApp` from a local folder through `FetchLocalObject`, all behind one
+  `CanFetchStorageObject` component. These are environmental contexts with a self-targeted
+  component whose method returns `anyhow` errors.
   - **Synchronous by default:** pages that teach a CGP idea through the example write
     `fetch_storage_object` as a synchronous method, so a beginner meets one idea at a time. The
     website's Overview and *Consumer and provider traits* page each say once that a real storage
     client would be async.
-  - **Async where async is the point or the scenario:** the
+  - **Async where the scenario needs it:** the
     [profile-picture example](../examples/profile-picture.md), the `cgp` README, the website's
-    storage tutorial, and the `#[async_trait]` reference page keep the async method, as a real
-    storage client needs.
+    storage tutorial, and the `#[async_trait]` reference page keep the async method, because they
+    model a real client or teach async itself.
 
 Use the verified code in [examples/](../examples/README.md) and the website's `example-code` crate.
 When a different example is necessary, record why in the page's internal document and add it to this
