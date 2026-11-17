@@ -63,7 +63,7 @@ parse failure's `Display` message as a Serde custom error. With `&'a str` wired 
 
 Asking for a borrowed string means the input must be able to lend one, and the failure comes before
 any parsing. A JSON string that `serde_json` has to unescape into a new buffer cannot be lent: with
-the workspace's `serde_json` 1.0.143, `"4\"2"`, whose middle character is an escaped quote, fails
+the workspace's `serde_json` 1.0.154, `"4\"2"`, whose middle character is an escaped quote, fails
 with `invalid type: string "4\"2", expected a borrowed string`, and an escaped newline fails the
 same way. Not every escape triggers it: in the same probe, `"\u0034\u0032"` was accepted and parsed
 as `42`. A deserializer that reads from an `io::Read` can never lend its input, so there even the

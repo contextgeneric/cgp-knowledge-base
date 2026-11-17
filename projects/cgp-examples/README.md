@@ -54,7 +54,9 @@ the commit. To test against a local change to `cgp`, switch the same entries to 
 paths into `../cgp`. It needs stable Rust 1.90 or later, uses the 2024 edition, and pins 1.90 in
 `rust-toolchain.toml`, the same version as the workspace's `rust-version`. These documents were
 verified against `cgp` `main` at commit
-`adc616c` (2026-09-26), with `rustc` 1.98.1, where `cargo test --workspace` passes. The only tests
+`adc616c` (2026-09-26), with `rustc` 1.98.1, where `cargo test --workspace` passes. The lockfile
+now pins `1c11cb0f` (2026-11-16), where `cargo build --workspace` and `cargo test --workspace` also pass on
+the pinned `rustc` 1.90.0. The only tests
 in the workspace are three unit tests in `expression`; the other crates check their wiring at
 compile time with `check_components!` blocks, so a successful build is most of their verification.
 
