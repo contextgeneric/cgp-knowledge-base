@@ -109,15 +109,6 @@ Housekeeping items affect neither behavior nor features but mislead a reader or 
   `#[derive_delegate(UseDelegate<…>)]`, which only `UseDelegate` tables need; every context on the
   branch uses `open`. Removing them is breaking for downstream `UseDelegate` users, and the
   website's cgp-serde plan accepts that.
-- **Repository metadata.** The workspace `Cargo.toml` sets `repository` to
-  `https://github.com/contextgeneric/cgp`, so all five published crates point at the CGP repository
-  rather than cgp-serde's.
-- **Crate descriptions.** `cgp-serde-alloc` and `cgp-serde-typed-arena` share the description
-  "Arena-based deserialization using cgp-serde", although only the second involves an arena.
-- **Version numbers.** The `v0.8.0` branch still carries version 0.2.0 in every manifest, the same
-  number as the published crates built on `cgp` 0.7.0.
-- **The repository README.** It shows the component definitions in the pre-0.8 attribute syntax and
-  defers everything else to the announcement post.
 - **Untested providers.** Seven providers are never run by any test; see [testing.md](testing.md).
 - **Dead wiring and a redundant check in the arena examples.** `arena.rs` opens
   `TryComputerComponent` and wires `SerializeJson` and `DeserializeJson<T>`, but calls

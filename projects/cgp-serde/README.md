@@ -192,8 +192,9 @@ They feed three artifacts:
   reference family document is split into one page per construct. The limitations page is written
   from this README and the architecture, with one sentence from the testing document, and the
   issues document feeds no page.
-- **The repository README**, which currently summarizes the components in pre-0.8 syntax and defers
-  to the announcement post.
+- **The repository README**, which presents the library to a first-time reader: an example of two
+  applications encoding one struct differently, the installation, the two components, the crates,
+  and the costs.
 - **Rustdoc for the constructs.** Every component, getter, and provider carries a one-sentence doc
   condensed from its reference entry, so the docs.rs pages say what each construct is for. Modules
   and struct fields carry none.

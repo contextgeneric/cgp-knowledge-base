@@ -85,5 +85,5 @@ records the coverage in full, including the provider suites, and the
 ## Public material derived from this
 
 The `examples/index` page of the
-[cgp-serde project section](../../../website/projects/cgp-serde.md), and an examples section of the
-repository README.
+[cgp-serde project section](../../../website/projects/cgp-serde.md), and the repository README's
+command for running an example.
