@@ -124,6 +124,9 @@ between projects finds the same kind of material in the same place.
   a well-known library.
 - **`testing.md`**: what the project's tests pin, which checks they assert, and what is untested.
 - **`issues.md`**: the open defects, missing features, and housekeeping items, grouped in that order.
+- **`releases.md`**: for a project with official releases, the companion of its website
+  release-notes pages, holding per version the facts behind the page and the diff findings it
+  leaves out; like [releases/](../releases/README.md), it records history.
 
 A project made of several independent subprojects gives each one its own subdirectory, named for the
 subproject's directory in the repository; each subproject follows this shape at its own scale.

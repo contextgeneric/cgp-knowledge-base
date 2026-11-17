@@ -177,6 +177,8 @@ architecture for the ideas every provider shares, then use the reference to look
 - [testing.md](testing.md): what the examples' tests and the provider suites pin, which tests pin a
   known issue, and what no test exercises.
 - [issues.md](issues.md): the confirmed defects, missing features, and housekeeping items.
+- [releases.md](releases.md): per official release, the facts behind its website release-notes
+  page and the diff findings the page leaves out.
 
 ## Public material derived from these documents
 

@@ -5,15 +5,16 @@ upgrader what to do about it. It is the site's one dated docs page: written for 
 with it, and not edited afterwards into agreement with later releases.
 
 - **Where they live**: `docs/release-notes/`, the Release notes category after Resources, with one
-  sub-category per artifact, `docs/release-notes/cgp/` and `docs/release-notes/cargo-cgp/`, and one
-  page per release in each, recorded in [pages/release-notes.md](../pages/release-notes.md)
+  sub-category per artifact, `cgp/`, `cargo-cgp/`, `cgp-serde/`, and `hypershell/`, and one page
+  per release in each, recorded in [pages/release-notes.md](../pages/release-notes.md)
 - **Voice**: project voice, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Style**: point-first, the one page kind that names it, because a reader scans the page for the
   items that affect them
 - **Derived from**: the release's source diff and its document in [releases/](../../releases/README.md),
   which stays the page's finer-detail companion; for `cargo-cgp`'s first release, the companion is
-  the [cargo-cgp/](../../cargo-cgp/README.md) section
+  the [cargo-cgp/](../../cargo-cgp/README.md) section, and for `cgp-serde` and Hypershell it is the
+  project section's `releases.md`, such as [projects/cgp-serde/releases.md](../../projects/cgp-serde/releases.md)
 - **Status once published**: a dated record, *Historical* in the records'
   [status words](../README.md#status-words); see [A dated page](#a-dated-page)
 - **Reading**: the shared set and [the release-notes row](README.md#release-notes-pages) of the
@@ -86,8 +87,9 @@ release has its own page, and links each artifact's sub-category and newest page
 **The index also states how CGP numbers its 0.x releases**, written only from the checked diffs of
 the releases it describes, such as whether a patch release ever broke code.
 
-**Each sub-category** has a `_category_.json` with its label (`cgp` or `cargo-cgp`), its position
-(`cgp` first), a generated index, and a `description` that names Context-Generic Programming.
+**Each sub-category** has a `_category_.json` with its label, the artifact's name (`cgp`,
+`cargo-cgp`, `cgp-serde`, or `hypershell`), its position in that order, a generated index, and a
+`description` that names Context-Generic Programming.
 
 **Pages sort newest first.** Docusaurus sorts by `sidebar_position`, ascending, so each page sets it
 to 100000 minus its version read as `major × 10000 + minor × 100 + patch`: v0.8.0 is 99200 and v0.7.0
@@ -163,7 +165,8 @@ inline only, because `example-code` builds against the current `cgp`.
   italics after a `---` rule, as the other docs pages set it. It reads "An AI agent wrote this page
   from the release's source changes and the CGP knowledge base. Its content was verified against the
   library's source at the release's tag. See How AI is used in this project.", with the last phrase
-  linking the disclosure page's documentation section; a `cargo-cgp` page says "the tool's source".
+  linking the disclosure page's documentation section; a `cargo-cgp` page says "the tool's source",
+  and a Hypershell page "the project's source".
   The category's record holds the level.
 
 ## What must not be on one

@@ -1116,6 +1116,8 @@ it stale.
   coverage the examples add, and the failure paths, checks, and syntax nothing exercises.
 - [projects/hypershell/issues.md](projects/hypershell/issues.md) — the confirmed defects (a streamed
   body not following redirects, the unusable `StreamToLines`), missing features, and housekeeping.
+- [projects/hypershell/releases.md](projects/hypershell/releases.md) — the companion of Hypershell's
+  release-notes pages: per release, its dates and old notes and the diff findings the page omits.
 - [writing-guide.md](projects/writing-guide.md) — the rules for a project section: verified against the
   project's source, probes rather than reading alone, leaving CGP itself to `cgp/`, the section shape,
   reference entries, public material, and registration.
@@ -1188,6 +1190,8 @@ it stale.
 - [projects/cgp-serde/issues.md](projects/cgp-serde/issues.md) — the confirmed defects (byte
   round-trip, owned bytes, borrowed strings, the `'static`-only variant serializer, undeclared
   lengths), missing features, and housekeeping.
+- [projects/cgp-serde/releases.md](projects/cgp-serde/releases.md) — the companion of cgp-serde's
+  release-notes pages: per release, its dates and old notes and the diff findings the page omits.
 - [projects/cgp-serde/reference/README.md](projects/cgp-serde/reference/README.md) — the catalog,
   and tables of every public item and provider with its crate, direction, bounds, context
   dependencies, and import path.

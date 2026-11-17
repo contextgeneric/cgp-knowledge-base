@@ -149,6 +149,8 @@ examples to see a program run.
 - [testing.md](testing.md): what the four tests pin, what the examples add, and what nothing
   exercises.
 - [issues.md](issues.md): the confirmed defects, missing features, and housekeeping items.
+- [releases.md](releases.md): per official release, the facts behind its website release-notes
+  page and the diff findings the page leaves out.
 
 ## Public material derived from these documents
 

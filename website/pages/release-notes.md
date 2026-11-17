@@ -1,7 +1,8 @@
 # Release notes
 
-The Release notes category lists what each official release of `cgp` and `cargo-cgp` changed, in one
-dated page per release; it is drafted on the `v0.8.0` branch and publishes with that release.
+The Release notes category lists what each official release of `cgp`, `cargo-cgp`, `cgp-serde`, and
+Hypershell changed, in one dated page per release; it is drafted on the `v0.8.0` branch and
+publishes with that release.
 
 - **URL:** <https://contextgeneric.dev/docs/release-notes/>
 - **Source:** [docs/release-notes/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/release-notes)
@@ -19,7 +20,8 @@ notes in full before publication.
 ## What it covers
 
 The index names Context-Generic Programming, says what the notes are, states how CGP numbers its 0.x
-releases, and links each artifact's sub-category. Each page restates one source document, which holds
+releases, and links each artifact's sub-category; the `cgp-serde` and Hypershell entries also link
+their Projects pages, and each project's Projects index links its notes under *Where to go next*. Each page restates one source document, which holds
 the facts the page gives and the finer detail it leaves out:
 
 | Page | Source document |
@@ -37,6 +39,9 @@ the facts the page gives and the finer detail it leaves out:
 | `cgp/` v0.2.0 | [releases/v0-2-0.md](../../releases/v0-2-0.md) |
 | `cgp/` v0.1.0 | [releases/v0-1-0.md](../../releases/v0-1-0.md) |
 | `cargo-cgp/` v0.1.0 | the [cargo-cgp/](../../cargo-cgp/README.md) section, since it is the tool's first release |
+| `cgp-serde/` v0.2.0 | [projects/cgp-serde/releases.md](../../projects/cgp-serde/releases.md#v020) |
+| `cgp-serde/` v0.1.0 | [projects/cgp-serde/releases.md](../../projects/cgp-serde/releases.md#v010) |
+| `hypershell/` v0.1.0 | [projects/hypershell/releases.md](../../projects/hypershell/releases.md#v010) |
 
 ## How it relates to the knowledge base
 
@@ -55,7 +60,9 @@ sources, and what still stands. The category sits after Resources, per
   and the release document, with the changelog entry, GitHub Release, and post where they exist.
   The v0.1.0 page links the tag in place of a compare view, since the release has no earlier tag,
   changelog entry, or post. The v0.2.0 and v0.3.1 pages link no post, since none exists, and the v0.4.2
-  page links the first post of its four-part series.
+  page links the first post of its four-part series. The `cgp-serde` v0.1.0 and v0.2.0 and Hypershell
+  v0.1.0 pages were written the same way; the `cgp-serde` v0.2.0 page links no post, since none
+  exists, and none of the three has a changelog entry.
 - **The index:** its versioning statement rests on the checked diffs of the patch releases v0.3.1,
   v0.4.1, v0.4.2, and v0.6.1, and on the breaking changes of every minor release from v0.2.0.
 
