@@ -7,6 +7,29 @@ the website's [release-notes guide](../../website/writing-guides/release-notes.m
 requires. Like [releases/](../../releases/README.md) for `cgp`, it records history, so it is exempt
 from the base's rule on documenting the present.
 
+## v0.3.0
+
+- **Page:** <https://contextgeneric.dev/docs/release-notes/cgp-serde/v0.3.0>, written before the
+  release, with its date and links set on release day.
+- **Commits:** 32 from v0.2.0, merged into `main` through one pull request (#2), whose
+  description lists the breaking changes the page checks against the diff.
+- **Old notes:** none yet; the release's GitHub Release is a one-sentence pointer to the page.
+
+The page leaves these findings out:
+
+- **The component attributes:** `#[cgp_component { provider: …, derive_delegate: … }]` became
+  `#[cgp_component(ValueSerializer)]` with a separate `#[derive_delegate(UseDelegate<Value>)]`, and
+  `HasArena`'s `#[cgp_getter]` the same, which generates the same items, so no user code changes.
+- **Doc comments:** a `missing_docs` check finds no undocumented component trait, provider, or type,
+  and 25 undocumented modules, methods, associated functions, and struct fields across the five
+  crates; the page states the first and concedes the second.
+- **The workspace:** the examples moved into the unpublished `cgp-serde-examples` crate as Cargo
+  examples, the provider suites and compile-fail tests stay in the unpublished `cgp-serde-tests`, CI
+  builds and tests the workspace, and the toolchain file moved from Rust 1.91 to 1.98.1 while
+  `rust-version` stays 1.90, checked at 1.90 before the release.
+- **`SerializeVariantFields`' `'static` bound** is pinned by a compile-fail test, and the JSON and RON
+  forms of a fieldless variant by the variant suites; the page states both limits in one line each.
+
 ## v0.2.0
 
 - **Page:** <https://contextgeneric.dev/docs/release-notes/cgp-serde/v0.2.0>.

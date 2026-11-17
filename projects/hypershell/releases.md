@@ -7,6 +7,33 @@ the website's [release-notes guide](../../website/writing-guides/release-notes.m
 requires. Like [releases/](../../releases/README.md) for `cgp`, it records history, so it is exempt
 from the base's rule on documenting the present.
 
+## v0.2.0
+
+- **Page:** <https://contextgeneric.dev/docs/release-notes/hypershell/v0.2.0>, written before the
+  release, with its date and links set on release day.
+- **Commits:** 69 from v0.1.0, through pull requests #1 to #5, #5 carrying the move to
+  `cgp` 0.8.0 and the fixes.
+- **Old notes:** none yet; the release's GitHub Release is a one-sentence pointer to the page.
+
+The page leaves these findings out:
+
+- **The path through `cgp` 0.4.2, 0.5.0, 0.6.0, and 0.7.0:** the repository moved through each
+  release before 0.8.0, dropping `#[cgp_context]` and the async `Send` bounds and moving from
+  `#[cgp_provider]` to `#[cgp_impl]`; none of those states was published, so the page gives only the
+  move from 0.4.1 to 0.8.0.
+- **A probe that could not run:** `hypershell` 0.1.0 from crates.io fails to build on Rust 1.98.1
+  with `E0364` re-export errors in its own preset modules, so the fixes were checked in the source at
+  both tags rather than by running 0.1.0: no v0.1.0 preset wires `PutMethod` or `DeleteMethod`,
+  `ConvertTo` is wired as `Promote<HandleConvert>`, the streaming exec never waits for the child, and
+  the WebSocket handler unwraps the connection result.
+- **The examples:** the unpublished crate holds 13 programs, the `Compare` and `If` syntax of
+  `compare_and_branch` and `parallel_compare` living in its own `dsl` module.
+- **The toolchain:** the repository moved from stable Rust 1.87 to a pinned nightly with
+  `-Z next-solver=globally` in `.cargo/config.toml`; a crate outside the workspace builds the library
+  and the `hello` program on stable Rust 1.98.1.
+- **`StreamToLines`** is still wired by no namespace, as in v0.1.0, which
+  [issues.md](issues.md) records.
+
 ## v0.1.0
 
 - **Page:** <https://contextgeneric.dev/docs/release-notes/hypershell/v0.1.0>.

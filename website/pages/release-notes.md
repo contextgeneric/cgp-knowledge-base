@@ -39,8 +39,10 @@ the facts the page gives and the finer detail it leaves out:
 | `cgp/` v0.2.0 | [releases/v0-2-0.md](../../releases/v0-2-0.md) |
 | `cgp/` v0.1.0 | [releases/v0-1-0.md](../../releases/v0-1-0.md) |
 | `cargo-cgp/` v0.1.0 | the [cargo-cgp/](../../cargo-cgp/README.md) section, since it is the tool's first release |
+| `cgp-serde/` v0.3.0 | [projects/cgp-serde/releases.md](../../projects/cgp-serde/releases.md#v030) |
 | `cgp-serde/` v0.2.0 | [projects/cgp-serde/releases.md](../../projects/cgp-serde/releases.md#v020) |
 | `cgp-serde/` v0.1.0 | [projects/cgp-serde/releases.md](../../projects/cgp-serde/releases.md#v010) |
+| `hypershell/` v0.2.0 | [projects/hypershell/releases.md](../../projects/hypershell/releases.md#v020) |
 | `hypershell/` v0.1.0 | [projects/hypershell/releases.md](../../projects/hypershell/releases.md#v010) |
 
 ## How it relates to the knowledge base
@@ -53,7 +55,8 @@ sources, and what still stands. The category sits after Resources, per
 
 ## Where it diverges from the guide
 
-- **Release day:** the `cgp` v0.8.0 and `cargo-cgp` v0.1.0 pages carry `Released on YYYY-MM-DD`, and
+- **Release day:** the `cgp` v0.8.0, `cargo-cgp` v0.1.0, `cgp-serde` v0.3.0, and Hypershell v0.2.0
+  pages carry `Released on YYYY-MM-DD`, and
   their tag, compare, and crates.io links resolve only once the releases exist. The other `cgp` pages
   carry crates.io's publish dates, which differ from the tag's by a day for v0.1.0 and v0.4.1.
 - **Sources:** the pages from v0.1.0 to v0.7.0 were written after their releases, from the source diff
@@ -64,7 +67,9 @@ sources, and what still stands. The category sits after Resources, per
   v0.1.0 pages were written the same way; the `cgp-serde` v0.2.0 page links no post, since none
   exists, and none of the three has a changelog entry.
 - **The index:** its versioning statement rests on the checked diffs of the patch releases v0.3.1,
-  v0.4.1, v0.4.2, and v0.6.1, and on the breaking changes of every minor release from v0.2.0.
+  v0.4.1, v0.4.2, and v0.6.1, and on the breaking changes of every minor release from v0.2.0; its
+  paragraph on `cgp-serde` and Hypershell rests on each release's `cgp` requirement and on a probe in
+  which `cgp-serde` 0.2.0 wired through `cgp` 0.6 fails to compile.
 
 ## Maintaining it
 
