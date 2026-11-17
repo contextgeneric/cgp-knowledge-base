@@ -71,7 +71,7 @@ relies on them cannot move those types to cgp-serde yet:
 - **Binary formats**: Serde's derived impls declare lengths and struct names, which formats such as
   postcard rely on; cgp-serde's record and sequence providers do neither.
 - **Maturity**: Serde is extensively tested, documented, and benchmarked; cgp-serde is a proof of
-  concept with thin tests, no rustdoc, and no benchmark. See [issues.md](issues.md) and
+  concept with thin tests, brief rustdoc, and no benchmark. See [issues.md](issues.md) and
   [testing.md](testing.md).
 
 The performance question is open rather than answered. Provider selection is resolved at compile

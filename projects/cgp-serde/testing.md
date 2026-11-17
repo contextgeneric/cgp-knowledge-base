@@ -6,8 +6,9 @@ each wire one scenario end to end and carry their assertions as tests. The **pro
 The **compile-fail tests**, also in `cgp-serde-tests`, pin wiring the providers reject, with its
 exact diagnostics. This
 document records what each pins, which tests pin a known issue, and which parts of the library no
-test exercises. On the `v0.8.0` branch, `cargo test --workspace` passes every test; the library
-crates carry no tests and no doc tests of their own.
+test exercises. On the `v0.8.0` branch, `cargo test --workspace` passes every test. The library
+crates carry no tests of their own, and their one doc test is the `cgp-serde` crate's README, which
+is also its crate documentation: two contexts serialize one struct and assert each JSON string.
 
 ## The examples' tests
 

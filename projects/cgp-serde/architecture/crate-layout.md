@@ -24,7 +24,8 @@ library code: its five examples are Cargo example targets, and it depends on all
 crates, on `cgp-error-anyhow` for a concrete error type, and on `serde_json`, `chrono`, and
 `typed-arena`, all as dev-dependencies. The test crate, `cgp-serde-tests`, depends on `cgp-serde`
 and `cgp-serde-extra`, on Serde's `derive` feature, on `ron` and `postcard` for its format tests,
-and on `trybuild` for its compile-fail tests. No library crate depends on `cgp-error-anyhow`: the
+and on `trybuild` for its compile-fail tests. `cgp-serde` takes `serde_json` as a dev-dependency,
+for the doc test in its README. No library crate depends on `cgp-error-anyhow`: the
 JSON providers name only `HasErrorType` and `CanRaiseError`, and the application chooses the error
 type.
 

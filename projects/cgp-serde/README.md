@@ -94,8 +94,8 @@ summary leaves out:
 - **Serde's attributes**: fields cannot be renamed, skipped, flattened, or defaulted when missing.
 - **JSON helpers**: the JSON providers deserialize from any `serde_json` reader, but the only
   convenience method takes a string; there is no counterpart for serializing.
-- **Evidence**: no benchmark has been run, the rustdoc covers the constructs but no module or
-  field, and seven providers are never run by a test.
+- **Evidence**: no benchmark has been run, the rustdoc covers each crate and construct but no
+  module or field, and seven providers are never run by a test.
 
 ## The documents
 
@@ -183,7 +183,7 @@ architecture for the ideas every provider shares, then use the reference to look
 ## Public material derived from these documents
 
 These documents are the source for the project's public writing, and each one names what it feeds.
-They feed three artifacts:
+They feed four artifacts:
 
 - **The cgp-serde section of the website's Projects pages**, recorded in
   [website/projects/cgp-serde.md](../../website/projects/cgp-serde.md), with 48 of its 53 pages
@@ -195,6 +195,9 @@ They feed three artifacts:
 - **The repository README**, which presents the library to a first-time reader: an example of two
   applications encoding one struct differently, the installation, the two components, the crates,
   and the costs.
+- **The crate READMEs**, one per published crate, each of which is also the crate's documentation
+  through `#![doc = include_str!("../README.md")]`: what the crate holds and where it fits, with a
+  runnable example in `cgp-serde`'s.
 - **Rustdoc for the constructs.** Every component, getter, and provider carries a one-sentence doc
   condensed from its reference entry, so the docs.rs pages say what each construct is for. Modules
   and struct fields carry none.
