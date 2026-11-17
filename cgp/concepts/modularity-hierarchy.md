@@ -70,8 +70,8 @@ gives it no leverage. Each application type must write its own method bodies, be
 implementations are factored into blanket impls they overlap:
 
 ```rust
-impl<T: HasSmtpConfig>      CanSendEmail for T { /* ... */ }
-impl<T: HasRecordedEmails>  CanSendEmail for T { /* ... */ }   // error[E0119]
+impl<T: HasS3Client> CanFetchStorageObject for T { /* ... */ }
+impl<T: HasLocalDir> CanFetchStorageObject for T { /* ... */ }   // error[E0119]
 ```
 
 So the shape survives but nothing can be shared, and it never becomes a *modularity* technique.
@@ -110,8 +110,8 @@ At the retrofit shape the wired type is data you often do not own, so coherence 
 `Vec<u8>` gets one wiring for the whole program, and no amount of provider machinery changes that.
 At the application shape `Self` is a type you define, so when one wiring per type is not enough you
 simply define another type, which is why `App` and `TestApp` can each choose their own
-`CanSendEmail` provider with no parameter anywhere. The fully modular shape then extends that same
-freedom to target types you do *not* own, which is the only thing the parameter adds.
+`CanFetchStorageObject` provider with no parameter anywhere. The fully modular shape then extends
+that same freedom to target types you do *not* own, which is the only thing the parameter adds.
 
 That ordering matters when explaining the hierarchy, because it means the application shape is the
 common case rather than an intermediate step, and the parameter is a response to a specific need
@@ -229,21 +229,21 @@ changed.
 
 Wired on an **environmental context**, the same tier behaves very differently, because the
 constraint "one wiring per type" stops being a constraint when you control how many types there are.
-The operation there is about the application rather than about data (`CanSendEmail` rather than
-`CanSerializeSelf`), so the component is still self-targeted and still on this tier. `App` and
+The operation there is about the application rather than about data (`CanFetchStorageObject` rather
+than `CanSerializeSelf`), so the component is still self-targeted and still on this tier. `App` and
 `TestApp` are both yours, so each wires its own provider and the same trait resolves differently in
 production and in tests:
 
 ```rust
-delegate_components! { App     { EmailSenderComponent: SendViaSmtp } }
-delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
+delegate_components! { App     { StorageObjectFetcherComponent: FetchS3Object } }
+delegate_components! { TestApp { StorageObjectFetcherComponent: FetchLocalObject } }
 ```
 
 No parameter is involved, and nothing has been worked around. This is the **application** shape, and
-it is where most CGP code lives: an operation about the application itself, such as sending an
-email, querying a user, or running the server, wired per application. Reading tier 3 as merely "the
-retrofit tier" therefore undersells it substantially, and reading tier 4 as the first tier with
-per-application choice is simply wrong.
+it is where most CGP code lives: an operation about the application itself, such as fetching a
+stored object, querying a user, or running the server, wired per application. Reading tier 3 as
+merely "the retrofit tier" therefore undersells it substantially, and reading tier 4 as the first
+tier with per-application choice is simply wrong.
 
 ## Tier 4: many implementations, one wiring per type per context
 

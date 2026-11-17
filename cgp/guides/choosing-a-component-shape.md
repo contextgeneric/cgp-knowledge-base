@@ -13,25 +13,25 @@ noticing there was an alternative.
 ## Default to an operation about the application
 
 **Start by asking what the operation is *about*, and default to the answer "the application".** Most
-operations in a real program, such as sending an email, querying a user, running the server, or
-loading the config, are things the application does, so the natural `Self` is a type standing for
+operations in a real program, such as fetching a stored object, querying a user, running the server,
+or loading the config, are things the application does, so the natural `Self` is a type standing for
 the application and the component targets that `Self`. This is the shape most CGP code is in, it
 needs no type parameter, and it already gives per-application choice:
 
 ```rust
-#[cgp_component(EmailSender)]
-pub trait CanSendEmail {
-    fn send_email(&self, to: &str, body: &str);
+#[cgp_component(StorageObjectFetcher)]
+pub trait CanFetchStorageObject {
+    fn fetch_storage_object(&self, object_id: &str) -> anyhow::Result<Vec<u8>>;
 }
 
-#[cgp_impl(new SendViaSmtp)]
-impl EmailSender { /* connect and send over SMTP */ }
+#[cgp_impl(new FetchS3Object)]
+impl StorageObjectFetcher { /* fetch the object from Amazon S3 */ }
 
-#[cgp_impl(new RecordEmails)]
-impl EmailSender { /* push to a Vec so a test can assert on it */ }
+#[cgp_impl(new FetchLocalObject)]
+impl StorageObjectFetcher { /* read the object from a folder a test fills */ }
 
-delegate_components! { App     { EmailSenderComponent: SendViaSmtp } }
-delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
+delegate_components! { App     { StorageObjectFetcherComponent: FetchS3Object } }
+delegate_components! { TestApp { StorageObjectFetcherComponent: FetchLocalObject } }
 ```
 
 `App` and `TestApp` are **environmental contexts**: types whose job is to carry choices and whatever

@@ -89,11 +89,11 @@ impl AreaCalculator {
 
 When a context has exactly one implementation of a consumer trait and no other context would reuse
 it, implement the trait directly on the context instead of writing a provider. A plain
-`impl CanSendEmail for TestApp` does this; [`#[cgp_impl(Self)]`](../reference/macros/cgp_impl.md) is
-the same direct impl written through the macro, so it can still take companion attributes such as
-`#[use_provider]` and `#[implicit]` arguments. It requires the `for Context` clause and generates no
-provider and no wiring entry. Switch to a named provider when a second context wants the same
-implementation.
+`impl CanFetchStorageObject for TestApp` does this;
+[`#[cgp_impl(Self)]`](../reference/macros/cgp_impl.md) is the same direct impl written through the
+macro, so it can still take companion attributes such as `#[use_provider]` and `#[implicit]`
+arguments. It requires the `for Context` clause and generates no provider and no wiring entry.
+Switch to a named provider when a second context wants the same implementation.
 
 ## Related guides
 

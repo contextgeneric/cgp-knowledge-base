@@ -48,13 +48,14 @@ The pages carry qualifications that a shortening revision is likely to drop:
   component-key ownership still stops a downstream crate from wiring a foreign component onto a
   foreign value type. The section *Selecting one provider for each type* keeps the original wiring
   anchor. Independent application choices are deferred to *Modularity Hierarchy*.
-- **Consumer and provider traits:** context-style `Self` inside `#[cgp_impl]` against Rust's ordinary
-  provider-side `Self`, with the exception for a provider's own associated types and constants;
-  multi-item components; a call trace explaining why `App` first fills both the context and
-  delegating-provider roles; simplified providers that keep the rejected blanket implementations'
-  context bounds; `send_welcome` as a generic caller bounded only by the consumer trait; that direct
-  and wired implementations of one consumer trait cannot coexist for a context; and the hand-written
-  expansion including the `IsProviderFor` supertrait, which only the introductory trait pair omits.
+- **Consumer and provider traits:** context-style `Self` inside `#[cgp_impl]` against Rust's
+  ordinary provider-side `Self`, with the exception for a provider's own associated types and
+  constants; multi-item components; a call trace explaining why `App` first fills both the context
+  and delegating-provider roles; simplified providers that keep the rejected blanket
+  implementations' context bounds; `fetch_profile_picture` as a generic caller bounded only by the
+  consumer trait; that direct and wired implementations of one consumer trait cannot coexist for a
+  context; and the hand-written expansion including the `IsProviderFor` supertrait, which only the
+  introductory trait pair omits.
 - **Abstract types:** shared type selection against provider compatibility, and when a type
   dependency must appear in the interface.
 - **Aggregate providers:** bundles checked against actual contexts; namespace customization needs
@@ -103,7 +104,7 @@ The pages carry qualifications that a shortening revision is likely to drop:
   trait; the switch from shape contexts to an application context marked; an inner request must not
   route back to the same wrapper.
 - **Impl-side dependencies:** stable generic caller bounds against what concrete contexts satisfy;
-  ordinary functions and blanket implementations first, then email providers and a greeting with
+  ordinary functions and blanket implementations first, then storage providers and a greeting with
   implicit field access; `CanGreet` does not imply `HasName`; the shared error stays in the public
   interface while `CanRunJob` remains a dependency of the generated `RunJobs`; `run_batch` requires
   only `RunJobs` and names its result through the implied `HasErrorType`; one error choice per context
@@ -142,9 +143,11 @@ next*, and implementation documents are dropped.
 Each page records which of CGP's three context shapes its code is in, since no signature marks it:
 
 - **Consumer and provider traits:** **environmental, self-targeted** throughout, the `App`/`TestApp`
-  email swap from [message.md](../../communication-strategy/message.md#the-problems-cgp-removes), one
-  of the first places a reader meets a type that stands for an application, described without the
-  qualifiers. It draws on [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md),
+  object-storage swap from
+  [message.md](../../communication-strategy/message.md#the-problems-cgp-removes), `FetchS3Object`
+  against `FetchLocalObject` with a synchronous method, one of the first places a reader meets a
+  type that stands for an application, described without the qualifiers. It draws on
+  [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md),
   [coherence](../../cgp/concepts/coherence.md), and the
   [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md).
 - **Bypassing coherence:** a **value context, self-targeted** retrofit, `CanEncode` wired onto

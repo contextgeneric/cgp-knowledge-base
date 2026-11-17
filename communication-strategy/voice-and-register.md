@@ -82,16 +82,19 @@ before introducing another domain:
   component. If the value moves into a parameter, explain that change beside the code.
 - **Greeter:** A method reads an implicit `name` from `Person`, then works on another matching
   context. Hello World uses `#[cgp_fn]`; component examples introduce `CanGreet` and a provider.
-- **Email swap:** `App` selects `SendViaSmtp`, while `TestApp` selects `RecordEmails`. These are
-  environmental contexts with a self-targeted component.
 - **Area calculation:** `Rectangle`, `Circle`, area providers, and a scaling wrapper introduce
   provider reuse and higher-order composition.
 - **Object storage:** `App` fetches stored files from Amazon S3 through `FetchS3Object`, and
   `GCloudApp` from Google Cloud Storage through `FetchGCloudObject`, behind one
-  `CanFetchStorageObject` component; a test context can wire a provider that reads a local folder.
-  These are environmental contexts with a self-targeted component, and the methods are async and
-  return `anyhow` errors. The [profile-picture example](../examples/profile-picture.md) holds the
-  full scenario, which the `cgp` README, the website's Overview, and its applied tutorial use.
+  `CanFetchStorageObject` component; `TestApp` wires `FetchLocalObject`, which reads a local
+  folder. These are environmental contexts with a self-targeted component whose method returns
+  `anyhow` errors. It is the example for test and production implementations.
+  - **Synchronous by default:** the website's Overview, Concepts, reference, and comparison pages
+    write `fetch_storage_object` as a synchronous method, so a beginner meets one idea at a time,
+    and say once that a real storage client would be async.
+  - **Async where it runs:** the [profile-picture example](../examples/profile-picture.md), the
+    `cgp` README, and the website's storage tutorial keep the async method, because they run
+    against real clients.
 
 Use the verified code in [examples/](../examples/README.md) and the website's `example-code` crate.
 When a different example is necessary, record why in the page's internal document and add it to this

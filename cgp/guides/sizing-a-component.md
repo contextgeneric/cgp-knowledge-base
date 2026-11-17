@@ -30,14 +30,14 @@ independent choices?"** Everything inside one component is answered by one provi
 one component can never come from two different providers. Group the items that a single decision
 settles, and separate the ones that different decisions settle.
 
-That principle is what makes the count vary rather than being fixed at one. Sending an email is one
-decision, so `CanSendEmail` holds one method:
+That principle is what makes the count vary rather than being fixed at one. Fetching a stored object
+is one decision, so `CanFetchStorageObject` holds one method:
 
 ```rust
-#[cgp_component(EmailSender)]
+#[cgp_component(StorageObjectFetcher)]
 #[use_type(HasErrorType.Error)]
-pub trait CanSendEmail {
-    fn send_email(&self, to: &str, body: &str) -> Result<(), Error>;
+pub trait CanFetchStorageObject {
+    fn fetch_storage_object(&self, object_id: &str) -> Result<Vec<u8>, Error>;
 }
 ```
 
@@ -123,8 +123,8 @@ of them. In a `CanManageUser` component whose `create_user` screens names but wh
 `update_user_data` do not, the single provider still depends on `CanCensorUsername`, and every
 context wiring that provider must supply the censor. The user snippets follow the
 [social media app](../../examples/social-media-app.md), where `Error` is the application's own
-concrete error enum rather than the abstract `Error` that `#[use_type]` imports in `CanSendEmail`
-above:
+concrete error enum rather than the abstract `Error` that `#[use_type]` imports in
+`CanFetchStorageObject` above:
 
 ```rust
 #[cgp_impl(new PostgresUserManager)]
@@ -254,19 +254,20 @@ context and skip the provider entirely.
 
 Worked on a service whose production and test contexts share a database but differ in their outbound
 integrations, the split falls out of step two. Both contexts hold the same `PostgresDb`, so the user
-operations are shared, while the email sending genuinely differs:
+operations are shared, while the object storage genuinely differs:
 
 ```rust
 #[derive(HasField)]
 pub struct ProductionApp {
     pub database: PostgresDb,
-    pub smtp: SmtpClient,
+    pub storage_client: aws_sdk_s3::Client,
+    pub bucket_id: String,
 }
 
 #[derive(HasField)]
 pub struct TestApp {
     pub database: PostgresDb,
-    pub sent_emails: RefCell<Vec<String>>,
+    pub local_dir: String,
 }
 ```
 
@@ -285,24 +286,24 @@ delegate_components! { ProductionApp { UserCreatorComponent: CreateUserWithPostg
 delegate_components! { TestApp       { UserCreatorComponent: CreateUserWithPostgres } }
 ```
 
-The email operation differs per context and has exactly one implementation on each side, so it needs
-no provider at all: a consumer trait is an ordinary trait, and implementing it directly is the
+The storage operation differs per context and has exactly one implementation on each side, so it
+needs no provider at all: a consumer trait is an ordinary trait, and implementing it directly is the
 lowest tier that expresses the case:
 
 ```rust
-impl CanSendEmail for ProductionApp {
-    fn send_email(&self, to: &str, body: &str) -> Result<(), Self::Error> { /* over SMTP */ }
+impl CanFetchStorageObject for ProductionApp {
+    fn fetch_storage_object(&self, object_id: &str) -> Result<Vec<u8>, Self::Error> { /* from Amazon S3 */ }
 }
 
-impl CanSendEmail for TestApp {
-    fn send_email(&self, to: &str, body: &str) -> Result<(), Self::Error> { /* record for assertions */ }
+impl CanFetchStorageObject for TestApp {
+    fn fetch_storage_object(&self, object_id: &str) -> Result<Vec<u8>, Self::Error> { /* from `local_dir` */ }
 }
 ```
 
 Reach for named providers and wiring on that half only when a second context wants the same
-implementation, or when the implementation should be composable. Then `#[cgp_impl(new SendViaSmtp)]`
-and a wiring line replace the direct impl with no change to the trait or its callers. The direct
-impl is a starting point rather than a dead end.
+implementation, or when the implementation should be composable. Then
+`#[cgp_impl(new FetchS3Object)]` and a wiring line replace the direct impl with no change to the
+trait or its callers. The direct impl is a starting point rather than a dead end.
 
 ## What the split costs
 

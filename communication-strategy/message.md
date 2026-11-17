@@ -113,26 +113,26 @@ object, a generic parameter, and CGP wiring are all valid ways to separate an in
 implementation. CGP is useful when per-context choices or repeated dependency parameters justify its
 additional declarations.
 
-This wiring fragment assumes `CanSendEmail`, its component, the providers, and both context types
-are defined elsewhere:
+This wiring fragment assumes `CanFetchStorageObject`, its component, the providers, and both
+context types are defined elsewhere:
 
 ```rust
-delegate_components! { App { EmailSenderComponent: SendViaSmtp } }
-delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
+delegate_components! { App     { StorageObjectFetcherComponent: FetchS3Object } }
+delegate_components! { TestApp { StorageObjectFetcherComponent: FetchLocalObject } }
 
-check_components! { App { EmailSenderComponent } }
-check_components! { TestApp { EmailSenderComponent } }
+check_components! { App { StorageObjectFetcherComponent } }
+check_components! { TestApp { StorageObjectFetcherComponent } }
 ```
 
-Explain what each provider does and where it gets its state. `SendViaSmtp` uses the application's
-SMTP dependencies; `RecordEmails` writes to storage supplied by the test context. Provider marker
-types do not hold the recorded messages themselves. Callers use the same consumer method while
-wiring selects the implementation.
+Explain what each provider does and where it gets its state. `FetchS3Object` reads the application's
+S3 client and bucket; `FetchLocalObject` reads files from a folder the test context names. Provider
+marker types hold none of that state themselves. Callers use the same consumer method while wiring
+selects the implementation.
 
 Introduce `App` and `TestApp` as environmental contexts: types that hold each application's choices
-and required data. `CanSendEmail` is self-targeted because sending mail is an operation on that
-application. Per-application choice does not require a target parameter. The choice is explicit, and
-a dependency with one implementation can remain a plain trait.
+and required data. `CanFetchStorageObject` is self-targeted because fetching a stored object is an
+operation on that application. Per-application choice does not require a target parameter. The
+choice is explicit, and a dependency with one implementation can remain a plain trait.
 
 ### Your second application already exists: it is spelled as a feature flag
 
