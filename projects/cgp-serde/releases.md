@@ -1,78 +1,80 @@
 # Releases
 
-This document is the companion of cgp-serde's release-notes pages on the website. Each page lists
-the user-visible changes of one official release and the steps to upgrade; this document records,
-per version, the facts behind the page and every finding of the diff review the page leaves out, as
-the website's [release-notes guide](../../website/writing-guides/release-notes.md#two-layers-two-readers)
-requires. Like [releases/](../../releases/README.md) for `cgp`, it records history, so it is exempt
+This document records, for each official cgp-serde release, the facts behind its website
+release-notes page and every finding of the diff review that the page leaves out. The page serves
+an upgrader; this record serves an agent that needs the finer detail, as the website's
+[release-notes guide](../../website/writing-guides/release-notes.md#two-layers-two-readers) divides
+the two. Like [releases/](../../releases/README.md) for `cgp`, it records history, so it is exempt
 from the base's rule on documenting the present.
 
 ## v0.3.0
 
 - **Page:** <https://contextgeneric.dev/docs/release-notes/cgp-serde/v0.3.0>, written before the
-  release, with its date and links set on release day.
-- **Commits:** 32 from v0.2.0, merged into `main` through one pull request (#2), whose
-  description lists the breaking changes the page checks against the diff.
+  release; its date and links are set on release day.
+- **Commits:** 32 from v0.2.0: 30 through pull request #2, its merge commit, and the dependency
+  update pushed after it.
 - **Old notes:** none yet; the release's GitHub Release is a one-sentence pointer to the page.
+- **Pull request:** #2's description lists the breaking changes, each checked against the diff
+  before it reached the page.
 
 The page leaves these findings out:
 
-- **The component attributes:** `#[cgp_component { provider: …, derive_delegate: … }]` became
-  `#[cgp_component(ValueSerializer)]` with a separate `#[derive_delegate(UseDelegate<Value>)]`, and
-  `HasArena`'s `#[cgp_getter]` the same, which generates the same items, so no user code changes.
-- **Doc comments:** a `missing_docs` check finds no undocumented component trait, provider, or type,
-  and 25 undocumented modules, methods, associated functions, and struct fields across the five
-  crates; the page states the first and concedes the second.
-- **The workspace:** the examples moved into the unpublished `cgp-serde-examples` crate as Cargo
-  examples, the provider suites and compile-fail tests stay in the unpublished `cgp-serde-tests`, CI
-  builds and tests the workspace, and the toolchain file moved from Rust 1.91 to 1.98.1 while
-  `rust-version` stays 1.90, checked at 1.90 before the release.
-- **`SerializeVariantFields`' `'static` bound** is pinned by a compile-fail test, and the JSON and RON
-  forms of a fieldless variant by the variant suites; the page states both limits in one line each.
+- **The component attributes:** `#[cgp_component]` takes the provider name alone, with
+  `#[derive_delegate(UseDelegate<Value>)]` beside it, and `HasArena`'s `#[cgp_getter]` the same;
+  the generated items are unchanged, so no user code changes.
+- **Doc comments:** a `missing_docs` check finds every component trait, provider, and type
+  documented, and 25 modules, methods, associated functions, and struct fields across the five
+  crates undocumented; the page states both.
+- **The examples and tests:** the examples are Cargo examples of the unpublished
+  `cgp-serde-examples` crate, and the provider suites and compile-fail tests stay in the
+  unpublished `cgp-serde-tests`; CI builds and tests the workspace.
+- **The toolchain:** the toolchain file moved from Rust 1.91 to 1.98.1, while `rust-version` stays
+  1.90, which the published crates were checked at before the release.
+- **The pinned limits:** a compile-fail test pins `SerializeVariantFields`' `'static` bound, and the
+  variant suites pin the JSON and RON forms of a fieldless variant; the page states each in one line.
 
 ## v0.2.0
 
 - **Page:** <https://contextgeneric.dev/docs/release-notes/cgp-serde/v0.2.0>.
 - **Dates:** published on crates.io on 2026-03-04, the day of its tag and its GitHub Release.
-- **Tag:** `v0.2.0`; the repository also has a branch named `v0.2.0`, so a diff names
+- **Tag:** `v0.2.0`; the repository also has a branch of that name, so a diff names
   `refs/tags/v0.2.0`.
-- **Commits:** 4 on the first-parent line from v0.1.0, one of them a pull request (#1).
-- **Old notes:** the GitHub Release body says only that the release updates to `cgp` v0.7.0 and
-  links that release's post; there is no post and no changelog.
+- **Commits:** 4 on the first-parent line from v0.1.0, one of them pull request #1.
+- **Old notes:** the GitHub Release body says only that the release moves to `cgp` v0.7.0, linking
+  that release's post; there is no post of its own and no changelog.
 
 The page leaves these findings out:
 
-- **The provider rewrite:** commit `901f6e2` rewrote every provider from the explicit
-  `impl<Context> … for Context` form with `where` bounds to the `#[cgp_impl]` header form with
-  `#[uses]` and `#[use_type]`, which emits the same impls, so no wiring changes.
+- **The provider rewrite:** commit `901f6e2` moved every provider from the explicit
+  `impl<Context> … for Context` form to `#[cgp_impl]` with `#[uses]` and `#[use_type]`, which
+  emits the same impls, so no wiring changes.
 - **A commented-out patch:** the workspace manifest gained a `[patch.crates-io]` table whose
   `cgp` entries are commented out, which a published crate ignores.
-- **The probes behind the page,** run against crates.io with exact pins: a function bounded only on `CanDeserializeJsonString<u32>` and naming `C::Error` compiles
-  against both 0.1.0 and 0.2.0, so the move to `#[cgp_fn]` kept the `HasErrorType` supertrait; a
-  context wiring `ValueSerializerComponent` to `UseSerde` with `cgp` 0.6.1 beside cgp-serde 0.2.0
-  fails with `E0277`, and compiles with `cgp` 0.7.0, which is the page's one breaking change.
+- **The supertrait probe:** a function bounded only on `CanDeserializeJsonString<u32>` and naming
+  `C::Error` compiles against both 0.1.0 and 0.2.0, so the move to `#[cgp_fn]` kept `HasErrorType`.
+- **The breaking-change probe:** a context wiring `ValueSerializerComponent` to `UseSerde` fails with
+  `E0277` beside `cgp` 0.6.1 and compiles beside `cgp` 0.7.0, which is the page's one break.
+- **How the probes ran:** each pinned its crates on crates.io with `=` versions.
 
 ## v0.1.0
 
 - **Page:** <https://contextgeneric.dev/docs/release-notes/cgp-serde/v0.1.0>.
 - **Dates:** published on crates.io on 2025-11-01, the day of its tag; the GitHub Release followed on
-  2025-11-02 and the post on 2025-11-03.
+  2025-11-02, and the post on 2025-11-03.
 - **Commits:** 61 on the first-parent line up to the tag.
-- **Old notes:** the [release post](../../website/blog/cgp-serde-release.md) and a GitHub Release
+- **Old notes:** the [release post](../../website/blog/cgp-serde-release.md), and a GitHub Release
   whose body links the post at a `localhost` address, a link that never resolved for a reader.
 
 The page leaves these findings out:
 
 - **The post's future work:** enum serialization, JSON helpers beyond `deserialize_json_string`,
-  other formats, documentation, and benchmarks, which the post names as missing; the page lists only
-  what the release provides.
+  other formats, documentation, and benchmarks, which the post names as missing.
 - **Package metadata at the tag:** every crate's `repository` names the `cgp` repository, the only
-  keyword is `cgp`, and `cgp-serde` shares its description, "CGP-enabled serde implementation",
-  with the unpublished test crate.
-- **The toolchain file** names Rust 1.91 while `rust-version` is 1.90; the page gives the latter, the
-  guide's one source for the minimum.
+  keyword is `cgp`, and `cgp-serde` shares the unpublished test crate's description.
+- **The toolchain file** names Rust 1.91, while the page gives `rust-version`, 1.90, the guide's one
+  source for the minimum.
 - **The arena getter's provider trait** is `ArenaGetter`, generated by `#[cgp_getter]` with
-  `UseDelegate<T>` dispatch; the page names only the consumer trait `HasArena`.
+  `UseDelegate<T>` dispatch; the page names only the consumer trait, `HasArena`.
 
 ## Public material derived from this
 

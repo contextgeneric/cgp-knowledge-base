@@ -11,10 +11,11 @@ with it, and not edited afterwards into agreement with later releases.
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Style**: point-first, the one page kind that names it, because a reader scans the page for the
   items that affect them
-- **Derived from**: the release's source diff and its document in [releases/](../../releases/README.md),
-  which stays the page's finer-detail companion; for `cargo-cgp`'s first release, the companion is
-  the [cargo-cgp/](../../cargo-cgp/README.md) section, and for `cgp-serde` and Hypershell it is the
-  project section's `releases.md`, such as [projects/cgp-serde/releases.md](../../projects/cgp-serde/releases.md)
+- **Derived from**: the release's source diff and its document in
+  [releases/](../../releases/README.md), which stays the page's finer-detail companion; for
+  `cargo-cgp`'s first release, the companion is the [cargo-cgp/](../../cargo-cgp/README.md) section,
+  and for `cgp-serde` and Hypershell it is the project section's `releases.md`, such as
+  [projects/cgp-serde/releases.md](../../projects/cgp-serde/releases.md)
 - **Status once published**: a dated record, *Historical* in the records'
   [status words](../README.md#status-words); see [A dated page](#a-dated-page)
 - **Reading**: the shared set and [the release-notes row](README.md#release-notes-pages) of the

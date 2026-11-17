@@ -65,8 +65,7 @@ than a link and stays relative.
 
 One exception applies to the projects documented under [projects/](projects/README.md). When the
 table records a branch other than `main` for one of them, as it does for `cgp-examples`, whose
-current development lives on `v0.8.0`, its documents link to that branch,
-per
+current development lives on `v0.8.0`, its documents link to that branch, per
 [projects/writing-guide.md](projects/writing-guide.md#a-project-section-documents-its-project-in-depth),
 because `main` holds different code from the code they describe.
 
@@ -74,7 +73,7 @@ because `main` holds different code from the code they describe.
 
 The branch or tag recorded above changes **only on explicit instruction**, such as when a project
 cuts an official release the ecosystem should pin, or when a project's current development lives on
-a release branch, as it does on `v0.8.0` for `cgp-examples`. An entry
-does *not* otherwise track a feature branch in progress: work in flight is read from the local
-sibling checkout, not from a revision recorded here. The same rule governs the `main` in a
-cross-project link: update it only when told to, as part of a release.
+a release branch, as it does on `v0.8.0` for `cgp-examples`. An entry does *not* otherwise track a
+feature branch in progress: work in flight is read from the local sibling checkout, not from a
+revision recorded here. The same rule governs the `main` in a cross-project link: update it only
+when told to, as part of a release.

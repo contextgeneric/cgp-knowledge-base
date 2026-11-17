@@ -72,8 +72,8 @@ Each surface has one job, and a page that does two jobs is usually two pages:
   the Overview tour the features, rather than teach, for readers already interested. Spec:
   [writing-guides/orientation.md](writing-guides/orientation.md).
 - **Release notes:** lists what one official release changed that a user can see, and how to
-  upgrade, with one page per release of `cgp`, `cargo-cgp`, `cgp-serde`, and Hypershell. It is the one dated surface under
-  `docs/`, and it leaves the story to the release post. Spec:
+  upgrade, with one page per release of `cgp`, `cargo-cgp`, `cgp-serde`, and Hypershell. It is the
+  one dated surface under `docs/`, and it leaves the story to the release post. Spec:
   [writing-guides/release-notes.md](writing-guides/release-notes.md).
 - **Project pages** (Contribute and the AI disclosure page): speak about the project rather than
   about CGP. Contribute's sponsorship section is the one place the author's own voice stands on the
@@ -125,10 +125,11 @@ afterwards.
   front page's cost section states the maturity; and *Resources*, material about CGP beyond the
   documentation and the places where people discuss it, one subpage per kind: *Videos* and
   *Community*.
-- **Release notes**, at `docs/release-notes/`: an index stating how CGP numbers its 0.x
-  releases, then `cgp/` with a page for every official release from v0.1.0, and `cargo-cgp/`,
-  `cgp-serde/`, and `hypershell/` with one from v0.1.0 each, newest first. It replaces `cgp`'s `CHANGELOG.md`, which is removed, and, from
-  v0.8.0, the GitHub Release bodies, which become one-line pointers to the pages.
+- **Release notes**, at `docs/release-notes/`: an index stating how CGP numbers its 0.x releases,
+  then `cgp/` with a page for every official release from v0.1.0, and `cargo-cgp/`, `cgp-serde/`,
+  and `hypershell/` with one from v0.1.0 each, newest first. It replaces `cgp`'s `CHANGELOG.md`,
+  which is removed, and, from v0.8.0, the GitHub Release bodies, which become one-line pointers to
+  the pages.
 - **Project:** *Contribute*.
 - **Further depth:** links out to the repositories, never to the legacy book. `cgp`'s docs.rs entry
   is linked once, from the Resources index.

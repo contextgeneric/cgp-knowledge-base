@@ -21,8 +21,9 @@ notes in full before publication.
 
 The index names Context-Generic Programming, says what the notes are, states how CGP numbers its 0.x
 releases, and links each artifact's sub-category; the `cgp-serde` and Hypershell entries also link
-their Projects pages, and each project's Projects index links its notes under *Where to go next*. Each page restates one source document, which holds
-the facts the page gives and the finer detail it leaves out:
+their Projects pages, and each project's Projects index links its notes under *Where to go next*.
+Each page restates one source document, which holds the facts the page gives and the finer detail it
+leaves out:
 
 | Page | Source document |
 |---|---|

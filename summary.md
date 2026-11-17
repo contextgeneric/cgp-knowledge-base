@@ -1022,9 +1022,9 @@ it stale.
   shape, one subdirectory per subproject where a project has several, and how each connects to an
   example, a published post, a set of constructs, and its section of the website's Projects pages.
 - [projects/hypershell/README.md](projects/hypershell/README.md) — the type-level shell-scripting
-  DSL: what it is, which revision the documents describe (`main`, the 0.2.0 release
-  built on namespaces), the crate split, the confirmed gaps, the section catalog, and the public
-  material the documents feed.
+  DSL: what it is, which revision the documents describe (`main`, the 0.2.0 release built on
+  namespaces), the crate split, the confirmed gaps, the section catalog, and the public material the
+  documents feed.
 - [projects/hypershell/architecture/README.md](projects/hypershell/architecture/README.md) — the whole
   design on one page: programs as types, interpretation by one provider per syntax, three wiring
   layers, input dispatch through path keys, abstract errors, and the backend crate split.
@@ -1124,9 +1124,9 @@ it stale.
   project's source, probes rather than reading alone, leaving CGP itself to `cgp/`, the section shape,
   reference entries, public material, and registration.
 - [projects/cgp-serde/README.md](projects/cgp-serde/README.md) — Serde rebuilt as CGP components: what
-  it is, which revision the documents describe (`main`, the 0.3.0 release, against
-  0.2.0), the crate split, the confirmed gaps, the section catalog, and the public material the
-  documents feed.
+  it is, which revision the documents describe (`main`, the 0.3.0 release, and how 0.2.0 differs),
+  the crate split, the confirmed gaps, the section catalog, and the public material the documents
+  feed.
 - [projects/cgp-serde/architecture/README.md](projects/cgp-serde/architecture/README.md) — the whole
   design on one page: replacing only Serde's data-type layer, the value moved into a parameter,
   re-entry, one struct for both directions, derive-free records, context-supplied services, and the

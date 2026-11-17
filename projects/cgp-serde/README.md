@@ -41,11 +41,11 @@ yet, because the record and sequence providers do not declare a length. The desi
 ## Which revision these documents describe
 
 These documents describe the `main` branch, the 0.3.0 release on crates.io, built on `cgp` 0.8.0.
-The 0.2.0 release (tag `v0.2.0`) was built against `cgp` 0.7.0. The library crates
-of the two releases offer the same components and providers and differ only in attribute syntax that
-`cgp` 0.8.0 changed, while the tests of 0.3.0 wire per-type dispatch with the `open` statement where
-0.2.0 builds `UseDelegate` tables. So what these documents say a provider does holds for both, but
-code quoted from them compiles only against 0.3.0. Source links point at `main`, per
+The 0.2.0 release (tag `v0.2.0`) was built on `cgp` 0.7.0 and has the same two components and most
+of the same providers. 0.3.0 renames `SerializeFields` to `SerializeRecordFields`, adds the three
+enum providers, and follows `cgp` 0.8.0's attribute syntax, and its tests dispatch per type with the
+`open` statement where 0.2.0's build `UseDelegate` tables. So what these documents say about a
+provider 0.2.0 also has holds for it, but code quoted from them compiles only against 0.3.0. Source links point at `main`, per
 [../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
 
 ## How it is organized

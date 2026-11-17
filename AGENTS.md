@@ -91,8 +91,8 @@ Documents describe CGP as it is now; only the release documents and the blog rec
 - Rewrite a corrected discrepancy to state the current behavior and delete the old wording.
 - Keep a current deviation only in a Known issues or limitations section.
 - Exempt only [releases/](releases/README.md), each project section's `releases.md`, and
-  [website/blog/](website/blog/README.md); when you
-  need to say what something used to be, link the release document that records it.
+  [website/blog/](website/blog/README.md); when you need to say what something used to be, link the
+  release document that records it.
 
 ## Document official versions, never pre-releases
 
