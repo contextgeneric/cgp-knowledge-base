@@ -3,8 +3,9 @@
 Hypershell's tests live in one place, the `hypershell-examples` crate, and consist of four runtime
 tests, while the examples themselves give compile-only coverage to most of the rest. This document
 records what each test pins, what the examples add, and what nothing exercises. On the `v0.8.0`
-branch, `cargo test --workspace` passes all four tests. The library crates carry no tests of their
-own, and there are no doc tests, since the doc comments carry no code blocks. The repository's CI
+branch, `cargo test --workspace` passes all four tests and one doc test. The library crates carry
+no tests of their own, and the doc test is the `hypershell` crate's README, which is also its crate
+documentation: it runs the `hello` program, so it needs `echo` on the machine. The repository's CI
 workflow runs the workspace's build and the same test command on every push and pull request.
 
 ## What each test pins

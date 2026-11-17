@@ -97,9 +97,9 @@ leaves out:
   namespace.
 - **The macro**: its expansion needs the prelude in scope, and it panics on unbalanced angle
   brackets.
-- **Evidence**: four tests, two of which assert nothing; no wiring checks; rustdoc for the
-  constructs alone, with no module or field docs; and a workspace that builds on nightly with the
-  new trait solver, which the repository's CI workflow builds and tests.
+- **Evidence**: four tests, two of which assert nothing; no wiring checks; rustdoc for the crates
+  and constructs, with no module or field docs; and a workspace that builds on nightly with the new
+  trait solver, which the repository's CI workflow builds and tests.
 
 ## The documents
 
@@ -155,7 +155,7 @@ examples to see a program run.
 ## Public material derived from these documents
 
 These documents are the source for the project's public writing, and each one names what it feeds.
-They feed three artifacts:
+They feed four artifacts:
 
 - **The Hypershell section of the website's Projects pages**, recorded in
   [website/projects/hypershell.md](../../website/projects/hypershell.md), with 21 of its pages
@@ -169,6 +169,9 @@ They feed three artifacts:
 - **The repository README**, which presents the project to a first-time reader: the `hello`
   program and the one-line context that runs it, the installation and the toolchain a program
   needs, the crates, the examples, and the costs.
+- **The crate READMEs**, one per published crate, each of which is also the crate's documentation
+  through `#![doc = include_str!("../README.md")]`: what the crate holds and where it fits, with the
+  `hello` program as a doc test in `hypershell`'s.
 - **Rustdoc for the constructs.** Every component, provider, and provider struct carries a
   one-sentence doc condensed from its reference entry, so the docs.rs pages explain what each
   construct is for. Modules and struct fields carry none, and the tables and namespaces that

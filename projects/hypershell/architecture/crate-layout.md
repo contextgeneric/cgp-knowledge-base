@@ -22,6 +22,8 @@ are assembled last, in `hypershell`. The workspace's crates are:
 | `hypershell` | the components, Tokio, reqwest, JSON, and macro crates, `cgp-error-anyhow`, `reqwest`, `url`, `serde_json` | `HypershellNamespace`, `HypershellErrorHandler`, `HypershellCli`, `HypershellHttp`, the prelude |
 | `hypershell-examples` | `hypershell`, the components, Tokio, and hash crates, and the libraries the examples use | the `Compare` and `If` extension, the checksum and compare namespaces, the runnable examples and the tests |
 
+`hypershell` also takes Tokio as a dev-dependency, for the doc test in its README.
+
 The graph is the practical form of the claim that CGP inverts dependencies. Because providers are
 written against an abstract context and concrete types are named only in `hypershell`, the Tokio
 crate builds without `reqwest` in its tree, and the JSON crate builds without Tokio. Two edges are
