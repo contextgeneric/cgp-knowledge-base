@@ -40,14 +40,12 @@ yet, because the record and sequence providers do not declare a length. The desi
 
 ## Which revision these documents describe
 
-These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0 and is not yet released. The
-crates on crates.io and the repository's `main` branch are the 0.2.0 release, built against `cgp`
-0.7.0; the `v0.8.0` branch still carries version 0.2.0 in its manifests. The library crates on the
-two branches offer the same components and providers and differ only in attribute syntax that `cgp`
-0.8.0 changed, while the tests on `v0.8.0` wire per-type dispatch with the `open` statement where
-the release builds `UseDelegate` tables. So what these documents say a provider does holds for both,
-but code quoted from them compiles only against the `v0.8.0` branch. Source links point at that
-branch, per
+These documents describe the `v0.8.0` branch, the 0.3.0 release on crates.io, built on `cgp` 0.8.0.
+The repository's `main` branch is the 0.2.0 release, built against `cgp` 0.7.0. The library crates
+of the two releases offer the same components and providers and differ only in attribute syntax that
+`cgp` 0.8.0 changed, while the tests of 0.3.0 wire per-type dispatch with the `open` statement where
+0.2.0 builds `UseDelegate` tables. So what these documents say a provider does holds for both, but
+code quoted from them compiles only against 0.3.0. Source links point at the `v0.8.0` branch, per
 [../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
 
 ## How it is organized

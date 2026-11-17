@@ -68,8 +68,9 @@ A revision must respect these facts:
 - **Source links point at `main`**, so until the `v0.8.0` branch merges they show the release's
   `UseDelegate` tables, and links to files only on `v0.8.0` do not resolve: the two variant provider
   pages' sources and the example pages' sources under `crates/cgp-serde-examples/`.
-- **The install instructions assume that merge too**: the index tells a reader to depend on the crates
-  from the repository by git, since the crates.io release is built on an older CGP.
+- **The install instructions name the crates.io release**: the index's *Running it* adds `cgp`
+  0.8.0, `cgp-serde` 0.3.0, `cgp-serde-extra` 0.3.0, and `serde_json`, the dependencies the
+  repository README's example builds with.
 - **The comparison's two judging sections want the author's read.** *What each approach costs* and
   *When plain Serde is the better choice* judge another project's tool, the reason those sections of
   every Comparisons page are on the author's list in
@@ -134,10 +135,9 @@ page is the evaluator's destination from the index.
 
 ### Release conditions
 
-**A cgp-serde release built on `cgp` 0.8.0.** The crates on crates.io and the repository's `main` are
-0.2.0, built against `cgp` 0.7.0, and the `v0.8.0` branch still carries that version, so the release
-needs a new version number. The `v0.8.0` branch must also be the default before source links point at
-it.
+**cgp-serde 0.3.0, built on `cgp` 0.8.0, is the release the pages install.** The pages' source links
+read the repository's `main`, so they show the code the pages describe once the `v0.8.0` branch
+merges into it.
 
 ## The source post
 

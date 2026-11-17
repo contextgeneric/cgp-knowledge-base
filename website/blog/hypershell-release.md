@@ -100,8 +100,8 @@ predates four breaking releases, v0.5.0 through v0.8.0, each removing something 
   depending only on `cgp`, `hypershell-components`, and `reqwest`; it also depends on
   `hypershell-tokio-components`, for the stream wrappers and input dispatchers; see
   [crate layout](../../projects/hypershell/architecture/crate-layout.md). The inversion argument holds.
-- **The install snippet pins `cgp = "0.4.1"` and `hypershell = "0.1.0"`.** Hypershell tracks `cgp`
-  0.8.0.
+- **The install snippet pins `cgp = "0.4.1"` and `hypershell = "0.1.0"`.** Hypershell 0.2.0 builds
+  on `cgp` 0.8.0.
 - **One claim has been overtaken.** The post offers AI editors "getting pretty good at deciphering the
   error messages" as the practical answer to CGP's diagnostics;
   [`cargo-cgp`](../../cargo-cgp/README.md), which rewrites the common wiring errors, is now the better

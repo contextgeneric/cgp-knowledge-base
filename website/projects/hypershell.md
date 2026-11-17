@@ -52,9 +52,10 @@ A revision must respect these facts:
 - **The pages publish when the website's `v0.8.0` branch merges**, which depends on Hypershell's own
   `v0.8.0` branch merging by then; moving them off the release branch instead is the author's
   decision.
-- **The install instructions assume that merge too**: the index tells a reader to clone the
-  repository, or to depend on it by git with its toolchain files copied, rather than naming a
-  crates.io version.
+- **The install instructions name the crates.io release**: the index's *Running it* adds `cgp`
+  0.8.0, `hypershell` 0.2.0, and Tokio, and says a small program builds on stable Rust while a crate
+  whose programs nest others copies the repository's toolchain files. A probe built and ran `hello`
+  on stable Rust in a crate of its own, which must name `cgp` because the macro's expansion does.
 
 ## What it covers
 
@@ -71,8 +72,8 @@ with a page planned: the index is written to be the page *rust dsl* lands on, an
 shell scripts for the *shell scripting vs rust* queries.
 
 **The index says on its first screen that Hypershell is an experimental proof of concept, not a shell
-replacement**, as the project says of itself, and that it builds on nightly Rust with the new trait
-solver. It shows the one-line context, `namespace HypershellNamespace;` inside the wiring of
+replacement**, as the project says of itself, and that its largest programs need nightly Rust with
+the new trait solver, while the library and small programs build on stable. It shows the one-line context, `namespace HypershellNamespace;` inside the wiring of
 `HypershellCli`, near the top, as the section's strongest single demonstration. Every context in the
 project is environmental; the interpreting component is parameter-targeted, with the program as a
 `Code` selector and the stage's input as the target, and the example pages say so where the first
@@ -172,10 +173,9 @@ Each is recorded in the project's [housekeeping](../../projects/hypershell/issue
 
 ### Release conditions
 
-**A Hypershell release built on `cgp` 0.8.0.** The crates on crates.io are 0.1.0 against `cgp` 0.4.1
-and assemble the language from presets, so until a release exists the index gives a git dependency on
-the default branch and says why. The `v0.8.0` branch must also be the default before source links
-point at it.
+**Hypershell 0.2.0, built on `cgp` 0.8.0 and `HypershellNamespace`, is the release the pages
+install.** The pages' source links read the repository's `main`, so they show the code the pages
+describe once the `v0.8.0` branch merges into it.
 
 ## The source post
 

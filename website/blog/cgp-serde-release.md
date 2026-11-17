@@ -81,8 +81,8 @@ Demonstration first, mechanism second:
   wired with `open`, are in [projects/cgp-serde/examples/](../../projects/cgp-serde/examples/README.md).
 - **The record serializer is named `SerializeFields` in the post.** On the `v0.8.0` branch it is
   `SerializeRecordFields`, matching `DeserializeRecordFields`.
-- **`cgp-serde` has moved on.** The repository tracks `cgp` 0.8.0 at crate version 0.2.0, so the post
-  describes the 0.1 release.
+- **`cgp-serde` has moved on.** Its 0.3.0 release builds on `cgp` 0.8.0, so the post describes the
+  0.1 release.
 
 ## Maintaining it
 
