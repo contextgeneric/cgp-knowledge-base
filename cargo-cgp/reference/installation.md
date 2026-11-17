@@ -48,15 +48,13 @@ this are in [The Nix package](../implementation/distribution/nix-package.md).
 To install the tool onto your `PATH` so `cargo cgp check` works like any other cargo subcommand:
 
 ```sh
-nix profile install github:contextgeneric/cargo-cgp
+nix profile install github:contextgeneric/cargo-cgp/v0.1.0
 ```
 
 This puts both `cargo-cgp` and `cargo-cgp-driver` in your Nix profile, side by side as the front-end
-requires. Append a release tag to pin an exact release rather than the default branch
-(`nix profile install github:contextgeneric/cargo-cgp/v0.1.0`), which is the form to prefer for a
-reproducible install. To run the tool once without installing it (for
-example in CI or to try it on a project), run the flake's default app from the project directory
-instead:
+requires. The `/v0.1.0` tag pins the documented release, which is the form to prefer for a
+reproducible install. To run the tool once without installing it (for example in CI or to try it on
+a project), run the flake's default app from the project directory instead:
 
 ```sh
 cd /path/to/your/project     # a cargo package or workspace that uses `cgp`
