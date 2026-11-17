@@ -188,9 +188,9 @@ and the [leaf](leaves.md#the-leaf-shapes) reads the builder's markers:
 
 ```text
 error[E0271]: [CGP-E050] field `first_name` of `Person` is already set
-  --> src/main.rs:24:22
+  --> src/main.rs:25:22
    |
-24 |         .build_field(PhantomData::<Symbol!("first_name")>, "Bob".to_owned());
+25 |         .build_field(PhantomData::<Symbol!("first_name")>, "Bob".to_owned());
    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: root cause: [CGP-E118] field `first_name` of `Person` is already set
