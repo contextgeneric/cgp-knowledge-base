@@ -93,7 +93,7 @@ scrolls sideways.
 bounds that overlap, then wired per type.** It is `CanEncode` over `Display` and `AsRef<[u8]>`, with
 the providers `EncodeAsText` and `EncodeAsBytes` and wiring for `u64`, `String`, and `Vec<u8>`; the
 text is in `index.tsx` between its `front-page:` markers and compiled in the website's
-`tests/front_page.rs`. Most of the page's attention falls on these twenty lines, so they carry the
+`tests/front_page.rs`. Most of the page's attention falls on these few lines, so they carry the
 pitch, the proof, and the answer to the first objection.
 
 **The caption is two sentences**: what changed, then the informed objection pre-empted.
@@ -143,8 +143,10 @@ failing one is worse than what it replaces:
 Two presentation choices stay with it. The bounds sit in `#[uses(Display)]` and `#[uses(AsRef<[u8]>)]`,
 the idiom the [guides](../../cgp/guides/declaring-dependencies.md) prescribe, which also shows the
 attribute carrying an ordinary Rust trait; do not rewrite them to `where Self: Display`. And the block
-is a fragment without imports, `main`, or a call site, but it must compile once the imports are
-restored; a program to run belongs in the Hello World tutorial.
+is a fragment without `main` or a call site that opens with `use cgp::prelude::*;`, so a reader sees
+that CGP arrives as one import, and omits `use core::fmt::Display;`, as the rejected block does; it
+must compile once that import is restored. A program to run belongs in the Hello World tutorial
+(author, 2026-11-18).
 
 Compile a replacement before it ships, in `tests/front_page.rs` with its compile-fail fixture, as
 [the page's record](../pages/front-page.md) describes, and change the page and the test in the same
