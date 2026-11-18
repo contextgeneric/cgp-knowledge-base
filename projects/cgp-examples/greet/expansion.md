@@ -5,7 +5,7 @@
 table instead of through the provider trait, and it leaves out two of the macro's provider impls.
 
 - **Source**:
-  [src/greet_expanded.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/greet/src/greet_expanded.rs)
+  [src/greet_expanded.rs](https://github.com/contextgeneric/cgp-examples/blob/main/greet/src/greet_expanded.rs)
 - **Run**: nothing uses it; it is the library's only module, and no binary imports it
 - **Needs**: nothing
 - **Result**: compiles. A probe wired a context through it and printed `Hello, Alice!`, and a second

@@ -1,7 +1,7 @@
 # Testing
 
 `expression` has three unit tests, in two of its four context modules, and one `check_components!`
-block per context. On the `v0.8.0` branch `cargo test -p cgp-example-expression` passes all three.
+block per context. On `main` `cargo test -p cgp-example-expression` passes all three.
 This document records what the tests and checks pin and what nothing exercises.
 
 ## What the tests pin

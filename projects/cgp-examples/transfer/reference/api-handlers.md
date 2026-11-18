@@ -173,13 +173,13 @@ The abstract types each return type names, on `App`.
 
 ## Source
 
-- [`providers/api_handlers/query_balance.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/query_balance.rs):
+- [`providers/api_handlers/query_balance.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/api_handlers/query_balance.rs):
   `HandleQueryBalance`, `QueryBalanceResponse`, and `HasQueryBalanceFields`.
-- [`providers/api_handlers/transfer.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/transfer.rs):
+- [`providers/api_handlers/transfer.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/api_handlers/transfer.rs):
   `HandleTransfer` and `HasTransferMoneyFields`.
-- [`providers/api_handlers/basic_auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/basic_auth.rs):
+- [`providers/api_handlers/basic_auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/api_handlers/basic_auth.rs):
   `HasBasicAuthHeader`.
-- [`interfaces/auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/auth.rs):
+- [`interfaces/auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/interfaces/auth.rs):
   `HasLoggedInUser` and `HasLoggedInUserMut`.
 
 ## Public material derived from this

@@ -321,15 +321,15 @@ A writable working directory.
 
 ## Source
 
-- [`contexts/full_builder.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/full_builder.rs):
+- [`contexts/full_builder.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/contexts/full_builder.rs):
   `FullAppBuilder` and its `main`.
-- [`contexts/default_builder.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/default_builder.rs):
+- [`contexts/default_builder.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/contexts/default_builder.rs):
   `DefaultAppBuilder`.
-- [`contexts/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/postgres.rs):
+- [`contexts/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/contexts/postgres.rs):
   the Postgres `AppBuilder`.
-- [`contexts/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/anthropic.rs):
+- [`contexts/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/contexts/anthropic.rs):
   the Anthropic `AppBuilder`.
-- [`contexts/anthropic_and_chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/anthropic_and_chatgpt.rs):
+- [`contexts/anthropic_and_chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/contexts/anthropic_and_chatgpt.rs):
   `AnthropicAndChatGptAppBuilder`, its three markers, and its `main`.
 
 ## Public material derived from this

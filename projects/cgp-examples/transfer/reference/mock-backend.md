@@ -176,7 +176,7 @@ bounds.
 
 ## Source
 
-- [`providers/mocked.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/mocked.rs):
+- [`providers/mocked.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/mocked.rs):
   the struct and all four impls.
 
 ## Public material derived from this

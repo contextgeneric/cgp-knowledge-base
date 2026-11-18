@@ -5,7 +5,7 @@ into higher-order providers that wrap a creator, and groups the providers into t
 `ProductionApp` forwards to with array keys.
 
 - **Source**:
-  [fine_grained.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/fine_grained.rs)
+  [fine_grained.rs](https://github.com/contextgeneric/cgp-examples/blob/main/web-app/src/fine_grained.rs)
 - **Run**: no test; the context is exercised only by its check block
 - **Needs**: nothing
 - **Result**: compiles and passes its check. A probe compiled the commented-out flat table on a

@@ -204,14 +204,14 @@ The component says nothing about a transfer to oneself; that rule is supplied by
 
 ## Source
 
-- [`interfaces/api.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/api.rs):
+- [`interfaces/api.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/interfaces/api.rs):
   `CanHandleApi` and the endpoint markers.
-- [`interfaces/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/error.rs):
+- [`interfaces/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/interfaces/error.rs):
   `CanRaiseHttpError` and the status markers.
-- [`interfaces/auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/auth.rs):
+- [`interfaces/auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/interfaces/auth.rs):
   `CanCheckPassword`, `CanQueryUserHashedPassword`, and the two logged-in-user getters, which are
   documented with the [API handlers](api-handlers.md#the-request-getters).
-- [`interfaces/finance.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/finance.rs):
+- [`interfaces/finance.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/interfaces/finance.rs):
   `CanQueryUserBalance` and `CanTransferMoney`.
 
 ## Public material derived from this

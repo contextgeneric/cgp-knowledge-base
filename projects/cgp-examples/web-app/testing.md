@@ -1,7 +1,7 @@
 # Testing
 
 `web-app` has no tests and no binary, so the only checks the repository runs are the check blocks of
-its four modules, at compile time. On the `v0.8.0` branch `cargo build -p cgp-example-web-app`
+its four modules, at compile time. On `main` `cargo build -p cgp-example-web-app`
 passes, and so does every check. This document records what the checks pin, what probes showed them
 catch, what a probe ran, and what nothing exercises.
 

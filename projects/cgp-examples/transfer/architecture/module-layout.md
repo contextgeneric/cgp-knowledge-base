@@ -8,7 +8,7 @@ point.
 ## The five modules
 
 The library root,
-[`src/lib.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/lib.rs),
+[`src/lib.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/lib.rs),
 declares five public modules, and each holds one kind of item:
 
 | Module | Holds | Depends on |
@@ -20,7 +20,7 @@ declares five public modules, and each holds one kind of item:
 | `contexts` | `MockApp`, its wiring and checks, and the `CanHandleApiSend` impls | all four |
 
 The binary,
-[`bin/server.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/bin/server.rs),
+[`bin/server.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/bin/server.rs),
 depends only on `contexts` and on the routing trait in `providers`. It builds a `MockApp`, mounts
 the routes on an Axum `Router`, and serves.
 
@@ -35,7 +35,7 @@ keeps each module small: `providers` has `api_handlers/`, `axum/`, `error.rs`, `
 Three dependencies do not follow the inward direction, and each has a reason in the code.
 
 - **`providers` depends on `namespaces`.** The mock backend in
-  [`providers/mocked.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/mocked.rs)
+  [`providers/mocked.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/mocked.rs)
   registers itself into `MockNamespace` with `#[default_impl(... in MockNamespace)]`, so it must
   name the namespace. The attribute places a provider's wiring next to the provider, and the price
   is this backward edge: the backend module cannot be compiled without the namespace that uses it.
@@ -44,7 +44,7 @@ Three dependencies do not follow the inward direction, and each has a reason in 
   routing traits in `providers/axum/routes.rs` bound the context's error to `AppError`, so both are
   written for this deployment's concrete error rather than for any context.
 - **`interfaces` holds one ordinary trait.** `CanHandleApiSend` in
-  [`interfaces/api.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/api.rs)
+  [`interfaces/api.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/interfaces/api.rs)
   is not a CGP component. It sits beside `CanHandleApi` because it restates that component with a
   `Send` future, and it is implemented in `contexts`. See the
   [HTTP layer](../reference/http-layer.md).
@@ -55,11 +55,11 @@ downstream crate can reuse any piece, as the probes behind the [guides](../guide
 
 ## Source
 
-- [`transfer/src/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/transfer/src): the
+- [`transfer/src/`](https://github.com/contextgeneric/cgp-examples/tree/main/transfer/src): the
   five modules.
-- [`transfer/bin/server.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/bin/server.rs):
+- [`transfer/bin/server.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/bin/server.rs):
   the binary.
-- [`transfer/Cargo.toml`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/Cargo.toml):
+- [`transfer/Cargo.toml`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/Cargo.toml):
   the dependencies: `cgp`, `anyhow`, `futures`, `num-traits`, `serde`, `axum`, `axum-extra`,
   `headers`, and `tokio`.
 

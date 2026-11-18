@@ -124,13 +124,13 @@ name the operand type, since its input type no longer shows it. `add_mult_binary
 
 ## Source
 
-- [`providers/to_lisp/add.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/add.rs)
+- [`providers/to_lisp/add.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/providers/to_lisp/add.rs)
   and
-  [`multiply.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/multiply.rs):
+  [`multiply.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/providers/to_lisp/multiply.rs):
   `PlusToLisp` and `TimesToLisp`.
-- [`providers/to_lisp/literal.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/literal.rs):
+- [`providers/to_lisp/literal.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/providers/to_lisp/literal.rs):
   `LiteralToLisp`.
-- [`providers/to_lisp/binary.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/binary.rs):
+- [`providers/to_lisp/binary.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/providers/to_lisp/binary.rs):
   `BinaryOpToLisp`.
 
 ## Public material derived from this

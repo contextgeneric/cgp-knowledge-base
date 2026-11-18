@@ -4,7 +4,7 @@ The base interpreter: an `Interpreter` context that evaluates the `Plus`/`Times`
 by value and converts it to Lisp by reference, keying each operation's providers by input.
 
 - **Source**:
-  [contexts/add_mult.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult.rs)
+  [contexts/add_mult.rs](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/contexts/add_mult.rs)
 - **Run**: `cargo test -p cgp-example-expression add_mult::`
 - **Needs**: nothing
 - **Result**: `test_add_mult` and `test_add_mult_to_lisp` pass

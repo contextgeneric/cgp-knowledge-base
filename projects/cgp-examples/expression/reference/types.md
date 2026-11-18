@@ -171,11 +171,11 @@ None.
 
 ## Source
 
-- [`types/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/types): the
+- [`types/`](https://github.com/contextgeneric/cgp-examples/tree/main/expression/src/types): the
   operator structs, `List`, and `Ident`.
-- [`contexts/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/contexts):
+- [`contexts/`](https://github.com/contextgeneric/cgp-examples/tree/main/expression/src/contexts):
   the language enums.
-- [`classic/add_mult.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/classic/add_mult.rs):
+- [`classic/add_mult.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/classic/add_mult.rs):
   the closed `Expr`.
 
 ## Public material derived from this

@@ -5,8 +5,8 @@ CGP application changes as its component count grows: coarse manager traits, fin
 per-operation traits with provider bundles, namespace-grouped wiring, and namespace default
 implementations.
 
-- **Source**: [web-app/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/web-app), on the
-  `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
+- **Source**: [web-app/](https://github.com/contextgeneric/cgp-examples/tree/main/web-app), on
+  `main`; see [which revision](../README.md#which-revision-these-documents-describe)
 - **Run**: nothing: the crate has no binary and no test, and every provider body is `todo!()`
 - **Needs**: nothing beyond the workspace build
 - **Result**: compiles, and every check block passes. A probe called a method on the contexts of
@@ -47,8 +47,8 @@ namespace defaults with [`#[default_impl]`](../../../cgp/reference/attributes/de
 
 ## Status and gaps
 
-The crate demonstrates wiring only, and nothing in it runs. Its gaps are each confirmed against the
-`v0.8.0` branch and recorded in full in [issues.md](issues.md):
+The crate demonstrates wiring only, and nothing in it runs. Its gaps are each confirmed against
+`main` and recorded in full in [issues.md](issues.md):
 
 - **Nothing runs it**: no binary and no test, and every provider body is `todo!()`.
 - **Two wiring steps are comments**: the flat nine-entry table and the flat namespace table exist

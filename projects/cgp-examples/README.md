@@ -7,7 +7,7 @@ documents treat each one as its own subproject.
 
 - **Repository**: <https://github.com/contextgeneric/cgp-examples>
 - **Local checkout**: `../cgp-examples`, per [sibling-projects.md](../../sibling-projects.md)
-- **Branch documented**: `v0.8.0`
+- **Branch documented**: `main`
 - **Crates**: `cgp-example-transfer`, `cgp-example-expression`, `cgp-example-builder`,
   `cgp-example-web-app`, and `cgp-example-greet`, all at 0.1.0 and unpublished
 - **Tracks**: `cgp` 0.8.0, through a git patch to the `cgp` repository's `main` branch
@@ -34,10 +34,8 @@ crate uses current CGP idioms, so its code is safe to copy for the patterns it s
 
 ## Which revision these documents describe
 
-These documents describe the `v0.8.0` branch, which tracks `cgp` 0.8.0. It is ahead of `main`, which
-builds against the published `cgp` 0.7.0 and has no `web-app` crate, no namespace wiring in
-`transfer`, and no `transfer` README. None of the crates is published. Source links point at the
-`v0.8.0` branch, per
+These documents describe `main`, which builds against the published `cgp` 0.8.0. None of the
+crates is published. Source links point at `main`, per
 [../writing-guide.md](../writing-guide.md#a-project-section-documents-its-project-in-depth).
 
 The repository also carries an unmerged `profile-picture` branch, which adds a `profile-picture`
@@ -65,9 +63,6 @@ compile time with `check_components!` blocks, so a successful build is most of t
 These gaps belong to the repository as a whole rather than to one crate, so they are recorded here
 rather than in a subproject's `issues.md`:
 
-- **`main` lags `v0.8.0`**: a reader who clones the default branch gets the `cgp` 0.7.0 versions of
-  four crates, no `web-app`, and an empty `README.md`, so the index of the crates exists only on
-  `v0.8.0`.
 - **Only `transfer` has a README of its own**: a reader who opens another crate's directory finds
   the code alone, with its scenario described only here and on the website.
 

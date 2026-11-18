@@ -133,9 +133,9 @@ None; it is bound directly with `UseType<DemoCurrency>`.
 
 ## Source
 
-- [`interfaces/types.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/types.rs):
+- [`interfaces/types.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/interfaces/types.rs):
   the five types.
-- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/mock.rs):
+- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/namespaces/mock.rs):
   their bindings.
 
 ## Public material derived from this

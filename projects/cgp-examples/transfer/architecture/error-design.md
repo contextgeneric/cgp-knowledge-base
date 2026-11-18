@@ -65,13 +65,13 @@ Axum's `405`. [The request lifecycle](request-lifecycle.md) records the response
 
 ## Source
 
-- [`interfaces/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/error.rs):
+- [`interfaces/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/interfaces/error.rs):
   the component and the four markers.
-- [`providers/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/error.rs):
+- [`providers/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/error.rs):
   `IsStatusCode` and the two providers.
-- [`types/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/types/error.rs):
+- [`types/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/types/error.rs):
   `AppError`.
-- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/mock.rs):
+- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/namespaces/mock.rs):
   the error wiring.
 
 ## Public material derived from this

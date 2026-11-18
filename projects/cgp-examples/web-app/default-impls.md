@@ -5,7 +5,7 @@
 filters.
 
 - **Source**:
-  [default_impls.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/default_impls.rs)
+  [default_impls.rs](https://github.com/contextgeneric/cgp-examples/blob/main/web-app/src/default_impls.rs)
 - **Run**: no test; the context is exercised only by its check block
 - **Needs**: nothing
 - **Result**: compiles and passes its check. A probe called `delete_post` on `ProductionApp`, which

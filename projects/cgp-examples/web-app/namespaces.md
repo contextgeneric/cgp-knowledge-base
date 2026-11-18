@@ -5,7 +5,7 @@ so that its two contexts, `ProductionApp` and `TestApp`, each wire the whole app
 entries and differ in one of them.
 
 - **Source**:
-  [namespace.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/web-app/src/namespace.rs)
+  [namespace.rs](https://github.com/contextgeneric/cgp-examples/blob/main/web-app/src/namespace.rs)
 - **Run**: no test; the contexts are exercised only by their check blocks
 - **Needs**: nothing
 - **Result**: compiles and passes its checks. A probe called `create_post` on `TestApp`, which

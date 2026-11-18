@@ -16,7 +16,7 @@ tests, and its gaps, so an agent changing the crate knows what it is changing.
 ## Running them
 
 The tests run from the repository root with `cargo test -p cgp-example-expression`. The table
-records what each context has and what running its tests produced on the `v0.8.0` branch:
+records what each context has and what running its tests produced on `main`:
 
 | Context | Test | Result |
 |---|---|---|

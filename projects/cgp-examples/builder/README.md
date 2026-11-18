@@ -5,8 +5,8 @@ or two AI clients, from independent per-subsystem builder providers that know no
 struct or of each other, and wires five builder contexts that combine those providers into four
 application types.
 
-- **Source**: [builder/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/builder), on the
-  `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
+- **Source**: [builder/](https://github.com/contextgeneric/cgp-examples/tree/main/builder), on
+  `main`; see [which revision](../README.md#which-revision-these-documents-describe)
 - **Run**: nothing: the crate has no binary and no test, and its two `main` functions are ordinary
   library functions nothing calls
 - **Needs**: for the SQLite builders, a connection string that names an existing file or carries
@@ -56,7 +56,7 @@ multi-target builder dispatches on its code with the `open` statement.
 ## Status and gaps
 
 The crate demonstrates the pattern, and every builder runs when called. Its gaps are each confirmed
-against the `v0.8.0` branch and recorded in full in [issues.md](issues.md):
+against `main` and recorded in full in [issues.md](issues.md):
 
 - **Nothing runs it**: no binary and no test; the `main` functions are library functions nothing
   calls.

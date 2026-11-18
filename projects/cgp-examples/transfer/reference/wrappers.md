@@ -209,13 +209,13 @@ inner provider's own.
 
 ## Source
 
-- [`providers/api_handlers/from_request.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/from_request.rs):
+- [`providers/api_handlers/from_request.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/api_handlers/from_request.rs):
   `HandleFromRequest` and `HandleFromResponse`.
-- [`providers/axum/json.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/axum/json.rs):
+- [`providers/axum/json.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/axum/json.rs):
   `ResponseToJson`.
-- [`providers/api_handlers/basic_auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/api_handlers/basic_auth.rs):
+- [`providers/api_handlers/basic_auth.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/api_handlers/basic_auth.rs):
   `UseBasicAuth`.
-- [`providers/finance.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/finance.rs):
+- [`providers/finance.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/finance.rs):
   `NoTransferToSelf`.
 
 ## Public material derived from this

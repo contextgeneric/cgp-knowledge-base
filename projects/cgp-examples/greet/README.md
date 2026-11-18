@@ -4,8 +4,8 @@
 a provider over an abstract name type, each in its own binary on a `Person` struct with a `name`
 field. Its library holds only a hand-written expansion of the component.
 
-- **Source**: [greet/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/greet), on the
-  `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
+- **Source**: [greet/](https://github.com/contextgeneric/cgp-examples/tree/main/greet), on `main`;
+  see [which revision](../README.md#which-revision-these-documents-describe)
 - **Run**: `cargo run -p cgp-example-greet --bin <name>`, with `greet-function`, `greet-component`,
   or `greet-abstract-type`
 - **Needs**: nothing

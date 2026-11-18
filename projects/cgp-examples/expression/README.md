@@ -5,8 +5,8 @@ generic type, each operation over the language is a set of per-operator provider
 wire those pieces into interpreters of increasing reach, from evaluation alone to an extended
 language with subtraction and negation.
 
-- **Source**: [expression/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression),
-  on the `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
+- **Source**: [expression/](https://github.com/contextgeneric/cgp-examples/tree/main/expression), on
+  `main`; see [which revision](../README.md#which-revision-these-documents-describe)
 - **Run**: `cargo test -p cgp-example-expression` from the repository root
 - **Needs**: nothing beyond the workspace build
 - **Result**: three unit tests pass: `test_add_mult`, `test_add_mult_to_lisp`, and
@@ -55,7 +55,7 @@ than its context.
 
 ## Status and gaps
 
-The interpreter is a demonstration, and its gaps are each confirmed against the `v0.8.0` branch and
+The interpreter is a demonstration, and its gaps are each confirmed against `main` and
 recorded in full in [issues.md](issues.md):
 
 - **Two contexts have no test**: `add_mult_binary_op` and `add_mult_code` compile and pass their

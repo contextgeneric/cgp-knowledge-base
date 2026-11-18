@@ -4,8 +4,8 @@
 two users, served over HTTP by Axum, with every domain type, every business operation, and every
 cross-cutting concern expressed as a swappable CGP component.
 
-- **Source**: [transfer/](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/transfer), on
-  the `v0.8.0` branch; see [which revision](../README.md#which-revision-these-documents-describe)
+- **Source**: [transfer/](https://github.com/contextgeneric/cgp-examples/tree/main/transfer), on
+  `main`; see [which revision](../README.md#which-revision-these-documents-describe)
 - **Run**: `cargo run --bin server` from the repository root, then `transfer/example.sh` in a second
   terminal
 - **Needs**: port 8080 free; `curl` and `base64` for the script
@@ -32,7 +32,7 @@ concrete choices are made once, in the wiring, which is what [architecture/](arc
 explains.
 
 The crate has its own
-[README](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/README.md), a public
+[README](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/README.md), a public
 walkthrough of the same program written for a reader new to CGP. These documents are the verified
 record the walkthrough should agree with, and [issues.md](issues.md) lists where it does not.
 
@@ -47,7 +47,7 @@ and a `for` loop. The request getters import the app's abstract types with `#[us
 ## Status and gaps
 
 The service works as a demonstration and has no automated tests. Its gaps are each confirmed against
-the `v0.8.0` branch and recorded in full in [issues.md](issues.md):
+`main` and recorded in full in [issues.md](issues.md):
 
 - **Unused items**: `HandleHttpErrorWithAnyhow` and `HandleFromResponse` are never wired,
   `ErrInternal` is never raised, and `CanAddApiRoutes` is never named.

@@ -11,8 +11,7 @@ service, a wiring study at four scales, and the smallest possible greeting.
 - **Ports** — [projects/cgp-examples/](../../projects/cgp-examples/README.md), one subproject per
   crate
 - **Repository** — [`cgp-examples`](https://github.com/contextgeneric/cgp-examples), documented on
-  its `v0.8.0` branch, which merges into `main` with the release; the pages describe `main` from
-  then on
+  its `main`, into which the `v0.8.0` branch merged on 2026-11-18 (`ecb4bc0a`)
 - **Verified against** — `cgp-examples` `v0.8.0` at commit `690911a`, with `cgp` `main` at `adc616c`
   through the workspace's patch, and `cargo-cgp` built from its source at commit `b6a6323`
 - **Status** — Draft: the crate index and the `expression` and `web-app` subsections are written;
@@ -54,8 +53,7 @@ A revision must respect these facts:
   uncertainty. Wiring the dispatcher directly reports `[CGP-E020]` through the context's check, as
   the [dispatch layers record](../../projects/cgp-examples/expression/architecture/dispatch-layers.md)
   states.
-- **Source links point at `main`**, so until the `v0.8.0` branch merges they show the older `cgp`
-  0.7.0 code, and the links into the `web-app` crate, which `main` lacks, fail.
+- **Source links point at `main`**, which holds the code the pages describe, `web-app` included.
 
 ## What it covers
 
@@ -173,9 +171,8 @@ type; the repository's only **value context**.
 ### Release conditions
 
 The crates are unpublished, so the pages clone the repository and run the crate, with no install
-snippet. The `v0.8.0` branch must merge into `main` with the release, so a reader who clones the
-default branch gets the code the pages describe; `main` lags it and has no `web-app` crate, per the
-[workspace gaps](../../projects/cgp-examples/README.md#workspace-gaps).
+snippet. A reader who clones the default branch gets the code the
+pages describe.
 
 ## The source posts
 

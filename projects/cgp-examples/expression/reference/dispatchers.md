@@ -68,7 +68,7 @@ names the context itself and the full lookup path, such as `ComputerComponent`, 
 
 ## Source
 
-- [`contexts/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/contexts):
+- [`contexts/`](https://github.com/contextgeneric/cgp-examples/tree/main/expression/src/contexts):
   the wrappers and their keys, one context per file.
 
 ## Public material derived from this

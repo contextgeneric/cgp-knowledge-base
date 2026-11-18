@@ -3,8 +3,8 @@
 Replacing the in-memory backend means writing providers for the four backend components and a new
 namespace that binds them, because `MockNamespace` cannot be inherited and partly overridden. This
 guide shows both, using a `ConstBalance` provider that answers every balance query from a context
-field as the running example. The snippets compiled and ran in a downstream probe crate against the
-`v0.8.0` branch, where the new context returned the field's value for Alice's balance.
+field as the running example. The snippets compiled and ran in a downstream probe crate against
+`main`, where the new context returned the field's value for Alice's balance.
 
 ## Write the new provider
 

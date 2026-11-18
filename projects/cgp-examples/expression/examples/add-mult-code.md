@@ -4,7 +4,7 @@ The base interpreter with both operations served by one component, `ComputerRef`
 operation code: each wiring key names the `Eval` or `ToLisp` code and the input type together.
 
 - **Source**:
-  [contexts/add_mult_code.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_code.rs)
+  [contexts/add_mult_code.rs](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/contexts/add_mult_code.rs)
 - **Run**: no test; the context is exercised only by its check block
 - **Needs**: nothing
 - **Result**: compiles and passes its check. A probe evaluated `2 * (3 + 4)` to `14` and converted

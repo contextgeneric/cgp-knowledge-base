@@ -239,7 +239,7 @@ Never wired or exercised; see [issues.md](../issues.md#housekeeping).
 
 ## Source
 
-- [`providers/eval/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/expression/src/providers/eval):
+- [`providers/eval/`](https://github.com/contextgeneric/cgp-examples/tree/main/expression/src/providers/eval):
   one file per operator: `add.rs`, `multiply.rs`, `literal.rs`, `subtract.rs` (with
   `EvalSubtractWithNegate`), and `negate.rs`.
 

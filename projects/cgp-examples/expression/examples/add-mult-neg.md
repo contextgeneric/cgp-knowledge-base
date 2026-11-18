@@ -5,7 +5,7 @@ The extended language: an `InterpreterPlus` context that evaluates `MathPlusExpr
 at all.
 
 - **Source**:
-  [contexts/add_mult_neg.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_neg.rs)
+  [contexts/add_mult_neg.rs](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/contexts/add_mult_neg.rs)
 - **Run**: `cargo test -p cgp-example-expression add_mult_neg::`
 - **Needs**: nothing
 - **Result**: `test_add_mult_neg` passes

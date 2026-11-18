@@ -156,11 +156,11 @@ None; it is the context.
 
 ## Source
 
-- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/mock.rs):
+- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/namespaces/mock.rs):
   `MockNamespace`.
-- [`namespaces/api_handlers.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/api_handlers.rs):
+- [`namespaces/api_handlers.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/namespaces/api_handlers.rs):
   `DefaultApiHandlers`.
-- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/contexts/app.rs):
+- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/contexts/app.rs):
   `MockApp`, its wiring, and its check.
 
 ## Public material derived from this

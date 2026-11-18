@@ -76,15 +76,15 @@ with `400`.
 
 ## Source
 
-- [`interfaces/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/transfer/src/interfaces):
+- [`interfaces/`](https://github.com/contextgeneric/cgp-examples/tree/main/transfer/src/interfaces):
   the `#[prefix]` attributes.
-- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/mock.rs)
+- [`namespaces/mock.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/namespaces/mock.rs)
   and
-  [`namespaces/api_handlers.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/namespaces/api_handlers.rs):
+  [`namespaces/api_handlers.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/namespaces/api_handlers.rs):
   the two tables.
-- [`providers/mocked.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/mocked.rs):
+- [`providers/mocked.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/mocked.rs):
   the `#[default_impl]` registrations.
-- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/contexts/app.rs):
+- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/contexts/app.rs):
   `MockApp`'s wiring.
 
 ## Public material derived from this

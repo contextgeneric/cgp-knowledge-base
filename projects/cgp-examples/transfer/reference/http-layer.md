@@ -269,17 +269,17 @@ to end.
 
 ## Source
 
-- [`interfaces/api.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/interfaces/api.rs):
+- [`interfaces/api.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/interfaces/api.rs):
   `CanHandleApiSend`.
-- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/contexts/app.rs):
+- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/contexts/app.rs):
   the `CanHandleApiSend` impls and `CanAddApiRoutes`.
-- [`providers/axum/routes.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/axum/routes.rs):
+- [`providers/axum/routes.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/axum/routes.rs):
   the method markers, `CanAddRoute`, `CanAddMainApiRoutes`, and `handle_api_error`.
-- [`types/requests/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/transfer/src/types/requests):
+- [`types/requests/`](https://github.com/contextgeneric/cgp-examples/tree/main/transfer/src/types/requests):
   the request types.
-- [`types/currency.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/types/currency.rs):
+- [`types/currency.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/types/currency.rs):
   `DemoCurrency`.
-- [`bin/server.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/bin/server.rs):
+- [`bin/server.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/bin/server.rs):
   the binary.
 
 ## Public material derived from this

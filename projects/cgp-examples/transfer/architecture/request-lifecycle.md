@@ -73,7 +73,7 @@ updating both balances.
 
 ## What the server returned
 
-The responses below were recorded against the running server on the `v0.8.0` branch, starting from
+The responses below were recorded against the running server on `main`, starting from
 the seeded data and running `example.sh` first. The balances in the first rows reflect that script's
 transfer of 10 EUR from Alice to Bob:
 
@@ -99,19 +99,19 @@ is Axum's. Every other error body is a message a provider formatted and raised t
 
 ## Source
 
-- [`bin/server.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/bin/server.rs)
+- [`bin/server.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/bin/server.rs)
   and
-  [`example.sh`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/example.sh):
+  [`example.sh`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/example.sh):
   the server and the script the responses were recorded with.
-- [`providers/axum/routes.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/axum/routes.rs):
+- [`providers/axum/routes.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/axum/routes.rs):
   steps 1, 2, and 9.
-- [`providers/api_handlers/`](https://github.com/contextgeneric/cgp-examples/tree/v0.8.0/transfer/src/providers/api_handlers)
+- [`providers/api_handlers/`](https://github.com/contextgeneric/cgp-examples/tree/main/transfer/src/providers/api_handlers)
   and
-  [`providers/axum/json.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/axum/json.rs):
+  [`providers/axum/json.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/axum/json.rs):
   steps 4 to 7.
-- [`providers/mocked.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/mocked.rs)
+- [`providers/mocked.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/mocked.rs)
   and
-  [`providers/finance.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/finance.rs):
+  [`providers/finance.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/finance.rs):
   step 8 and the transfer guard.
 
 ## Public material derived from this

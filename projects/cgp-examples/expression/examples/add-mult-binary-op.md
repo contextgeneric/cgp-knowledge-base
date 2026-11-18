@@ -4,7 +4,7 @@ The base interpreter again, with the two per-operator conversion providers repla
 `BinaryOpToLisp` that takes the operator symbol as a type-level string.
 
 - **Source**:
-  [contexts/add_mult_binary_op.rs](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_binary_op.rs)
+  [contexts/add_mult_binary_op.rs](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/contexts/add_mult_binary_op.rs)
 - **Run**: no test; the context is exercised only by its check block
 - **Needs**: nothing
 - **Result**: compiles and passes its check. A probe evaluated `2 * (3 + 4)` to `14` by value and

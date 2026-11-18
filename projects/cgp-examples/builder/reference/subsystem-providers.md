@@ -358,17 +358,17 @@ error type, and the second reads its key from the environment instead.
 
 ## Source
 
-- [`providers/sqlite.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/sqlite.rs):
+- [`providers/sqlite.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/providers/sqlite.rs):
   `SqliteClient` and the two SQLite providers.
-- [`providers/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/postgres.rs):
+- [`providers/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/providers/postgres.rs):
   `PostgresClient` and `BuildPostgresClient`.
-- [`providers/http_client.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/http_client.rs):
+- [`providers/http_client.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/providers/http_client.rs):
   `HttpClient` and the two HTTP providers.
-- [`providers/chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/chatgpt.rs):
+- [`providers/chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/providers/chatgpt.rs):
   `OpenAiClient` and the two OpenAI providers.
-- [`providers/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/anthropic.rs):
+- [`providers/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/providers/anthropic.rs):
   `AnthropicClient` and `BuildDefaultAnthropicClient`.
-- [`providers/sqlite_and_http.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/providers/sqlite_and_http.rs):
+- [`providers/sqlite_and_http.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/providers/sqlite_and_http.rs):
   `SqliteAndHttpClient` and `BuildDefaultSqliteAndHttpClient`.
 
 ## Public material derived from this

@@ -137,13 +137,13 @@ the code selects the operation.
 
 ## Source
 
-- [`contexts/add_mult.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult.rs),
-  [`add_mult_binary_op.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_binary_op.rs),
-  [`add_mult_code.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_code.rs),
+- [`contexts/add_mult.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/contexts/add_mult.rs),
+  [`add_mult_binary_op.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/contexts/add_mult_binary_op.rs),
+  [`add_mult_code.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/contexts/add_mult_code.rs),
   and
-  [`add_mult_neg.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/contexts/add_mult_neg.rs):
+  [`add_mult_neg.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/contexts/add_mult_neg.rs):
   the two arrangements and each context's wrappers.
-- [`dsl.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/dsl.rs): the
+- [`dsl.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/dsl.rs): the
   `Eval` and `ToLisp` codes.
 
 ## Public material derived from this

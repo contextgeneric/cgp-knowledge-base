@@ -81,9 +81,9 @@ None; it is implemented on the operator types.
 
 ## Source
 
-- [`components/expression.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/components/expression.rs):
+- [`components/expression.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/components/expression.rs):
   the two abstract types.
-- [`providers/to_lisp/binary.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/expression/src/providers/to_lisp/binary.rs):
+- [`providers/to_lisp/binary.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/expression/src/providers/to_lisp/binary.rs):
   `BinarySubExpression`.
 
 ## Public material derived from this

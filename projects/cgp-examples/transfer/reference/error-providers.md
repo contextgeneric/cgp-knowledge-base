@@ -123,9 +123,9 @@ None; it is plain data.
 
 ## Source
 
-- [`providers/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/providers/error.rs):
+- [`providers/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/providers/error.rs):
   `IsStatusCode`, `DisplayHttpError`, and `HandleHttpErrorWithAnyhow`.
-- [`types/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/transfer/src/types/error.rs):
+- [`types/error.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/transfer/src/types/error.rs):
   `AppError`.
 
 ## Public material derived from this

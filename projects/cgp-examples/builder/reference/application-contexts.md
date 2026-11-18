@@ -145,13 +145,13 @@ None.
 
 ## Source
 
-- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/app.rs):
+- [`contexts/app.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/contexts/app.rs):
   the SQLite `App` and its two constructors.
-- [`contexts/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/postgres.rs):
+- [`contexts/postgres.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/contexts/postgres.rs):
   the Postgres `App`.
-- [`contexts/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/anthropic.rs):
+- [`contexts/anthropic.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/contexts/anthropic.rs):
   `AnthropicApp`.
-- [`contexts/anthropic_and_chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/v0.8.0/builder/src/contexts/anthropic_and_chatgpt.rs):
+- [`contexts/anthropic_and_chatgpt.rs`](https://github.com/contextgeneric/cgp-examples/blob/main/builder/src/contexts/anthropic_and_chatgpt.rs):
   `AnthropicAndChatGptApp`.
 
 ## Public material derived from this

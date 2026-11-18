@@ -4,7 +4,7 @@ This document maps each CGP construct the five crates use to the subproject docu
 in running code, so an agent looking for a real use of a construct can find one without reading
 every section. Each row links the construct's reference document for its semantics; the subproject
 links say only where the crate uses it. A construct that no crate uses is absent from the tables,
-and the survey behind it is a search of the crates' `src/` and `bin/` trees on the `v0.8.0` branch.
+and the survey behind it is a search of the crates' `src/` and `bin/` trees on `main`.
 
 ## Defining components and providers
 
