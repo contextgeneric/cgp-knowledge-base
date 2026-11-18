@@ -17,7 +17,7 @@ directory's `_category_.json`. The project moved from Zola to Docusaurus to stop
 theming and committed to no plugins and no React beyond the landing page, as the
 [new-website post](blog/new-website.md) records; raise any new site machinery with the user.
 
-**Three settings depart from stock, all to publish the agent skill from its own repository:**
+**Three settings depart from stock to publish the agent skill from its own repository:**
 
 - **`markdown.format: 'detect'`:** a `.md` file is parsed as CommonMark and only `.mdx` as MDX,
   because MDX reads an autolink such as `<https://example.com>` in the skill as JSX and fails the
@@ -31,7 +31,7 @@ theming and committed to no plugins and no React beyond the landing page, as the
 Both deploy workflows check out with `submodules: recursive`; without it the build fails on missing
 files.
 
-**`trailingSlash: true` matches how GitHub Pages serves the site.** Pages serves each page from a
+**A fourth setting, `trailingSlash: true`, matches how GitHub Pages serves the site.** Pages serves each page from a
 directory and answers a URL without the trailing slash with a 301, so the setting makes the sitemap,
 every canonical tag, and every internal link name the slash form that answers directly. The redirect
 stubs under `static/` name the same form by hand. Absolute links to the site written in Markdown,
@@ -45,7 +45,7 @@ file matches; the website's
 [README](https://github.com/contextgeneric/contextgeneric.dev/blob/main/README.md#search-engines)
 gives its use.
 
-**The theme is the other departure, within the policy.** Colours, fonts, and code colours come from
+**The theme departs from stock too, within the policy.** Colours, fonts, and code colours come from
 tokens in `src/css/custom.css`, two Prism themes in `src/prism/themes.ts`, and configuration
 options: `headTags` for the SVG favicon, the `@font-face` rules and the body font's preload, the
 `theme-color` tags, the logo's `srcDark`, the announcement bar's colours, and
