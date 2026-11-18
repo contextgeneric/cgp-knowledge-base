@@ -14,7 +14,8 @@ and optional agent support, then develops namespace wiring and migration from v0
   introduces cargo-cgp as new and names the problem it solves before its missing-field example, and
   the cargo-cgp section's paragraph introducing the tool says what each command does, and the
   paragraph on human review describes the pages read in full by what they explain, and the paragraph
-  opening *Separate filtering from database access* names the problem the wrapper solves
+  opening *Separate filtering from database access* names the problem the wrapper solves, and the
+  paragraph after the array-key wiring states the cost of listing every component
 - **How it was made**: revision of a human-written draft by an agent; the footnote links the
   disclosure's blog-post section
 - **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)
