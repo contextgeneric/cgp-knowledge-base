@@ -31,6 +31,12 @@ theming and committed to no plugins and no React beyond the landing page, as the
 Both deploy workflows check out with `submodules: recursive`; without it the build fails on missing
 files.
 
+**`trailingSlash: true` matches how GitHub Pages serves the site.** Pages serves each page from a
+directory and answers a URL without the trailing slash with a 301, so the setting makes the sitemap,
+every canonical tag, and every internal link name the slash form that answers directly. The redirect
+stubs under `static/` name the same form by hand. Absolute links to the site written in Markdown,
+such as in a published post or the skill pages, keep the form their author wrote and still redirect.
+
 **The theme is the other departure, within the policy.** Colours, fonts, and code colours come from
 tokens in `src/css/custom.css`, two Prism themes in `src/prism/themes.ts`, and configuration
 options: `headTags` for the SVG favicon, the `@font-face` rules and the body font's preload, the

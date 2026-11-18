@@ -132,10 +132,11 @@ the old addresses**: `/overview/`, `/tutorials/hello/`, `/resources/`, `/contrib
 drew 1,934 impressions and 10 clicks a year at positions 6.5 to 8, and each returned 404 on
 2026-09-21. The blog's URLs survived unchanged.
 
-The `v0.8.0` branch carries seven static stubs under `static/`, one for each of these paths and for
-the dead feed paths `/feed/` and `/atom`, each with a canonical link and a meta refresh. GitHub Pages
-cannot issue a 301, so a stub is all that is available without a plugin; they reach readers at the
-merge. The `www` host redirects correctly.
+The site carries eight static stubs under `static/`: one for each of these paths, one for each of the
+dead feed paths `/feed/` and `/atom`, and one for the skill reference page's old address. Each has a
+canonical link and a meta refresh, naming the new page in its trailing-slash form. GitHub Pages
+cannot issue a 301 to another path, so a stub is all that is available without a plugin. The `www`
+host redirects correctly.
 
 ### The name is won, and the acronym is unwinnable
 
@@ -230,6 +231,11 @@ every recommendation is cheaper before the merge. **The relaunch is URL-additive
 documentation paths are unchanged and
 [information-architecture.md](information-architecture.md#the-target-page-inventory) keeps the
 Overview where it is, so the only broken history is the migration's, which the stubs repair.
+
+**Every URL the site declares takes the trailing-slash form**, set by `trailingSlash: true` in the
+configuration, as [site.md](site.md#how-the-site-is-built) records. GitHub Pages answers the form
+without the slash with a 301, so a sitemap or canonical tag that named it would hand every engine a
+redirect in place of the page.
 
 ### The patterns book is the best-performing property, not a competitor
 
