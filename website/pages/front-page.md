@@ -27,14 +27,15 @@ inside the Docusaurus layout. Its first screen holds the hero and the code band:
   dark theme sets on a circle of its own background colour.
 - **The code band:** the encoder pair Rust rejects and the same pair under CGP, as two editor windows
   that state their verdict with a mark and a colour; the rejected window quotes rustc's `E0119`
-  beneath the block; the caption ends on the pull quote "Coherence is not repealed; it is scoped."
+  beneath the block; the caption names the providers `String` and `Vec<u8>` select and ends on the
+  pull quote "For each type, a call to `encode()` still selects a single encoder."
 
 The essay has five sections:
 
-- **Why Rust allows this only once:** three short paragraphs: coherence as a guarantee; the
+- **Why the encoders overlap:** three short paragraphs: coherence as a guarantee; the
   workaround without CGP and providers as named implementations; and the context as a type that
   stands for an application, linking *Bypassing coherence* and *Consumer and provider traits*.
-- **What that gives you:** the first four headline features as illustrated cards linking the pages
+- **Reusing providers across applications:** the first four headline features as illustrated cards linking the pages
   [seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) maps
   them to, and a line linking the Overview.
 - **More than trait implementations:** three linked tiles for abstract types, extensible records and

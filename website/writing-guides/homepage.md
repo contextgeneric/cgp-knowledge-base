@@ -79,12 +79,13 @@ a phone the blocks stack and only the hero copy fits the first screen. Do not sh
 small logo, and do not put the blocks in tabs, which hide the comparison.
 
 **Each block is an editor window that states its verdict.** The title bar carries a cross or a tick
-beside the label ("Rust accepts only one of these", "With CGP, both compile"), and the changed lines
-read like a diff, with a tint and a gutter mark in the window's own red or green, so a reader who
-cannot tell red from green still sees the difference. The rejected window numbers its lines and
-quotes rustc's `E0119` beneath the block without the location line, so the error names lines 7 and 11
-as the page numbers them. The lines run to about 70 characters, so below 1360 px the code sets a
-little smaller and below 1240 px the windows stack, and neither scrolls sideways.
+beside the label ("Rust rejects the overlapping implementations", "With CGP, both encoders
+compile"), and the changed lines read like a diff, with a tint and a gutter mark in the window's own
+red or green, so a reader who cannot tell red from green still sees the difference. The rejected
+window numbers its lines and quotes rustc's `E0119` beneath the block without the location line, so
+the error names lines 7 and 11 as the page numbers them. The lines run to about 70 characters, so
+below 1360 px the code sets a little smaller and below 1240 px the windows stack, and neither
+scrolls sideways.
 
 ## The example, and how to sell it
 
@@ -97,12 +98,13 @@ pitch, the proof, and the answer to the first objection.
 
 **The caption is two sentences**: what changed, then the informed objection pre-empted.
 
-> With CGP, both encoders compile: each one now has a name, and each type names the one it uses, so a
-> call to `encode()` is as unambiguous as it ever was. Coherence is not repealed; it is scoped.
+> CGP gives each encoder a name. Here, `String` selects `EncodeAsText` and `Vec<u8>` selects
+> `EncodeAsBytes`. For each type, a call to `encode()` still selects a single encoder.
 
-The first sentence opens on "With CGP" because the caption sits under both windows, and a sentence
-starting "Both implementations compile" reads as though the rejected block compiled too (author,
-2026-11-18).
+The second sentence is the pull quote, set large. The accepted window's label, rather than the
+caption, says that both encoders compile with CGP, because the caption sits under both windows and
+a sentence starting "Both implementations compile" reads as though the rejected block compiled too
+(author, 2026-11-18).
 
 Everything else a writer wants to add above the fold (why coherence exists, what the wiring table is,
 what it costs at runtime) belongs to the essay or to

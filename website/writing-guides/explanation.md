@@ -133,7 +133,7 @@ organized around *why can't Rust do this already?* It runs in five movements:
    [reinvent independently](../../communication-strategy/evidence.md), named rather than taught.
 5. **The move**: the implementation's `Self` becomes a type the implementing crate owns, so both rules
    are satisfied, and coherence is **restored locally**, because each type names one provider. The page
-   exists to earn "Coherence is not repealed; it is scoped."
+   exists to earn the claim that coherence is scoped rather than repealed.
 
 It is built from [coherence](../../cgp/concepts/coherence.md) and
 [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md), with the
