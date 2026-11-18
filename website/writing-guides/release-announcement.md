@@ -124,8 +124,9 @@ four of its habits matter most here:
   the `example-code` crate, which takes `cgp` from the repository's `main` until the release is on
   crates.io. A pin to a version crates.io lacks is right on the branch and broken the moment a reader
   copies it, so the pin and the release ship together.
-- **Confirm the sitemap and submit it**, per [seo.md](../seo.md#the-work-in-order), the one search task
-  that cannot be done early.
+- **Confirm the sitemap and submit it, and send the changed pages to IndexNow** with the website's
+  `scripts/indexnow/submit.py`, per [seo.md](../seo.md#the-work-in-order), the search tasks that
+  cannot be done early.
 
 **A release is the project's largest attention event**, so whatever the announcement links to is ready
 before it publishes, which is why the v0.8.0 announcement and the site relaunch are

@@ -445,17 +445,20 @@ Four signals are worth watching, each tied to a target in
 - **Clicks to `/docs/`**, eighteen a year against the blog's 336.
 - **Clicks on the problem queries** (*rust coherence*, conflicting implementations, dependency
   injection), at zero against 41 impressions.
-- **Whether the dead URLs stop appearing** once the stubs reach the live site.
+- **Whether the dead URLs stop appearing**, now that the stubs are live.
 
 **Establish the baseline before the relaunch merges**, because a before-and-after taken across it
 cannot be attributed: export on the merge day, keep the raw files outside this repository, and
-summarize the change here.
+summarize the change here. **Every declared URL took the trailing-slash form on 2026-11-18**, the
+relaunch's day, so a comparison splits there too.
 
-**IndexNow** submits changed URLs to Bing and the engines sharing its index through a key file at the
-site root and a ping per URL. That matters because
+**IndexNow tells Bing and the engines sharing its index which pages changed**, through a key file at
+the site root and the website's `scripts/indexnow/submit.py`, as
+[site.md](site.md#how-the-site-is-built) records. That matters because
 [Kagi builds its results](https://help.kagi.com/kagi/search-details/search-sources.html) from its own
-crawler plus the major providers. It is a build step rather than a plugin, worth nothing until the
-relaunch has something new to announce.
+crawler plus the major providers. The relaunch sent every sitemap URL and redirect stub once, on
+2026-11-18; after that, a release sends only the pages it changed. An accepted submission means the
+engines received the URLs, not that they indexed them.
 
 ### Repeating the hand check
 
@@ -483,19 +486,22 @@ readers at the merge.
 [Repeating the hand check](#repeating-the-hand-check) describes.
 
 **The relaunch-day submission is the only item that cannot be done early**: confirming that the live
-sitemap lists every URL and taking a Search Console export as the baseline, which belongs on the
-release checklist in
+sitemap lists every URL, taking a Search Console export as the baseline, and sending the site to
+IndexNow, done on 2026-11-18. The sitemap and IndexNow steps recur at every release, on the
+checklist in
 [writing-guides/release-announcement.md](writing-guides/release-announcement.md#publishing-and-what-happens-afterwards)
-beside re-pinning the tutorials' `cgp` version. DocSearch follows the relaunch.
+beside re-pinning the tutorials' `cgp` version; the baseline export is the relaunch's alone. DocSearch follows the relaunch.
 
 ## The decisions this needs
 
-Two decisions are taken, and two remain open:
+Three decisions are taken, and two remain open:
 
 - **Algolia DocSearch is accepted, for after the relaunch.** Several hundred pages need a search, and
   DocSearch is free for open-source documentation and ships inside `preset-classic`; it needs a
   DocSearch application and a configuration block.
 - **Search Console is in place.**
+- **IndexNow is adopted**, as a key file and a script rather than a plugin;
+  [Measurement](#measurement) describes its use.
 - **Bing Webmaster Tools is open**, for the same reasons as Search Console.
 - **`maybevoid.com/projects/cgp/` is open**: whether the author's older site redirects, links forward,
   or stays. It belongs to the author alone, and nothing waits on it.
