@@ -161,7 +161,7 @@ impression total overstates the site's reach.
 `rust-patterns` and `no-std` categories, inherited from `[workspace.package]`, place every publishable
 crate in crates.io's and lib.rs's browse surfaces.
 
-**The repository settings name the project, read on GitHub on 2026-11-16.** The eight repositories
+**The repository settings name the project, read on GitHub on 2026-11-18.** The eight repositories
 the release announces each describe themselves with the full name, Context-Generic Programming:
 
 - **The `cgp` repository's description is the settled tag line**, after the name. Neither the
@@ -171,8 +171,10 @@ the release announces each describe themselves with the full name, Context-Gener
 - **Every member carries the topics `rust`, `cgp`, and `context-generic-programming`**, beside a few
   of its own, such as `cargo-subcommand` on `cargo-cgp` and `serde` on `cgp-serde`. `cgp-skills`
   keeps `agent-skills`, which `gh skill search` finds.
-- **Only `cgp` and `cgp-serde` set a homepage**, the site and `cgp-serde`'s release post. Each
-  member's homepage moves to its page on the site once the relaunch publishes those pages.
+- **Six members link their page on the site as their homepage**: `cgp` the site itself, `cargo-cgp`
+  its Tooling page, `cgp-knowledge-base` the knowledge-base pages, and `cgp-examples`, `hypershell`,
+  and `cgp-serde` their Projects pages. `cgp-skills` and `contextgeneric.dev` set none; their
+  pages are the skill pages and the site.
 
 **The front page names the project first, at the author's decision.** Its title is
 *Context-Generic Programming (CGP) - Pluggable trait implementations for Rust*, with no site-name
