@@ -62,7 +62,7 @@ expecting: the project moves with the library while the post that announced it d
 - [cgp-examples/](cgp-examples/README.md): a repository of five independent example crates, each
   documented as its own subproject: an HTTP money-transfer service, a modular interpreter, an
   application builder, a web-app wiring study, and a greeting program. Documented against its
-  `v0.8.0` branch, with all five subprojects written.
+  `main` branch, with all five subprojects written.
 - [error/](error/README.md): the error backends `cgp-error-anyhow`, `cgp-error-eyre`, and
   `cgp-error-std`, which each make one concrete type a context's abstract error. Documented with one
   subdirectory per crate and a shared architecture and guides, against the `cgp` repository's `main`

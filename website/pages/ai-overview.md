@@ -6,7 +6,7 @@ under two headings that keep the section's two directions apart.
 
 - **URL:** <https://contextgeneric.dev/docs/ai/>
 - **Source:** [docs/ai/index.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/ai/index.md)
-- **Status:** Current, on the `v0.8.0` branch
+- **Status:** Current
 - **How it was made:** written by an agent (level one), following
   [writing-guides/orientation.md](../writing-guides/orientation.md); not yet read by the author
 

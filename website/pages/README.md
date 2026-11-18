@@ -13,8 +13,7 @@ Pages recorded elsewhere:
   position 9): ported from the base's [projects/](../../projects/README.md) sections, with the
   blueprint and one plan per project under [projects/](../projects/README.md) and the page type in
   [writing-guides/project.md](../writing-guides/project.md). Draft: the index, 21 Hypershell pages,
-  49 cgp-serde pages, and 14 cgp-examples pages are written on `v0.8.0`; the error backends are
-  planned.
+  49 cgp-serde pages, and 14 cgp-examples pages are published; the error backends are planned.
 
 ## Standalone pages
 

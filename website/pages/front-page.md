@@ -7,8 +7,7 @@ ends on routes into the rest of the site.
 - **Source:** [src/pages/index.tsx](https://github.com/contextgeneric/contextgeneric.dev/blob/main/src/pages/index.tsx),
   its stylesheet `index.module.css`, and the feature cards in
   [src/components/HomepageFeatures/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/src/components/HomepageFeatures)
-- **Status:** Current on the `v0.8.0` branch; the live page on `main` is the earlier landing page it
-  replaces
+- **Status:** Current
 - **How it was made:** written by an agent from this base, level one of the four in
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md), and revised with the author over
   several reviews, including one pass of the copy by another assistant that the agent reviewed. It

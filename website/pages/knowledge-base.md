@@ -5,7 +5,7 @@ how the documentation is written, and two how-to pages.
 
 - **URL:** <https://contextgeneric.dev/docs/ai/knowledge-base/>
 - **Source:** [docs/ai/knowledge-base/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/ai/knowledge-base)
-- **Status:** Current, on the `v0.8.0` branch; awaiting the author's read of the process page
+- **Status:** Current; awaiting the author's read of the process page
 - **How it was made:** all four written by an agent (level one) from
   [writing-guides/knowledge-base.md](../writing-guides/knowledge-base.md); none read by the author
   yet, and each footer records agent authorship without claiming review

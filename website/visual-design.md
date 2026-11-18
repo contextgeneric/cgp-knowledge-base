@@ -1,6 +1,6 @@
 # The site's visual design
 
-This document records the theme the website ships on the `v0.8.0` branch: its palette, fonts, code
+This document records the theme the website ships: its palette, fonts, code
 colours, image treatment, layout constraints, and the check that keeps every colour readable. An
 agent changing a colour, a font, or an image's treatment starts here.
 

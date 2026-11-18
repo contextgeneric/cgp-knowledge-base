@@ -8,8 +8,7 @@ recorded talks, and *Community* holds the discussion channels and the social acc
   <https://contextgeneric.dev/docs/resources/videos>, and
   <https://contextgeneric.dev/docs/resources/community>
 - **Source:** [docs/resources/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/resources)
-- **Status:** Current on the `v0.8.0` branch; the live page is the older list described under
-  *Where it diverges*
+- **Status:** Current
 
 ## How the page was made
 
@@ -55,14 +54,6 @@ or who wants CGP's news to *Community*.
 
 The talk's transcript and its record, [rustlab-2025-coherence.md](../blog/rustlab-2025-coherence.md),
 are the source for the line that describes it.
-
-## Where it diverges
-
-The live page on `main` is a single list that omits `cargo-cgp` and the agent skill, names
-`cgp-error-anyhow` but not `cgp-error-eyre` or `cgp-error-std`, lists `cgp-serde` by GitHub URL,
-carries a books group with the CGP Patterns book and the Hermes SDK among its projects, and lacks a
-`description`. The `v0.8.0` section replaces it when the branch merges, at the same
-`/docs/resources` URL.
 
 ## Maintaining it
 

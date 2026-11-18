@@ -6,7 +6,7 @@ repository's `main` branch, and how to update it.
 
 - **URL:** <https://contextgeneric.dev/docs/ai/skills/installation>
 - **Source:** [docs/ai/skills/installation.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/ai/skills/installation.md)
-- **Status:** Current on the `v0.8.0` branch; the live site has no installation page
+- **Status:** Current
 
 ## How the page was made
 

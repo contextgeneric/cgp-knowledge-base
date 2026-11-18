@@ -1,8 +1,8 @@
 # The website: build, branches, example code, and navigation
 
 This document records the facts every website task shares: how the site is built and deployed,
-which branch carries the redesign, the `example-code` crate that compiles the pages' code, and the
-navigation. Each page's own record is under [pages/](pages/README.md).
+which branches hold work that is not on `main`, the `example-code` crate that compiles the pages'
+code, and the navigation. Each page's own record is under [pages/](pages/README.md).
 
 ## How the site is built
 
@@ -67,9 +67,9 @@ change. The MDX setup rejects `{#custom-id}`, so anchors always come from headin
 ## Branches, and what is not on `main`
 
 **Every push to `main` deploys, so unpublished work lives on a branch named after the release it
-accompanies.** `v0.8.0` carries the whole redesign and merges when the release ships. It carries
-two releases, `cgp` v0.8.0 and `cargo-cgp` v0.1.0, merges only once both are published, and every
-page on it treats both as out.
+accompanies.** Such a branch merges only once every release it describes is published, and every
+page on it treats those releases as out. The redesign that accompanied `cgp` v0.8.0 and `cargo-cgp`
+v0.1.0 is on `main`, and its `v0.8.0` branch holds nothing `main` lacks.
 
 Two other branches hold content that is not on `main`:
 
@@ -77,7 +77,7 @@ Two other branches hold content that is not on `main`:
   [blog/incoherent-rust-today.md](blog/incoherent-rust-today.md).
 - **`rustlab-presentation`:** the slide assets for the RustLab talk transcript.
 
-The `notes/` tree, on `main` and `v0.8.0`, is working notes on applying Diátaxis to the site and on
+The `notes/` tree on `main` is working notes on applying Diátaxis to the site and on
 implicit parameters. Nothing under it is routed or built; its conclusions belong in the
 [writing guides](writing-guides/README.md).
 
@@ -109,18 +109,19 @@ holds its conventions. Four matter from this side:
 
 **A page gets its file when someone writes, revises, or reviews it,** so a missing file means nobody
 has been through the page, per
-[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#code). On
-`v0.8.0` the targets are `tests/concepts/` (every concept page with code), `tests/comparisons/`
-(every comparison page), `tests/tutorials/` (the ported tutorial parts), the standalone binaries
-`tests/quickstart.rs`, `tests/overview.rs`, and `tests/front_page.rs`, `tests/cargo_cgp/`, and
-`tests/reference/`, which mirrors `errors.rs`, `macros/`, `attributes/`, `derives/`, `traits/`,
-`providers/` (every page with code), `components/` with `handler/`, and `types/`. The `traits/` and
-`types/` mirrors stay flat, because a Rust module name cannot hold a hyphen; every basename is
-unique, so the mirror still resolves.
+[AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#code). The
+targets are `tests/concepts/` (every concept page with code), `tests/comparisons/` (every comparison
+page), `tests/tutorials/` (the ported tutorial parts), the standalone binaries
+`tests/quickstart.rs`, `tests/overview.rs`, and `tests/front_page.rs`, `tests/cargo_cgp/`,
+`tests/blog/` (the v0.8.0 post's examples), and `tests/reference/`, which mirrors `errors.rs`,
+`macros/`, `attributes/`, `derives/`, `traits/`, `providers/` (every page with code), `components/`
+with `handler/`, and `types/`. The `traits/` and `types/` mirrors stay flat, because a Rust module
+name cannot hold a hyphen; every basename is unique, so the mirror still resolves.
 
-**The crate takes `cgp` from the `cgp` repository's git `main`,** the 0.8.0 release the site
-documents, so it tests the pages before the release reaches crates.io; pinning `cgp = "0.8.0"` joins
-the tutorials' pin on the release checklist.
+**The crate takes `cgp` 0.8.0 from crates.io,** the release the site documents, with its `alloc`
+feature. While the next release is prepared, it takes `cgp` from the repository's `main` until that
+release reaches crates.io, as the release guide's
+[re-pin step](writing-guides/release-announcement.md#publishing-and-what-happens-afterwards) says.
 
 Two sets of capture-only programs sit outside the test suite and CI, compiled by the diagnostic
 capture harness with cargo-cgp's pinned nightly:
@@ -151,10 +152,9 @@ Tooling holds `cargo-cgp` (1) under `docs/tooling/cargo-cgp/`, at the URLs that 
 manifest and READMEs, `cgp`'s README, and the agent skill link them there.
 
 **The announcement bar is hardcoded in `docusaurus.config.ts`,** so it is updated by hand with every
-release announcement. On `main` it promotes the v0.7.0 post; `v0.8.0` points it at the v0.8.0 post.
+release announcement. It promotes the v0.8.0 post.
 Its one-line pitch is governed by [identity.md](../communication-strategy/identity.md).
 
-**The configured tagline on `main` is the retired "Modular programming paradigm for Rust."**
-`v0.8.0` carries the current line from [identity.md](../communication-strategy/identity.md), *"a
-language extension for Rust, with pluggable trait implementations at compile-time,"* which reaches
-the live site when the branch merges.
+**The configured tagline is the current line from
+[identity.md](../communication-strategy/identity.md)**, *"a language extension for Rust, with
+pluggable trait implementations at compile-time."*

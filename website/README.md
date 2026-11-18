@@ -83,8 +83,8 @@ documents; the rules for the published pages are in the website repository's
 
 ## The catalog
 
-- [site.md](site.md): the facts every page shares: the build and deployment, the `v0.8.0` release
-  branch, the `example-code` crate, and the navigation.
+- [site.md](site.md): the facts every page shares: the build and deployment, the branches that hold
+  unpublished work, the `example-code` crate, and the navigation.
 - [information-architecture.md](information-architecture.md): the site as intended: what each surface
   is for, the target page inventory, the sidebar and navigation, and each reader profile's path.
 - [seo.md](seo.md): the search and agent-discoverability strategy, from a twelve-month Search Console

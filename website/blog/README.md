@@ -10,8 +10,8 @@ published one, are in [../AGENTS.md](https://github.com/contextgeneric/contextge
 **The blog is the site's most-read writing and its least current.** Of the sixteen published posts,
 eight write every provider inside-out with `#[cgp_provider]`/`#[cgp_new_provider]`, seven show
 `#[cgp_context]` on a context definition, and four use the removed `Async` trait or one of its aliases.
-The live site's [Introduction](https://contextgeneric.dev/docs/) still sends newcomers to the blog as
-the most up-to-date resource; the `v0.8.0` branch's does not. The posts' ideas stay current where their
+The site's [Introduction](https://contextgeneric.dev/docs/) warns that older posts describe the
+library as it was when they were published. The posts' ideas stay current where their
 code does not, and several are the only prose on the design questions they work through. So each
 record's "Where it diverges from CGP v0.8.0" section names what is stale, to read before quoting the
 post, per [../AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#code).

@@ -778,7 +778,8 @@ it stale.
 - [website/seo.md](website/seo.md) — the site's search and agent discoverability strategy, written
   against a twelve-month Google Search Console export: the 1.09% click-through rate that reframes
   the problem as presentation rather than rank, the derived descriptions behind it and the
-  written ones every docs page carries, the dead pre-migration URLs the redirect stubs repair at the merge, the branded
+  written ones every docs page carries, the dead pre-migration URLs the redirect stubs repair, the
+  trailing-slash URLs and IndexNow submissions that keep the site's addresses canonical, the branded
   terms that already rank first and have no volume, the blanket-implementation family that is the
   project's one proven term, why the tag line orients rather than ranks, the map from the headline
   features to query families, the per-page title and description levers, why adding a page is almost
@@ -794,8 +795,9 @@ it stale.
   below `<html>`, and the ids the anchor check counts), and the contrast check with the screenshot
   practice.
 - [website/site.md](website/site.md) — the facts every website task shares: the stock Docusaurus
-  build and its three departures for the skill, the theme, deployment, broken-link checks, the
-  `v0.8.0` release branch, the `example-code/` crate, the sidebar order, and the announcement bar.
+  build and its departures (three for the skill, the trailing slash, and the theme), the IndexNow
+  key file and script, deployment, broken-link checks, the branches that hold unpublished work, the
+  `example-code/` crate, the sidebar order, and the announcement bar.
 
 ### `website/pages/`: one record per standalone page and docs section
 
@@ -1238,7 +1240,7 @@ it stale.
   rejection messages, and the serializer's `'static` limit.
 - [projects/cgp-examples/README.md](projects/cgp-examples/README.md) — the repository of five
   independent example crates: what each demonstrates, its context shape, worked example, citing post,
-  whether it runs, the `v0.8.0` branch against `main` and the unmerged
+  whether it runs, the revision the documents describe and the unmerged
   `profile-picture` branch, the build setup, workspace gaps, and the subproject catalog.
 - [projects/cgp-examples/constructs.md](projects/cgp-examples/constructs.md) — each CGP construct the
   five crates use, mapped to the subproject documents that show it in running code.

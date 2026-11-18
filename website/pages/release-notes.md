@@ -1,8 +1,8 @@
 # Release notes
 
 The Release notes category lists what each official release of `cgp`, `cargo-cgp`, `cgp-serde`, and
-Hypershell changed, in one dated page per release; it is drafted on the `v0.8.0` branch and
-publishes with that release.
+Hypershell changed, in one dated page per release; each page is drafted before its release and
+publishes with it.
 
 - **URL:** <https://contextgeneric.dev/docs/release-notes/>
 - **Source:** [docs/release-notes/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/release-notes)

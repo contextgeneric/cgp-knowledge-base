@@ -7,7 +7,7 @@ payoff.
 - **URL**: <https://contextgeneric.dev/docs/tutorials/hello>
 - **Source**: [docs/tutorials/hello.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/tutorials/hello.md)
 - **Pages**: one, at `sidebar_position: 2` in the tutorials category
-- **Status**: Current; the version pin is stale on `main` and updated on the `v0.8.0` branch
+- **Status**: Current
 
 ## What it teaches
 
@@ -71,11 +71,9 @@ verified code is the opening of the [area calculation example](../../examples/ar
 
 ## Where it diverges from CGP v0.8.0
 
-**Only the version pin, and only on `main`**: the published page pins `cgp = "0.7.0"` while its code is
-written against [v0.8.0](../../releases/v0-8-0.md). The `v0.8.0` branch pins `cgp = "0.8.0"`, which
-resolves once the release is published, so the page and the release land together. `#[cgp_fn]`,
-`#[implicit]`, and `#[derive(HasField)]` are unchanged, and the appendix remains an accurate
-simplification.
+**Nowhere**: the page pins `cgp = "0.8.0"`, and its code is written against
+[v0.8.0](../../releases/v0-8-0.md). `#[cgp_fn]`, `#[implicit]`, and `#[derive(HasField)]` are
+unchanged, and the appendix remains an accurate simplification.
 
 **One caveat**: the appendix's `HasName` returns `&str` from a `String` field, as `#[cgp_auto_getter]`
 supports, but presents it as hand-written code. Before adding any claim about how values are fetched,
