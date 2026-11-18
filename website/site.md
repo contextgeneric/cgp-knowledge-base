@@ -37,6 +37,14 @@ every canonical tag, and every internal link name the slash form that answers di
 stubs under `static/` name the same form by hand. Absolute links to the site written in Markdown,
 such as in a published post or the skill pages, keep the form their author wrote and still redirect.
 
+**IndexNow is a key file and a script, not a plugin.** `static/<key>.txt`, named after the key and
+holding only it, proves to the engines that a submission comes from the site, so it stays deployed.
+`scripts/indexnow/submit.py` sends changed URLs to IndexNow, which shares them with Bing and the
+engines that use its index. It refuses a URL on another host and refuses to send until the live key
+file matches; the website's
+[README](https://github.com/contextgeneric/contextgeneric.dev/blob/main/README.md#search-engines)
+gives its use.
+
 **The theme is the other departure, within the policy.** Colours, fonts, and code colours come from
 tokens in `src/css/custom.css`, two Prism themes in `src/prism/themes.ts`, and configuration
 options: `headTags` for the SVG favicon, the `@font-face` rules and the body font's preload, the
