@@ -25,14 +25,15 @@ improvements, migration, and a practical closing follow.
 
 **cargo-cgp.** The section restores the author's account of verbose diagnostics as a long-standing
 adoption barrier: a newcomer could need advanced Rust and CGP implementation knowledge to diagnose a
-simple mistake. It names the accompanying v0.1.0 release and shows the readable diagnostic before an
+simple mistake. It names the accompanying v0.1.0 release as CGP's error toolchain and shows the readable diagnostic before an
 expandable raw-compiler comparison, both captured from the exact missing-height program. It
 identifies the example as `src/lib.rs` in a package using CGP v0.8.0, runs the checker in that
 project, then repairs the field and verifies the check. It uses the canonical recognition
 qualification and distinguishes the optional tool's pinned nightly from ordinary stable-Rust builds.
 The compiler-API explanation follows the demonstration and precedes installation:
 `cargo install --locked cargo-cgp` and `cargo cgp setup`, with the minimum Rust version and
-Linux-only testing beside them, and links to the installation and expansion documentation.
+Linux-only testing beside them, and links to the installation and expansion documentation and to the
+tool's v0.1.0 release notes.
 
 **Documentation.** The section explains the earlier reliance on blog posts, the missing reference
 material, and the author's limited time for a side project, keeping the author's estimate that
@@ -89,7 +90,8 @@ the restrictions the release lifts: reserved variant names, another derive's hel
 default bodies, and a provider's own const.
 
 Migration opens by linking the [release notes page](../pages/release-notes.md), which lists every
-change, then names every removed preset construct, `replace_with!` included, and works a user-group
+change, and names cgp-serde 0.3.0 and Hypershell 0.2.0, which move to v0.8.0 at the same time, with
+their Projects pages and release notes; it then names every removed preset construct, `replace_with!` included, and works a user-group
 conversion with its filter dependency and component checks, stating the required component
 registrations before the migrated context and updating the earlier default-provider implementation
 explicitly. It then covers, in order:
@@ -103,8 +105,11 @@ explicitly. It then covers, in order:
   macro-name ambiguity, and the dropped `on_unimplemented` messages.
 - **Error backends:** their changed behavior.
 
-The closing invites a small wiring refactor or the Quickstart and asks for specific diagnostic and
-documentation feedback without promising a roadmap.
+The closing concedes the learning curve, the small ecosystem, and the unfinished tooling and
+documentation, invites a small wiring refactor or the Quickstart, and asks for specific diagnostic and
+documentation feedback without promising a roadmap. The front matter's `description` names the three
+improvements and leaves the agent skill to its section, as the strategy keeps assistant support out
+of openings.
 
 ## How it relates to the knowledge base
 
