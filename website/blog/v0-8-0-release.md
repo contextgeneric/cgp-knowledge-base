@@ -5,12 +5,11 @@ and optional agent support, then develops namespace wiring and migration from v0
 
 - **URL**: <https://contextgeneric.dev/blog/v0.8.0-release>
 - **Source**:
-  [blog/2026-05-10-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/blog/2026-05-10-v0.8.0-release.md),
+  [blog/2026-11-18-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/blog/2026-11-18-v0.8.0-release.md),
   on the website's `v0.8.0` branch
-- **Dated**: 10 May 2026 is the placeholder filename date; set the actual publication date at
-  release
+- **Dated**: 18 November 2026, the release day, in the filename
 - **Tags**: `release`, `deepdive`
-- **Status**: **Draft**, awaiting the author's review and coordinated publication
+- **Status**: **Draft**, read by the author and awaiting publication with the website's merge
 - **How it was made**: revision of a human-written draft by an agent; the footnote links the
   disclosure's blog-post section
 - **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)

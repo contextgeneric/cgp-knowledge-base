@@ -87,8 +87,8 @@ holds its conventions. Four matter from this side:
 - **Rejected snippets are `trybuild` compile-fail fixtures** under `tests/compile_fail/`, each a
   complete failing program with a blessed `.stderr`. Re-bless with
   `TRYBUILD=overwrite cargo test --test compile_fail_tests` after a toolchain or `cgp` change. A
-  snapshot that quotes a `cgp` file holds that checkout's absolute path, so another checkout fails it
-  until re-blessed.
+  snapshot that quotes a `cgp` file names it through trybuild's `$CARGO/…` path, so no snapshot
+  depends on where the checkout lives.
 - **Duplication between files is wanted,** because each file answers for its page alone.
 - **Generated code is only shape-checked here;** `cargo cgp expand` on the test target is the
   authority on its text.

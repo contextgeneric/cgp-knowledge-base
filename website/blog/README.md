@@ -67,8 +67,9 @@ status is one of the section's [status words](../README.md#status-words).
 - [RustLab 2025: how to stop fighting with coherence](rustlab-2025-coherence.md): 2026-03-07,
   *historical*. A slide-by-slide transcript of CGP's first conference talk, and the clearest narrative
   anywhere of why coherence exists and how provider traits work around it.
-- [CGP v0.8.0: cargo-cgp, new documentation, and namespaces](v0-8-0-release.md): placeholder date
-  2026-05-10, on the website's `v0.8.0` branch, **draft awaiting review and coordinated publication**.
+- [CGP v0.8.0: cargo-cgp, new documentation, and namespaces](v0-8-0-release.md): dated
+  2026-11-18, on the website's `v0.8.0` branch, **read by the author and awaiting publication with
+  the branch's merge**.
   The social-media wiring progression, fixed defaults and their limits, verified cargo-cgp
   diagnostics, expanded documentation and optional agent support, other improvements, migration, and
   a practical closing.

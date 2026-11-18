@@ -115,9 +115,8 @@ programs the pages say compile under `tests/cargo_cgp/`.
   options. The settings and command-palette names come from VS Code's and rust-analyzer's
   documentation, and the restart command's name from the extension's `package.json`. How VS Code
   renders the error in its window is unverified.
-- **The `example-code` crate patches `cgp` to the sibling checkout,** and its `.stderr` snapshots are
-  blessed against it; before the branch merges, the patch goes and the snapshots are re-blessed
-  against the release.
+- **The `example-code` crate pins `cgp` 0.8.0 from crates.io,** and its `.stderr` snapshots are
+  blessed against that release.
 - **The pinned nightly's date appears only where real output contains it.** Commands use
   `nightly-YYYY-MM-DD` and say where to read the real one, so a toolchain bump changes quoted output
   but no instructions.
