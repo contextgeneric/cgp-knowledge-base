@@ -97,8 +97,12 @@ pitch, the proof, and the answer to the first objection.
 
 **The caption is two sentences**: what changed, then the informed objection pre-empted.
 
-> Both implementations compile, because each one now has a name, and each type names the one it uses, so
-> a call to `encode()` is as unambiguous as it ever was. Coherence is not repealed; it is scoped.
+> With CGP, both encoders compile: each one now has a name, and each type names the one it uses, so a
+> call to `encode()` is as unambiguous as it ever was. Coherence is not repealed; it is scoped.
+
+The first sentence opens on "With CGP" because the caption sits under both windows, and a sentence
+starting "Both implementations compile" reads as though the rejected block compiled too (author,
+2026-11-18).
 
 Everything else a writer wants to add above the fold (why coherence exists, what the wiring table is,
 what it costs at runtime) belongs to the essay or to
