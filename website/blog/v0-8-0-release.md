@@ -8,8 +8,8 @@ and optional agent support, then develops namespace wiring and migration from v0
   [blog/2026-11-18-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2026-11-18-v0.8.0-release.md)
 - **Dated**: 18 November 2026, the release day, in the filename
 - **Tags**: `release`, `deepdive`
-- **Status**: **Published** on 18 November 2026, read by the author before publication; the
-  discussion links follow the channel posts
+- **Status**: **Published** on 18 November 2026, read by the author before publication; by the
+  author's choice, it has no discussion-links section
 - **Revised after publication**: on 18 November 2026, at the author's request:
   - **Plainer points:** the opening introduces cargo-cgp as new; the cargo-cgp, human-review,
     filtering, bundle, missing-keys, preset, prefix, check, defaults, and shared-wiring paragraphs
@@ -255,6 +255,6 @@ next step or restating the syntax.
 
 **Publication is separate from revision.** The author reads the post before publication; the filename
 gets the actual release date, the fixed slug stays, and the site branch publishes only with both
-official releases. Re-run the quoted diagnostics against the released tool, verify the announcement
-bar and version pins, and add discussion links after submission. Release wording already describes
-the official versions as shipped, as the branch rules require.
+official releases. Re-run the quoted diagnostics against the released tool, and verify the
+announcement bar and version pins. Release wording already describes the official versions as
+shipped, as the branch rules require.
