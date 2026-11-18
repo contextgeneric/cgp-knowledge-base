@@ -16,7 +16,9 @@ and optional agent support, then develops namespace wiring and migration from v0
   paragraph on human review describes the pages read in full by what they explain, and the paragraph
   opening *Separate filtering from database access* names the problem the wrapper solves, and the
   paragraph after the array-key wiring states the cost of listing every component, and the paragraph
-  after the helper-macro pseudocode restores the original draft's lazy and eager macro expansion
+  after the helper-macro pseudocode restores the original draft's lazy and eager macro expansion,
+  and the paragraph after the first namespace table says lookups follow the routes registered in
+  `DefaultNamespace`
 - **How it was made**: revision of a human-written draft by an agent; the footnote links the
   disclosure's blog-post section
 - **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)
