@@ -31,9 +31,9 @@ inside the Docusaurus layout. Its first screen holds the hero and the code band:
 
 The essay has five sections:
 
-- **Why Rust allows this only once:** coherence as a guarantee, the workaround without CGP, providers
-  as named implementations, and the context as a type that stands for an application, linking
-  *Bypassing coherence* and *Consumer and provider traits*.
+- **Why Rust allows this only once:** three short paragraphs: coherence as a guarantee; the
+  workaround without CGP and providers as named implementations; and the context as a type that
+  stands for an application, linking *Bypassing coherence* and *Consumer and provider traits*.
 - **What that gives you:** the first four headline features as illustrated cards linking the pages
   [seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) maps
   them to, and a line linking the Overview.
@@ -43,6 +43,9 @@ The essay has five sections:
   word for word and the agent skill beside the learning time, then the advice to try CGP on a small
   part of a project, linking *Modularity Hierarchy*.
 - **Where to go next:** five route cards, one per reader, from trying CGP to helping build it.
+
+The tag line, the section titles, and the pull quote balance their line breaks, so a title that
+wraps in section 1's narrow column or on a phone does not leave one word on its last line.
 
 Each feature card has its own illustration under `static/img/features/`:
 `one-interface-many-implementations.webp`, `zero-cost-abstraction.webp`, `type-safe-wiring.webp`, and

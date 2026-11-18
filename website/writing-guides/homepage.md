@@ -199,6 +199,11 @@ implementing crate owns, so neither rule bites, and coherence is **restored loca
 wired type names one provider; the caption already says this, so the section explains it rather than
 repeating it.
 
+**Keep the section to three short paragraphs**, one each for the guarantee, the move, and the
+context, because a reader arriving from the code band is still scanning. Name one workaround rather
+than several, and leave the rules' detail to *Bypassing coherence*, which the section links (author,
+2026-11-18: "a bit too long for readers at a first glance").
+
 The section ends where the page crosses from the retrofit shape to the application shape, and it says
 so in one sentence: *"so far the wired type has been the data, which gets one choice for the whole
 program; the move that makes the choice yours is to wire a type you define to stand for your
