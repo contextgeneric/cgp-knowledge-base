@@ -171,10 +171,9 @@ the release announces each describe themselves with the full name, Context-Gener
 - **Every member carries the topics `rust`, `cgp`, and `context-generic-programming`**, beside a few
   of its own, such as `cargo-subcommand` on `cargo-cgp` and `serde` on `cgp-serde`. `cgp-skills`
   keeps `agent-skills`, which `gh skill search` finds.
-- **Six members link their page on the site as their homepage**: `cgp` the site itself, `cargo-cgp`
-  its Tooling page, `cgp-knowledge-base` the knowledge-base pages, and `cgp-examples`, `hypershell`,
-  and `cgp-serde` their Projects pages. `cgp-skills` and `contextgeneric.dev` set none, though the
-  skill pages and the site would serve them.
+- **Every member links its page on the site as its homepage**: `cgp` and `contextgeneric.dev` the
+  site itself, `cargo-cgp` its Tooling page, `cgp-skills` the skill pages, `cgp-knowledge-base` the
+  knowledge-base pages, and `cgp-examples`, `hypershell`, and `cgp-serde` their Projects pages.
 
 **The front page names the project first, at the author's decision.** Its title is
 *Context-Generic Programming (CGP) - Pluggable trait implementations for Rust*, with no site-name
