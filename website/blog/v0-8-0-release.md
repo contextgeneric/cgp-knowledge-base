@@ -20,7 +20,8 @@ and optional agent support, then develops namespace wiring and migration from v0
   and the paragraph after the first namespace table says lookups follow the routes registered in
   `DefaultNamespace`; a paragraph after the two-group production table explains that `@app.core`
   covers both core groups and follows one lookup through both bundles; the defaults restrictions
-  link `PathCons` to its reference page
+  link `PathCons` to its reference page; *Other improvements* turns the component-key passage into
+  one bullet and sends the handler-macro fixes and lifted restrictions to the release notes
 - **How it was made**: revision of a human-written draft by an agent; the footnote links the
   disclosure's blog-post section
 - **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)
@@ -94,10 +95,9 @@ base namespace and fixed choices in a configuration namespace, leaving varying p
 **Other improvements, migration, and the closing.** Other improvements introduce `open`, table
 iteration, implementation-only generics, shape macros, and fieldless variants through concrete uses.
 The `no_std` build with its `alloc` feature, the `&str` implicit read, and the generated doc lines
-follow, then a paragraph with a compiled import on the component key a provider header derives,
-naming `CGP-E041`, `CGP-E070`, and the path form. The section ends with the handler-macro fixes and
-the restrictions the release lifts: reserved variant names, another derive's helper attributes, async
-default bodies, and a provider's own const.
+follow, then the `CGP-E041` fix for a missing component key and the path form that avoids the
+import. A closing sentence sends the smaller changes, such as the handler-macro fixes and the lifted
+restrictions, to the v0.8.0 release notes.
 
 Migration opens by linking the [release notes page](../pages/release-notes.md), which lists every
 change, and names cgp-serde 0.3.0 and Hypershell 0.2.0, which move to v0.8.0 at the same time, with
@@ -140,7 +140,7 @@ of openings.
 - **The smaller changes and migration:** [`#[cgp_impl]`](../../cgp/reference/macros/cgp_impl.md)
   for the component key a header derives, with the
   [unresolved wiring name](../../cgp/errors/wiring/unresolved-wiring-name.md) class and the
-  [error-code catalog](../../cargo-cgp/error-code.md) for `CGP-E041` and `CGP-E070`;
+  [error-code catalog](../../cargo-cgp/error-code.md) for `CGP-E041`;
   [`#[implicit]`](../../cgp/reference/attributes/implicit.md),
   [`#[use_type]`](../../cgp/reference/attributes/use_type.md), and
   [`#[derive_delegate]`](../../cgp/reference/attributes/derive_delegate.md); and the release's
