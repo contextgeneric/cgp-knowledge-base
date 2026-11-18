@@ -10,6 +10,8 @@ context-and-capabilities proposal on stable Rust.
 - **Published**: 3 November 2025, tagged `release`
 - **Status**: Historical
 - **Notice**: a note at the top of the post, written on the website's `v0.8.0` branch, links the [cgp-serde pages](https://contextgeneric.dev/docs/projects/cgp-serde/), per [projects/cgp-serde.md](../projects/cgp-serde.md); it is the sanctioned edit in [../AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts) and changes no claim
+- **Links repointed**: on 18 November 2026, at the author's request, the two "Full Example" links
+  name tag `v0.2.0` instead of `main`, where 0.3.0 moved the files; the edit changes no claim
 
 ## What it covers
 
@@ -76,10 +78,10 @@ Demonstration first, mechanism second:
   `DelegateComponent` lookup; v0.7.0 simplified that to `Context: ValueSerializer<Context, Value>`.
 - **One inconsistency to not copy:** the lookup-table section shows a `#[cgp_impl(Provider)]` block
   whose body uses the inside-out `Provider::Delegate::serialize` form, mixing the two styles.
-- **The two "Full Example" links no longer resolve.** They name `messages.rs` and
-  `arena_simplified.rs` under `crates/cgp-serde-tests/src/tests/` on `main`, where 0.3.0 moved both
-  to `crates/cgp-serde-examples/examples/` and wired them with `open`; the 0.2.0 tests the post
-  showed, wired with `UseDelegate` tables, stay at tag `v0.2.0`. The current versions are in
+- **The two "Full Example" links show 0.2.0's code.** They name `messages.rs` and
+  `arena_simplified.rs` under `crates/cgp-serde-tests/src/tests/` at tag `v0.2.0`, the tests the
+  post shows, wired with `UseDelegate` tables. 0.3.0 moved both to
+  `crates/cgp-serde-examples/examples/` and wired them with `open`; the current versions are in
   [projects/cgp-serde/examples/](../../projects/cgp-serde/examples/README.md).
 - **The record serializer is named `SerializeFields` in the post.** In 0.3.0 it is
   `SerializeRecordFields`, matching `DeserializeRecordFields`.
