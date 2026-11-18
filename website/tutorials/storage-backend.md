@@ -6,7 +6,7 @@ providers, so a reader sees one operation run against two backends each context 
 
 - **URL**: <https://contextgeneric.dev/docs/tutorials/storage-backend>
 - **Source**: [docs/tutorials/storage-backend.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/docs/tutorials/storage-backend.md),
-  written on the website's `v0.8.0` branch and not yet published
+  published with the v0.8.0 release
 - **Pages**: one, at `sidebar_position: 3` in the tutorials category, after Hello World and before
   the area-calculation series
 - **Status**: Current

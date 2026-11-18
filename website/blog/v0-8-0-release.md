@@ -1,15 +1,15 @@
 # CGP v0.8.0 - cargo-cgp, new documentation, and namespaces
 
-The release-branch announcement opens with cargo-cgp diagnostics and the expanded documentation
+The release announcement opens with cargo-cgp diagnostics and the expanded documentation
 and optional agent support, then develops namespace wiring and migration from v0.7.0.
 
 - **URL**: <https://contextgeneric.dev/blog/v0.8.0-release>
 - **Source**:
-  [blog/2026-11-18-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/v0.8.0/blog/2026-11-18-v0.8.0-release.md),
-  on the website's `v0.8.0` branch
+  [blog/2026-11-18-v0.8.0-release.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/2026-11-18-v0.8.0-release.md)
 - **Dated**: 18 November 2026, the release day, in the filename
 - **Tags**: `release`, `deepdive`
-- **Status**: **Draft**, read by the author and awaiting publication with the website's merge
+- **Status**: **Published** on 18 November 2026, read by the author before publication; the
+  discussion links follow the channel posts
 - **How it was made**: revision of a human-written draft by an agent; the footnote links the
   disclosure's blog-post section
 - **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)

@@ -122,11 +122,11 @@ that post's [internal document](../website/blog/README.md), and closes with what
   types in getter traits.
 - [v0.7.0](v0-7-0.md): 28 February 2026. The ergonomics release: `#[cgp_fn]`, `#[implicit]`,
   `#[uses]`, `#[extend]`, `#[use_provider]`, `#[use_type]`, and the removal of `#[cgp_context]`.
-- [v0.8.0](v0-8-0.md): **unreleased**, in development on `main`. Namespaces and paths, the
-  `open` statement, the removal of presets, and the adoption of `cargo-cgp`.
+- [v0.8.0](v0-8-0.md): 18 November 2026. Namespaces and paths, the `open` statement, the removal of
+  presets, and the adoption of `cargo-cgp`.
 
 There is **no v0.7.1**. It was planned as a minor namespace release, grew past that, and was
-renumbered to v0.8.0; the draft announcement written under the old number is documented at
+renumbered to v0.8.0; the announcement drafted under the old number is documented at
 [website/blog/v0-8-0-release.md](../website/blog/v0-8-0-release.md).
 
 ## What counts as a release, and where the facts come from

@@ -950,8 +950,7 @@ it stale.
 
 ### `website/projects/`: the blueprint and one plan per project section
 
-- [README.md](website/projects/README.md) — the blueprint for the Projects section, partly written on
-  the website's `v0.8.0` branch: the deep dives it replaces, the section index, the four gating
+- [README.md](website/projects/README.md) — the blueprint for the Projects section, partly published: the deep dives it replaces, the section index, the four gating
   conditions, the order of the remaining work, the inbound links, and the shape of a plan.
 - [cgp-examples.md](website/projects/cgp-examples.md) — the plan and record of the cgp-examples
   section: the 14 pages written for the crate index, `expression`, and `web-app` and the revisions
@@ -1010,7 +1009,7 @@ it stale.
   associated types in getter traits; all three still current.
 - [v0-7-0.md](releases/v0-7-0.md) — 2026-02-28, the most recent shipped release: the attribute suite
   and the removal of `#[cgp_context]`; its changelog entry is mislabelled v0.6.2.
-- [v0-8-0.md](releases/v0-8-0.md) — **unreleased**, in development on `main`: namespaces and
+- [v0-8-0.md](releases/v0-8-0.md) — released 18 November 2026: namespaces and
   paths, the `open` statement, the removal of presets, the `no_std` build and its `alloc` feature,
   the syntax and behavior changes since v0.7.0, and why it is not v0.7.1.
 

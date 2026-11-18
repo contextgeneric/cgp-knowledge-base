@@ -9,7 +9,7 @@ coherence bypass on a trait every Rust developer already knows.
 - **URL** — <https://contextgeneric.dev/docs/projects/cgp-serde/>
 - **Source** —
   [docs/projects/cgp-serde/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/projects/cgp-serde),
-  written on the website's `v0.8.0` branch and not yet published
+  published with the v0.8.0 release
 - **Ports** — [projects/cgp-serde/](../../projects/cgp-serde/README.md)
 - **Repository** — [`cgp-serde`](https://github.com/contextgeneric/cgp-serde), documented on its
   `main` branch

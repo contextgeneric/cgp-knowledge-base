@@ -85,10 +85,8 @@ Each surface has one job, and a page that does two jobs is usually two pages:
 
 ## The target page inventory
 
-Every page below exists on the `v0.8.0` branch unless marked **new**, and each section's record
-under [pages/](pages/README.md) or [projects/](projects/README.md) holds its pages and counts. The
-redesign publishes at once when that branch merges with the release; only the Projects section lands
-afterwards.
+Every page below is published unless marked **new**, and each section's record under
+[pages/](pages/README.md) or [projects/](projects/README.md) holds its pages and counts.
 
 - **Front page:** the hook and the bounded essay.
 - **Overview**, staying at its current path: the feature tour. The five headline features each get a

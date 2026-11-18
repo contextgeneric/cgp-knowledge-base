@@ -7,7 +7,7 @@ service, a wiring study at four scales, and the smallest possible greeting.
 - **URL** — <https://contextgeneric.dev/docs/projects/cgp-examples/>
 - **Source** —
   [docs/projects/cgp-examples/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/projects/cgp-examples),
-  written on the website's `v0.8.0` branch and not yet published
+  published with the v0.8.0 release
 - **Ports** — [projects/cgp-examples/](../../projects/cgp-examples/README.md), one subproject per
   crate
 - **Repository** — [`cgp-examples`](https://github.com/contextgeneric/cgp-examples), documented on

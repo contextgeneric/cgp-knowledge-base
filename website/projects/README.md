@@ -2,10 +2,10 @@
 
 This directory holds the blueprint for the website's **Projects** section, which publishes the
 [projects/](../../projects/README.md) sections of this base as public documentation, one directory per
-project, with each project's example programs expanded into short tutorials. Part of it is written on
-the website's `v0.8.0` branch; each project's plan below says which pages.
+project, with each project's example programs expanded into short tutorials. Part of it is published;
+each project's plan below says which pages.
 
-- **Location** — `https://contextgeneric.dev/docs/projects/` once the `v0.8.0` branch publishes, a
+- **Location** — `https://contextgeneric.dev/docs/projects/`, a
   `Projects` category between Comparisons and Resources in the sidebar
 - **Derived from** — [projects/](../../projects/README.md), which stays the source of truth
 - **Page-type spec** — [../writing-guides/project.md](../writing-guides/project.md), which holds the
@@ -66,10 +66,8 @@ Each plan says which of these gates apply to it:
 
 ## Ordering
 
-**The written pages publish with the website's `v0.8.0` branch; the rest land after the release.**
-The remaining work is the largest discretionary body left, and three of the four projects need their
-own branches merged and, for the libraries, their own releases, which follow the `cgp` release. Its
-order:
+**The written pages are published; the rest land later.** The remaining work is the largest
+discretionary body left. Its order:
 
 1. **The rest of cgp-examples**: `builder`, `transfer`, and `greet`.
 2. **Hypershell's blocked pages, once its code prerequisites land.** It is the one project with

@@ -41,7 +41,7 @@ context, in the Overview's scenario.
   a component and two providers; the section's first environmental context.
 - [Area calculation](area-calculation.md): the series from plain Rust functions to configurable static
   dispatch with higher-order providers, an index and two tutorials on the live site, and on to catching
-  a mis-wiring in a third tutorial on the website's `v0.8.0` branch; where a reader goes after Hello
+  a mis-wiring in a third tutorial; where a reader goes after Hello
   World.
 
 ## The document shape

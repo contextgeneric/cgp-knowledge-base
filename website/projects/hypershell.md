@@ -8,7 +8,7 @@ account of what the proof of concept does not do. The project with measured sear
 - **URL** — <https://contextgeneric.dev/docs/projects/hypershell/>
 - **Source** —
   [docs/projects/hypershell/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/projects/hypershell),
-  written on the website's `v0.8.0` branch and not yet published
+  published with the v0.8.0 release
 - **Ports** — [projects/hypershell/](../../projects/hypershell/README.md)
 - **Repository** — [`hypershell`](https://github.com/contextgeneric/hypershell), documented on its
   `main` branch, the 0.2.0 code built on `HypershellNamespace`
@@ -48,7 +48,6 @@ A revision must respect these facts:
 - **The *Try a change* results** are recorded in the example records for `hello_name`,
   `http_checksum_native`, and `bluesky_websocket`.
 - **Source links point at `main`**, which holds the namespace-based code the pages describe.
-- **The pages publish when the website's `v0.8.0` branch merges.**
 - **The install instructions name the crates.io release**: the index's *Running it* adds `cgp`
   0.8.0, `hypershell` 0.2.0, and Tokio, and says a small program builds on stable Rust while a crate
   whose programs nest others copies the repository's toolchain files. A probe built and ran `hello`
