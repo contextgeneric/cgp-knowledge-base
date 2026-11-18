@@ -19,7 +19,8 @@ and optional agent support, then develops namespace wiring and migration from v0
   after the helper-macro pseudocode restores the original draft's lazy and eager macro expansion,
   and the paragraph after the first namespace table says lookups follow the routes registered in
   `DefaultNamespace`; a paragraph after the two-group production table explains that `@app.core`
-  covers both core groups and follows one lookup through both bundles
+  covers both core groups and follows one lookup through both bundles; the defaults restrictions
+  link `PathCons` to its reference page
 - **How it was made**: revision of a human-written draft by an agent; the footnote links the
   disclosure's blog-post section
 - **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)
