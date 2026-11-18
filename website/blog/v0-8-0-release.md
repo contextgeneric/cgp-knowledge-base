@@ -21,7 +21,10 @@ and optional agent support, then develops namespace wiring and migration from v0
   `DefaultNamespace`; a paragraph after the two-group production table explains that `@app.core`
   covers both core groups and follows one lookup through both bundles; the defaults restrictions
   link `PathCons` to its reference page; *Other improvements* turns the component-key passage into
-  one bullet and sends the handler-macro fixes and lifted restrictions to the release notes
+  one bullet and sends the handler-macro fixes and lifted restrictions to the release notes; ten
+  paragraphs state their problem or reason plainly, the preset paragraph restores the original
+  draft's single inheritance and eager expansion, and seven constructs link their reference pages
+  where the prose first names them
 - **How it was made**: revision of a human-written draft by an agent; the footnote links the
   disclosure's blog-post section
 - **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)
