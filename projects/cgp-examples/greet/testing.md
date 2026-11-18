@@ -1,9 +1,8 @@
 # Testing
 
 `greet` has no tests and no check blocks, so the only verification the repository carries is that
-the crate builds and its binaries run. On `main` all three build, and each prints
-`Hello, Alice!` for a `Person` named Alice. This document records what that shows and what nothing
-exercises.
+the crate builds and its binaries run. On `main`, all three build, and each prints `Hello, Alice!`
+for a `Person` named Alice. This document records what that shows and what nothing exercises.
 
 ## What running the binaries shows
 

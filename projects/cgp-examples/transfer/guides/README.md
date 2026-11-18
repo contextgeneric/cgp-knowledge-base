@@ -2,8 +2,8 @@
 
 These guides say how to make the two changes the service is designed for: serving a new endpoint,
 and replacing the in-memory backend. Each was checked by building the change in a downstream probe
-crate against `main`, so the steps are the ones the compiler requires rather than the
-ones the crate's README summarizes.
+crate against `main`, so the steps are the ones the compiler requires rather than the ones the
+crate's README summarizes.
 
 - [adding-an-endpoint.md](adding-an-endpoint.md): the six pieces a new endpoint needs, where each
   goes, and which of them a downstream crate can add without editing `transfer`.

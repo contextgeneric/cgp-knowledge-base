@@ -73,9 +73,9 @@ updating both balances.
 
 ## What the server returned
 
-The responses below were recorded against the running server on `main`, starting from
-the seeded data and running `example.sh` first. The balances in the first rows reflect that script's
-transfer of 10 EUR from Alice to Bob:
+The responses below were recorded against the running server on `main`, starting from the seeded
+data and running `example.sh` first. The balances in the first rows reflect that script's transfer
+of 10 EUR from Alice to Bob:
 
 | Request | Status | Body |
 |---|---|---|

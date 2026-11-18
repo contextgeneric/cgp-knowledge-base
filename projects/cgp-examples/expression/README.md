@@ -55,8 +55,8 @@ than its context.
 
 ## Status and gaps
 
-The interpreter is a demonstration, and its gaps are each confirmed against `main` and
-recorded in full in [issues.md](issues.md):
+The interpreter is a demonstration, and its gaps are each confirmed against `main` and recorded in
+full in [issues.md](issues.md):
 
 - **Two contexts have no test**: `add_mult_binary_op` and `add_mult_code` compile and pass their
   checks, and only a probe has run them.

@@ -4,8 +4,7 @@ A new endpoint touches six places in `transfer`, not only a handler and a table 
 needs a marker, request types, a handler, a pipeline, a `Send` impl, and a route, plus an entry in
 the context's check. This guide lists each piece and where it goes, using a `GET /whoami` endpoint
 that returns the logged-in user as the running example. Every snippet below compiled and ran in a
-downstream probe crate against `main`, where the endpoint answered `alice` for Alice's
-credentials.
+downstream probe crate against `main`, where the endpoint answered `alice` for Alice's credentials.
 
 ## The six pieces
 
