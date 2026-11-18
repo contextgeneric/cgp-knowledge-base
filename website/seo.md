@@ -94,7 +94,7 @@ Markdown**, which on a reference page was a heading made mostly of punctuation a
 sentence such as *"This is the second part of the blog series"*. On 2026-09-21 only 13 of 278 sources
 set one.
 
-**Every page under `docs/` on the `v0.8.0` branch sets a written description**; the published skill
+**Every page under `docs/` sets a written description**; the published skill
 pages are not the site's to edit. The conventions,
 including the YAML apostrophe that fails the build, are in
 [the reference guide](writing-guides/reference.md#conventions-the-port-must-follow).
@@ -120,9 +120,8 @@ A new page avoids the problem with a front-matter `title`, which can differ from
 the whole `docs/` tree is 19 pages, 2,624 impressions, and 18 clicks.** The four extensible-datatypes
 posts alone carry 41,746 impressions, and every one predates `#[cgp_impl]`, `#[implicit]`, and the
 `open` statement, so here search success does harm; [blog/README.md](blog/README.md#reading-the-drift-at-a-glance)
-records the drift. The live [Introduction](pages/introduction.md) still calls the blog the most
-up-to-date resource. The `v0.8.0` branch rewrites it, but a reader from a search result may never pass
-through the Introduction, since
+records the drift. The [Introduction](pages/introduction.md) warns that older posts describe earlier
+releases, but a reader from a search result may never pass through the Introduction, since
 [most readers do not arrive at the homepage](information-architecture.md#most-readers-do-not-arrive-at-the-homepage).
 
 ### Five dead URLs still draw impressions into 404s
@@ -182,15 +181,15 @@ suffix: the page sets the tag and `og:title` with `@docusaurus/Head`, because pa
 `Layout` renders `{title} | {siteTitle}`. Its description opens with the settled tag line verbatim.
 The page is recorded in [pages/front-page.md](pages/front-page.md).
 
-### The pages that would answer the high-intent queries are not published yet
+### The pages that answer the high-intent queries arrived with the relaunch
 
 **The site appears for the vocabulary the strategy targets, at good positions, and converts none of
 it**: *rust coherence* drew 24 impressions and no clicks at position 8.0, and *rust conflicting
 implementations of trait*, *rust trait orphan rule*, and *rust dependency injection* are the same. A
 small count means the query is rare or the site ranks too low to be seen; the export cannot say which.
-The pages that answer them, `/docs/concepts/coherence` and `/docs/reference/`, exist only on the
-`v0.8.0` branch, which is why the relaunch is the first real attempt to make the documentation
-findable.
+The pages that answer them, `/docs/concepts/coherence/` and `/docs/reference/`, went live with the
+relaunch on 2026-11-18, after the export, which is why the relaunch is the first real attempt to
+make the documentation findable.
 
 ## The strategy
 
@@ -351,8 +350,8 @@ The three clusters with real traffic get three answers:
   impressions, 3 clicks, position 4.0) suggests CGP is relevant. Decide at the next export.
 
 **Nothing else in the data supports a page**: the serde, comparison-vocabulary, provider-pattern, and
-macro clusters sit at positions 24 to 36 with no clicks, partly because the pages that answer them are
-unpublished.
+macro clusters sit at positions 24 to 36 with no clicks, partly because the pages that answer them
+were unpublished when the export was taken.
 
 ### The internal linking is already right, and it is doing more work than usual here
 
@@ -447,10 +446,12 @@ Four signals are worth watching, each tied to a target in
   injection), at zero against 41 impressions.
 - **Whether the dead URLs stop appearing**, now that the stubs are live.
 
-**Establish the baseline before the relaunch merges**, because a before-and-after taken across it
-cannot be attributed: export on the merge day, keep the raw files outside this repository, and
-summarize the change here. **Every declared URL took the trailing-slash form on 2026-11-18**, the
-relaunch's day, so a comparison splits there too.
+**The baseline is a period that ends on 2026-11-17, the day before the relaunch merged**, because a
+before-and-after taken across the merge cannot be attributed. Search Console exports a past date
+range, as the [twelve-month export](#what-was-measured) shows, so the baseline can be taken after
+the merge: keep the raw files outside this repository, and summarize the change here. **Every
+declared URL took the trailing-slash form on 2026-11-18**, the relaunch's day, so a comparison
+splits there too.
 
 **IndexNow tells Bing and the engines sharing its index which pages changed**, through a key file at
 the site root and the website's `scripts/indexnow/submit.py`, as
@@ -477,10 +478,8 @@ page under `docs/` and every blog post carries a written description, each docs 
 [named opening](#own-the-name-by-saying-it-where-it-means-something), and every construct's
 reference page and both concept pages that needed one carry a search-facing title.
 
-**The metadata repairs are done except the members' GitHub homepages**, which move to their pages on
-the site once the relaunch publishes them. The crate manifests and the repository descriptions and
-topics are set, and the redirect stubs, `robots.txt`, and the site and front-page titles reach
-readers at the merge.
+**The metadata repairs are done**: the crate manifests, the repository descriptions, topics, and
+homepages, the redirect stubs, `robots.txt`, and the site and front-page titles are all live.
 
 **The hand check on Bing and Kagi follows, and it blocks nothing**: six queries, recorded as
 [Repeating the hand check](#repeating-the-hand-check) describes.
@@ -512,5 +511,5 @@ Three decisions are taken, and two remain open:
 replaces the finding rather than appending to it, per
 [document-the-present](../AGENTS.md#document-the-present-not-the-history). **Techniques expire faster**,
 so re-read a recommendation that rests on a cited study against its source before acting on it again.
-Revisit the document when the relaunch merges, when a new export is taken, when a section is added to
+Revisit the document when a new export is taken, when a section is added to
 the site, and when a hand check on another engine disagrees with Google's data.
