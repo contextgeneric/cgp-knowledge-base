@@ -113,7 +113,11 @@ black lines, such as the Hypershell post's, visible at all.
 
 The three shared diagrams (`wiring-table.svg`, `coherence-scoped.svg`, and
 `consumer-provider-split.svg`) use the brand red and the warm neutrals. Dark variants of them are
-optional. The front page's own art keeps its colours; its record is in
+optional. Each one matches the code on its page and leaves room around every label, because a label
+that fits one platform's sans font can run wider in another's; render a changed diagram in Chrome and
+Firefox before committing it. Drawn 880 units wide,
+the diagrams scale to about 40% in a phone's content column, which leaves their smallest labels hard
+to read there. The front page's own art keeps its colours; its record is in
 [pages/front-page.md](pages/front-page.md), and the illustration palette for new art is in
 the [homepage guide](writing-guides/homepage.md#images-metadata-and-provenance), which is separate from
 this interface palette.
