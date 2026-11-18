@@ -91,7 +91,7 @@ chooses the second.
 ## The routing map
 
 Each chapter's note points at the page that now owns its material. Every destination was verified on
-the website's `v0.8.0` branch on 2026-09-21, and that branch is published, so the notes can land.
+2026-09-21 and is now published, so the notes can land.
 
 | Book chapter | Current home on the site |
 |---|---|

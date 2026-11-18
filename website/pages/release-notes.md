@@ -57,9 +57,9 @@ sources, and what still stands. The category sits after Resources, per
 ## Where it diverges from the guide
 
 - **Release day:** the `cgp` v0.8.0, `cargo-cgp` v0.1.0, `cgp-serde` v0.3.0, and Hypershell v0.2.0
-  pages carry the release date, 2026-11-18, crates.io's publish date for all four, and their tag and
-  crates.io links resolve. The other `cgp` pages carry crates.io's publish dates, which differ from the tag's by a
-  day for v0.1.0 and v0.4.1.
+  pages carry the release date, 2026-11-18, which is crates.io's publish date for all four, and
+  their tag and crates.io links resolve. The other `cgp` pages carry crates.io's publish dates,
+  which differ from the tag's by a day for v0.1.0 and v0.4.1.
 - **Sources:** the pages from v0.1.0 to v0.7.0 were written after their releases, from the source diff
   and the release document, with the changelog entry, GitHub Release, and post where they exist.
   The v0.1.0 page links the tag in place of a compare view, since the release has no earlier tag,

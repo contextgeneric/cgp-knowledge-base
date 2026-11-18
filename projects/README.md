@@ -87,8 +87,8 @@ linked per project so an agent can find the semantics behind anything it meets i
 Each project section also has a public counterpart: the website's **Projects** section ports these
 documents to the site, with each project's example programs written as short tutorials. The
 Hypershell, cgp-serde, and cgp-examples sections are published, and the error backends' is
-planned. [website/projects/](../website/projects/README.md) holds one plan
-per project naming the public page each document feeds. A project document's *Public material
+planned. [website/projects/](../website/projects/README.md) holds one plan per project naming the
+public page each document feeds. A project document's *Public material
 derived from this* line points there.
 
 For the communication strategy these projects are the ecosystem's most concrete social proof, which

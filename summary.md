@@ -950,8 +950,9 @@ it stale.
 
 ### `website/projects/`: the blueprint and one plan per project section
 
-- [README.md](website/projects/README.md) — the blueprint for the Projects section, partly published: the deep dives it replaces, the section index, the four gating
-  conditions, the order of the remaining work, the inbound links, and the shape of a plan.
+- [README.md](website/projects/README.md) — the blueprint for the Projects section, partly
+  published: the deep dives it replaces, the section index, the four gating conditions, the order of
+  the remaining work, the inbound links, and the shape of a plan.
 - [cgp-examples.md](website/projects/cgp-examples.md) — the plan and record of the cgp-examples
   section: the 14 pages written for the crate index, `expression`, and `web-app` and the revisions
   they were verified against, the `builder`, `transfer`, and `greet` pages still to write, the
