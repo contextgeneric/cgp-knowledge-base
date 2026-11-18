@@ -26,8 +26,8 @@ inside the Docusaurus layout. Its first screen holds the hero and the code band:
   section; the GitHub star widget; and the hero illustration, `static/img/cgp-hero.webp`, which the
   dark theme sets on a circle of its own background colour.
 - **The code band:** the encoder pair Rust rejects and the same pair under CGP, as two editor windows
-  that state their verdict with a mark and a colour; the CGP window opens with `use cgp::prelude::*;`
-  and neither shows the `Display` import; the rejected window quotes rustc's `E0119`
+  that state their verdict with a mark and a colour; the CGP window opens with `use cgp::prelude::*;`,
+  marked as an added line, and neither window shows the `Display` import; the rejected window quotes rustc's `E0119`
   beneath the block; the caption names the providers `String` and `Vec<u8>` select and ends on the
   pull quote "For each type, a call to `encode()` still selects a single encoder."
 

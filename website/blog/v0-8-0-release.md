@@ -10,23 +10,19 @@ and optional agent support, then develops namespace wiring and migration from v0
 - **Tags**: `release`, `deepdive`
 - **Status**: **Published** on 18 November 2026, read by the author before publication; the
   discussion links follow the channel posts
-- **Revised after publication**: on 18 November 2026, at the author's request, the opening paragraph
-  introduces cargo-cgp as new and names the problem it solves before its missing-field example, and
-  the cargo-cgp section's paragraph introducing the tool says what each command does, and the
-  paragraph on human review describes the pages read in full by what they explain, and the paragraph
-  opening *Separate filtering from database access* names the problem the wrapper solves, and the
-  paragraph after the array-key wiring states the cost of listing every component, and the paragraph
-  after the helper-macro pseudocode restores the original draft's lazy and eager macro expansion,
-  and the paragraph after the first namespace table says lookups follow the routes registered in
-  `DefaultNamespace`; a paragraph after the two-group production table explains that `@app.core`
-  covers both core groups and follows one lookup through both bundles; the defaults restrictions
-  link `PathCons` to its reference page; *Other improvements* turns the component-key passage into
-  one bullet and sends the handler-macro fixes and lifted restrictions to the release notes; ten
-  paragraphs state their problem or reason plainly, the preset paragraph restores the original
-  draft's single inheritance and eager expansion, and seven constructs link their reference pages
-  where the prose first names them; six passages restore points of the original draft: wiring noise
-  as an obstacle to adoption, too much information at once, fine-grained traits by name, namespaces
-  as opt-in, deletion as a destructive operation, and defaults as intentional coupling
+- **Revised after publication**: on 18 November 2026, at the author's request:
+  - **Plainer points:** the opening introduces cargo-cgp as new; the cargo-cgp, human-review,
+    filtering, bundle, missing-keys, preset, prefix, check, defaults, and shared-wiring paragraphs
+    state their problem or reason.
+  - **Restored from the original draft:** lazy and eager macro expansion, single-inheritance
+    presets, wiring noise as an obstacle to adoption, too much information at once, fine-grained
+    traits by name, namespaces as opt-in, deletion as a destructive operation, and defaults as
+    intentional coupling.
+  - **Added:** a paragraph on how `@app.core` covers both core groups, with one lookup traced
+    through both bundles, and links where the prose first names `PathCons` and the constructs it
+    uses, `check_components!` included.
+  - **Cut:** the end of *Other improvements* became one component-key bullet and a sentence that
+    sends the handler-macro fixes and lifted restrictions to the release notes.
 - **How it was made**: revision of a human-written draft by an agent; the footnote links the
   disclosure's blog-post section
 - **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)
