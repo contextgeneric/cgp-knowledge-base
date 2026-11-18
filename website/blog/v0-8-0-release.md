@@ -167,8 +167,8 @@ v0.8.0. The proposed `???` keys and nested helper-macro form are labeled pseudoc
 not presented as accepted Rust syntax.
 
 The production site build passes without broken links or anchors, and the full example suite passes
-against the sibling `cgp` checkout. Every external link resolves except the web-app source link,
-which names `cgp-examples`' `main` and resolves once that repository's `v0.8.0` branch merges.
+against the sibling `cgp` checkout. Every external link resolves, the web-app source link on
+`cgp-examples`' `main` included.
 
 The narrative revision preserves all 36 fenced listings verbatim, including the diagnostics and
 historical input, and preserves every heading and anchor. The namespace application table moves
