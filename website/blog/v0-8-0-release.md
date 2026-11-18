@@ -10,6 +10,8 @@ and optional agent support, then develops namespace wiring and migration from v0
 - **Tags**: `release`, `deepdive`
 - **Status**: **Published** on 18 November 2026, read by the author before publication; the
   discussion links follow the channel posts
+- **Revised after publication**: on 18 November 2026, at the author's request, the opening paragraph
+  introduces cargo-cgp as new and names the problem it solves before its missing-field example
 - **How it was made**: revision of a human-written draft by an agent; the footnote links the
   disclosure's blog-post section
 - **Documents**: [releases/v0-8-0.md](../../releases/v0-8-0.md)
