@@ -91,7 +91,7 @@ The titles below are jobs; a page's headings may name the compared tool.
   constraint, and environment onto component, provider, wiring, impl-side dependency, and context.
   "Context" is glossed here on first use, with the canonical gloss from
   [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each).
-- **The idea, briefly**: the compressed refresher, each sub-concept with one cited snippet in the
+- **The idea**: the compressed refresher, each sub-concept with one cited snippet in the
   tool's own language, and what its users value, stated as they would. Name the version where behavior
   is version-specific.
 - **How CGP expresses it**: the same problems in CGP beside those snippets, saying where the two align
