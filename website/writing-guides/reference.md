@@ -113,7 +113,7 @@ belongs inside the reference, because a reader with a wiring failure is looking 
 name they have, an error code or a message shape. It consolidates the twenty-one class documents of
 the internal [errors catalog](../../cgp/errors/README.md) into one page, organized by its
 **hidden-versus-surfaced** axis, showing each class's program, what the compiler reports, and what
-`cargo cgp check` makes of it. Write it before the bulk of a port, so every *Common Mistakes* section
+`cargo cgp check` makes of it. Write it before the bulk of a port, so every *Common mistakes* section
 can link a class instead of re-explaining it. The **glossary** belongs inside for the same reason, as
 [The glossary page](#the-glossary-page) specifies.
 
@@ -156,7 +156,7 @@ an advanced reader continues into the machinery.
   [notation](https://doc.rust-lang.org/reference/notation.html), under the internal
   [conventions](../../cgp/writing-guide.md#syntax-grammar-conventions). The argument-free macros
   (`#[async_trait]`, `#[cgp_auto_dispatch]`, `#[cgp_auto_getter]`) have no grammar section.
-- **Common Mistakes:** corner cases, surprising behavior, and open bugs, from the internal Known
+- **Common mistakes:** corner cases, surprising behavior, and open bugs, from the internal Known
   issues, omitted when there are none and never softened.
 
 The page closes with three short lists: **Related constructs**, each with a phrase saying how it

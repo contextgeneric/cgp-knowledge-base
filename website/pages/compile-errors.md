@@ -13,9 +13,9 @@ whether the compiler hides or surfaces a mistake's cause, and ends with a short 
 
 The page documents no construct. It turns the twenty-one class documents under
 [cgp/errors/](../../cgp/errors/README.md) into one page, because twenty-one public pages would be a
-category no reader scans. It states the catalog's **hidden-versus-surfaced** axis once near the top as
-"the one distinction that explains everything", and opens with a lookup table keyed on what a reader
-has in front of them: a `rustc` code and a message shape.
+category no reader scans. It states the catalog's **hidden-versus-surfaced** axis once near the top,
+under "Checked and hidden errors", and opens with a lookup table keyed on what a reader has in front
+of them: a `rustc` code and a message shape.
 
 **Every quoted diagnostic is real output from a run of the tool** on a small program with the page's
 names. The checked and method-call routes to one mistake produce the same headline, chain, and
