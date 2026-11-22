@@ -19,7 +19,7 @@ A project section is verified against the project's source, as `cgp/` is against
   records.
 - Record a project's older idiom as a change in its `issues.md`, not by modernizing an example alone.
 
-## Verify behavior with a probe, not by reading alone
+## Verify behavior with a probe
 
 A claim about how the project behaves is checked by running it:
 

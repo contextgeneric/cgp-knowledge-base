@@ -103,7 +103,7 @@ These documents are the verified record behind the `builder` pages of the
 [cgp-examples project section](../../../website/projects/cgp-examples.md), not yet written, which
 will write one example page per builder context.
 
-## How it relates to the rest of the base
+## How it relates to the base
 
 The [application builder](../../../examples/application-builder.md) worked example teaches the
 crate's pattern and stands alone. The pattern itself is

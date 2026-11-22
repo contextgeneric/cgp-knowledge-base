@@ -47,7 +47,7 @@ encodings in `cgp-serde-extra`. Structs named `Serialize…` may implement both 
 structs named `Deserialize…` implement only deserialization. Where the two directions need different
 mechanisms, they are separate structs: `SerializeRecordFields` pairs with `DeserializeRecordFields`,
 and `SerializeIterator` with `DeserializeExtend`. The full pairing is in
-[component-design.md](component-design.md#one-struct-both-directions).
+[component-design.md](component-design.md#one-provider-for-both-directions).
 
 **A struct or enum needs no serialization-specific derive.** `SerializeRecordFields` walks a
 struct's field list through [`HasFields`](../../../cgp/reference/traits/has_fields.md), and

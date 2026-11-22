@@ -45,7 +45,7 @@ bytes as well as streams, so no conversion stage is needed.
   [abstract syntax](../architecture/abstract-syntax.md#the-surface-syntax) and
   [the macro reference](../reference/macro.md).
 - Running a program is one `handle` call: see [interpretation](../architecture/interpretation.md).
-- The one-line context: see [assembly](../architecture/assembly.md#layer-three-contexts).
+- The one-line context: see [assembly](../architecture/assembly.md#joining-the-namespace).
 - `SimpleExec` and `WithStaticArgs`: see [execution](../reference/execution.md).
 
 ## Public material derived from this

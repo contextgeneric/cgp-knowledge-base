@@ -7,7 +7,7 @@ and the fix. Every output below was produced by a probe against the `main` branc
 its headline, its root cause, and the part of the tree that locates it. The general technique is in
 the CGP [debugging guide](../../../cgp/guides/debugging.md).
 
-## Check first, then read the root cause
+## Check the program first
 
 **Put the program in a `check_components!` before reading any error, and read it with
 `cargo cgp check`.** A failure reported at the `handle` call resolves to its root cause too, but a
@@ -24,7 +24,7 @@ check_components! {
 ```
 
 The tree `cargo cgp check` prints follows the lookup described in
-[assembly](../architecture/assembly.md#one-lookup-end-to-end). Each namespace hop and each bundle's
+[assembly](../architecture/assembly.md#one-lookup). Each namespace hop and each bundle's
 `open` redirect is a `[CGP-E103]` line naming the table it looks in, each provider a `[CGP-E102]`,
 and each consumer trait reached through a dependency a `[CGP-E101]`. Read from the bottom: the last
 lines name the leaf that failed. The table names locate it. The context's own namespace hop reads

@@ -7,7 +7,7 @@ it needs, and the three ways a provider hands work back to the context. The gene
 [type-level DSLs](../../../cgp/concepts/type-level-dsls.md); the providers are listed in the
 [reference](../reference/README.md).
 
-## `Handler` is the interpreter interface
+## The interpreter interface
 
 **Running a program is one call to `CanHandle::handle`, with the program as the `Code` tag and the
 program's input as the argument.** Hypershell defines no interpreter trait of its own. It uses CGP's
@@ -68,7 +68,7 @@ but it is not the form the [writing-providers](../../../cgp/guides/writing-provi
 [declaring-dependencies](../../../cgp/guides/declaring-dependencies.md) guides recommend; the
 modernization is tracked in [issues.md](../issues.md#housekeeping).
 
-## Arguments have their own components
+## Argument components
 
 **Argument syntax is interpreted by four extractor components, not by `Handler`.** An argument is
 not a pipeline stage: it has no input and produces a value synchronously. Each extractor is a

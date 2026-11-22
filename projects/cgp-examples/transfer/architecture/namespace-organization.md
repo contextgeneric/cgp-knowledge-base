@@ -47,7 +47,7 @@ namespace that rebinds a path its parent binds conflicts with the parent's forwa
 consequence for this crate is that the type choices, which a second backend would usually keep, live
 in `MockNamespace` alongside the mock providers, so a new configuration repeats them.
 
-## `DefaultApiHandlers` is a table, not a namespace to join
+## `DefaultApiHandlers` as a table
 
 The endpoint pipelines live in a separate table,
 [`DefaultApiHandlers`](../reference/wiring.md#defaultapihandlers), keyed by the endpoint marker:

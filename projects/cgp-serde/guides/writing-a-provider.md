@@ -56,7 +56,7 @@ one direction, since `new` declares the struct and a second `new` would declare 
 
 **Follow the library's naming convention.** Name a struct that implements both directions, or only
 serialization, `Serialize…`, and a struct that implements only deserialization `Deserialize…`; see
-[component design](../architecture/component-design.md#one-struct-both-directions).
+[component design](../architecture/component-design.md#one-provider-for-both-directions).
 
 **Write the header in consumer-trait shape.** `impl<Value> ValueSerializer<Value>` with `self` as
 the context, per the [`#[cgp_impl]` guide](../../../cgp/guides/writing-providers.md); the explicit

@@ -6,7 +6,7 @@ errors, how `HypershellNamespace` makes them concrete with `anyhow`, and what an
 raises a new kind of error must add. The CGP side is
 [modular error handling](../../../cgp/concepts/modular-error-handling.md).
 
-## Providers name the error sources, never the error type
+## Error sources in providers
 
 **A provider requires `CanRaiseError<E>` for each source error it can produce and `CanWrapError<D>`
 for each detail it attaches.** `Handler` returns `Result<Output, Error>` against the context's
@@ -39,7 +39,7 @@ status, carrying the whole `Response`), and the detail structs `StdinPipeError`,
 `WaitWithOutputError`, and `DecodeUtf8InputError`. The [reference](../reference/README.md) lists
 each with its provider.
 
-## The namespace makes the error concrete
+## The concrete error type
 
 **`HypershellNamespace` binds all three error components, routing every source error type to one
 aggregate that picks a raising strategy per type.** The bindings are:
@@ -66,7 +66,7 @@ entire `reqwest::Response`, headers included. A probe of a redirected request pr
 carrying the URL, status, and every response header. `ExecOutputError` writes its own `Debug`,
 giving the exit code and the captured stderr.
 
-## Every source error type is listed twice
+## Source error lists
 
 **Each source type appears in the namespace's route list and again in `HypershellErrorHandler`'s
 table, and a type missing from either list is a compile error at the first provider that raises

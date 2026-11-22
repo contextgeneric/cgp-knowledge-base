@@ -324,7 +324,7 @@ with a different [`Symbol!`](../cgp/reference/macros/symbol.md) operator string:
 @ComputerRefComponent.<Code> Code.Times<MathExpr>: BinaryOpToLisp<Symbol!("*")>,
 ```
 
-## Dispatching on the operation as well as the input
+## Dispatching on operation and input
 
 Evaluation and conversion can share one component by keying the dispatch on the *operation* as well
 as the input. Marker types name the operations, and each path key fixes a concrete code as its first

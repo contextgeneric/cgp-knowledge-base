@@ -41,7 +41,7 @@ all four input types. Nothing runs the context at test time.
 
 - **No test**: the probe result above is the only runtime evidence; see [testing.md](../testing.md).
 
-## The test the public page gives
+## The public page's test
 
 The public page runs this context with an integration test the reader saves as
 `expression/tests/binary_op.rs`, which builds `2 * (3 + 4)`, converts it with `ToLisp`, and

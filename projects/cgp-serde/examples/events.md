@@ -49,7 +49,7 @@ so it has no fields, and `CgpVariant` gives it the payload `Nil`; see
 [variants](../reference/variants.md). None of the types derives anything from Serde, and none names
 an encoding.
 
-## Two applications, three different entries
+## Two applications
 
 `ServerApp` stores batches compactly and `InspectorApp` writes them for people to read. Both are
 fieldless environmental contexts that open both serialization components and key their entries on

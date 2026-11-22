@@ -123,7 +123,7 @@ The three programs run and print what their code says. The crate's gaps are reco
 The `greet` index and its three example pages, once each binary has its own record, in the
 [cgp-examples project section](../../../website/projects/cgp-examples.md), not yet written.
 
-## How it relates to the rest of the base
+## How it relates to the base
 
 The greeting is the running example of the `/cgp` skill's introduction and of many reference
 documents, which write it in their own forms; nothing links this crate. The constructs it shows are

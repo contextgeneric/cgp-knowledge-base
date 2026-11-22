@@ -6,7 +6,7 @@ kinds of syntax the language has, how they nest, and the `hypershell!` macro tha
 them. The per-item detail is in the [reference](../reference/README.md); the general technique is
 [type-level DSLs](../../../cgp/concepts/type-level-dsls.md).
 
-## Every piece of syntax is an empty marker
+## Syntax as empty structs
 
 **Each syntax type is a struct holding only `PhantomData` over its parameters, with no methods and
 no trait impls.** The definitions in

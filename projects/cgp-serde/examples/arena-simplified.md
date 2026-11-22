@@ -13,7 +13,7 @@ a test that wires the same choices through a `UseDelegate` table.
 - **Result**: prints the deserialized `Cluster`, with id 8 and the two expected coordinates; the
   test asserts it
 
-## A deserializer that takes the arena from its context
+## The arena deserializer
 
 The example defines its own getter and deserializer. The getter is a
 [`#[cgp_auto_getter]`](../../../cgp/reference/macros/cgp_auto_getter.md) trait, which reads the
@@ -46,7 +46,7 @@ field, and the field is itself a borrowed arena; that outer `'a` is what lets th
 coordinates outlive the context; see
 [context services](../architecture/context-services.md#the-lifetimes).
 
-## The context carries the arena
+## The context
 
 `App<'a>` is an environmental context that carries data: one field, a borrowed arena the caller
 creates first. The data types derive `CgpData`, and `Cluster<'a>` holds its coordinates by

@@ -54,7 +54,7 @@ A page is written from four inputs, read together:
 document that the diff contradicts is corrected in the same change as the page. The changelog and the
 old notes catch items the others leave implicit, but they never outrank the code: the changelog alone
 carried errors that the
-[release history](../../releases/README.md#what-counts-as-a-release-and-where-the-facts-come-from)
+[release history](../../releases/README.md#release-scope-and-sources)
 records.
 
 **Three facts come from one source each:**

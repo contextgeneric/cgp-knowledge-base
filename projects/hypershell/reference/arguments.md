@@ -6,7 +6,7 @@ than by `Handler`. Three extractors produce a string, a command argument, and a 
 HTTP methods, is in [http.md](http.md). The components and most providers are in
 `hypershell-components`, with `JoinExtractArgs` in the Tokio crate and `UrlEncodeStringArg` in the
 reqwest crate. The design is in
-[interpretation](../architecture/interpretation.md#arguments-have-their-own-components).
+[interpretation](../architecture/interpretation.md#argument-components).
 
 ## `CanExtractStringArg` and `StringArgExtractor`
 

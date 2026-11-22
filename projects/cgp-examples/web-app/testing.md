@@ -54,7 +54,7 @@ nothing from the extras. Three further probes are recorded with the stage they c
 - **A default-impls context without its filter entry**: `[CGP-E113]` at the creator's check; see
   [default-impls.md](default-impls.md#the-context).
 - **A context or child namespace that overrides a default**: `[CGP-E011]` at the entry; see
-  [default-impls.md](default-impls.md#a-default-cannot-be-overridden).
+  [default-impls.md](default-impls.md#overriding-a-default).
 
 ## What a probe ran
 

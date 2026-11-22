@@ -202,7 +202,7 @@ They feed four artifacts:
   condensed from its reference entry, so the docs.rs pages say what each construct is for. Modules
   and struct fields carry none.
 
-## How it relates to the rest of the base
+## How it relates to the base
 
 The [modular serialization example](../../examples/modular-serialization.md) develops the project's
 scenario end to end, and is the teaching version of what the repository's own examples, documented

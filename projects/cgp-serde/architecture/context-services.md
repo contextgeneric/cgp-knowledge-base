@@ -5,7 +5,7 @@ trait while it works. The library uses this to deserialize borrowed values into 
 supplies. This document explains the idea, the layered form the allocation crates take, and the
 lifetimes that make it sound. The items are documented in [allocation](../reference/allocation.md).
 
-## A provider can ask the context for more than serialization
+## Services from the context
 
 **A provider's impl-side dependencies are not limited to the serialization components.** Any trait
 the context implements can appear in a provider's `#[uses]` list, and the provider calls it on

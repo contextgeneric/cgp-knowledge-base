@@ -63,7 +63,7 @@ field. `MyApp` joins the same namespace as `HypershellCli` and adds only the fie
 - The argument sub-language and `FieldArg`: see
   [arguments](../reference/arguments.md#fieldarg-and-extractfieldarg).
 - A custom context that joins the namespace: see
-  [assembly](../architecture/assembly.md#layer-three-contexts).
+  [assembly](../architecture/assembly.md#joining-the-namespace).
 - Why a field read here is `HasField` rather than an `#[implicit]` argument: the program chooses the
   field name; see [arguments](../reference/arguments.md#fieldarg-and-extractfieldarg).
 

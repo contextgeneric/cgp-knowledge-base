@@ -90,7 +90,7 @@ The [v0.8.0 release post](../../../website/blog/v0-8-0-release.md), whose worked
 crate and awaits author review and publication. It also feeds the `web-app` index of the
 [cgp-examples project section](../../../website/projects/cgp-examples.md).
 
-## How it relates to the rest of the base
+## How it relates to the base
 
 The [social media app](../../../examples/social-media-app.md) worked example teaches the crate's
 progression through the namespace stage and stands alone. The patterns themselves are

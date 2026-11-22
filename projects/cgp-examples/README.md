@@ -130,7 +130,7 @@ from [constructs.md](constructs.md); its `expression` and `web-app` subsections 
 also feed the unfinished [v0.8.0 release post](../../website/blog/v0-8-0-release.md), whose code
 follows `web-app`.
 
-## How it relates to the rest of the base
+## How it relates to the base
 
 The worked examples in the table are the teaching versions of these crates and stand alone; an agent
 learning a pattern reads the worked example, and an agent changing a crate reads its section here.

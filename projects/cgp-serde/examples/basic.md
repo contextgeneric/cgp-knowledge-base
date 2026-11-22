@@ -30,7 +30,7 @@ pub struct Payload {
 serializes as a JSON object keyed by its field names and is read back from one; see [derive-free
 records](../architecture/derive-free-records.md).
 
-## One context, both directions
+## The context
 
 `App` is a fieldless environmental context. It opens three components, and keys the two
 serialization components on the value type, wiring a provider in each direction for the struct and
@@ -65,7 +65,7 @@ The two directions are wired separately and need not name the same provider. `St
 by `SerializeString` and deserialized by `UseSerde`, which write and read the same JSON string.
 `Vec<u8>` names `SerializeHex` in both tables, because one struct implements both directions of the
 hex encoding; see
-[component design](../architecture/component-design.md#one-struct-both-directions).
+[component design](../architecture/component-design.md#one-provider-for-both-directions).
 
 Changing the encoding is a wiring edit. With `Vec<u8>` wired to `SerializeBase64` in both tables, a
 probe serialized the same value as `{"quantity":42,"message":"hello","data":"AQID"}` and read it
@@ -142,7 +142,7 @@ checks the `TryComputer` entries.
   [wiring a context](../guides/wiring-a-context.md#open-the-components-and-dispatch-per-type).
 - JSON as wireable, fallible operations that raise into the context's error type: see
   [JSON providers](../reference/json.md) and
-  [wiring a context](../guides/wiring-a-context.md#wire-the-error-components-when-the-json-providers-are-used).
+  [wiring a context](../guides/wiring-a-context.md#wire-an-error-type-for-json).
 - Checking a deserializing component with `Life<'de>`: see
   [components](../reference/components.md#candeserializevalue).
 

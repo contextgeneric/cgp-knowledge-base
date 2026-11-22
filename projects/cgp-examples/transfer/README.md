@@ -102,7 +102,7 @@ behind the `Send`-recovery snippets that the
 It also feeds the `transfer` index of the
 [cgp-examples project section](../../../website/projects/cgp-examples.md), not yet written.
 
-## How it relates to the rest of the base
+## How it relates to the base
 
 The [money-transfer API](../../../examples/money-transfer-api.md) worked example teaches this
 scenario's patterns and stands alone, so an agent learning them reads that example rather than these

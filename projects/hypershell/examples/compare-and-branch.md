@@ -62,7 +62,7 @@ The context is the same `MyApp` as in `parallel_compare`, joined to `HypershellC
 - Nesting control syntax: see [the examples library](README.md#the-examples-library) and
   [extending the language](../guides/extending-the-language.md#add-control-syntax).
 - Inputs shaped by the program: see
-  [interpretation](../architecture/interpretation.md#handler-is-the-interpreter-interface).
+  [interpretation](../architecture/interpretation.md#the-interpreter-interface).
 
 ## Known issues
 

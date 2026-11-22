@@ -96,8 +96,8 @@ The path's last segment is the error type the provider raises, written by its fu
 ## What it demonstrates
 
 - Adding a syntax and an error type on one context: see
-  [assembly](../architecture/assembly.md#layer-three-contexts) and
-  [error handling](../architecture/error-handling.md#every-source-error-type-is-listed-twice).
+  [assembly](../architecture/assembly.md#joining-the-namespace) and
+  [error handling](../architecture/error-handling.md#source-error-lists).
 - Per-input dispatch under one syntax: see
   [streams and input dispatch](../architecture/streams-and-input-dispatch.md#dispatching-on-the-input-type).
 - The WebSocket extension: see

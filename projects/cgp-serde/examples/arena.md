@@ -11,7 +11,7 @@ allocation crates, so that the allocator is a wiring entry rather than code insi
 - **Result**: prints the deserialized `Payload`, with id 8 and the two expected coordinates; the
   test asserts it
 
-## The same scenario, with the library's providers
+## The library's providers
 
 This example deserializes the same JSON as [`arena_simplified`](arena-simplified.md), and differs in
 two ways. It defines no provider or getter of its own, and imports the layered items instead:

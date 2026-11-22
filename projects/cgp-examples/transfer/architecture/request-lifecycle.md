@@ -4,7 +4,7 @@ This document traces one balance query and one transfer from the socket to the i
 back, naming the item that handles each step, and records what the running server returned for each
 path. It ties together the reference entries, which describe each item on its own.
 
-## A balance query, step by step
+## A balance query
 
 A request to `GET /balance?currency=EUR` with Alice's Basic-auth header passes through nine steps,
 each handled by one item or, at step 3, by the wiring. The pipeline in the middle is the

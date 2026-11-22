@@ -129,7 +129,7 @@ There is **no v0.7.1**. It was planned as a minor namespace release, grew past t
 renumbered to v0.8.0; the announcement drafted under the old number is documented at
 [website/blog/v0-8-0-release.md](../website/blog/v0-8-0-release.md).
 
-## What counts as a release, and where the facts come from
+## Release scope and sources
 
 A document exists here for every tag in [`cgp`](https://github.com/contextgeneric/cgp) that names a
 published version. Pre-release tags are test runs of a release and are not tracked, per the base's

@@ -70,7 +70,7 @@ expecting: the project moves with the library while the post that announced it d
 - [writing-guide.md](writing-guide.md): this section's rules, on verifying a section against its
   project's source, probing a runtime claim, and the shape each project document follows.
 
-## How these relate to the rest of the base
+## How these relate to the base
 
 Each project connects outward in three directions, and the documents make all three explicit. It has
 a **worked example** in [examples/](../examples/README.md) that develops its scenario in verified
@@ -135,7 +135,7 @@ subproject's directory in the repository; each subproject follows this shape at 
 
 Create a directory named for the project with a `README.md` following the front-door shape in
 [Section shape](#section-shape): what it is, which revision is documented, how it is organized, what
-CGP it uses, how it relates to the rest of the base, and its current status. Register it in the
+CGP it uses, how it relates to the base, and its current status. Register it in the
 catalog above and in [../summary.md](../summary.md) in the same change, and add it to
 [../sibling-projects.md](../sibling-projects.md) so its checkout and repository are findable. The
 section then follows [Section shape](#section-shape), with [cgp-serde/](cgp-serde/README.md) as the

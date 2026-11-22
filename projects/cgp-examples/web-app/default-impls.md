@@ -85,7 +85,7 @@ error[E0277]: [CGP-E001] missing wiring for `@app.extra.content_filter.UsernameC
    = note: root cause: [CGP-E113] missing wiring for `@app.extra.content_filter.UsernameCensorComponent` on `NoFilterApp`
 ```
 
-## A default cannot be overridden
+## Overriding a default
 
 A context that joins `DefaultAppComponents` cannot replace one of its defaults. A probe added a
 direct entry for one bound path beside the namespace line:

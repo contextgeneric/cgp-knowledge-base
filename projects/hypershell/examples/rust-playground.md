@@ -54,7 +54,7 @@ enough because the program reads no field other than the client.
 ## What it demonstrates
 
 - A program whose input and output are Rust types: see
-  [interpretation](../architecture/interpretation.md#handler-is-the-interpreter-interface).
+  [interpretation](../architecture/interpretation.md#the-interpreter-interface).
 - `HypershellHttp`: see
   [contexts and namespace](../reference/contexts-and-namespace.md#hypershellhttp).
 - JSON in both directions: see [JSON](../reference/json.md).

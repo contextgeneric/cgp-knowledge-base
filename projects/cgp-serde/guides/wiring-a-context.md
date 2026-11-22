@@ -36,7 +36,7 @@ condensed to one line per entry. Open several components at once with braces, as
 JSON providers through `try_compute` opens `TryComputerComponent` too and keys it on the
 [JSON codes](../reference/json.md#serializejson-and-deserializejson).
 
-## Wire every type the traversal reaches
+## Wire the nested types
 
 **List the value types a traversal touches, not only the types an application names.** Start from
 each top-level type and follow what each provider asks the context for, using the "Re-enters for"
@@ -73,7 +73,7 @@ Three kinds of value type need care in a key:
   syntax: `@ValueDeserializerComponent.[u8; 32]` fails with `expected ','`. Define a type alias,
   such as `type Digest = [u8; 32];`, and key on the alias.
 
-## Wire the error components when the JSON providers are used
+## Wire an error type for JSON
 
 The JSON providers and `deserialize_json_string` raise `serde_json` errors through the context, so a
 context using them wires an error type and a raiser, such as the `anyhow` backend:

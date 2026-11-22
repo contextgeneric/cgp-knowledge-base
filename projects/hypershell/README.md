@@ -178,7 +178,7 @@ They feed four artifacts:
   `delegate_components!` and `cgp_namespace!` declare stay bare until the crates build against a
   `cgp` whose macros document them, which the pinned revision does not.
 
-## How it relates to the rest of the base
+## How it relates to the base
 
 The [shell-scripting DSL example](../../examples/shell-scripting-dsl.md) develops the project's
 scenario as a teaching progression, building on these crates, and is the source other documents

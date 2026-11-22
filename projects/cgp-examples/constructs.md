@@ -54,7 +54,7 @@ three stages:
 | joining a namespace with `namespace …;` | [`transfer`'s `MockApp`](transfer/reference/wiring.md#mockapp), [`web-app` contexts](web-app/namespaces.md#the-contexts) |
 | [`cgp_namespace!`](../../cgp/reference/macros/cgp_namespace.md) | [`transfer`'s `MockNamespace`](transfer/reference/wiring.md#mocknamespace), [`web-app`'s `DefaultAppComponents`](web-app/default-impls.md#the-namespace) |
 | [`#[default_impl]`](../../cgp/reference/attributes/default_impl.md) | [`transfer` mock backend](transfer/reference/mock-backend.md), [`web-app` default implementations](web-app/default-impls.md#the-namespace) |
-| the `for` statement | [`transfer`'s `DefaultApiHandlers`](transfer/architecture/namespace-organization.md#defaultapihandlers-is-a-table-not-a-namespace-to-join) |
+| the `for` statement | [`transfer`'s `DefaultApiHandlers`](transfer/architecture/namespace-organization.md#defaultapihandlers-as-a-table) |
 
 ## Handlers, errors, and extensible data
 

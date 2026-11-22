@@ -169,7 +169,7 @@ which wires the same choices through `UseDelegate` tables.
   [modular serialization example](../../../examples/modular-serialization.md), which owns the
   teaching version of this scenario.
 - Wiring every type a traversal reaches, including intermediate and reference types: see
-  [wiring a context](../guides/wiring-a-context.md#wire-every-type-the-traversal-reaches).
+  [wiring a context](../guides/wiring-a-context.md#wire-the-nested-types).
 - The four encodings in `cgp-serde-extra`: see [encodings](../reference/encodings.md).
 - Serializing with an unmodified Serde format: see
   [using a format](../guides/formats.md#serialize-with-any-format).

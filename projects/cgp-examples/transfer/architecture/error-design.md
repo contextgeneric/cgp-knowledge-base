@@ -5,7 +5,7 @@ chosen by the type a provider raises with, not by a runtime value. This document
 works in the crate. The general technique of an abstract error type plus raising components is
 [modular error handling](../../../../cgp/concepts/modular-error-handling.md).
 
-## One error type, raised with a status marker
+## The error type
 
 The crate has one concrete error, [`AppError`](../reference/error-providers.md#apperror), a status
 code paired with an `anyhow::Error` detail, and it reaches the rest of the code only as the
@@ -30,7 +30,7 @@ missing user writes `Self::raise_http_error(ErrNotFound, format!(...))` and decl
 as `#[uses(CanRaiseHttpError<ErrNotFound, String>)]`. That makes each provider's possible statuses
 visible in its imports: `UseMockedApp`'s transfer raises `404` and `400`, and nothing else can.
 
-## The provider is chosen per detail type
+## Providers per detail type
 
 The component is generic over `Detail` as well as `Code`, so the wiring can choose a different
 provider for each detail type. `MockNamespace` uses that freedom only once:

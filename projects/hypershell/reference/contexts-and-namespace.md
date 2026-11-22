@@ -72,7 +72,7 @@ delegate_components! {
 ### Behavior
 
 The strategies and why each type gets its own are in
-[error handling](../architecture/error-handling.md#the-namespace-makes-the-error-concrete). Its list
+[error handling](../architecture/error-handling.md#the-concrete-error-type). Its list
 of types must match the namespace's route list; nothing checks that it does.
 
 ## The backend bundles

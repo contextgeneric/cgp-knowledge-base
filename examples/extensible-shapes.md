@@ -58,7 +58,7 @@ pub struct Triangle {
 }
 ```
 
-## A per-type operation, lifted onto enums
+## Lifting a per-type operation onto enums
 
 The smallest unit is an ordinary trait with one implementation per shape type. Marking the trait
 with [`#[cgp_auto_dispatch]`](../cgp/reference/macros/cgp_auto_dispatch.md) is what later lets any
@@ -204,7 +204,7 @@ pub enum TriangleOnly {
 }
 ```
 
-## Under the hood: the dispatch combinators
+## The dispatch combinators
 
 What `#[cgp_auto_dispatch]` writes for `Shape::area` is a
 [dispatch combinator](../cgp/reference/providers/dispatch_combinators.md), and the same dispatch can

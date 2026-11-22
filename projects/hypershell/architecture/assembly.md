@@ -29,7 +29,7 @@ the syntax and then the input, as in `@cgp.extra.handler.HandlerComponent.Simple
 That second segment is what lets a bundle dispatch on the input; see
 [streams-and-input-dispatch.md](streams-and-input-dispatch.md).
 
-## Layer one: backend bundles
+## Bundles
 
 **Each backend crate publishes one aggregate provider that maps its syntax to its providers.** A
 bundle is declared with `delegate_components! { new … }`, `open`s each component it serves, and
@@ -100,7 +100,7 @@ no namespace, and leaving the prefixed routes to the layer above.
 The bundles are providers, not contexts, so none is checked with `delegate_and_check_components!`.
 Nothing in the repository checks them at all; see [testing.md](../testing.md).
 
-## Layer two: the namespace
+## The namespace
 
 **`HypershellNamespace` routes each prefixed path to the bundle that serves it, and binds the few
 components that need no bundle directly.** It inherits CGP's `DefaultNamespace`, which carries the
@@ -159,7 +159,7 @@ namespace wires to [`UseField`](../../../cgp/reference/providers/use_field.md) o
 The full route table is in
 [the contexts and namespace reference](../reference/contexts-and-namespace.md).
 
-## Layer three: contexts
+## Joining the namespace
 
 **A context joins the namespace with one statement and gains the whole language.** The two contexts
 the `hypershell` crate provides are exactly that:
@@ -216,7 +216,7 @@ namespace that inherits `HypershellNamespace`, as the examples crate does with
 `HypershellChecksumNamespace` and `HypershellCompareNamespace`; see
 [extending the language](../guides/extending-the-language.md).
 
-## One lookup, end to end
+## One lookup
 
 Resolving `HypershellCli: CanHandle<SimpleExec<StaticArg<"echo">, Args>, Vec<u8>>` crosses all three
 layers, and each step is a CGP rule documented elsewhere:

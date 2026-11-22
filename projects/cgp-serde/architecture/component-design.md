@@ -30,7 +30,7 @@ needs a wiring entry, including intermediate types such as a `Vec` of structs an
 iteration yields. The library does not yet publish a namespace of defaults that would shorten that
 table, so every context spells out its full wiring.
 
-## One struct, both directions
+## One provider for both directions
 
 **A provider is a type-level name, so one struct can implement both components, and the library uses
 this whenever the two directions are one decision.** A context that wires `Vec<u8>` to

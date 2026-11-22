@@ -117,7 +117,7 @@ These documents are the verified record behind the `expression` pages of the
 [cgp-examples project section](../../../website/projects/cgp-examples.md), which write this crate's
 four contexts as its pilot example pages.
 
-## How it relates to the rest of the base
+## How it relates to the base
 
 The [expression interpreter](../../../examples/expression-interpreter.md) worked example teaches
 this crate's patterns step by step and stands alone. The CGP ideas it applies are documented where

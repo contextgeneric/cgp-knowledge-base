@@ -41,7 +41,7 @@ from and whether the result borrows from it:
   and call `end` to reject trailing input. Needs no error components at all.
 
 The first two need the context's error components, and the seed needs none; see
-[wiring a context](wiring-a-context.md#wire-the-error-components-when-the-json-providers-are-used).
+[wiring a context](wiring-a-context.md#wire-an-error-type-for-json).
 
 ## Choose a format that fits the output
 

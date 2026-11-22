@@ -50,7 +50,7 @@ which one is in play and links to it:
 - reading runtime values from the context:
   [`#[derive(HasField)]`](../cgp/reference/derives/derive_has_field.md)
 
-## A program is a type
+## Programs as types
 
 The smallest DSL program is a type, not a value. The `hypershell!` macro provides shell-like surface
 syntax, a pipe operator and bracketed argument lists, that desugars into a chain of phantom-typed
@@ -137,7 +137,7 @@ handler for every fragment of the language, each keyed by a distinct `Code` type
 program is therefore resolving `CanHandle` for that type. The `#[prefix]` attribute registers the
 component under the path `@cgp.extra.handler`, which is where the namespace below routes it.
 
-## Abstract syntax, decoupled from its meaning
+## Abstract syntax
 
 A syntax marker like `SimpleExec` is nothing but a phantom struct, with no interpreter attached:
 
@@ -284,7 +284,7 @@ language is thus assembled in three layers: bundles that map syntax to providers
 routes syntax to bundles, and contexts that join the namespace. The whole route table is in the
 [Hypershell namespace reference](../projects/hypershell/reference/contexts-and-namespace.md), and
 one lookup is traced through all three layers in
-[assembly](../projects/hypershell/architecture/assembly.md#one-lookup-end-to-end).
+[assembly](../projects/hypershell/architecture/assembly.md#one-lookup).
 
 ## Running on a custom context
 
