@@ -3,7 +3,7 @@
 This guide holds the rules for writing and revising a related-work comparison. The knowledge base's
 [AGENTS.md](../AGENTS.md) holds the rules every document follows.
 
-## Compile the foreign snippets, and record the toolchain
+## Foreign snippets
 
 Every foreign snippet that can be compiled is compiled, with its toolchain recorded:
 

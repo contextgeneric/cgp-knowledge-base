@@ -71,7 +71,7 @@ structural type option", and row polymorphism "is notably absent from Rust's str
 ([Andreas, "Structural vs Nominal Typing in Rust"](https://felixandreas.me/blog/nominal-vs-structural-types/)).
 That absence is the ground CGP works on.
 
-### Row polymorphism proper, in PureScript
+### Row polymorphism in PureScript
 
 Row polymorphism is structural flexibility delivered by a *row variable* rather than a subtype
 relation. Where structural subtyping coerces a wider value to a narrower type, row polymorphism
@@ -154,7 +154,7 @@ a function can be polymorphic in whether a given field is there at all
 [Row polymorphism, HandWiki](https://handwiki.org/wiki/Row_polymorphism)). CGP reproduces exactly
 this with the per-field presence markers shown later.
 
-### Extensible variants: the sum-side dual
+### Extensible variants
 
 Everything above concerns records, products of named fields, and it has an exact dual for enums, the
 *sums* of named variants. Where a row-polymorphic record function accepts "at least these fields", a
@@ -197,7 +197,7 @@ is built from *constraints resolved like type classes* rather than a built-in ro
 and Jones route applied to sums, with `inj` and `prj` doing the injection and projection that a row
 system's containment predicate governs.
 
-### The unifying theory: "rows by any other name"
+### The unifying theory
 
 Beneath the language-specific designs lies a general theory, and the research paper this document
 studies, J. Garrett Morris and James McKinna's "Abstracting extensible data types: or, rows by any
@@ -228,7 +228,7 @@ that *is* the projection or concatenation code. The Haskell `row-types` library 
 direct implementation of this paper
 ([Hackage: Data.Row.Records](https://hackage.haskell.org/package/row-types-1.0.1.2/docs/Data-Row-Records.html)).
 
-### A third application: effect rows
+### Effect rows
 
 Rows type more than data, and their most prominent third use, *effects*, matters here because it is
 where row polymorphism most visibly both succeeds and fails. Koka types a computation's side effects
@@ -250,7 +250,7 @@ discharges an effect. Where the row languages keep a distinct row kind for each 
 variants, and effects, CGP collapses all three onto trait predicates over a context, a point the
 [algebraic effects](algebraic-effects.md) document takes up from the effect side.
 
-### Two cautionary tales: PureScript effects and Gleam records
+### PureScript effects and Gleam records
 
 Two languages that once had prominent row systems removed them, and the reasons bear directly on
 CGP's positioning. PureScript's original effect monad, `Eff`, tracked side effects in a *row* of
@@ -291,7 +291,7 @@ of row theories. The snippets below come from the knowledge base's casting and b
 and the structs and enums they derive are **value contexts**: the record being built or the enum
 being cast is the type that carries the shape.
 
-### A struct is a closed row; `HasField` is row containment
+### Field lists and field requirements
 
 The [`#[derive(HasFields)]`](../cgp/reference/derives/derive_has_fields.md) derive gives a struct
 the type-level equivalent of a closed row: a [`Product!`](../cgp/reference/macros/product.md) of
@@ -323,7 +323,7 @@ other fields playing the role of the tail variable `r`. The difference from Pure
 row variable is implicit and never named. CGP does not infer or carry a residual row; it resolves
 the containment bound against whatever concrete context is wired.
 
-### Building a record is row combination
+### Combining fields in a builder
 
 Assembling a struct field by field is CGP's record concatenation, the combination predicate
 `ρ₁ ⊙ ρ₂ ~ ρ₃`. The [builder family](../cgp/reference/traits/has_builder.md) walks a *partial
@@ -347,7 +347,7 @@ recovered for generic Rust. The [application builder](../examples/application-bu
 assembles a whole application context this way, with independent providers each contributing one
 subsystem's fields.
 
-### Presence markers are presence polymorphism
+### Presence markers
 
 CGP tracks field presence with the same per-field flags Rémy's presence polymorphism introduced,
 made concrete as [`MapType`](../cgp/reference/traits/map_type.md) markers on a partial record. The
@@ -364,7 +364,7 @@ presence polymorphism made operational. Where a presence-polymorphic function ab
 a field is present, a CGP builder tracks that presence through the markers and refuses to finalize
 until it is resolved.
 
-### An enum is a row-typed sum; upcast and downcast are injection and branching
+### Widening, narrowing, and handling variants
 
 The variant side is the exact dual.
 [`#[derive(HasFields)]`](../cgp/reference/derives/derive_has_fields.md) represents an enum as a
@@ -396,7 +396,7 @@ types à la carte* terms, `CanUpcast` is `inj` and `CanDowncast` is `prj`. But w
 `prj` returns a `Maybe` with no exhaustiveness check, CGP's branching consumes the whole sum and
 proves it covered every case, so the projection that à la carte leaves partial CGP makes total.
 
-### Providers are the paper's computational evidence
+### Trait implementations as evidence
 
 CGP lines up with the *theory* more than with any implementing language on one point: Morris and
 McKinna's insight that a row predicate's evidence "has computational content". In CGP that evidence
@@ -482,7 +482,7 @@ from independent parts, a visitor over an open set of variants, a cast between s
 delivers row polymorphism's payoff without adopting a new kind system, and pays the complexity only
 where it is used.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 A reader fluent in rows arrives with almost the whole mental model, so map the vocabulary directly.
 A struct's derived `HasFields` shape **is a closed row**;

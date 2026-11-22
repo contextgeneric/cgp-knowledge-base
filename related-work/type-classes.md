@@ -75,7 +75,7 @@ through *superclasses* (`class Eq a => Ord a` requires every `Ord` type to be `E
 class systems add *associated types*, a type member of a class, which correspond to CGP's
 [abstract-type components](../cgp/concepts/abstract-types.md).
 
-### Coherence: one instance per type, globally
+### Coherence and canonical instances
 
 *Coherence* governs instance resolution, and it is the rule CGP's provider split is built to work
 around. It means that for a given class and type there is one instance, and every resolution
@@ -148,7 +148,7 @@ classes pleasant, the compiler silently choosing a dictionary, becomes a hazard 
 not unique. This is the hazard CGP confronts directly, and the reason its embrace of many instances
 has to be paired with explicit selection.
 
-### Instance arguments in Agda: coherence dropped, resolution scoped
+### Instance arguments in Agda
 
 Agda offers type-class-style overloading without a class construct and without coherence, through
 *instance arguments*. Devriese and Piessens's design reuses Agda's ordinary dependently typed
@@ -176,7 +176,7 @@ implicits than to Haskell's global coherence, and it is the first hint of the de
 further: many instances allowed, with the conflict resolved where the choice is made rather than by
 a global uniqueness rule.
 
-### Type classes in Lean: search, priorities, and the diamond problem
+### Type classes in Lean
 
 Lean uses type classes pervasively for its mathematical library, resolves them by a backtracking
 tabled search with per-instance priorities, and pays for the absence of coherence with the *diamond
@@ -208,7 +208,7 @@ Lean is the clearest cautionary example of what unmanaged instance choice costs,
 backdrop for CGP's explicit per-context selection, which admits no diamond because a context names
 exactly one provider per component.
 
-### Modular type classes: classes as signatures, instances as structures
+### Modular type classes
 
 Type classes *are* ML modules plus a resolution layer. Dreyer, Harper, and Chakravarty established
 this in *Modular Type Classes*, which treats **classes as signatures and instances as structures and
@@ -246,7 +246,7 @@ overlapping instances can coexist and a context picks one. Every construct below
 type-class concept, and the extension features that type-class languages bolt on with pragmas are,
 in CGP, the default.
 
-### A component is a class; a provider is a first-class instance
+### Components and providers
 
 A CGP component is a type class, and a provider is an instance made into a named, selectable value.
 Declaring a component is declaring a class:
@@ -273,7 +273,7 @@ constraints threaded by dictionary passing, and the context is the dictionary th
 snippet is the [area calculation](../examples/area-calculation.md) example's component, wired on a
 **value context** such as `Rectangle`.
 
-### Overlapping instances are the default, with no heuristic
+### Overlapping providers
 
 Where Haskell needs pragmas and a most-specific heuristic to permit overlap, CGP permits unlimited
 overlapping instances by construction and resolves them by naming rather than guessing. The
@@ -308,7 +308,7 @@ overlap silently producing incoherence, cannot arise, because the choice is neve
 providers wire an **environmental context** (an application such as `AppA`) and the component is
 parameter-targeted: the serialized value is `Value`, not `Self`.
 
-### Incoherent instances made deterministic and local
+### Selecting a provider per context and value type
 
 The deepest correspondence is that CGP embraces the incoherence type-class languages fear, and makes
 it safe by moving the choice from a global search to an explicit per-context table. GHC warns that
@@ -324,7 +324,7 @@ The different-choice-in-different-places that is a hazard in Haskell is a featur
 is written down rather than inferred. In one line, CGP is *incoherent instances with the incoherence
 made deterministic and the selection made explicit*.
 
-### No orphan rule, no newtype dance
+### Orphan conflicts and newtypes
 
 Two everyday type-class frustrations disappear because a provider's `Self` is always a type its
 crate owns. The orphan rule, Rust's enforced version of Haskell's convention, never bites, so a
@@ -398,7 +398,7 @@ explicitness is, for its audience, a feature rather than a cost, in the spirit o
 dictionaries" critics of coherence advocate: the choice is a greppable line in a wiring table, not
 the outcome of a resolution search that overlap or incoherence could quietly derail.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 A reader who knows type classes holds essentially all of CGP's conceptual furniture, so state the
 correspondence and then the one change. A **component is a class**, a **provider is an instance**
@@ -420,7 +420,7 @@ off. The one change is the key of selection: CGP replaces the one-instance-per-t
 it, automatic resolution, with explicit per-context selection. Framed this way CGP is this reader's
 own type-class system with global uniqueness swapped for modular, per-context choice, the fully
 modular end of the
-[modular type classes](#modular-type-classes-classes-as-signatures-instances-as-structures)
+[modular type classes](#modular-type-classes)
 spectrum.
 
 Correct the two expectations coherence buys. First, *automatic resolution*. This reader expects the

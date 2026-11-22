@@ -62,7 +62,7 @@ independent parts, and visitors over an enum's variants. The question this docum
 therefore not *what* reflection is for but *how* each system makes a type's shape available, and
 what that choice costs and guarantees.
 
-### Runtime reflection: Bevy
+### Runtime reflection in Bevy
 
 Bevy's [`bevy_reflect`](https://docs.rs/bevy_reflect/latest/bevy_reflect/) (at version 0.20 as of
 this writing) is the prominent Rust runtime-reflection system, and it is the runtime counterpart to
@@ -88,7 +88,7 @@ defining runtime move. The type is erased into `dyn Reflect`, and its structure 
 asking the value at run time rather than by knowing it at compile time. Field access by name returns
 an `Option`, so a wrong name is a runtime `None`, not a compile error.
 
-#### `TypeInfo`: the static shape descriptor
+#### The `TypeInfo` descriptor
 
 Backing the dynamic access is `TypeInfo`, a description of a type's shape that is available without
 an instance. The `#[derive(Reflect)]` macro generates a
@@ -125,7 +125,7 @@ a compile error. This is the runtime end of the spectrum in full: maximal flexib
 over types discovered at run time, bought with runtime cost and runtime failure modes. It is what
 CGP trades entirely away.
 
-### Compile-time metaprogramming: Zig's `comptime`
+### Zig's `comptime`
 
 Zig's `comptime` is the reference design for compile-time reflection, and it is the closest
 functional analogue of what CGP achieves: the introspection runs during compilation and leaves no
@@ -146,7 +146,7 @@ functions with `comptime` type parameters; there is no separate generics feature
 substrate reflection runs on: since types are values the compiler can inspect and manipulate,
 introspecting one is calling a builtin on a `comptime` value.
 
-#### `@typeInfo`: a type's structure as comptime data
+#### `@typeInfo`
 
 The builtin `@typeInfo(T)` decomposes a type into structured `comptime` data describing its shape.
 It returns a `std.builtin.Type`, a tagged union whose active field says whether `T` is a struct, an
@@ -158,7 +158,7 @@ each field of a struct carries a `name`, a `type`, and a `default_value_ptr`
 it is evaluated away. It is the direct ancestor of Rust's nightly introspection and the compile-time
 twin of Bevy's runtime `TypeInfo`.
 
-#### `inline for` and `@field`: iterating the shape
+#### `inline for` and `@field`
 
 Reflection becomes useful through `inline for`, which unrolls a loop over a `comptime` collection,
 and `@field`, which accesses a field by a `comptime`-known name. The canonical pattern reads a
@@ -188,7 +188,7 @@ what every reflection system stores and of CGP's `Tag::VALUE`. A real recursive 
 switch on `@typeInfo(field.type)` to decide how to write each field; this one formats every field
 with `{any}`.
 
-#### `@Type`: reflection in reverse
+#### `@Type`
 
 Zig's introspection runs in both directions, which most reflection facilities lack. `@Type`
 *constructs* a type from a `std.builtin.Type` value. Where `@typeInfo` reads a type into data,
@@ -199,7 +199,7 @@ type synthesis, the analogue of C++26's splicers, and CGP cannot do it. CGP can 
 *lists* and partial-record companions, but it cannot synthesize a new nominal type from computed
 structure.
 
-#### Zero cost, checked at instantiation
+#### Zero cost and late checking
 
 The defining trade of `comptime` is that it is zero-cost but checked late. Because all of it runs at
 compile time, a `comptime` routine leaves no runtime metadata, no dispatch, and no cost, the payoff
@@ -210,7 +210,7 @@ is no separate declaration-site check that a `comptime` function is well-formed 
 inputs. This is the one axis on which CGP diverges sharply from the model it otherwise mirrors, and
 a later section develops it.
 
-### Compile-time reflection comes to Rust
+### Compile-time reflection in Rust
 
 Rust has historically had no reflection at all, and the effort to add compile-time reflection is now
 concrete enough to study from its source and tracking issues. It matters to CGP because its stated
@@ -220,7 +220,7 @@ MVP and its current shape, and the design questions still open before it can sta
 below about the nightly API was read from the compiler source on the day of writing; it is unstable
 and will change.
 
-#### Why Rust had none, and the userspace answers
+#### Userspace reflection in Rust
 
 Rust filled the absence of reflection with `#[derive]` proc macros that generate specialized code
 per type, and the cost of that choice motivates the reflection effort. The prominent userspace
@@ -236,7 +236,7 @@ fully compile-time introspection. The narrower
 [`dtolnay/reflect`](https://github.com/dtolnay/reflect) is a proof of concept in a different
 direction: a compile-time reflection API for writing proc macros.
 
-#### The nightly MVP: `core::mem::type_info`
+#### The nightly MVP
 
 The nightly compiler effort is the more consequential development. Its
 [tracking issue #146922](https://github.com/rust-lang/rust/issues/146922), opened in September 2025
@@ -287,7 +287,7 @@ the `DynMetadata` for building a fat pointer
 therefore moved well past "tuples or bust", and the remaining work is stabilization rather than more
 kinds.
 
-#### Compile-time-only: the `#[rustc_comptime]` restriction
+#### The `#[rustc_comptime]` restriction
 
 The single most important design decision is that this reflection is callable *only at compile
 time*, and the source enforces it. `TypeId::info` is documented "It can only be called at compile
@@ -303,7 +303,7 @@ outlive `'static`", which "will be able to break invariants that other `TypeId` 
 have assumed", and a dedicated PR for non-`'static` reflection
 ([#152381](https://github.com/rust-lang/rust/pull/152381)) is part of the linked work.
 
-#### How Zig's `comptime` inspired it, and why Rust chose const-fn reflection
+#### Zig's influence and const-fn reflection
 
 The relationship to Zig's `comptime` is inspiration without adoption, and the project goal is
 explicit about it. Zig demonstrated that first-class compile-time type introspection combined with
@@ -316,7 +316,7 @@ from accessing type information from the current crate", and estimates the archi
 ambition narrowed to what Rust's architecture can deliver soon, with general `comptime` much later
 and Zig as the acknowledged model rather than the immediate target.
 
-#### The road to stabilization: open questions and the RFC
+#### Stabilization
 
 Despite the implemented surface, the feature is at the very start of the stabilization process, and
 the tracking issue is candid about what remains. Its checklist has every box unchecked: implement
@@ -347,7 +347,7 @@ set against facet and the Rust MVP it shows exactly where the type-level encodin
 reflection. Its serializer wires an **environmental context**: the `Self` of `SerializeRecordFields`
 is an application such as `AppA`, and the serialized `Value` is a parameter.
 
-### A type's shape becomes a type, not a descriptor
+### Representing a struct as a field list
 
 The foundational move is that `#[derive(HasFields)]` lifts a struct's structure into the type system
 as a type-level list, CGP's form of the `TypeInfo`, `Shape`, `std.builtin.Type`, and `FieldId`
@@ -379,7 +379,7 @@ a *type*, not a value. The Rust MVP's `FieldId` answers `name()` with a `&'stati
 as a type parameter. That difference, the field type carried as a *type* rather than an opaque
 `TypeId` value, is what lets CGP dispatch on it, and it is the crux of the comparison below.
 
-### `cgp-serde`: reflection-driven serialization in the trait system
+### Serialization in `cgp-serde`
 
 The `cgp-serde` crate's
 [`SerializeRecordFields`](https://github.com/contextgeneric/cgp-serde/blob/main/crates/cgp-serde/src/providers/fields.rs)
@@ -499,7 +499,7 @@ can also cause errors during constant evaluation for a concrete type, as its tra
 Rust still type-checks a `const fn` body against its declared types and bounds; the distinction is
 when type-dependent evaluation can fail, not whether the body receives ordinary type checking.
 
-### Reflection that also selects behavior and configures types
+### Selecting behavior and types
 
 CGP applies the same type-level-shape idea beyond inspecting data, to two things a structural
 reflection facility does not directly address: choosing implementations and fixing abstract types.
@@ -600,7 +600,7 @@ not part of the current scheme. Until then CGP's derive stands in for the compil
 reflection Rust is still building, and the reflection MVP is best read not as a rival to CGP but as
 the same underlying idea, reflected into values where CGP reflects it into types.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 A reader who thinks in `TypeInfo`, `@typeInfo`, or `TypeId::field` holds most of CGP's structural
 machinery already, so map the vocabulary and then mark the one shift. A `#[derive(HasFields)]`

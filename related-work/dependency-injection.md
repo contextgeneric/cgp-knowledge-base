@@ -162,7 +162,7 @@ so the "container" has no runtime existence at all. The snippets below come from
 **environmental context**: a type standing for an application, which carries the application's
 choices and dependencies rather than being the data operated on.
 
-### Impl-side dependencies are the injected constructor parameters
+### Impl-side dependencies
 
 A provider states the collaborators and values it needs in a way that reads like declaring
 dependencies, and CGP satisfies them from the context rather than from a container. Where a Spring
@@ -198,7 +198,7 @@ appears in the `CanManageUser` consumer trait a caller invokes, so, unlike a lea
 they do not cascade to callers. That is the decoupling a DI framework promises, delivered by hiding
 the requirements one level down in the provider's impl rather than in a container.
 
-### Wiring is the container configuration
+### Wiring as container configuration
 
 A context selects which provider satisfies each component in a
 [`delegate_components!`](../cgp/reference/macros/delegate_components.md) table, the direct analogue
@@ -233,7 +233,7 @@ through `App` route statically to the S3 provider, while calls through `GCloudAp
 One program can use either context or both. The wiring does not require separate binaries or
 guarantee that either provider is absent from a binary.
 
-### Checking replaces the container's startup validation
+### Checking declared dependencies
 
 A DI container discovers a missing or ambiguous binding when it assembles the graph: at startup for
 Spring and Guice, at build time for Dagger. CGP's counterpart is
@@ -317,7 +317,7 @@ propagation or overlapping implementations. CGP becomes useful when reusable pro
 independent implementation choices per context and static wiring justifies the extra declarations. A
 build-time dependency graph alone does not make CGP necessary.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 Map a provider's declared requirements to constructor dependencies and its wiring to configuration.
 Distinguish selecting an implementation from constructing and managing runtime objects: CGP handles

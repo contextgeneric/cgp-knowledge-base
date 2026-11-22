@@ -20,8 +20,8 @@ writing will rest on.
 The first such writing is the website's **Comparisons** section, one public page per document here,
 specified by the [comparison page guide](../website/writing-guides/related-work.md). That guide
 fixes what changes in the port, and the largest change concerns the last section of every document
-below: *Presenting CGP to someone who knows this* is guidance for the writer and is applied as the
-public page's structure, never published as prose.
+below: *Presenting CGP* is guidance for the writer and is applied as the public page's structure,
+never published as prose.
 
 Honesty is the whole value of the section. A document that flatters CGP or misrepresents the related
 work is worse than useless, because the readers it ultimately serves are the people most able to see

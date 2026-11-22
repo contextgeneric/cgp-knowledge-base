@@ -59,7 +59,7 @@ what makes a `HashMap<K, V>` sound: every insert and lookup agrees on one `Hash 
 tradition; this document takes it as given and looks at what Rust has considered doing about its
 cost.
 
-### Specialization: let the specific impl win
+### Specialization
 
 RFC 1210, *impl specialization*, proposes allowing two impls to overlap when one is *strictly more
 specific* than the other, and letting the compiler pick the specific one. Its motivation is
@@ -103,7 +103,7 @@ problem and concludes that specialization, even stabilized, would permit neither
 overlapping impls nor orphan impls
 ([RustLab transcript](../website/blog/rustlab-2025-coherence.md)).
 
-### Dictionary passing: traits as structs, impls as values
+### Dictionary passing
 
 A second line of thought treats the trait system as sugar over *dictionary passing*, the elaboration
 Haskell compilers perform and the [type classes](type-classes.md) comparison describes. Nadrieril's
@@ -129,7 +129,7 @@ point of friction, since a global impl can constrain a caller in ways the caller
 The value of the framing for this comparison is that once impls are values, *choosing* an impl is
 passing a different value, which is exactly the freedom coherence forbids.
 
-### Incoherent Rust: named impls passed as bounds
+### Named and incoherent impls
 
 Boxy's *An Incoherent Rust* proposes to drop the coherence rules and replace them with explicit impl
 selection. The motivating problem is *ecosystem evolution*: once a foundational crate such as
@@ -153,7 +153,7 @@ then names the remaining challenges as substantial: syntax, ergonomics for deriv
 traits, migration of the existing ecosystem, and whether the complexity is worth it
 ([Boxy, *An Incoherent Rust*](https://www.boxyuwu.blog/posts/an-incoherent-rust/)).
 
-### Contexts and capabilities: values from the enclosing scope
+### Contexts and capabilities
 
 Tyler Mandry's 2021 *Contexts and capabilities in Rust* addresses a different limitation: a function
 or impl cannot reach a value from its caller's environment, such as an allocator, an executor, or a
@@ -192,7 +192,7 @@ such as `HashSet` that rely on consistency, and methods that capture implicit va
 rather than function pointers
 ([Nadrieril, *What If Traits Carried Values*](https://nadrieril.github.io/blog/2026/03/22/what-if-traits-carried-values.html)).
 
-### Cairo: a Rust-like language that shipped named impls
+### Named impls in Cairo
 
 Cairo, the smart-contract language of StarkNet, borrows Rust's surface syntax and gives every impl a
 name, so it is the nearest thing to a shipped Incoherent Rust. Its book states the rule: "after
@@ -229,7 +229,7 @@ everything is the definition of a context type and its wiring. What the proposal
 language, CGP adds as a library, with the single restriction that every binding lives in one place:
 the context.
 
-### A named impl is a provider
+### Naming implementations with providers
 
 The thing Boxy's proposal names with `impl Name<T> = Trait<T> for T` is what CGP calls a provider.
 The [consumer/provider split](../cgp/concepts/consumer-and-provider-traits.md) gives every
@@ -264,7 +264,7 @@ general and neither is more specific than the other. The `ValueSerializer` compo
 parameter-targeted and the contexts that wire it are **environmental contexts**, applications such
 as `AppA` and `AppB`.
 
-### An incoherent bound resolves through the context, not at each call site
+### Selecting implementations on a context
 
 Boxy's `function::<T + TraitImpl<T>>` passes the impl at every call. CGP instead lets generic code
 require the *consumer* trait on the context and defers the choice to wherever the context is
@@ -297,7 +297,7 @@ agrees on one impl, which is the property the proposal recovers by moving `Hash`
 definition. The [type classes](type-classes.md) comparison develops this as "incoherent instances
 made deterministic".
 
-### Passing an impl explicitly is a higher-order provider
+### Passing providers as type parameters
 
 Where the proposals and Cairo let a caller pass an impl as a parameter, CGP has
 [higher-order providers](../cgp/concepts/higher-order-providers.md). A provider takes another
@@ -324,7 +324,7 @@ providers are the exception for the cases where a provider must override its inn
 and they often default their inner parameter to
 [`UseContext`](../cgp/reference/providers/use_context.md) so the context's wiring is the fallback.
 
-### A capability is a context field; the `with` block is the context
+### `with` clauses as context fields
 
 Mandry's `with arena: &BasicArena` clause declares a value the function needs from its environment.
 CGP declares the same thing as an [implicit argument](../cgp/concepts/implicit-arguments.md), which
@@ -373,7 +373,7 @@ field is a compile error that [`check_components!`](../cgp/reference/macros/chec
 names at the wiring site. The `App` here is an **environmental context** with one field, and the
 `Greeter` component is self-targeted.
 
-### The context is the dictionary
+### The context as a dictionary
 
 The dictionary-passing account and CGP meet in one observation the author's draft develops at
 length: the context *is* the top-level dictionary. In Nadrieril's elaboration every dictionary is a
@@ -455,7 +455,7 @@ application, impls for types the program does not own, or environment values rea
 without parameters, CGP is the only one of these that can be used today, and its explicitness is the
 price of that.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 A Rust reader who has followed these proposals holds the exact vocabulary CGP needs, so use it. A
 **provider is a named impl**, a **consumer-trait bound on the context is an incoherent trait

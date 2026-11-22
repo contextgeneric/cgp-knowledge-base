@@ -67,7 +67,7 @@ The English and German instantiations are distinct types with different message 
 can find the inherited policy members. The calls can be inlined, but choosing policies statically
 does not itself guarantee inlining.
 
-### Policy interfaces can be implicit or constrained
+### Implicit and constrained policies
 
 An unconstrained host expresses its requirements through the operations its body uses. In the
 example, the policies must supply compatible `message` and `write` members. A class can satisfy
@@ -78,7 +78,7 @@ require an undocumented interface: a host can constrain its policy arguments and
 requirement before its body is instantiated. The distinction from Rust traits concerns both
 structural matching and how the generic body is checked.
 
-### CRTP gives a base access to its derived object
+### CRTP
 
 CRTP passes the derived class as an argument to its base template. The base can then call a derived
 member through a cast to that known type:
@@ -104,7 +104,7 @@ The two base instantiations do not form a shared runtime interface. A heterogene
 another representation, such as a virtual interface, type erasure, or a `std::variant` for a closed
 set of alternatives. CRTP alone does not choose that representation.
 
-### Concepts state requirements without fully checking a generic body
+### C++ concepts
 
 A concept names a predicate over template arguments. Here, `Hashable` requires a hash expression
 whose result is convertible to `std::size_t`:
@@ -132,7 +132,7 @@ CGP declares policy interfaces as traits and supplies implementations through pr
 Applications can select providers through context wiring or pass them explicitly as type parameters.
 Rust checks the generic implementation against its declared bounds in either form.
 
-### Providers are policies; the context is the host
+### Providers as policies
 
 The greeting can declare its message and output interfaces separately, then implement each choice as
 a provider:
@@ -215,7 +215,7 @@ The `#[uses(HasMessage, CanWrite)]` declaration states the generic dependencies 
 their dependencies. This separates checking the reusable body from checking an application's
 assembly.
 
-### Policies as type parameters are higher-order providers
+### Policies as type parameters
 
 A higher-order provider keeps policy choices local to a parameterized implementation. The greeting
 can use the familiar `HelloWorld<WriteToStdout, GermanMessage>` shape:
@@ -275,7 +275,7 @@ A manually declared provider struct can default an inner parameter to
 context's wiring. The `new` declarations above do not introduce defaults automatically. This is a
 CGP forwarding convention; C++ can also express policies that obtain behavior through their host.
 
-### Providers access the context without an inheritance cast
+### Context access without a cast
 
 Inside `#[cgp_impl]`, `self` refers to the context on which the operation runs. The macro rewrites
 that source form into a provider implementation with an explicit context parameter. A provider can
@@ -298,7 +298,7 @@ This addresses a need that CRTP often serves: reusable behavior accessing the ho
 mechanism is different. CGP passes the context to provider functions, so there is no inheritance
 relationship or base-to-derived cast in this correspondence.
 
-### Generic bodies and concrete wiring have separate checks
+### Checking generic bodies and wiring
 
 Rust checks a generic provider body using the bounds available at its definition. For example, `run`
 can rely on the `HasMessage` and `CanWrite` bounds declared by `#[uses]`. If it calls an operation
@@ -312,7 +312,7 @@ field, another component, or a required relationship between associated types.
 the listed components. A wiring table alone does not validate every possible use, and the resulting
 diagnostics can still involve generated traits and Rust's trait solver.
 
-### Wiring gathers choices under a context type
+### Gathering choices on a context
 
 Context wiring lets generic consumers name the interfaces they need without enumerating the
 application's provider types. Adding another independently selected component can leave those
@@ -376,7 +376,7 @@ erasure in C++, and trait objects in Rust, can support open sets of runtime impl
 Variants and enums can represent closed sets. The [dynamic dispatch](dynamic-dispatch.md) page
 explains how static wiring and runtime polymorphism can coexist.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 Start with the familiar `HelloWorld<WriteToStdout, GermanMessage>` composition, then show the
 alternative of wiring independent choices on a context. A provider plays a policy's role, a

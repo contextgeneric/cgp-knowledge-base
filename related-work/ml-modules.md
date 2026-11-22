@@ -131,7 +131,7 @@ analogy here; it is not a formal equivalence between ML modules and CGP. The
 CGP uses Rust traits to declare interfaces and provider types to name implementations. A context's
 wiring selects those providers, while provider bounds state which other interfaces they require.
 
-### Components are signatures; providers are structures
+### Signatures and structures
 
 A component and its providers separate the interface from its named implementations:
 
@@ -164,7 +164,7 @@ Components can group multiple methods, associated types, and constants. This exa
 operation because it is independently replaceable. A larger ML signature may correspond to one
 component or several, depending on which choices should vary together.
 
-### Abstract-type components are a signature's abstract types
+### Abstract types
 
 An abstract-type component lets generic code use a type that the context supplies:
 
@@ -186,7 +186,7 @@ representations remain available for data abstraction. The
 [Abstract types](../cgp/concepts/abstract-types.md) page distinguishes configuring a type from
 hiding its representation.
 
-### Higher-order providers are functors
+### Functors and higher-order providers
 
 A higher-order provider composes behavior from another provider supplied as a type parameter:
 
@@ -215,7 +215,7 @@ the same context's `HasErrorType` refer to the same associated `Error`. Other re
 associated types may still require equality bounds. This convenience does not replace ML's full
 account of sharing constraints or abstract type identity.
 
-### `delegate_components!` records the assembly choices
+### Assembling with `delegate_components!`
 
 A wiring table names the provider for each component without listing those entries in dependency
 order. Providers obtain their declared dependencies through the same context:
@@ -245,7 +245,7 @@ a table alone does not force every entry to be usable. An
 [aggregate provider](../cgp/concepts/aggregate-providers.md) or
 [namespace](../cgp/concepts/namespaces.md) can package choices for reuse.
 
-### Modular implicits select by scope; CGP selects through the context
+### Selection by scope and by context
 
 Modular implicits and CGP both support composing implementations from other implementations. Their
 selection mechanisms differ: modular implicits searches the implicit modules in scope under type
@@ -301,7 +301,7 @@ implementation choices independently. For a smaller Rust interface, ordinary tra
 parameters may already express the needed dependency. The choice depends on the assembly problem as
 well as the language's abstraction facilities.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 Build on the separation of signatures, implementations, and parameterized implementations. Show
 `ScaledArea<RectangleArea>` as a concrete higher-order provider, then explain why several providers

@@ -123,7 +123,7 @@ interface, a [provider](../cgp/reference/macros/cgp_impl.md) is an implementatio
 construct by construct, and it breaks in exactly one place, that everything is static, which is the
 source of both what CGP gains and what it gives up.
 
-### CGP code reads like a duck-typed program
+### Calls on a generic receiver
 
 The most immediate resemblance is stylistic. A CGP provider is written against an unknown context
 and reads like duck-typed code that sends messages to a receiver and trusts it to respond. A
@@ -187,7 +187,7 @@ Where a component carries a generic parameter, CGP even reproduces *multiple* di
 type argument, dispatching on the context *and* that argument the way multimethods dispatch on
 several runtime types, but decided at compile time.
 
-### `DelegateComponent` is a compile-time vtable
+### Wiring as a vtable
 
 The type-level table a context carries is a vtable that exists only during compilation. Each
 [`DelegateComponent<Key>`](../cgp/reference/traits/delegate_component.md) impl on a context maps one
@@ -216,7 +216,7 @@ Static wiring can coexist with runtime trait objects. A dyn-compatible consumer 
 `dyn CanCalculateArea`, including in a heterogeneous collection of concrete CGP contexts. Each
 concrete context still uses its own static provider selection inside that dynamic call.
 
-### Component delegation is delegation, with `self` bound
+### Delegation and the original context
 
 CGP's delegation chain is delegation in Lieberman's exact sense, because the context stays bound to
 the original as lookup walks the chain. An
@@ -252,7 +252,7 @@ pointed the other way, letting a provider route a call back to the context's own
 prototype consulting its delegator. On the axis that separates delegation from forwarding, CGP's
 delegation *is* delegation, resolved statically.
 
-### Namespaces are shared prototypes with open slots, not shadowable ones
+### Namespaces and inheritance
 
 A CGP namespace is a shared table of wirings that many contexts inherit, which is the prototype's
 job. But the override rule differs from JavaScript's, and the difference matters enough to state
@@ -364,7 +364,7 @@ Rust's `dyn Trait` is useful for runtime polymorphism and can coexist with CGP. 
 trait object, or a dyn-compatible consumer trait may be used as a trait object. CGP wiring fits
 implementation choices known at build time, where reusable providers justify the additional tables.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 Separate dynamic dispatch, dynamic typing, and prototype mutation before mapping them to CGP. Rust
 trait objects select implementations at runtime while checking their interfaces statically. A

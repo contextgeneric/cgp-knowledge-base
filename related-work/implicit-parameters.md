@@ -176,7 +176,7 @@ by hand. Two CGP constructs map onto the two forms of implicit parameter.
 parameters, and a [component](../cgp/concepts/consumer-and-provider-traits.md) with its wiring
 corresponds to a type class.
 
-### Implicit arguments are implicit value parameters
+### Implicit arguments
 
 An `#[implicit]` argument is written as an ordinary function parameter but is supplied from the
 context's fields rather than by the caller. That is the shape of a Scala `using` parameter, except
@@ -201,7 +201,7 @@ a compiler search at the call site. The snippet wires a **value context**: the t
 and `height` is the rectangle itself. The [area calculation](../examples/area-calculation.md)
 example develops it.
 
-### A shared context value is a threaded environment
+### A shared environment
 
 When several pieces of code must agree on one value, Scala uses a single `given Config` in scope and
 Haskell the `Reader` monad. CGP has them all read the same field or the same
@@ -213,7 +213,7 @@ type with `#[use_type(HasErrorType.Error)]` and names it as the bare `Error`, so
 on one type the context supplies once. That is the type-level echo of a threaded `Reader`
 environment, resolved at compile time and costing nothing at run time.
 
-### Abstract types are implicit type parameters
+### Abstract types
 
 The correspondence runs one level up as well, and a reader from these languages recognizes this half
 fastest, because they have solved the same problem with the same trick. An
@@ -251,7 +251,7 @@ different error types, just as different contexts can. A CGP consumer trait can 
 abstract-type requirement as a supertrait so callers need not restate that bound. The type
 dependency remains, but it need not be an independent generic parameter.
 
-### Components and wiring make instance selection explicit
+### Explicit instance selection
 
 A component's consumer trait plays the interface role, while providers supply interchangeable
 implementations selected through wiring. Separate provider marker types let implementations coexist
@@ -346,7 +346,7 @@ CGP helps when Rust code needs separately reusable implementations and explicit 
 Those benefits must justify its additional declarations. It does not replace the scope rules or
 inference mechanisms of Scala and Haskell.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 Distinguish the binding rules before using the implicit-parameter analogy. Scala resolves givens
 through scope and priority rules, Haskell's `ImplicitParams` uses named bindings, and ordinary

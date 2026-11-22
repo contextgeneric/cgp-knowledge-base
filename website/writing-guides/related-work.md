@@ -158,7 +158,7 @@ in the modern idioms the [guides](../../cgp/guides/README.md) teach.
 
 **Foreign snippets are compiled against a named toolchain before publication**, recorded in the
 page's Sources sentence, per the
-[related-work rules](../../related-work/writing-guide.md#compile-the-foreign-snippets-and-record-the-toolchain).
+[related-work rules](../../related-work/writing-guide.md#foreign-snippets).
 A snippet that cannot be run, because the feature is a proposal or a research fork, says so beside
 the code.
 

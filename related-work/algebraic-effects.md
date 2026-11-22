@@ -82,7 +82,7 @@ mark exactly where CGP can and cannot follow:
   schedulers can instead suspend and later resume a continuation once. This *multi-shot* resumption
   cannot be expressed as an ordinary function return.
 
-### Effect typing: rows, sets, or nothing
+### Effect typing
 
 An *effect system* records in a computation's type which effects it may perform, so an unhandled
 effect can be caught statically. Languages differ sharply in whether they do this. Koka types
@@ -195,7 +195,7 @@ Flix's set-based effect system makes `\ Ask` part of `addTwice`'s type, and `mai
 it, which is why `main` carries only `\ IO`
 ([Flix documentation, *Effects and Handlers*](https://doc.flix.dev/effects-and-handlers.html)).
 
-### The fragment CGP corresponds to: tail-resumptive handlers are dynamic binding
+### Tail-resumptive handlers
 
 Tail-resumptive handlers provide the closest comparison to CGP. They resume exactly once in tail
 position, so the operation can run in place without capturing the rest of the computation.
@@ -216,7 +216,7 @@ examples use environmental contexts: types representing applications and supplyi
 implementations for self-targeted components. Supporting declarations and imports are omitted where
 they do not affect the comparison.
 
-### Components declare operations; providers implement them
+### Operations and their implementations
 
 A component declares an operation independently of its implementation. A context then selects a
 provider through wiring:
@@ -242,7 +242,7 @@ provider receives the context rather than a continuation. If the method returns 
 continues once at the call site. Like any Rust function, the method can also panic or diverge; CGP
 does not enforce termination or an exactly-once return guarantee.
 
-### Context fields supply an environment value
+### Environment values from fields
 
 CGP's [implicit arguments](../cgp/concepts/implicit-arguments.md) let nested implementations read
 values from a shared context. This resembles a reader effect whose handler supplies an environment
@@ -261,7 +261,7 @@ not forward the individual value. The difference is selection: a CGP field depen
 against a context type, without dynamic handler installation. The
 [implicit parameters](implicit-parameters.md) comparison develops that distinction.
 
-### Raising an error constructs a value
+### Raising errors
 
 CGP's error components choose how to construct an error, while Rust's `Result` controls propagation.
 This provider can produce an error without fixing the context's concrete error type:
@@ -310,7 +310,7 @@ captured continuation. CGP's wiring supplies error-construction behavior without
 control-flow mechanism. [Modular error handling](../cgp/concepts/modular-error-handling.md) explains
 the error components in detail.
 
-### Dependency checks verify the selected providers
+### Checking provider dependencies
 
 A provider's impl-side dependencies state the traits and fields it needs from a context. For
 example, `LoadOrFail` requires `CanRaiseError<String>`. A check verifies those requirements
@@ -350,7 +350,7 @@ follows from Rust's associated types and CGP's
 [abstract-type components](../cgp/concepts/abstract-types.md). It is an additional use of the wiring
 mechanism, separate from the comparison with handlers interpreting operations.
 
-### A related theoretical view: coeffects
+### Coeffects
 
 Coeffects offer another way to describe CGP's declared context dependencies. An effect describes
 what a computation does; a coeffect describes what it requires from its environment.
@@ -426,7 +426,7 @@ CGP can still participate in asynchronous Rust programs. Its
 [type-level DSLs](../cgp/concepts/type-level-dsls.md) select interpreters through providers. These
 constructs compose ordinary Rust computations; they do not add general algebraic effect handlers.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 Use the operations-and-implementations correspondence, then state the continuation boundary. A
 component declares operations and a provider implements them, but a provider receives the context

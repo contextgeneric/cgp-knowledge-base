@@ -152,7 +152,7 @@ read_config(&dir)?;
 dir.open("../secret.txt")   // Err(PermissionDenied: a path led outside of the filesystem)
 ```
 
-### Two senses that share only the word
+### Privilege bits and reference qualifiers
 
 Two well-known uses of "capability" are unrelated to authority in the model's sense, and a reader
 who brings either will be confused by a comparison built on the first. Linux "capabilities" divide
@@ -222,7 +222,7 @@ value the context supplies rather than something available everywhere. It drops 
 lexical scoping rather than message passing. It is a *static* discipline, and that is why it is the
 sense CGP can be compared with honestly.
 
-### The Rust community's word
+### Capabilities in Rust discussions
 
 Rust programmers use the word in a mixture of these senses, usually without saying which, and three
 threads are worth separating because they ask for different things. The first is *implicit values*.
@@ -255,7 +255,7 @@ capability: a value whose type proves authority and whose ownership prevents for
 compile time. A reader who says "I want capabilities in Rust" may mean any of the three, and the
 properties they get from each differ.
 
-### The properties that tell the senses apart
+### Comparing the senses
 
 Six properties separate the senses, and a design can be placed by asking which it has:
 
@@ -275,7 +275,7 @@ requirements may include authority-bearing values, but CGP does not make every d
 authority token. It also does not restrict access to globals or check the escape of capability
 references beyond Rust's ordinary type and lifetime rules.
 
-### Providers declare requirements on a context
+### Provider requirements
 
 A provider uses `#[uses]` for trait dependencies and `#[implicit]` for field dependencies. This
 fragment assumes a `CanGreet` component whose method returns a `String`:
@@ -311,7 +311,7 @@ Contexts can also determine [abstract types](../cgp/concepts/abstract-types.md),
 type shared by their providers. Selecting such a type is separate from supplying an
 authority-bearing value of that type. A type choice alone does not grant access to a resource.
 
-### An object capability can live in the context
+### Object capabilities in a context
 
 A context can carry a `cap-std` directory handle to a provider that declares it as a dependency.
 This example reads configuration using that handle:
@@ -353,14 +353,14 @@ The mechanisms compose: the value type supplies resource-access behavior, and CG
 dependency declaration and static wiring check. An allocator or arena can be passed through a
 context field in the same way, as discussed in [Rust's own proposals](rust-language-proposals.md).
 
-### CGP does not remove ambient authority
+### Ambient authority
 
 A provider can access ordinary Rust APIs beyond its context dependencies. `ReadConfigFromDir` could
 call `std::fs::File::open(...)` directly if the execution environment allows it, and CGP would not
 reject the call. Its declared bounds describe requirements on the context, not a complete list of
 effects or authority exercised by the body.
 
-### A trait bound does not create an authority token
+### Trait bounds and authority
 
 A `HasField` bound establishes access to a field of a particular name and type. It does not
 establish who may create the field's value. When the field contains a capability, the relevant
@@ -368,7 +368,7 @@ construction and access restrictions come from that value's type and execution e
 types with private constructors can implement controlled tokens; CGP can carry those tokens without
 changing their guarantees.
 
-### Wiring is static; capability values can vary at runtime
+### Static wiring and runtime values
 
 A concrete context type fixes its provider selections and field types. Its values can still hold
 different handles: two `App` instances can refer to different directories, including a temporary
@@ -446,7 +446,7 @@ CGP fits the separate requirement of reusable implementations with declared depe
 per context. It can carry capability values from those systems, but a wiring check is not a security
 audit or proof of confinement.
 
-## Presenting CGP to someone who knows this
+## Presenting CGP
 
 Identify which capability property the reader needs before comparing mechanisms. CGP declares
 requirements on a context and can carry authority-bearing values; it does not exclude ambient access

@@ -71,8 +71,8 @@ value contexts.
 Each page derives from the internal document of the same name under
 [related-work/](../../related-work/README.md), which stays the source of truth and names the page
 it feeds under its Sources heading. The port applied the guide's four transformations: the internal
-*Presenting CGP to someone who knows this* sections became the *In your terms* tables and the *What
-to expect that differs* sections; the refreshers were compressed; every internal link was repointed
+*Presenting CGP* sections became the *In your terms* tables and the *What to expect that differs*
+sections; the refreshers were compressed; every internal link was repointed
 to a Concepts, reference, tutorial, or blog page; and Sources were kept. The two documents that drew
 on the [unpublished incoherent-Rust draft](../blog/incoherent-rust-today.md) state those points as
 the project's analysis or attribute them to the [RustLab transcript](../blog/rustlab-2025-coherence.md),
