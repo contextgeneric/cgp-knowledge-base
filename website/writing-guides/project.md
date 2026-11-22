@@ -143,9 +143,9 @@ Two kinds of program need a different first step:
 ### Then it walks through the program, one idea per heading
 
 **The body quotes the parts that carry the program's ideas, each under a heading that names the
-idea**, not the file, per
+idea as a short label**, not the file, per
 [projects/writing-guide.md](../../projects/writing-guide.md#the-shape-of-a-project-section), so the
-headings in order summarize how the program works. In each part:
+headings in order outline how the program works. In each part:
 
 - **Name each construct on first appearance, with a one-clause gloss and a link**: a CGP construct
   to its [reference page](reference.md), a project construct to the project's reference page or, in
@@ -240,7 +240,8 @@ and when it is worth paying. It never lists open issues or missing features.
 already written this way, so the port is mostly re-pointing. A debugging guide keeps each failure's
 program, error, and root cause, per the base's
 [error-message rule](../../AGENTS.md#show-the-example-behind-an-error-message), with `cargo cgp check`
-output quoted as produced.
+output quoted as produced. Each failure keeps a symptom heading, such as "A syntax has no route",
+because a reader searches for the symptom they see.
 
 ## Reference pages
 
@@ -296,8 +297,8 @@ is a hole.
 **The limitations page states the high-level limits a reader learning the project should know, not
 its defects**: that it is a proof of concept, what its design rules out, what it needs to build, what
 its errors are like, and what extending it can and cannot do. Write it from the README and the
-architecture, each limit in a short section named for what it means to the reader, such as "Programs
-are fixed at compile time". Close with where a simpler tool is the better choice, from the comparison
+architecture, each limit in a short section whose heading names the limit as a short label, such as
+"Compile-time programs". Close with where a simpler tool is the better choice, from the comparison
 document where there is one.
 
 **Bugs and unimplemented features stay off every public page**, this one included: they stay in
@@ -425,7 +426,7 @@ Concepts page.
 - **Check each example page's closing links**: the next example, a project page that develops the
   idea, and a Concepts or tutorial page.
 - **Find the problem**: a *The problem* section before the code, fair to the alternative.
-- **Read only the headings of an example page**; they summarize how the program works.
+- **Read only the headings of an example page**; they outline how the program works.
 - **Find the pattern and its cost**, with a link to the page that explains it.
 - **Run what the page runs**: every command, output, and *Try a change* result matches a run against
   the revision the plan names.
