@@ -44,7 +44,7 @@ a necessary qualification.
 Give an explanation the length its subject needs. A long piece should state its scope near the start
 so readers can decide where to focus. Simplify the entry without removing advanced material that
 belongs on the page; the
-[website rules](../website/writing-guides/README.md#layer-the-depth-do-not-omit-the-advanced-material) define that
+[website rules](../website/writing-guides/README.md#layering-the-depth) define that
 obligation by page type.
 
 Name the construct, operation, or limitation behind an abstract claim. Show the wiring entry behind

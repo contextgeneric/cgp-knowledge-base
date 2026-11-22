@@ -15,7 +15,7 @@ the thing they need.
   [the reference pages' row](README.md#reference-pages-the-glossary-and-the-error-catalog) of the
   reading map
 
-## The site reference is canonical
+## The canonical reference
 
 **The site reference is the canonical place to look a construct up, complete enough that a reader
 never needs docs.rs.** CGP's constructs are procedural macros, and rustdoc cannot show what a reader
@@ -25,7 +25,7 @@ index links it; a page never defers to rustdoc for anything a reader needs; and 
 exists without a page is a defect. [information-architecture.md](../information-architecture.md)
 records the surface.
 
-## Derived from the internal reference, and kept in step with it
+## Porting from the internal reference
 
 **A reference page is ported, not rewritten.** The 90 documents under `cgp/reference/` hold almost
 all the information, and differ from a public page in four ways, which the port changes:
@@ -49,7 +49,7 @@ corner case, an expansion rule, a *When to use it* judgement from a guide) is ch
 source and added to the internal document in the same change. A page may simplify or reorder its
 document but never knows more.
 
-## Granularity: one page per named construct
+## Granularity
 
 **Every publicly nameable macro, attribute, derive, trait, component, provider, and type gets its own
 page, and no page's title is a list of names.** A reader arrives knowing a name and wanting a URL, and
@@ -134,7 +134,7 @@ an advanced reader continues into the machinery.
   is the internal Purpose section rewritten for a reader without the skill, and the section most often
   ported badly.
 - **Usage:** every accepted form, each argument and option, and the defaults, from the internal Syntax
-  section. The [coverage rule](README.md#layer-the-depth-do-not-omit-the-advanced-material) makes it
+  section. The [coverage rule](README.md#layering-the-depth) makes it
   exhaustive: every form the parser accepts is here, rare, advanced, and legacy ones included.
   **Enumerate against the parser,** not the internal document; **give the forms a spine,** naming
   independent axes (an operator, a key form, a value form) and taking them in turn; and **say when the
@@ -198,7 +198,7 @@ These mechanics are settled; copy them rather than rediscover them.
   what a reader searches, as on Concepts and Comparisons, carries only a `description`.
 - **Do not name CGP in a page's own title,** because every page renders as
   `{Page} | CGP — Context-Generic Programming`; the exception is a page whose subject is CGP, such as
-  the disclosure page or the skill. [seo.md](../seo.md#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them)
+  the disclosure page or the skill. [seo.md](../seo.md#titles-and-descriptions)
   holds the reasoning.
 - **Escape apostrophes in single-quoted YAML** (`'a context''s wiring table'`); an unescaped one fails
   the build with an error naming the wrong line.
@@ -249,7 +249,7 @@ snapshot are outside this convention.
   unevenly, returning an `open` header's redirect target as `Path!(@Component)` while each entry's key
   stays a raw `PathCons` list, so a page showing both says so.
 
-## Say when a construct is machinery the macros generate
+## Generated machinery
 
 **A page for a construct a user never writes opens with a *Generated machinery* notice.** The macros
 generate such a construct's impls and the library's recursions consume it, so a reader meets the name
@@ -272,7 +272,7 @@ construct is rarely reached, and why. **Do not apply it to a construct whose met
 **A section that is entirely machinery says so once, in its overview:** the `types/` pages carry no
 notice, while `traits/`, where generated constructs sit among written ones, uses the per-page notice.
 
-## Linking: three destinations, and one prohibition
+## Linking
 
 **A reference page never links into the knowledge base,** per the
 [one-way rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links); it
@@ -346,7 +346,7 @@ copy of a Concepts page and drifts from it. The three sections owe different thi
   copy its canonical gloss rather than paraphrasing. Link the Concepts page that argues the idea and
   the reference page of the construct that expresses it.
 - **Rust terms:** one sentence, linking the destination the
-  [external documentation table](#linking-three-destinations-and-one-prohibition) fixes. A
+  [external documentation table](#linking) fixes. A
   CGP-specific consequence is a clause and a link, never a paragraph.
 - **Related concepts:** one or two sentences in the term's own community's vocabulary, linking the
   [comparison page](related-work.md) that places CGP against it and the term's canonical page, taken

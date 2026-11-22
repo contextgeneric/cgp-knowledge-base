@@ -36,7 +36,7 @@ The essay has five sections:
   workaround without CGP and providers as named implementations; and the context as a type that
   stands for an application, linking *Bypassing coherence* and *Consumer and provider traits*.
 - **Reusing providers across applications:** the first four headline features as illustrated cards linking the pages
-  [seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) maps
+  [seo.md](../seo.md#the-tag-line-and-the-features) maps
   them to, and a line linking the Overview.
 - **More than trait implementations:** three linked tiles for abstract types, extensible records and
   variants, and handlers.
@@ -72,7 +72,7 @@ the name, tag line, reassurance line, and curated features;
 [message.md](../../communication-strategy/message.md) for the strengths and costs; and
 [vocabulary.md](../../communication-strategy/vocabulary.md) for where "context" first appears.
 [visual-design.md](../visual-design.md) records the tokens the page uses, including the code windows'
-diff tints and verdict marks, and [seo.md](../seo.md#the-off-site-metadata-is-under-set) the title.
+diff tints and verdict marks, and [seo.md](../seo.md#off-site-metadata) the title.
 
 The page's code is compiled in the [`example-code` crate](../site.md#the-example-code-crate) at
 `tests/front_page.rs`, with a `check_components!` assertion per wired type, so the wiring is shown

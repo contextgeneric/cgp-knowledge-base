@@ -39,8 +39,10 @@ A page starts from its guide and its record:
 - Read the page's guide and the page's own record, and read
   [information-architecture.md](../information-architecture.md) before adding or moving a page.
 - Add a writing guide before adding a page of a kind the site has not published.
+- Name each section with a short topic label, following the headings rule of the optional
+  `/point-first-writing` skill.
 
-## Layer the depth; do not omit the advanced material
+## Layering the depth
 
 A public page covers its whole subject and keeps it approachable through layers rather than
 omission. These rules govern public pages, not the knowledge base's documents:
@@ -123,11 +125,11 @@ Every row starts from the same reading:
   [writing-styles.md](../../communication-strategy/writing-styles.md), whole.
 - **The name and the tag line:**
   [the naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page),
-  with [Own the name](../seo.md#own-the-name-by-saying-it-where-it-means-something) and
-  [The tag line orients the reader](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words)
+  with [Own the name](../seo.md#owning-the-name) and
+  [The tag line orients the reader](../seo.md#the-tag-line-and-the-features)
   for what it means for search.
 - **The front matter:**
-  [the title and description levers](../seo.md#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them)
+  [the title and description levers](../seo.md#titles-and-descriptions)
   and [the titles and openings rules](../../communication-strategy/formats.md#titles-first-lines-and-search).
 - **Provenance:** [the provenance note](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page).
 
@@ -149,8 +151,8 @@ the naming rule exempts them.
   [readers by role](../../communication-strategy/readers.md#readers-by-role-and-point-of-contact);
   [the conversion ladder](../../communication-strategy/formats.md#the-conversion-ladder); and
   [CGP's reception](../../communication-strategy/evidence.md#cgps-own-reception-and-the-lessons-in-it).
-- **SEO:** [the off-site metadata](../seo.md#the-off-site-metadata-is-under-set), for the front page's
-  own title, and [raise the click-through rate](../seo.md#raise-the-click-through-rate-before-trying-to-raise-the-rank).
+- **SEO:** [the off-site metadata](../seo.md#off-site-metadata), for the front page's
+  own title, and [raise the click-through rate](../seo.md#click-through-rate-first).
 
 ### Concept pages
 
@@ -165,9 +167,9 @@ the naming rule exempts them.
   [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and
   [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer-and-how-to-reveal-them);
   and [reader-simulation.md](../../communication-strategy/reader-simulation.md), whole.
-- **SEO:** [adding a page](../seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider),
+- **SEO:** [adding a page](../seo.md#adding-a-page),
   for the coherence page's title, and
-  [the internal linking](../seo.md#the-internal-linking-is-already-right-and-it-is-doing-more-work-than-usual-here).
+  [the internal linking](../seo.md#internal-linking).
 
 ### Tutorials
 
@@ -193,9 +195,9 @@ the naming rule exempts them.
   and, for the glossary, [the public page it feeds](../../communication-strategy/vocabulary.md#the-public-page-this-feeds);
   [the comprehension barriers](../../communication-strategy/readers.md#the-comprehension-barriers);
   and [when not to reach for CGP](../../communication-strategy/message.md#when-not-to-reach-for-cgp).
-- **SEO:** [adding a page](../seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider),
+- **SEO:** [adding a page](../seo.md#adding-a-page),
   for one page per question, and
-  [the internal linking](../seo.md#the-internal-linking-is-already-right-and-it-is-doing-more-work-than-usual-here).
+  [the internal linking](../seo.md#internal-linking).
 
 ### `cargo-cgp` pages
 
@@ -204,7 +206,7 @@ the naming rule exempts them.
   [the compile-error problem](../../communication-strategy/message.md#read-a-cgp-compile-error-without-decoding-a-wall-of-generated-types),
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring), and
   [the agent skill's placement](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these).
-- **SEO:** [coding agents](../seo.md#coding-agents-are-the-second-audience).
+- **SEO:** [coding agents](../seo.md#coding-agents).
 
 ### Comparison pages
 
@@ -217,7 +219,7 @@ the naming rule exempts them.
   [readers by prior mental model](../../communication-strategy/readers.md#readers-by-prior-mental-model);
   [the bridge terms](../../communication-strategy/vocabulary.md#the-name-and-the-communitys-bridge-terms);
   and [CGP's reception](../../communication-strategy/evidence.md#cgps-own-reception-and-the-lessons-in-it).
-- **SEO:** [the comparisons](../seo.md#comparisons-are-the-most-valuable-unproven-pages-on-the-site).
+- **SEO:** [the comparisons](../seo.md#comparison-pages).
 
 ### Projects pages
 
@@ -228,10 +230,10 @@ the naming rule exempts them.
   the evaluator; [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target);
   and [the canonical examples](../../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs),
   for the exception Projects pages hold.
-- **SEO:** [adding a page](../seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider),
+- **SEO:** [adding a page](../seo.md#adding-a-page),
   for the Hypershell section's measured demand.
 
-### Orientation pages: the Introduction, the Quickstart, and Resources
+### Orientation pages
 
 - **Guide:** [orientation.md](orientation.md), which the AI section's overview also follows.
 - **Strategy:** [the tag line](../../communication-strategy/identity.md#the-tag-line) and
@@ -242,9 +244,9 @@ the naming rule exempts them.
   [the conversion ladder](../../communication-strategy/formats.md#the-conversion-ladder); and
   [what we watch](../../communication-strategy/evidence.md#what-we-watch-and-what-counts-as-a-result),
   for the Quickstart's activation target.
-- **SEO:** [the stale pages that rank](../seo.md#the-pages-that-rank-are-the-pages-that-have-gone-stale),
+- **SEO:** [the stale pages that rank](../seo.md#stale-pages-that-rank),
   for the Introduction's routing, and
-  [the derived descriptions](../seo.md#derived-descriptions-made-the-worst-snippets).
+  [the derived descriptions](../seo.md#derived-descriptions).
 
 ### The Contribute page
 
@@ -256,7 +258,7 @@ the naming rule exempts them.
   [the conversion ladder](../../communication-strategy/formats.md#the-conversion-ladder), for the
   enthusiast; and [the stated preferences](../../communication-strategy/author-personality.md#stated-preferences),
   for the sponsorship section.
-- **SEO:** [the derived descriptions](../seo.md#derived-descriptions-made-the-worst-snippets).
+- **SEO:** [the derived descriptions](../seo.md#derived-descriptions).
 
 ### The knowledge-base pages and the AI disclosure page
 
@@ -265,7 +267,7 @@ the naming rule exempts them.
 - **Strategy:** [ai-disclosure.md](../../communication-strategy/ai-disclosure.md), whole;
   [the reader who doubts agent-written documentation](../../communication-strategy/readers.md#the-reader-who-doubts-agent-written-documentation)
   and [the contributor directing an agent](../../communication-strategy/readers.md#the-contributor-directing-an-agent).
-- **SEO:** [coding agents](../seo.md#coding-agents-are-the-second-audience).
+- **SEO:** [coding agents](../seo.md#coding-agents).
 
 ### The release post
 
@@ -281,15 +283,15 @@ the naming rule exempts them.
   [CGP's reception](../../communication-strategy/evidence.md#cgps-own-reception-and-the-lessons-in-it)
   and [where the profiles gather](../../communication-strategy/evidence.md#where-the-profiles-gather);
   and [revision of human-written drafts](../../communication-strategy/ai-disclosure.md#revision-of-human-written-drafts).
-- **SEO:** [the truncated titles](../seo.md#the-longest-titles-are-truncated-before-they-say-anything)
-  and [the work, in order](../seo.md#the-work-in-order), for the relaunch-day submission.
+- **SEO:** [the truncated titles](../seo.md#truncated-titles)
+  and [the work, in order](../seo.md#the-order-of-work), for the relaunch-day submission.
 
 ### Release-notes pages
 
 - **Guide:** [release-notes.md](release-notes.md), in point-first style.
 - **Strategy:** the shared set.
-- **SEO:** [the truncated titles](../seo.md#the-longest-titles-are-truncated-before-they-say-anything)
-  and [the derived descriptions](../seo.md#derived-descriptions-made-the-worst-snippets).
+- **SEO:** [the truncated titles](../seo.md#truncated-titles)
+  and [the derived descriptions](../seo.md#derived-descriptions).
 
 ## Where a guide's authority stops
 

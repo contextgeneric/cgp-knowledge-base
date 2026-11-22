@@ -13,7 +13,7 @@ agent changing a colour, a font, or an image's treatment starts here.
 - **Rule:** page styles use the tokens rather than hex colours, as the website repository's
   [AGENTS.md](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md) requires
 
-## The palette keeps the logo's red and builds around it
+## The palette
 
 **The one fixed colour is the CGP logo's red, `#8f1f1d`**, with a tint scale of the same hue, warm
 neutrals, and admonition and status colours that stay clear of it. The tokens are CSS custom
@@ -54,7 +54,7 @@ admonition highlights. The theme points each of them at the tokens, so a new Doc
 reads one of them still matches. Infima's primary hero, which the blog archive's header uses, fills
 with the primary colour, so the theme gives it the warm surface instead.
 
-## Prose links are underlined
+## Prose links
 
 Colour alone does not separate a link from body text, because the red and the text colour differ by
 less than 3:1. Links in Markdown content are therefore underlined with a softened underline that
@@ -62,7 +62,7 @@ darkens on hover, while navigation links, heading anchors, and generated categor
 own styles. The footer's links share its text colour, so the links inside its licence line are
 underlined too. Every link, button, and control shows a focus ring in the brand family.
 
-## Code has its own two themes
+## Code themes
 
 The code colours are two Prism themes written for the palette, one per site theme. No token uses the
 brand red, so code never reads as a link or an error, and each token colour keeps 4.5:1 against the
@@ -103,7 +103,7 @@ website's
 gives the commands that cut the subsets; a character outside them renders in the fallback face, so a
 page that starts using a new script or symbol block needs the subset recut.
 
-## Images read in both themes
+## Images in both themes
 
 An image loaded by `<img>` follows the operating system's colour scheme, not the site's theme switch,
 so a dark variant of an image cannot track the switch. The theme frames images instead: in the dark
@@ -138,7 +138,7 @@ feature illustration with its frame, by `filter: brightness(0.9)`.
 The social card, `static/img/social-card.jpg`, uses the palette and the heading font, and its generator
 must run again whenever the tag line, the hero art, or these colours change.
 
-## The site's frame follows the theme
+## The site's frame
 
 The shell carries the palette in both themes:
 

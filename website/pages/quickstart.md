@@ -51,7 +51,7 @@ compares the page's `src/main.rs` block with the compiled program.
   expansion turns it into a worse copy of the tutorial. The guide's check is to run it on a clean
   machine and time it; over ten minutes means a step comes out.
 - **Re-pin it with the release.** The install names a version, and re-pinning is on the
-  [release checklist](../writing-guides/release-announcement.md#publishing-and-what-happens-afterwards)
+  [release checklist](../writing-guides/release-announcement.md#publishing)
   beside the tutorials.
 - **Walk the install at the release.** `cgp = "0.8.0"` does not resolve on crates.io until the
   release is published, so the page must not publish before it, and the guide's real check, pasting

@@ -75,7 +75,7 @@ The finished section is about 33 pages, estimated from the internal catalogs: ab
 architecture pages, 2 guides, and 6 indexes. The pages below wait on the
 [prerequisites](#prerequisites).
 
-### `builder`, the extensible builder pattern
+### `builder`
 
 Application contexts assembled from per-subsystem builder providers that never name the final struct.
 Environmental and self-targeted: the builder contexts carry the configuration and the wiring.
@@ -97,7 +97,7 @@ Environmental and self-targeted: the builder contexts carry the configuration an
 - **Architecture** — `architecture.md`, from
   [architecture/README.md](../../projects/cgp-examples/builder/architecture/README.md).
 
-### `transfer`, a namespace-organized web service
+### `transfer`
 
 A balance-and-transfer HTTP service in which every domain type, business operation, and cross-cutting
 concern is a component, wired with prefixes, a namespace, and `#[default_impl]`. Environmental, mostly
@@ -125,7 +125,7 @@ may draw on, so the two use the same vocabulary.
   [missing features](../../projects/cgp-examples/transfer/issues.md#missing-features) if the
   repository adopts it.
 
-### `greet`, the smallest program
+### `greet`
 
 One greeting written as a CGP function, as a component with two providers, and over an abstract name
 type; the repository's only **value context**.

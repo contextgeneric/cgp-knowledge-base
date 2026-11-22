@@ -26,7 +26,7 @@ Resources for a question or CGP's news, and Contribute for helping. A closing li
 as a dated record.
 
 The page has no maturity section, which belongs to the front page's cost section, per the
-[homepage guide](../writing-guides/homepage.md#below-the-fold-the-bounded-essay), and it leaves out
+[homepage guide](../writing-guides/homepage.md#below-the-fold), and it leaves out
 the CGP Patterns book, a
 [legacy resource](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#legacy-resources).
 

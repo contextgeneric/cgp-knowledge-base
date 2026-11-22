@@ -21,7 +21,7 @@ with it, and not edited afterwards into agreement with later releases.
 - **Reading**: the shared set and [the release-notes row](README.md#release-notes-pages) of the
   reading map
 
-## Two layers, two readers
+## Layers and readers
 
 **The page serves the upgrader; the release document serves an agent reading old code.** The page
 holds the user-visible changes and the steps to upgrade. The release document holds the rest:
@@ -36,7 +36,7 @@ being dropped.
 voice and teaches its main feature; the notes give every change in the project voice and teach
 nothing. Each links the other, and neither is trimmed to remove the overlap.
 
-## Sources, and which one decides
+## Sources
 
 A page is written from four inputs, read together:
 
@@ -96,7 +96,7 @@ the releases it describes, such as whether a patch release ever broke code.
 to 100000 minus its version read as `major × 10000 + minor × 100 + patch`: v0.8.0 is 99200 and v0.7.0
 is 99300. A later release never renumbers an earlier page.
 
-## The page's parts, in order
+## The page's parts
 
 Every page has the parts below, in this order, and leaves out a section with nothing in it:
 
@@ -155,7 +155,7 @@ inline only, because `example-code` builds against the current `cgp`.
 - **The naming rule**: Context-Generic Programming once, in the opening, per
   [identity.md](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
 - **The title and description levers**, per
-  [seo.md](../seo.md#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them):
+  [seo.md](../seo.md#titles-and-descriptions):
   the artifact and version first, under about 60 characters, and a description written for this
   page rather than a template.
 - **Every breaking change**: each removal-ledger row in which this release removes or renames

@@ -29,10 +29,10 @@ it is only as credible as the pages are candid about what each project is.
 page can link a construct's full account, and so a reader who adopts the project can look things up.
 Write and publish a project's example pages first, with the most care.
 
-## Ported, with one expansion
+## Porting the pages
 
 **Every page except an example page is a port**, with the four transformations of
-[reference.md](reference.md#derived-from-the-internal-reference-and-kept-in-step-with-it):
+[reference.md](reference.md#porting-from-the-internal-reference):
 
 - **Re-point every link**, per [Linking](#linking).
 - **Drop the internal records**: the header fields recording the branch and checkout, everything in
@@ -92,10 +92,10 @@ stated) and drops those that assume the reader types every line (each construct 
 need, explicit form before sugar). The *New to CGP?* admonition sends a reader who wants the
 construction to the tutorials.
 
-### It is a landing page, so it orients first
+### The first screen
 
 **Most readers arrive from a search or a link**, per
-[information-architecture.md](../information-architecture.md#most-readers-do-not-arrive-at-the-homepage),
+[information-architecture.md](../information-architecture.md#where-readers-arrive),
 so the first screen does three things before any code:
 
 - **Say what the program does**, in one or two sentences, as the destination.
@@ -108,7 +108,7 @@ so the first screen does three things before any code:
   know first, usually Hello World and the Concepts page for the pattern, and that the page can be read
   without them.
 
-### Then it states the problem
+### The problem
 
 **A *The problem* section comes before any of the program's code**, so the walkthrough is not a tour
 of machinery. In a few short paragraphs it answers:
@@ -126,7 +126,7 @@ the right choice for the task as stated, it says so, then names the requirement 
 [message.md](../../communication-strategy/message.md). A deliberately trivial program says the task is
 trivial and the problem is the program's shape.
 
-### Then it runs the program
+### Running the program
 
 **A *Run it* section shows the result before explaining it**: the command, what the machine needs,
 and the output the program produced, quoted from a run. Where the record says the program was not
@@ -140,7 +140,7 @@ Two kinds of program need a different first step:
 - **A crate that only wires**, whose provider bodies are `todo!()`, says so on the first screen and
   opens with *Check it* instead: the check command, and what its passing means.
 
-### Then it walks through the program, one idea per heading
+### The walkthrough
 
 **The body quotes the parts that carry the program's ideas, each under a heading that names the
 idea as a short label**, not the file, per
@@ -157,14 +157,14 @@ headings in order outline how the program works. In each part:
   [vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target), and
   say whether a component is self-targeted or parameter-targeted where it matters.
 
-### Then it names the pattern
+### The pattern
 
 **A *The pattern* section names the CGP design pattern the program shows, when to use it, and what it
 costs**, in a paragraph or two, linking the Concepts page that explains it and stating the cost beside
 the benefit, per [message.md](../../communication-strategy/message.md). Where the program uses a
 pattern past what a smaller program would need, say so.
 
-### A change to try, when one is verified
+### Trying a change
 
 **Where a small edit shows the pattern working, give it as a *Try a change* section**: swap one wiring
 entry and see the output change, or remove one and read the error `cargo cgp check` reports. It also
@@ -180,7 +180,7 @@ canonical qualification from
 [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
 unchanged.
 
-### It closes with a route
+### The closing route
 
 **An example page lists no defects or missing features**, even where its record has a *Known issues*
 section. A limit of the design the program shows belongs in *The pattern*, as its cost.
@@ -246,7 +246,7 @@ because a reader searches for the symptom they see.
 ## Reference pages
 
 **A project reference page documents one construct, completely**, as
-[reference.md](reference.md#granularity-one-page-per-named-construct) requires; the port splits each
+[reference.md](reference.md#granularity) requires; the port splits each
 internal family document, and the project's plan records which pages it feeds. A **construct** is
 anything a reader writes, wires, implements, joins, or calls by name: a syntax type, a component (its
 consumer trait, provider trait, and key as one), a provider, a namespace, a bundle, a context, a

@@ -43,7 +43,7 @@ next.
 
 [Identity](../../communication-strategy/identity.md#the-headline-feature-set) fixes the features and
 their titles, [the message](../../communication-strategy/message.md) the problems and their limits,
-and [seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) the
+and [seo.md](../seo.md#the-tag-line-and-the-features) the
 page each feature links. The scenario comes from the
 [profile-picture example](../../examples/profile-picture.md), under the names the `cgp` README uses.
 

@@ -85,7 +85,7 @@ error → `#[cgp_component]` → `#[cgp_impl]` → explicit provider calls → h
 failure → `check_components!` → `cargo cgp check` → *(optional desugaring)*.
 
 **The two orderings of the
-[tutorial guide](../writing-guides/tutorial.md#the-two-orderings-that-carry-a-tutorial) carry the
+[tutorial guide](../writing-guides/tutorial.md#the-two-orderings) carry the
 series and must not be disturbed**: every step opens with code that is unsatisfactory for a stated
 reason, and providers are called by name and the consumer trait implemented by hand before
 `delegate_components!` replaces it.

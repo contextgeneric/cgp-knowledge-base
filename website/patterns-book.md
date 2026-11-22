@@ -20,11 +20,11 @@ so no public page links or recommends it; this record stays for the book's repos
 - **Written**: 19 chapters of a 47-entry table of contents; the other 28 entries link nowhere
 
 The record sits in `website/` because
-[information-architecture.md](information-architecture.md#the-sites-job-and-the-properties-around-it)
+[information-architecture.md](information-architecture.md#the-sites-job)
 decides what each public property owns, and the plan is a routing decision between two of them. If the
 book is revived as a maintained property, it graduates to its own section with a document per chapter.
 
-## What the search data says the book is worth
+## Search traffic
 
 **The book earns 308 clicks a year from 19 pages; the main site earns 672 from 91**, in the export
 [seo.md](seo.md#what-was-measured) is written against. Its traffic is concentrated:
@@ -40,7 +40,7 @@ book is revived as a maintained property, it graduates to its own section with a
 **One chapter is 77% of the book**, and it earns most of the blanket-implementation query family, the
 project's best term: 2,019 impressions and 110 clicks a year at position 5.8.
 
-## The chapters split in two, and the traffic is in the current half
+## Current and stale chapters
 
 **Seven chapters use no CGP macros and are current; twelve show wiring the library has since removed
 or replaced.** No modern idiom (`#[cgp_impl]`, `#[cgp_fn]`, `#[implicit]`, `#[uses]`) appears anywhere
@@ -138,7 +138,7 @@ An agent revising a chapter reads the internal document that owns its material:
 A B-3 note dates each construct from the [removal ledger](../releases/README.md) rather than from
 memory, and [seo.md](seo.md) holds the traffic figures the plan rests on.
 
-## The work, in order
+## Changes left
 
 These changes remain, all in the `cgp-patterns` repository, ordered by value per minute. The book's
 introduction already states which chapters are current, so the published book no longer calls itself
@@ -148,7 +148,7 @@ a work in progress. **B-1 and B-3 can be made now**, since the website pages the
 clicks), the introduction (27), *Provider Traits* (20), and *Provider* (6) carry 290 of the book's 308
 annual clicks. Add a short "where this goes next" line to each, pointing at its page in the map, with
 no banner or apology, since these chapters are current. **This is the cheapest high-value change
-available to the project**, and it is the forward link [seo.md](seo.md#the-off-site-metadata-is-under-set)
+available to the project**, and it is the forward link [seo.md](seo.md#off-site-metadata)
 asks for.
 
 **B-3: add the dated note to the twelve stale chapters**, naming the constructs each predates and

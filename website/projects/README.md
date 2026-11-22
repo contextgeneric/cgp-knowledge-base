@@ -51,7 +51,7 @@ true before the pages are written, and the posts that get a pointer.
 - [error-backends.md](error-backends.md) — `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`,
   one walkthrough per crate; the only section that ships from the `cgp` repository.
 
-## What must be true before a project's pages are written
+## Prerequisites for a project's pages
 
 Each plan says which of these gates apply to it:
 
@@ -75,7 +75,7 @@ discretionary body left. Its order:
 3. **cgp-serde's blocked pages, once its code prerequisites land.**
 4. **The error backends**, which can move earlier, since nothing blocks them past the release.
 
-## Links into the section from the rest of the site
+## Links into the section
 
 A section nobody links to is found only from the sidebar, so these onward links are part of the work:
 

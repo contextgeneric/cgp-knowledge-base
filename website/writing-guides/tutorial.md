@@ -15,7 +15,7 @@ to route a newcomer.
 - **Records**: one teaching-contract document per series under [../tutorials/](../tutorials/README.md)
 - **Reading**: the shared set and [the tutorials' row](README.md#tutorials) of the reading map
 
-## Tutorials are independent and named for an outcome
+## Independent tutorials
 
 **Each tutorial stands alone**: no required order, no numbered curriculum, and none that assumes
 another is finished. It restates the little it needs, such as the prelude import and the two-line
@@ -90,13 +90,13 @@ Six obligations hold in both registers, adopted from Diátaxis, which the projec
 - **Aim for perfect reliability.** Pin the `cgp` version in the `Cargo.toml` snippet to the version the
   code is written against, `"0.8.0"` on the release branch. A pin to an unpublished release resolves
   only when it ships, so re-pinning every tutorial belongs to the
-  [release](release-announcement.md#publishing-and-what-happens-afterwards), and a tutorial going live
+  [release](release-announcement.md#publishing), and a tutorial going live
   ahead of its release gives the git dependency in a one-line note. Where a step intentionally fails to
   compile, say so before it happens.
 - **Give one path**: no options or "you could also"; the [guides](../../cgp/guides/README.md) hold the
   decisions, and the tutorial can link them.
 
-## What CGP takes from Diátaxis, and what it rejects
+## CGP and Diátaxis
 
 **CGP rejects Diátaxis's rules that a tutorial should not teach or explain**, for a specific reason. A
 Rust programmer's first honest reaction to a CGP macro is *what did that generate, and what is it
@@ -117,7 +117,7 @@ Two further prohibitions are relaxed:
 
 The rest of Diátaxis is adopted without qualification, as the six obligations above.
 
-## The two orderings that carry a tutorial
+## The two orderings
 
 Two orderings do most of the teaching, and an unwary addition breaks them more easily than anything
 else; the [area-calculation teaching contract](../tutorials/area-calculation.md) exists to protect
@@ -135,7 +135,7 @@ of something the reader has written.
 Both are properties of the first-principles register. An applied tutorial starts from the idiomatic
 form, because that is what the reader would write, and links the tutorial that derives it.
 
-## Which constructs, in which order, and in whose words
+## Constructs and their order
 
 **Introduce constructs in the order the
 [prerequisite ladder](../../communication-strategy/readers.md#the-comprehension-barriers) allows.**
@@ -191,7 +191,7 @@ contacts with CGP, the front page's hero block and Hello World, both wire a valu
 the naturally environmental applied tutorial directly after Hello World shows the common shape before
 the reader's habits form. The order is fixed in
 [information-architecture.md](../information-architecture.md#the-target-page-inventory), and the trade it
-pays for is in the [homepage guide](homepage.md#which-shape-it-is-and-why-that-matters-here).
+pays for is in the [homepage guide](homepage.md#the-examples-shape).
 
 ## Errors, checking, and the tooling
 

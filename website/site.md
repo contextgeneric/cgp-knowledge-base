@@ -64,7 +64,7 @@ records.
 the build, so a change that renames or moves a page or heading fixes every reference in the same
 change. The MDX setup rejects `{#custom-id}`, so anchors always come from heading text.
 
-## Branches, and what is not on `main`
+## Branches
 
 **Every push to `main` deploys, so unpublished work lives on a branch named after the release it
 accompanies.** Such a branch merges only once every release it describes is published, and every
@@ -121,7 +121,7 @@ name cannot hold a hyphen; every basename is unique, so the mirror still resolve
 **The crate takes `cgp` 0.8.0 from crates.io,** the release the site documents, with its `alloc`
 feature. While the next release is prepared, it takes `cgp` from the repository's `main` until that
 release reaches crates.io, as the release guide's
-[re-pin step](writing-guides/release-announcement.md#publishing-and-what-happens-afterwards) says.
+[re-pin step](writing-guides/release-announcement.md#publishing) says.
 
 Two sets of capture-only programs sit outside the test suite and CI, compiled by the diagnostic
 capture harness with cargo-cgp's pinned nightly:

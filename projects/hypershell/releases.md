@@ -3,7 +3,7 @@
 This document records, for each official Hypershell release, the facts behind its website
 release-notes page and every finding of the diff review that the page leaves out. The page serves
 an upgrader; this record serves an agent that needs the finer detail, as the website's
-[release-notes guide](../../website/writing-guides/release-notes.md#two-layers-two-readers) divides
+[release-notes guide](../../website/writing-guides/release-notes.md#layers-and-readers) divides
 the two. Like [releases/](../../releases/README.md) for `cgp`, it records history, so it is exempt
 from the base's rule on documenting the present.
 

@@ -63,7 +63,7 @@ language without touching its crates.
 
 The section serves the type-system reader and the evaluator most. It also answers the one query
 cluster in
-[seo.md](../seo.md#adding-a-page-is-almost-never-the-answer-and-the-data-says-which-three-cases-to-consider)
+[seo.md](../seo.md#adding-a-page)
 with a page planned: the index is written to be the page *rust dsl* lands on, and the comparison with
 shell scripts for the *shell scripting vs rust* queries.
 

@@ -62,7 +62,7 @@ the six-section layered descent.
 **The mapping is one internal document to one or more pages, depending on the group.** In `macros/`,
 `attributes/`, `components/`, and `providers/` the file names match and most relative links port
 unchanged. In `derives/`, `traits/`, and `types/` the site's
-[one page per named construct](../writing-guides/reference.md#granularity-one-page-per-named-construct)
+[one page per named construct](../writing-guides/reference.md#granularity)
 splits a family document across pages: `traits/has_builder.md` feeds seven, `traits/extract_field.md`
 six, `traits/optional_fields.md` eight. Each internal document names the pages it feeds in a note
 under its Source section. The special cases:
@@ -99,4 +99,4 @@ verification every page follows are specified once in
   macro updates the code, the internal document, and the page. A page that disagrees with its
   internal document is the defect.
 - Update the counts above when a page is added or split, as the guide's
-  [granularity rule](../writing-guides/reference.md#granularity-one-page-per-named-construct) says.
+  [granularity rule](../writing-guides/reference.md#granularity) says.

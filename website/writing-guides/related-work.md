@@ -46,7 +46,7 @@ end by routing. Four things set it apart:
   who find the page through their own vocabulary. Write every sentence about their tool as if its
   maintainers are reading.
 
-## Derived from the internal comparison, and what changes
+## Porting from the internal comparison
 
 **A comparison page is ported rather than written fresh**, because the internal document already
 carries the faithful account, the compiled snippets, the cited sentiment, and the honest boundary. Four

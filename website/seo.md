@@ -10,7 +10,7 @@ It is a **specification**, in the sense [README.md](README.md#records-and-specif
 [information-architecture.md](information-architecture.md) decides which pages exist and where a
 reader goes next; this document decides how a reader who is not on the site arrives.
 
-## What this document owns, and what it must not touch
+## Scope
 
 **Search visibility is a question of placement, not of wording.** The communication strategy settles
 every public claim: [identity.md](../communication-strategy/identity.md) owns the tag line, the frame,
@@ -28,7 +28,7 @@ Three standing rules bind it, and a recommendation that breaks one is a defect h
   written to catch a query, and claims about search performance beyond the data are excluded.
 - **The site stays a stock Docusaurus installation.** Every recommendation is front matter, Markdown,
   static files, or configuration already present; the one accepted addition,
-  [Algolia DocSearch](#the-decisions-this-needs), is the author's decision, as
+  [Algolia DocSearch](#decisions), is the author's decision, as
   [site.md](site.md#how-the-site-is-built) requires.
 - **The site never links into this knowledge base outside its two sanctioned surfaces**, under the
   [one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links),
@@ -63,7 +63,7 @@ contradicts all three.
 The findings below, ordered by what they cost, show a presentation problem rather than a ranking
 one, and the stale blog posts that rank are the one place search success does harm.
 
-### The site is shown constantly and clicked rarely
+### Impressions and clicks
 
 **The property drew 121,685 impressions and 970 clicks over twelve months, a click-through rate of
 0.80%.** May 2026 alone contributed 40,568 impressions at 0.21% and position 17.1, Google briefly
@@ -87,7 +87,7 @@ That is **a presentation problem rather than a ranking problem**: pages with a c
 description are chosen. Clicks also concentrate: the front page (307) and the patterns book's
 blanket-implementations chapter (237) are 55% of the Pages table's 980.
 
-### Derived descriptions made the worst snippets
+### Derived descriptions
 
 **A page without a `description` in its front matter gets one derived from its first line of
 Markdown**, which on a reference page was a heading made mostly of punctuation and on a blog post a
@@ -105,16 +105,16 @@ the wording rules that keep it from implying currency are in
 [blog/README.md](blog/README.md#publication-conventions). A description does not rank a page; it
 supplies the snippet a reader judges before clicking.
 
-### The longest titles are truncated before they say anything
+### Truncated titles
 
 **A result shows roughly the first 60 characters**, and titles ran to 161 characters on 2026-09-21,
 the longest on the posts with the worst click-through rates. Published posts keep their titles under
 the
 [dated-artifact rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#blog-posts).
 A new page avoids the problem with a front-matter `title`, which can differ from its heading, under
-[the title rules](#titles-and-descriptions-are-the-per-page-levers-and-docusaurus-separates-them).
+[the title rules](#titles-and-descriptions).
 
-### The pages that rank are the pages that have gone stale
+### Stale pages that rank
 
 **The blog is 61 of the 110 pages with impressions, 90,978 of the impressions, and 336 of the clicks;
 the whole `docs/` tree is 19 pages, 2,624 impressions, and 18 clicks.** The four extensible-datatypes
@@ -122,9 +122,9 @@ posts alone carry 41,746 impressions, and every one predates `#[cgp_impl]`, `#[i
 `open` statement, so here search success does harm; [blog/README.md](blog/README.md#reading-the-drift-at-a-glance)
 records the drift. The [Introduction](pages/introduction.md) warns that older posts describe earlier
 releases, but a reader from a search result may never pass through the Introduction, since
-[most readers do not arrive at the homepage](information-architecture.md#most-readers-do-not-arrive-at-the-homepage).
+[most readers do not arrive at the homepage](information-architecture.md#where-readers-arrive).
 
-### Five dead URLs still draw impressions into 404s
+### Dead URLs
 
 **The Zola-to-Docusaurus migration moved every documentation URL under `/docs/` and left nothing at
 the old addresses**: `/overview/`, `/tutorials/hello/`, `/resources/`, `/contribute/`, and `/tutorials/`
@@ -137,7 +137,7 @@ canonical link and a meta refresh, naming the new page in its trailing-slash for
 cannot issue a 301 to another path, so a stub is all that is available without a plugin. The `www`
 host redirects correctly.
 
-### The name is won, and the acronym is unwinnable
+### The name and the acronym
 
 **The site ranks first for its own name, which has almost no volume**: *context generic programming*
 at position 1.1 and 46.6%, *cgp rust* at 1.3 and 37.5%, 112 impressions together in a year against
@@ -155,7 +155,7 @@ on a page whose subject is CGP itself, such as the disclosure page and the publi
 programming* (970 impressions, one click), *v0*, *implicit*, *serde*, and *rust context*, so the
 impression total overstates the site's reach.
 
-### The off-site metadata is under-set
+### Off-site metadata
 
 **The crate manifests are set**: `homepage` points at the site, and five keywords and the
 `rust-patterns` and `no-std` categories, inherited from `[workspace.package]`, place every publishable
@@ -181,7 +181,7 @@ suffix: the page sets the tag and `og:title` with `@docusaurus/Head`, because pa
 `Layout` renders `{title} | {siteTitle}`. Its description opens with the settled tag line verbatim.
 The page is recorded in [pages/front-page.md](pages/front-page.md).
 
-### The pages that answer the high-intent queries arrived with the relaunch
+### High-intent queries
 
 **The site appears for the vocabulary the strategy targets, at good positions, and converts none of
 it**: *rust coherence* drew 24 impressions and no clicks at position 8.0, and *rust conflicting
@@ -212,7 +212,7 @@ None sets a date or predicts a volume, and
 [formats.md](../communication-strategy/formats.md#titles-first-lines-and-search)'s rule against
 unmeasured search claims binds the rest.
 
-### Raise the click-through rate before trying to raise the rank
+### Click-through rate first
 
 **This is the strategy's organizing decision.** At 81,117 impressions and 1.09% outside May, much of
 the site's visibility is wasted, and recovering it needs no links, authority, or ranking change: only
@@ -222,7 +222,7 @@ title, so the target is a better rate, not a multiple of today's traffic. The pe
 description work is therefore the main work; the redirect stubs, the off-site metadata, and the agent
 surfaces are worthwhile but smaller.
 
-### The relaunch is the event, and it only happens once
+### The relaunch
 
 **The site goes from 40 published URLs to several hundred, nearly all new, and Google crawls each in
 the state it merges in**; on the blog's evidence, that first title and description stay for years. So
@@ -236,7 +236,7 @@ configuration, as [site.md](site.md#how-the-site-is-built) records. GitHub Pages
 without the slash with a 301, so a sitemap or canonical tag that named it would hand every engine a
 redirect in place of the page.
 
-### The patterns book is the best-performing property, not a competitor
+### The patterns book
 
 **The book earns 308 clicks from 19 pages; the main site earns 672 from 91.** Its
 blanket-implementations chapter, at 12,232 impressions, 237 clicks, and position 6.8, is the most
@@ -245,7 +245,7 @@ consequences follow:
 
 - **Do not redirect it or fold it into the site.** It works, and no page would inherit its readers.
 - **Link it forward.** Its blanket-implementations chapter offers the current page for the same idea,
-  B-1 in [patterns-book.md](patterns-book.md#the-work-in-order), the cheapest high-value link
+  B-1 in [patterns-book.md](patterns-book.md#changes-left), the cheapest high-value link
   available.
 - **Read it as evidence about titles.** A chapter called *Blanket Implementations* wins *rust blanket
   implementation*.
@@ -253,9 +253,9 @@ consequences follow:
 **docs.rs and lib.rs** rightly win part of *cgp rust* for a reader who wants an API listing, and the
 crate's `homepage` routes that reader to the site. **`maybevoid.com/projects/cgp/`**, the author's
 older site, appears for the full term; what happens to it is
-[the author's call](#the-decisions-this-needs).
+[the author's call](#decisions).
 
-### Own the name by saying it where it means something
+### Owning the name
 
 **The [naming rule](../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page)
 places the name for the reader, not for search.** Each page other than the skill pages and the
@@ -264,7 +264,7 @@ Introduction, so a reader from a search result knows what the page belongs to. T
 first, so the search benefit is a by-product. It is **one mention, not a density target**, in a
 sentence written for the page's explanation.
 
-### The tag line orients the reader; the features carry the searchable words
+### The tag line and the features
 
 **The settled tag line is not a keyword asset.** It answers *what is this*, and almost nobody types it:
 the branded queries total 112 impressions a year. Never rewrite it for search or repeat it for
@@ -295,7 +295,7 @@ dsl`**, 771 impressions and 25 clicks at position 7.0 plus 314 for its variants,
 **One page per question**: where two pages could answer a query, one answers it and the other links,
 as [the base's link rule](../AGENTS.md#writing-links) already applies to explanations.
 
-### Comparisons are the most valuable unproven pages on the site
+### Comparison pages
 
 **The eleven comparison pages are CGP's best untested search asset.** A reader searching "Rust type
 classes" or "dependency injection in Rust without a framework" has a specific, low-competition,
@@ -305,7 +305,7 @@ makes such a page rank: a `description`, and
 because that reader arrives with a vocabulary rather than a problem. They are also the pages most
 likely to be quoted elsewhere, the only link-building the project should do, so protect them.
 
-### Titles and descriptions are the per-page levers, and Docusaurus separates them
+### Titles and descriptions
 
 Two mechanics, verified against Docusaurus's documentation on 2026-09-21, settle how the work is done:
 
@@ -325,7 +325,7 @@ Four rules keep the writing tractable:
 - **Every description is a sentence about that page, written once, not a template**; a generic one
   tells the reader nothing, and the engine replaces it with a fragment of the text.
 
-### Adding a page is almost never the answer, and the data says which three cases to consider
+### Adding a page
 
 **A new page is justified when a reader arriving on a query has a question the site answers and no
 page owns, never by query volume alone**, as [What must never be done](#what-must-never-be-done) sets.
@@ -335,10 +335,10 @@ The three clusters with real traffic get three answers:
   page.** The [book's chapter](https://patterns.contextgeneric.dev/blanket-implementations.html) wins
   the query, `docs/concepts/coherence` answers the question behind it, and the glossary hands the term
   to the Rust Reference. The work is two changes: the chapter links forward (B-1 in
-  [patterns-book.md](patterns-book.md#the-work-in-order)), and the coherence page carries a title in
+  [patterns-book.md](patterns-book.md#changes-left)), and the coherence page carries a title in
   the reader's words, *blanket implementation* rather than `E0119`, which draws 11 impressions against
   2,019. A standalone "what is a blanket implementation" page would re-teach Rust, which the
-  [reference guide](writing-guides/reference.md#linking-three-destinations-and-one-prohibition) rules
+  [reference guide](writing-guides/reference.md#linking) rules
   out, and break the [Concepts section's one-to-one mirroring](pages/concepts.md).
 - **Domain-specific languages (20 queries, 1,432 impressions, 36 clicks, position 7.7) have a page
   planned, and it should come sooner.** The Hypershell post wins *rust dsl* and converts at 3.2%, but
@@ -353,7 +353,7 @@ The three clusters with real traffic get three answers:
 macro clusters sit at positions 24 to 36 with no clicks, partly because the pages that answer them
 were unpublished when the export was taken.
 
-### The internal linking is already right, and it is doing more work than usual here
+### Internal linking
 
 **Internal links are how a crawler finds a page nothing external links to, which is nearly every page
 the relaunch adds**, and Google's
@@ -364,7 +364,7 @@ ideas behind it*, Concepts pages route into Comparisons, many pages link the glo
 indexes are hand-written. **Link with the words the destination is about**, never "here" or "this
 page".
 
-## Coding agents are the second audience
+## Coding agents
 
 **An agent finds CGP through surfaces other than a search engine, and CGP is better placed there
 than its search performance suggests.** Two channels behave differently.
@@ -380,14 +380,14 @@ than its search performance suggests.** Two channels behave differently.
   [knowledge-base pages](pages/knowledge-base.md) teach that use, so it needs no discoverability work
   beyond them.
 - **The site itself**, fetched directly, which is why the
-  [named opening](#own-the-name-by-saying-it-where-it-means-something) and one page per question
+  [named opening](#owning-the-name) and one page per question
   matter for an agent too.
 
 **Model priors** form from GitHub, published writing, and forum discussion, which the site cannot
 configure. The only practice is the project's existing one: publish, be cited, and keep the vocabulary
 stable, which [vocabulary.md](../communication-strategy/vocabulary.md) enforces.
 
-### `llms.txt`, and why it is worth a file but not an argument
+### `llms.txt`
 
 **Almost nothing reads it.** Ahrefs analysed 137,210 domains in May 2026: 28% publish an `llms.txt`,
 97% of those files received no traffic that month, and 96% of the requests that arrived came from
@@ -399,7 +399,7 @@ states that Google Search does not use it, and no major model provider has commi
 an agent already there. If it is published, it is generated from the sidebar, links only public
 pages, is advertised nowhere, and is never presented as a ranking technique.
 
-## What was checked and is not worth acting on
+## Checks not worth acting on
 
 Three things were examined and deliberately left alone:
 
@@ -426,7 +426,7 @@ Five techniques are excluded, each by a rule the project already holds:
 - **No bulk-generated pages.** The site discloses its AI assistance; generating pages to occupy
   queries is the line between documentation and spam.
 - **No site machinery added quietly.** A plugin or third-party service is the author's decision, as
-  [Algolia DocSearch](#the-decisions-this-needs) was.
+  [Algolia DocSearch](#decisions) was.
 
 ## Measurement
 
@@ -471,11 +471,11 @@ classes"** on Bing and Kagi; record the position of any `contextgeneric.dev` or
 property appears instead. Record the date and the engine beside each finding, and put anything that
 changes the guidance into this document rather than into a log.
 
-## The work, in order
+## The order of work
 
 **The click-through work comes first, because presentation is what the site is losing on.** Every
 page under `docs/` and every blog post carries a written description, each docs page beside its
-[named opening](#own-the-name-by-saying-it-where-it-means-something), and every construct's
+[named opening](#owning-the-name), and every construct's
 reference page and both concept pages that needed one carry a search-facing title.
 
 **The metadata repairs are done**: the crate manifests, the repository descriptions, topics, and
@@ -488,10 +488,10 @@ homepages, the redirect stubs, `robots.txt`, and the site and front-page titles 
 sitemap lists every URL, taking a Search Console export as the baseline, and sending the site to
 IndexNow, done on 2026-11-18. The sitemap and IndexNow steps recur at every release, on the
 checklist in
-[writing-guides/release-announcement.md](writing-guides/release-announcement.md#publishing-and-what-happens-afterwards)
+[writing-guides/release-announcement.md](writing-guides/release-announcement.md#publishing)
 beside re-pinning the tutorials' `cgp` version; the baseline export is the relaunch's alone. DocSearch follows the relaunch.
 
-## The decisions this needs
+## Decisions
 
 Three decisions are taken, and two remain open:
 

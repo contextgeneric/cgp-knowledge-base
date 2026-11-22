@@ -86,7 +86,7 @@ anyone reading `main`.
   reader, and the only one whose value decays with time.
 
 The `rustlab-presentation` branch carries the RustLab transcript's slide assets rather than a post;
-[site.md](../site.md#branches-and-what-is-not-on-main) records it.
+[site.md](../site.md#branches) records it.
 
 ## Reading the drift at a glance
 

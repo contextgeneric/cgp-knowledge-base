@@ -17,7 +17,7 @@ proof.
   [formats.md](../../communication-strategy/formats.md#the-conversion-ladder) for matching the next
   step to the reader
 - **Reading**: the shared set and
-  [the orientation pages' row](README.md#orientation-pages-the-introduction-the-quickstart-and-resources)
+  [the orientation pages' row](README.md#orientation-pages)
   of the reading map; the Overview reads the front page's row, and the Contribute page its own
 
 ## What separates orientation from every other page type
@@ -38,7 +38,7 @@ neighbouring type owns what this one refuses:
 ## What every orientation page owes its reader
 
 - **Orient a cold reader in the first paragraph.** Any of these may be a first contact, per
-  [information-architecture.md](../information-architecture.md#most-readers-do-not-arrive-at-the-homepage),
+  [information-architecture.md](../information-architecture.md#where-readers-arrive),
   so each opens by naming Context-Generic Programming in full, saying what CGP is in one sentence, and
   linking onward, not summarizing the front page. The Introduction and the Overview present the
   project and state the tag line whole; the Quickstart and Resources relate a short form to what they
@@ -72,7 +72,7 @@ names as a record of releases and talks whose older posts describe the library a
 
 **The feature tour: it shows each feature working, states where it stops, and sends the reader to the
 page that explains it.** It is the front page's
-[offload destination](homepage.md#the-offload-rule-and-the-pages-it-offloads-to) for essay sections 2
+[offload destination](homepage.md#the-offload-rule) for essay sections 2
 and 3, and it settles the site's feature lists: the front page carries the five from
 [identity.md](../../communication-strategy/identity.md#the-headline-feature-set), four as cards and the
 fifth in its reassurance line, and the Overview expands each with an example. Each section leads from
@@ -88,7 +88,7 @@ The page has these parts, in this order:
   order, each opening with the problem, stated fairly (where plain Rust already handles a case, say so
   first), then one compiled example of about fifteen lines, the limit the strategy pairs with the
   strength, and a link to the page
-  [seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) names as
+  [seo.md](../seo.md#the-tag-line-and-the-features) names as
   the feature's owner. The opening says once that examples leave out the imports, unneeded
   definitions, and each context's check, and Type-Safe Wiring names `delegate_and_check_components!`
   as the one-step form.
@@ -144,7 +144,7 @@ what is new; the Quickstart never grows a second example, an explanation of `#[i
 on what the macro generates.
 
 **The install pins the version the page's code is written against**, so re-pinning is on the
-[release checklist](release-announcement.md#publishing-and-what-happens-afterwards) beside the
+[release checklist](release-announcement.md#publishing) beside the
 tutorials. A page that publishes ahead of its release gives the git dependency in a one-line note
 instead, because a pin crates.io does not carry fails on the reader's first build.
 

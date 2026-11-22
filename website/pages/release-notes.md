@@ -12,7 +12,7 @@ publishes with it.
 
 An agent writes each page from its release's source diff, read beside the release document, the old
 changelog entry, the GitHub Release body, and the release post, as
-[writing-guides/release-notes.md](../writing-guides/release-notes.md#sources-and-which-one-decides)
+[writing-guides/release-notes.md](../writing-guides/release-notes.md#sources)
 sets out. Each page's foot carries the provenance line for documentation pages: level one of the four
 in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md). The author reads the v0.8.0
 notes in full before publication.

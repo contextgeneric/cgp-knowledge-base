@@ -7,7 +7,7 @@ to leave them holding an idea they did not have, and able to repeat it.
 This is the site's **Concepts** tier: one page per idea, mirroring the internal
 [cgp/concepts/](../../cgp/concepts/README.md) catalog one to one, so every cross-cutting CGP idea has
 a public page a reader can be sent to. Three of its pages are the
-[homepage](homepage.md#the-offload-rule-and-the-pages-it-offloads-to)'s offload destinations,
+[homepage](homepage.md#the-offload-rule)'s offload destinations,
 specified [below](#the-three-pages-the-homepage-offloads-to).
 
 - **Where they live**: `docs/concepts/`, recorded in [pages/concepts.md](../pages/concepts.md)
@@ -173,7 +173,7 @@ It is built from [consumer and provider traits](../../cgp/concepts/consumer-and-
 [check traits](../../cgp/concepts/check-traits.md). It is the one page in the tier that may name
 `DelegateComponent` and `IsProviderFor`, late, as the machinery behind a model that has already landed.
 
-### When to use CGP, and when not
+### When to use CGP
 
 **Modularity Hierarchy is a hybrid**: an explanation walking the five tiers of the hierarchy, a section
 each with illustrative code built from the [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md)

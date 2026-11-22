@@ -8,7 +8,7 @@ guide specifies one kind of page, and this document holds what they add up to.
 **states the site as intended**, including pages that do not exist yet. Where they disagree, that
 disagreement is the redesign, and each page's record states the work it implies.
 
-## The site's job, and the properties around it
+## The site's job
 
 **The site takes a reader from never having heard of CGP to being able to use it, making the honest
 case at each step.** Four public properties carry CGP's documentation, and each owns what the others
@@ -29,7 +29,7 @@ The site may cite these and never this [knowledge base](README.md), outside the 
 [one-way link rule](https://github.com/contextgeneric/contextgeneric.dev/blob/main/AGENTS.md#links),
 which is why each page's provenance is recorded here rather than on the page.
 
-## Most readers do not arrive at the homepage
+## Where readers arrive
 
 **The site's front door is not its front page.** Every substantial post was submitted to the Rust
 subreddit, Lobsters, and Hacker News, which link the post, and search traffic lands on whichever page
@@ -44,7 +44,7 @@ never. Three consequences follow:
 - **Newcomers are not routed into the blog.** It carries the most depth and the least current code,
   and a post is a dated record that is not rewritten, so newcomers go to the tutorials and Concepts.
 
-## The surfaces and what each is for
+## The surfaces
 
 Each surface has one job, and a page that does two jobs is usually two pages:
 

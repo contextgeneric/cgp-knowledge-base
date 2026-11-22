@@ -474,7 +474,7 @@ lowest useful level of abstraction. The
 Incremental adoption permits a smaller evaluation, but removing an abstraction still takes work. CGP
 does not require a framework runtime; that fact is not proof of production readiness. Preserve the
 candid account of maturity that the
-[homepage guide](../website/writing-guides/homepage.md#below-the-fold-the-bounded-essay) gives the
+[homepage guide](../website/writing-guides/homepage.md#below-the-fold) gives the
 front page's cost section.
 
 **"There is a learning curve."** Agree and make the first task small. A function-style operation can

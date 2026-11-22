@@ -9,11 +9,11 @@ project's, which changes more about how it is written than the subject does.
 - **Voice**: the author's, first-person, per
   [voice-and-register.md](../../communication-strategy/voice-and-register.md)
 - **Status once published**: a dated historical record; see
-  [Publishing, and what happens afterwards](#publishing-and-what-happens-afterwards)
+  [Publishing](#publishing)
 - **Reading**: the shared set and [the release post's row](README.md#the-release-post) of the
   reading map
 
-## The two readers, and the tension between them
+## The two readers
 
 **A release post serves two readers with opposite needs.** The **existing user** scans for a construct
 name and a migration path: what changed, what broke, and what to do about it. The **first-contact
@@ -45,7 +45,7 @@ rather than giving every entry of the release notes an equal explanation.
 independent improvements when those form the opening, matching what readers meet first. "CGP v0.8.0
 released" wastes the pitch. A search result shows roughly the first sixty characters, so the
 improvement must fit inside them, per
-[seo.md](../seo.md#the-longest-titles-are-truncated-before-they-say-anything).
+[seo.md](../seo.md#truncated-titles).
 
 ## The shape
 
@@ -78,7 +78,7 @@ main problem-and-solution walkthrough. Only the front matter and the discussion 
 - **What's next, and what is unfinished**: what the release does not yet do, what is coming, and what
   the author would like input on, which invites the reader into the project.
 
-## The voice, and what it permits here
+## The voice
 
 **Read [author-personality.md](../../communication-strategy/author-personality.md) before drafting**;
 four of its habits matter most here:
@@ -107,7 +107,7 @@ four of its habits matter most here:
   shipped; the post and site publish only after both releases exist, and that gate stays out of the
   draft.
 
-## Publishing, and what happens afterwards
+## Publishing
 
 **Publication has mechanical steps; check each explicitly:**
 
@@ -125,7 +125,7 @@ four of its habits matter most here:
   crates.io. A pin to a version crates.io lacks is right on the branch and broken the moment a reader
   copies it, so the pin and the release ship together.
 - **Confirm the sitemap and submit it, and send the changed pages to IndexNow** with the website's
-  `scripts/indexnow/submit.py`, per [seo.md](../seo.md#the-work-in-order), the search tasks that
+  `scripts/indexnow/submit.py`, per [seo.md](../seo.md#the-order-of-work), the search tasks that
   cannot be done early.
 
 **A release is the project's largest attention event**, so whatever the announcement links to is ready

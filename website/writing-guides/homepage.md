@@ -44,7 +44,7 @@ and nothing in it depends on anything below.
 
 **Below the fold is a bounded essay** for the reader interested enough to want the argument. It runs
 from the constraint to the payoff to the cost in a fixed number of sections, and the
-[offload rule](#the-offload-rule-and-the-pages-it-offloads-to) caps its length.
+[offload rule](#the-offload-rule) caps its length.
 
 ## Above the fold
 
@@ -63,7 +63,7 @@ the code element.
   which heads off reading "language extension" as a new language and "pluggable" as a runtime
   framework. `cargo add cgp` sits beside it, because the evaluator scans for the toolchain gamble.
 - **The before/after code block**, the hook: the implementations Rust rejects, then the same
-  implementations under CGP. [The example](#the-example-and-how-to-sell-it) specifies it.
+  implementations under CGP. [The example](#the-example) specifies it.
 - **Two links, no more:** the **Quickstart** for the reader ready to try, and the page's own **cost
   section** for the reader deciding on risk, since that section states the project's maturity. A third
   link dilutes both; the enthusiast finds the blog. The GitHub star widget may stay, since it is
@@ -87,7 +87,7 @@ the error names lines 7 and 11 as the page numbers them. The lines run to about 
 below 1360 px the code sets a little smaller and below 1240 px the windows stack, and neither
 scrolls sideways.
 
-## The example, and how to sell it
+## The example
 
 **The example is settled: a trait the snippet defines, implemented twice over two ordinary Rust
 bounds that overlap, then wired per type.** It is `CanEncode` over `Display` and `AsRef<[u8]>`, with
@@ -152,7 +152,7 @@ Compile a replacement before it ships, in `tests/front_page.rs` with its compile
 [the page's record](../pages/front-page.md) describes, and change the page and the test in the same
 commit.
 
-### Which shape it is, and why that matters here
+### The example's shape
 
 **The block is the retrofit shape**: a value context, since `String` and `u64` are the data being
 encoded, with the component targeting `Self`. It is the **least representative of CGP's three
@@ -176,7 +176,7 @@ contradicts the gloss every other page gives; "each type names the implementatio
 Each omission is repaid elsewhere, and naming them stops a revision from cramming one in:
 
 - **Two applications choosing differently for the same type**, repaid by
-  [*Modularity Hierarchy*](explanation.md#when-to-use-cgp-and-when-not). Do not put the fully modular
+  [*Modularity Hierarchy*](explanation.md#when-to-use-cgp). Do not put the fully modular
   shape above the fold: it changes the trait to `CanEncodeValue<Value>`, breaking the shape rule, and
   needs `open` and `@`-path syntax the reader has no grounding for.
 - **The orphan rule dissolved.** The block wires types the snippet does not own, legal only because it
@@ -184,7 +184,7 @@ Each omission is repaid elsewhere, and naming them stops a revision from crammin
   essay.
 - **Everything past trait implementations**, which section 3 of the essay repays in a sentence each.
 
-## Below the fold: the bounded essay
+## Below the fold
 
 Five sections, in this order, each answering one question and stopping. The titles below are jobs
 rather than required headings, but the order is the order in which the questions occur to a reader.
@@ -228,7 +228,7 @@ fit the space.
 [identity.md](../../communication-strategy/identity.md#the-headline-feature-set), in its order and with
 its titles verbatim, as one illustrated card each: one or two sentences anchored to what the reader
 has seen, the illustration beside the text, and the whole card linking the page that
-[seo.md](../seo.md#the-tag-line-orients-the-reader-the-features-carry-the-searchable-words) maps the
+[seo.md](../seo.md#the-tag-line-and-the-features) maps the
 feature to. A line under the cards links the Overview. The fifth feature, *Still Ordinary Rust*, gets
 no card, because the reassurance line states it. Say "per application" rather than "per context",
 except on a card pointing back at the hero, which says "each type". Draw the wording from
@@ -273,7 +273,7 @@ blog for depth; and the Contribute page for the enthusiast. Each card links its 
 reason written as a complete action sentence, so a reader follows the path from trying CGP to
 understanding it or evaluating adoption.
 
-## The offload rule, and the pages it offloads to
+## The offload rule
 
 **A section that wants a second code block, a second example, or a paragraph of mechanism has outgrown
 the homepage.** The material moves to a dedicated page, and the section keeps one paragraph and a
@@ -284,8 +284,8 @@ their specifications:
   page linked most: [explanation.md](explanation.md#why-cgp-exists).
 - **How CGP works**, published as *Consumer and provider traits* with *Impl-side dependencies*:
   [explanation.md](explanation.md#how-cgp-works).
-- **When to use CGP, and when not**, published as *Modularity Hierarchy*, where the cost section hands
-  a skeptic: [explanation.md](explanation.md#when-to-use-cgp-and-when-not).
+- **When to use CGP**, published as *Modularity Hierarchy*, where the cost section hands
+  a skeptic: [explanation.md](explanation.md#when-to-use-cgp).
 - **The Overview**, the feature tour and the destination of sections 2 and 3:
   [orientation.md](orientation.md#the-overview).
 
