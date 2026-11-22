@@ -18,11 +18,11 @@ may still yield, `IsNothing` for a field not yet set, `IsVoid` for a variant rul
 [cast](../../reference/traits/cast.md) built on them, is implemented only for the marker
 configurations where it is valid, so an operation applied in the wrong state has no impl. The
 failure is an
-[acceptable](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile)
+[acceptable](../../implementation/writing-guide.md#documenting-failure-modes)
 one: the derive cannot know which operations the program will apply, and the compiler checks each
 one against the state the program reaches. The shapes differ in which state is wrong.
 
-### A field set twice, or taken before it is set
+### Fields set twice or taken early
 
 A builder accepts a field only while it is unset, and gives one back only once it is set:
 
@@ -54,7 +54,7 @@ no slot for.
 `finalize_build` is implemented only once every field is set, so a builder finalized with a field
 unset fails, and so does a `BuildWithHandlers` list without a step for one field.
 
-### A variant extracted twice, or a match left incomplete
+### Repeated extraction and incomplete matches
 
 An extractor yields each variant once, and its remainder finalizes only once every variant is ruled
 out. Extracting a variant from a remainder that already ruled it out fails, as does finalizing a
@@ -96,7 +96,7 @@ Constructing an enum by a tag it lacks (`Shape::from_variant(PhantomData::<Symbo
 fails the same way. So does calling `downcast` on the remainder an earlier downcast returns: the
 remainder is an extractor, not the enum, and an extractor takes `downcast_fields`.
 
-### A missing data derive, or a missing `Default`
+### Missing derives and `Default`
 
 Each operation needs the traits a derive supplies: `HasFields` (from `#[derive(HasFields)]`) to walk
 a shape, `HasExtractor` (from `#[derive(ExtractField)]`) to match an enum, `HasBuilder` (from

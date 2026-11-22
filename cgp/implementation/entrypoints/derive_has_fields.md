@@ -100,7 +100,7 @@ user wrote rather than left at the derive's `call_site` span. A coherence confli
 as a hand-written `HasFields` impl clashing with the derived one, therefore lands its caret on the
 type name instead of on the whole `#[derive(HasFields)]`. `derive_has_fields_impls_from_struct` and
 `derive_has_fields_impls_from_enum` pass each finished impl through
-[`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), which
+[`override_item_span`](../README.md#spans), which
 moves only the `impl`/`{ … }` boundary, the mechanism the
 [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full.
 

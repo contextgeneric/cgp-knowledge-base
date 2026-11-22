@@ -92,7 +92,7 @@ Redirect value is a bare path and contributes no inner table. `DelegateEntries` 
 `NormalDelegateMapping`s whose values can open a table too; `namespace` and `open` carry no value
 and contribute nothing.
 
-## A key: `DelegateKey`
+## `DelegateKey`
 
 `DelegateKey` is the left side of a mapping, an enum over three shapes selected by a lookahead on a
 fork (after skipping any attributes and generics): a leading `@` gives a `PathDelegateKey`, a
@@ -114,7 +114,7 @@ points at the macro `call_site`; it flows into the entry and drives the
   several paths, each becoming its own key. This is what lets a dispatch parameter slot into the
   redirect path at lookup time.
 
-## A value: `DelegateValue`
+## `DelegateValue`
 
 `DelegateValue` is the right side of a Normal or Direct mapping, an enum of either a plain `Type` or
 a `DelegateValueWithInnerTable`. Its `Parse` speculatively tries the inner-table form first and

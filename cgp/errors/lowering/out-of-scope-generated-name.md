@@ -78,7 +78,7 @@ The parameter is the wrong construct for a type the signature names. Promote the
 nameable everywhere, or, when the type genuinely need not be named, keep `#[impl_generics]` and take
 the value through an implicit argument instead of returning it.
 
-## A sibling: the shadowed abstract type
+## The shadowed abstract type
 
 A related failure has the opposite cause: the name resolves, but to the wrong thing. Giving an
 abstract type the same name as the trait that bounds it makes the bound resolve to the associated
@@ -101,7 +101,7 @@ is to name them apart, which is why an abstract database type reads better as `D
 CGP defect (the collision is ordinary Rust name resolution) but it is easy to walk into when naming
 an abstract type after the concrete trait it abstracts over.
 
-## A second sibling: `Box` in a `no_std` crate
+## `Box` in a `no_std` crate
 
 The third shape is a name the expansion deliberately leaves to the caller. The variant derives
 ([`#[derive(CgpVariant)]`](../../reference/derives/derive_cgp_variant.md), `CgpData` on an enum, and
@@ -141,13 +141,13 @@ from `cgp` would make every `cgp` user link `alloc`, and the only alternative wa
   pin the `E0433` with the caret on the return type and the pass-through, and the fixture doubles as
   the recorded forcing condition for promoting an inferred type to an abstract one.
 - [`lowering/out-of-scope-generated-name/no_std_empty_variant_without_box.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/no_std_empty_variant_without_box.rs):
-  the [`Box` sibling](#a-second-sibling-box-in-a-no_std-crate): a `no_std` crate deriving
+  the [`Box` sibling](#box-in-a-no_std-crate): a `no_std` crate deriving
   `CgpVariant` over an empty variant without `Box` in scope, its snapshots pinning the `E0433` on
   the variant and rustc's suggested import. Its working counterpart,
   [`ok/no_std_empty_variant.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/ok/no_std_empty_variant.rs),
   imports `Box` and compiles clean.
 - [`lowering/out-of-scope-generated-name/cgp_type_name_shadows_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/cgp_type_name_shadows_bound.rs):
-  the [shadowed abstract type](#a-sibling-the-shadowed-abstract-type), pinning the `E0404` and both
+  the [shadowed abstract type](#the-shadowed-abstract-type), pinning the `E0404` and both
   of its landmark notes.
 - [`lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/wrong-component-half/consumer_trait_in_provider_impl_generic.rs):
   the adjacent `E0425` shape: a `#[cgp_impl]` header names the consumer trait

@@ -75,7 +75,7 @@ names resolved, rust-analyzer maps the trait's name to both references, so its h
 key below the trait; go-to-definition still gives one target, since the
 [`#[cgp_component]` marker struct](../entrypoints/cgp_component.md#behavior-and-corner-cases) is
 spanned on the same provider identifier as the trait. See the
-[Spans note](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote).
+[Spans note](../README.md#spans).
 
 The trait arguments come from `ProviderImplArgs::from_generic_args`, and the derivation ends by
 running

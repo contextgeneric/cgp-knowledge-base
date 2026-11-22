@@ -38,7 +38,7 @@ ill-formed, and the compiler rejects it. The boundary is shared by
 [`#[implicit]`](../../guides/reading-context-fields.md) argument, since all three lower field types
 through `parse_field_type`. Deferring to the compiler is correct here, because the macro lacks the
 type information the check needs: an
-[acceptable failure](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile),
+[acceptable failure](../../implementation/writing-guide.md#documenting-failure-modes),
 not a defect.
 
 ## The raw diagnostic

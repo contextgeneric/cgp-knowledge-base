@@ -9,7 +9,7 @@ wraps it in `ItemCgpGetter`, and appends three field-reading provider impls. Bot
 [entrypoint documents](../entrypoints/cgp_getter.md) cover what each stage produces; this document
 covers the types.
 
-## Shared getter-field parsing: `GetterField` and `parse_getter_fields`
+## `GetterField` and `parse_getter_fields`
 
 Both macros turn a getter trait's methods into `GetterField`s through the shared
 `parse_getter_fields` helper, which is the single source of truth for what a getter signature means.

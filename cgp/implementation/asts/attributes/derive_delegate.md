@@ -25,7 +25,7 @@ rejected with a spanned "expect non-empty tuple list of identifiers in use_deleg
 emits one dispatcher impl per entry alongside the component's standard provider impls, during
 `to_items`.
 
-## `to_provider_impl`: the generated impl
+## `to_provider_impl`
 
 `DeriveDelegateAttribute::to_provider_impl(provider_trait)` builds one impl of the provider trait
 for `Wrapper<__Components__>` that forwards each method to a delegate looked up through

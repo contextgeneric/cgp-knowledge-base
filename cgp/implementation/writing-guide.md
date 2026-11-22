@@ -46,7 +46,7 @@ The Tests, Snapshots, and Known issues sections index everything that pins the m
 - Index a failure case captured in `cgp-macro-tests` from the relevant Known issue and from its Tests
   section.
 
-## Documenting how a macro's expansion can fail to compile
+## Documenting failure modes
 
 A failure the macro defers to the compiler is documented as acceptable only when it passes the
 adjacency test:

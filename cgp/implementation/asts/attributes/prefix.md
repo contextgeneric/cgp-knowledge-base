@@ -15,7 +15,7 @@ carry generic arguments). Parsing reads the three in order. `CgpComponentAttribu
 one `PrefixAttribute` per `#[prefix]` attribute into its `prefixes` vector during the host's
 `preprocess` stage, which is why the attribute repeats.
 
-## `to_namespace_impl`: the registration impl
+## `to_namespace_impl`
 
 `PrefixAttribute::to_namespace_impl(component_name)` emits one impl of the namespace trait for the
 component marker, whose `Delegate` is a `RedirectLookup` down the prefix path with the marker

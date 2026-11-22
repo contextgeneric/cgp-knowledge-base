@@ -86,7 +86,7 @@ field's `HasField`/`HasFieldMut` impl points at that field rather than at the wh
 macro's `call_site` span (the entire derived struct), so without a re-span every such error would
 underline the derive and say nothing about which field is involved.
 `derive_has_field_impls_from_struct` therefore passes each finished impl through
-[`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), moving
+[`override_item_span`](../README.md#spans), moving
 only its boundary tokens (the `impl` keyword and the `{ … }` body) onto the field's own span: the
 field identifier for a named field, or the whole `syn::Field` for a tuple field, which has no
 identifier. This is the same technique the

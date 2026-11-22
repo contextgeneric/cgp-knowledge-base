@@ -52,5 +52,5 @@ plainly.
 
 A wiring mistake whose cause survives *both* flags belongs here, with a fixture of `hidden` quality
 in its error class's directory that proves the cause is unrecoverable from the text. The catalog's
-[hidden-versus-surfaced axis](../../cgp/errors/README.md#the-central-axis-hidden-versus-surfaced) is
+[hidden-versus-surfaced axis](../../cgp/errors/README.md#hidden-and-surfaced-causes) is
 the same distinction from the CGP side.

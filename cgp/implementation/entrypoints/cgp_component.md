@@ -164,7 +164,7 @@ component would then offer both the component and the macro as targets. That mis
 only when navigating from another crate, where the editor relies on the recorded definition span
 rather than a live expansion; deriving the span from the provider identifier keeps the definition on
 a single user token, mirroring `derive_check_trait_ident`. See the
-[Spans note](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote) for why span
+[Spans note](../README.md#spans) for why span
 placement serves the editor as well as the compiler.
 
 ## Failure modes

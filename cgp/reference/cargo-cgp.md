@@ -21,7 +21,7 @@ A CGP macro expands to ordinary Rust, so the compiler type-checks the *generated
 wiring mistake surfaces as a wall of errors naming types the programmer never wrote, with the real
 cause buried under machinery like `IsProviderFor` and `CanUseComponent`, encoded as a nested
 `Symbol<…>` list, or hidden from the output entirely (the
-[hidden-versus-surfaced axis](../errors/README.md#the-central-axis-hidden-versus-surfaced) the
+[hidden-versus-surfaced axis](../errors/README.md#hidden-and-surfaced-causes) the
 catalog is built around). `cargo-cgp` reads those diagnostics inside the compiler and re-presents
 them: it names the real cause, renders the dependency chain that leads to it as a `cargo tree`-style
 tree, and tags each rewritten message with a `[CGP-Exxx]` code, much as Clippy layers its own

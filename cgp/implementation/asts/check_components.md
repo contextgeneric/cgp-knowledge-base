@@ -40,13 +40,13 @@ diagnostic span per entry, using the component's span unless the entry lists mor
 components, in which case it uses the parameter's, so the error lands on the token the user is most
 likely to have gotten wrong.
 
-## A key: `CheckKey`
+## `CheckKey`
 
 `CheckKey` is the left side, an enum of a single `Type` or a bracketed `Multi` list. `to_keys`
 returns one type for the single form and one per element for the array form, which is how a
 bracketed key checks several components at once; an empty bracketed key yields no entry.
 
-## A value: `CheckValue`
+## `CheckValue`
 
 `CheckValue` is the optional right side, the generic parameters to check the component with: an enum
 of a single `TypeWithGenerics` or a bracketed `Multi` list. `to_values` returns one or many, so a

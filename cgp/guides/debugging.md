@@ -375,7 +375,7 @@ this as a lookup once you have the error code and the trait it names.
   as the trait that bounds it (`type Database: Database`), so the bound resolved to the associated
   type rather than the trait. Ordinary name resolution rather than a CGP defect; rename one of the
   two, which is why an abstract database type reads better as `Db`. See
-  [the shadowed-abstract-type sibling](../errors/lowering/out-of-scope-generated-name.md#a-sibling-the-shadowed-abstract-type).
+  [the shadowed-abstract-type sibling](../errors/lowering/out-of-scope-generated-name.md#the-shadowed-abstract-type).
 - **`E0271` "type mismatch resolving `<Ctx as HasField<…>>::Value == T`"**: a field whose name
   matches but whose type does not. Read the required side with suspicion before hunting through the
   provider: rustc prints it *normalized*, so a requirement shown as a concrete `Pool<Postgres>` may

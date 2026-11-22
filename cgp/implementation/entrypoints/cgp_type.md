@@ -126,7 +126,7 @@ lifts the associated type into a free parameter on the generated `UseType` and `
 the compiler reports `E0404` "expected trait, found **type parameter** `Database`" rather than
 naming an associated type, which can read as though the author had written a generic parameter they
 did not. The class is the
-[shadowed-abstract-type sibling](../../errors/lowering/out-of-scope-generated-name.md#a-sibling-the-shadowed-abstract-type),
+[shadowed-abstract-type sibling](../../errors/lowering/out-of-scope-generated-name.md#the-shadowed-abstract-type),
 pinned by
 [`lowering/out-of-scope-generated-name/cgp_type_name_shadows_bound.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/lowering/out-of-scope-generated-name/cgp_type_name_shadows_bound.rs).
 

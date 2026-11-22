@@ -117,7 +117,7 @@ token rather than at the whole `#[derive(BuildField)]`. The per-field `UpdateFie
 `HasField`-on-partial impls are aimed at the field they read (the field identifier, or the whole
 `syn::Field` for a tuple field), and the whole-struct
 `HasBuilder`/`IntoBuilder`/`PartialData`/`FinalizeBuild` impls at the struct name. Each goes through
-[`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), moving
+[`override_item_span`](../README.md#spans), moving
 only the `impl`/`{ … }` boundary, the mechanism the
 [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full. The `__Partial{Name}`
 companion struct is cloned from the user's own struct, so its tokens already carry meaningful spans

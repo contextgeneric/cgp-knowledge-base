@@ -100,7 +100,7 @@ range, so go-to-definition on a field name should not offer those types, though 
 checked in an editor. Each field type keeps its own tokens, so a type error inside a field lands on
 the type the user wrote. The `Cons` and `Field` wrappers are built with `quote!` and sit at the
 invocation's span. The expansion is a single type rather than an impl, so the
-[error-span](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote) re-spanning that
+[error-span](../README.md#spans) re-spanning that
 item-emitting macros need does not apply.
 
 ## Known issues

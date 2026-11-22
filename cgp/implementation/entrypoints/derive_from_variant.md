@@ -74,7 +74,7 @@ Each per-variant impl is re-spanned onto the variant it constructs, so a coheren
 (`E0119`) with a hand-written `FromVariant` impl lands its caret on the variant the user wrote
 rather than on the whole `#[derive(FromVariant)]`. `derive_from_variant_from_enum` passes each
 finished impl through
-[`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), moving
+[`override_item_span`](../README.md#spans), moving
 only the `impl`/`{ … }` boundary, the mechanism the
 [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full.
 

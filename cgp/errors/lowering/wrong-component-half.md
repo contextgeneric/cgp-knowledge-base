@@ -23,7 +23,7 @@ Naming the other half gives the trait one argument too many (a consumer trait wh
 belongs) or one too few (a provider trait where a consumer trait belongs). The macros cannot catch
 it, because they do not resolve the trait names they are given, so the mistake reaches the compiler
 as an
-[acceptable failure](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile).
+[acceptable failure](../../implementation/writing-guide.md#documenting-failure-modes).
 The shapes follow, one per position. A provider's attribute on a component trait, `#[uses]` where
 [`#[extend]`](../../reference/attributes/extend.md) belongs, is not among them: `#[cgp_component]`
 reads its own attributes, so it rejects `#[uses]` with a message naming the `#[extend]` form.
@@ -53,7 +53,7 @@ from the trait name, `CanCalculateAreaComponent`, which nothing declares. A comp
 parameters fails the same way, since the context is always one argument more than the consumer trait
 takes.
 
-### `#[cgp_impl]` on a trait that is not a component
+### `#[cgp_impl]` on a non-component trait
 
 A trait without [`#[cgp_component]`](../../reference/macros/cgp_component.md) has no provider half
 at all:
@@ -126,7 +126,7 @@ generic arguments rather than as the wrong half. Each shape adds its own compani
   on the unconstrained `__Context__` follow, the latter suggesting `RectangleArea<__Context__>`. A
   call of the component then fails too, with an `E0599`, since the provider implements no provider
   trait.
-- **`#[cgp_impl]` on a trait that is not a component:** the same burst, with the `E0425` on
+- **`#[cgp_impl]` on a non-component trait:** the same burst, with the `E0425` on
   `GreetComponent`.
 - **A consumer trait in an inner-provider bound:** the `E0107` on the trait in the `#[use_provider]`
   attribute, and an `E0308` "mismatched types" in the body, "expected `&InnerCalculator`, found

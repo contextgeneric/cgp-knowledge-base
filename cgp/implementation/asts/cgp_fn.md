@@ -41,7 +41,7 @@ followed by the `#[uses]` bounds, then the `#[extend_where]` predicates, then th
 The ordering is what the snapshots pin: user-declared dependencies come before field requirements,
 and the imported abstract types and higher-order providers come after both.
 
-## Implicit arguments: `ImplicitArgFields` and `ImplicitArgField`
+## `ImplicitArgFields` and `ImplicitArgField`
 
 The implicit-argument types are shared building blocks that `#[cgp_fn]` and `#[cgp_impl]` both use,
 so they live under `types/implicits/` rather than in the `cgp_fn` module. An `ImplicitArgField`

@@ -14,7 +14,7 @@ This class is a failure of the names in a wiring entry, not of what they wire.
 the key must name a component marker and the value a provider type, both in scope where the table is
 written. The macro copies the names as written and cannot check them, because which items exist and
 what they are is known only to the compiler, so a wrong name is an
-[acceptable failure](../../implementation/writing-guide.md#documenting-how-a-macros-expansion-can-fail-to-compile)
+[acceptable failure](../../implementation/writing-guide.md#documenting-failure-modes)
 that CGP defers to it. A `#[cgp_impl]` or `#[cgp_provider]` header names a component too, without
 writing it: the macro derives the key from the provider trait's path, so the same failure reaches a
 provider. Its shapes differ in what the name gets wrong.

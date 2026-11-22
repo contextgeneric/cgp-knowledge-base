@@ -118,7 +118,7 @@ holds the promoted constant `&Nil`, and the mutable extractor holds `Box::leak(B
 Rust promotes `&Nil` but not `&mut Nil`, and the leaked box never allocates because `Nil` is
 zero-sized. Its `Box` is written bare and spanned at the empty variant, the one name a CGP expansion
 resolves in the caller's scope rather than through an `exports` marker, because `cgp` links no
-`alloc`; see the [hygiene note](../README.md#hygiene-exports-markers-and-reserved-identifiers).
+`alloc`; see the [hygiene note](../README.md#hygiene).
 Every borrowed payload thus stays a reference, which the borrowed matchers' `PromoteRef` needs,
 since it dereferences the payload, and a C-like enum, all of whose variants are empty, still uses
 the borrowed partial enum's `'__a__` and `__R__` parameters.
@@ -136,7 +136,7 @@ token rather than at the whole `#[derive(ExtractField)]`. The per-variant `Extra
 aimed at the variant they match, and the whole-enum
 `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`/`FinalizeExtract`/`PartialData` impls at the enum
 name. Each goes through
-[`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), moving
+[`override_item_span`](../README.md#spans), moving
 only the `impl`/`{ … }` boundary, the mechanism the
 [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full. The
 `__Partial{Name}`/`__PartialRef{Name}` companion enums are cloned from the user's own enum, so their

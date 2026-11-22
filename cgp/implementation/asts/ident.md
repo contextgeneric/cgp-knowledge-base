@@ -6,10 +6,10 @@ lists far more leniently than Rust accepts in the positions CGP cares about: `sy
 takes associated bindings and bounds, and `syn::GenericParam` takes bounds and defaults. Each
 restricted type models only the valid forms, so a wrong input is rejected at parse time with a
 message naming the problem, instead of lowering into code the compiler rejects later. The
-[Parsing note](../README.md#parsing-build-with-parse_internal-and-distrust-syns-leniency) states the
+[Parsing note](../README.md#parsing) states the
 rule; this document covers the types.
 
-## Type arguments: `TypeArg` and `TypeArgs`
+## `TypeArg` and `TypeArgs`
 
 `TypeArg` is one argument in a type-expression position, such as each of `'a`, `A`, `(A, B)`, and
 `Bar<A>` in `Foo<'a, A, (A, B), Bar<A>>`. It has three variants: a lifetime, a type, and a const
@@ -48,7 +48,7 @@ as `TypeArg`. Two methods serve the callers: `ident()` returns the final segment
 associated-type bindings merged into its own argument list (`Trait<Arg, Item = u8>`), the form a
 pinned `#[use_type]` bound needs.
 
-## Definition-site parameters: `TypeGenericParam` and `IdentWithTypeGenerics`
+## `TypeGenericParam` and `IdentWithTypeGenerics`
 
 `TypeGenericParam` is one parameter at a definition site, such as each of `'a` and `C` in
 `Bar<'a, C>`. It accepts a bare lifetime, a bare type identifier, or a `const N: T` parameter, and

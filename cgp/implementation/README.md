@@ -233,7 +233,7 @@ to find them. The canonical examples are `to_raw_item_impl` in the
 consumer-blanket-impl builders in the [`cgp_component` stack](asts/cgp_component.md) for
 `#[cgp_component]`.
 
-### Generics: keep the kinds and roles distinct
+### Generics
 
 Generics are the most error-prone part of the codegen beyond insertion order, because a parameter's
 *kind* (lifetime, type, or const) and its *role* (an `impl<T>` parameter versus the `<T>` in
@@ -257,7 +257,7 @@ from two sources (the trait's own generics plus an inserted context, say) pass t
 that appears in a generated header must be bound in that header, or the compiler reports the free
 parameter as `E0207`.
 
-### Spans: aim generated items at the token the user wrote
+### Spans
 
 A generated item's tokens carry whatever span the macro stamps on them, and by default
 `parse_internal!`/`quote!` stamp every token they synthesize with the macro's `call_site` span,
@@ -324,7 +324,7 @@ defining crate. The per-macro detail lives in each document's error-spans discus
 [`delegate_components!`](entrypoints/delegate_components.md) and
 [`#[cgp_impl]`](entrypoints/cgp_impl.md) are the worked examples.
 
-### Parsing: build with `parse_internal!`, and distrust `syn`'s leniency
+### Parsing
 
 Build every `syn` node from quasi-quoted tokens with [`parse_internal!`](macros/parse_internal.md)
 rather than `parse2` or `parse_quote!`, so a malformed fragment fails with an error naming the
@@ -359,7 +359,7 @@ the same type does the lowering. Build each IR node with `parse_internal!` from 
 any other node, and give the inner node any setting its own parser would take from the attribute
 (the `new` flag and the component type of an `ItemCgpProvider`, say) explicitly.
 
-### Hygiene: exports markers and reserved identifiers
+### Hygiene
 
 The expansion must compile in a crate that has only `cgp` in scope, so every CGP item it references
 is emitted through a [`crate::exports`](macros/export_constructs.md) marker that resolves to

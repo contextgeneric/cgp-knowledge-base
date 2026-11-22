@@ -23,7 +23,7 @@ the `in` keyword, and a `namespace` path (a `PathWithTypeArgs`). Parsing reads t
 host (`#[cgp_impl]`) emits the resulting impls after the provider impl, using the provider's own
 generics and provider type.
 
-## `to_item_impl`: the registration impl
+## `to_item_impl`
 
 `DefaultImplAttribute::to_item_impl(provider_generics, provider_type)` emits one impl of the
 namespace's lookup trait, keyed on the given path type, whose `Delegate` associated type is the

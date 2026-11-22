@@ -27,7 +27,7 @@ the root cause buried or suppressed. Documenting these classes in one place serv
   returns a compact summary of the facts each document records: the class, whether the root cause is
   present, and its position.
 
-## What belongs here, and what does not
+## Scope
 
 This catalog covers only **compilation failures that occur after CGP codegen**: input a macro
 *accepts* and lowers to Rust that then fails to type-, trait-, or borrow-check. This is exactly the
@@ -74,7 +74,7 @@ a `.rust.stderr` only as the nightly prints it. When the two differ in a way a r
 the class says so. To check a raw-diagnostic claim, compile the fixture on stable; to check a
 bullet, read the snapshot.
 
-## The central axis: hidden versus surfaced
+## Hidden and surfaced causes
 
 The single most important distinction in this catalog is whether the compiler **surfaces** or
 **hides** the root cause of an unsatisfied dependency, because the two produce completely different
@@ -105,7 +105,7 @@ re-checking the wiring to promote the error into a surfaced one, or the compiler
 introspection `cargo-cgp` performs through `rustc_driver` (which is how, under its next-generation
 solver, it already surfaces causes plain `cargo check` hides).
 
-## The verbosity problem: many errors, one cause
+## The verbosity problem
 
 A second recurring difficulty is volume: a single mistake deep in a dependency graph surfaces at
 *every* provider that transitively needs it, so the compiler prints one error per affected provider
