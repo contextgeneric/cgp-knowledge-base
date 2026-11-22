@@ -194,8 +194,9 @@ These mechanics are settled; copy them rather than rediscover them.
 - **A page whose heading is a construct name also carries a search-facing `title`,** while its `h1`
   stays the name, such as `` # `#[cgp_component]` ``, and the `sidebar_label` is untouched. Put the
   construct name first, then its job, under about 45 characters, so the site name truncates first. A
-  page covering two constructs names both and drops the job phrase. A page whose heading is already
-  what a reader searches, as on Concepts and Comparisons, carries only a `description`.
+  page covering two constructs names both and drops the job phrase. A Concepts page carries a
+  problem-oriented `title` beside its heading. A Comparisons page, whose heading is already what a reader
+  searches, carries only a `description`, unless its heading runs past about 60 characters.
 - **Do not name CGP in a page's own title,** because every page renders as
   `{Page} | CGP — Context-Generic Programming`; the exception is a page whose subject is CGP, such as
   the disclosure page or the skill. [seo.md](../seo.md#titles-and-descriptions)

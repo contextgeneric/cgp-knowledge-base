@@ -476,7 +476,7 @@ changes the guidance into this document rather than into a log.
 **The click-through work comes first, because presentation is what the site is losing on.** Every
 page under `docs/` and every blog post carries a written description, each docs page beside its
 [named opening](#owning-the-name), and every construct's
-reference page and both concept pages that needed one carry a search-facing title.
+reference page and every concept page carry a search-facing title.
 
 **The metadata repairs are done**: the crate manifests, the repository descriptions, topics, and
 homepages, the redirect stubs, `robots.txt`, and the site and front-page titles are all live.
