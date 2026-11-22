@@ -24,7 +24,7 @@ wrong:
   relates a short form of the tag line to its content or leaves the line out; only a page that
   presents the project states the line whole, and a generated category index carries the name in its
   `_category_.json` description. The skill pages and the published blog posts are exempt.
-  [identity.md](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page)
+  [identity.md](../../communication-strategy/identity.md#the-naming-rule)
   owns the rule and its short forms; each guide says where its kind carries them.
 - **Style:** every public page is written in natural-writing's natural style, unless its guide names
   another, which only [release-notes.md](release-notes.md) does, for pages a reader scans; the guides
@@ -114,17 +114,17 @@ Every row starts from the same reading:
 
 - **The strategy in brief:** [messaging-brief.md](../../communication-strategy/messaging-brief.md),
   whole.
-- **The reader:** [naming the reader](../../communication-strategy/readers.md#naming-the-reader-is-the-first-decision-in-a-piece),
+- **The reader:** [naming the reader](../../communication-strategy/readers.md#naming-the-reader),
   the first decision for any page.
 - **The words:**
-  [the terms](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
+  [the terms](../../communication-strategy/vocabulary.md#terms-to-use),
   including the canonical `cargo-cgp` qualification and the names of the knowledge base and the agent
   skill, and [the words to avoid](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid).
 - **The voice:** [author-personality.md](../../communication-strategy/author-personality.md),
   [voice-and-register.md](../../communication-strategy/voice-and-register.md), and
   [writing-styles.md](../../communication-strategy/writing-styles.md), whole.
 - **The name and the tag line:**
-  [the naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page),
+  [the naming rule](../../communication-strategy/identity.md#the-naming-rule),
   with [Own the name](../seo.md#owning-the-name) and
   [The tag line orients the reader](../seo.md#the-tag-line-and-the-features)
   for what it means for search.
@@ -143,14 +143,14 @@ the naming rule exempts them.
 - **Style:** natural style for both, as for every page.
 - **Strategy:** [identity.md](../../communication-strategy/identity.md), whole;
   [message.md](../../communication-strategy/message.md)'s
-  [lead with the pain](../../communication-strategy/message.md#lead-with-the-pain-not-the-paradigm),
+  [lead with the pain](../../communication-strategy/message.md#leading-with-the-pain),
   [the problems](../../communication-strategy/message.md#the-problems-cgp-removes),
   [the strengths](../../communication-strategy/message.md#the-strengths-worth-advertising),
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring), and
   [when not to reach for CGP](../../communication-strategy/message.md#when-not-to-reach-for-cgp);
   [readers by role](../../communication-strategy/readers.md#readers-by-role-and-point-of-contact);
   [the conversion ladder](../../communication-strategy/formats.md#the-conversion-ladder); and
-  [CGP's reception](../../communication-strategy/evidence.md#cgps-own-reception-and-the-lessons-in-it).
+  [CGP's reception](../../communication-strategy/evidence.md#cgps-reception).
 - **SEO:** [the off-site metadata](../seo.md#off-site-metadata), for the front page's
   own title, and [raise the click-through rate](../seo.md#click-through-rate-first).
 
@@ -158,14 +158,14 @@ the naming rule exempts them.
 
 - **Guide:** [explanation.md](explanation.md), in natural style.
 - **Strategy:**
-  [the frame](../../communication-strategy/identity.md#the-frame-the-whole-identity-serves-enhances-not-replaces);
-  [lead with the pain](../../communication-strategy/message.md#lead-with-the-pain-not-the-paradigm),
+  [the frame](../../communication-strategy/identity.md#the-frame);
+  [lead with the pain](../../communication-strategy/message.md#leading-with-the-pain),
   [the problems](../../communication-strategy/message.md#the-problems-cgp-removes), and
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring);
   [readers by Rust experience](../../communication-strategy/readers.md#readers-by-rust-experience) and
   [the comprehension barriers](../../communication-strategy/readers.md#the-comprehension-barriers);
   [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and
-  [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer-and-how-to-reveal-them);
+  [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer);
   and [reader-simulation.md](../../communication-strategy/reader-simulation.md), whole.
 - **SEO:** [adding a page](../seo.md#adding-a-page),
   for the coherence page's title, and
@@ -177,12 +177,12 @@ the naming rule exempts them.
 - **Strategy:**
   [readers by Rust experience](../../communication-strategy/readers.md#readers-by-rust-experience),
   [the comprehension barriers](../../communication-strategy/readers.md#the-comprehension-barriers),
-  and [the teaching discipline](../../communication-strategy/readers.md#the-teaching-discipline-this-points-to);
+  and [the teaching discipline](../../communication-strategy/readers.md#the-teaching-discipline);
   [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target) and
-  [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer-and-how-to-reveal-them);
-  [lead with the pain](../../communication-strategy/message.md#lead-with-the-pain-not-the-paradigm);
+  [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer);
+  [lead with the pain](../../communication-strategy/message.md#leading-with-the-pain);
   [the conversion ladder](../../communication-strategy/formats.md#the-conversion-ladder);
-  [what we watch](../../communication-strategy/evidence.md#what-we-watch-and-what-counts-as-a-result),
+  [what we watch](../../communication-strategy/evidence.md#what-we-watch),
   for the activation measure; and
   [reader-simulation.md](../../communication-strategy/reader-simulation.md), whole.
 - **SEO:** the shared set.
@@ -191,8 +191,8 @@ the naming rule exempts them.
 
 - **Guide:** [reference.md](reference.md).
 - **Strategy:** [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target),
-  [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer-and-how-to-reveal-them),
-  and, for the glossary, [the public page it feeds](../../communication-strategy/vocabulary.md#the-public-page-this-feeds);
+  [deferred terms](../../communication-strategy/vocabulary.md#terms-to-defer),
+  and, for the glossary, [the public page it feeds](../../communication-strategy/vocabulary.md#the-public-glossary);
   [the comprehension barriers](../../communication-strategy/readers.md#the-comprehension-barriers);
   and [when not to reach for CGP](../../communication-strategy/message.md#when-not-to-reach-for-cgp).
 - **SEO:** [adding a page](../seo.md#adding-a-page),
@@ -203,9 +203,9 @@ the naming rule exempts them.
 
 - **Guide:** [tooling.md](tooling.md), in natural style.
 - **Strategy:** [reading the error messages](../../communication-strategy/readers.md#reading-the-error-messages);
-  [the compile-error problem](../../communication-strategy/message.md#read-a-cgp-compile-error-without-decoding-a-wall-of-generated-types),
+  [the compile-error problem](../../communication-strategy/message.md#long-compiler-errors),
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring), and
-  [the agent skill's placement](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these).
+  [the agent skill's placement](../../communication-strategy/message.md#the-agent-skill).
 - **SEO:** [coding agents](../seo.md#coding-agents).
 
 ### Comparison pages
@@ -217,8 +217,8 @@ the naming rule exempts them.
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring), and
   [when not to reach for CGP](../../communication-strategy/message.md#when-not-to-reach-for-cgp);
   [readers by prior mental model](../../communication-strategy/readers.md#readers-by-prior-mental-model);
-  [the bridge terms](../../communication-strategy/vocabulary.md#the-name-and-the-communitys-bridge-terms);
-  and [CGP's reception](../../communication-strategy/evidence.md#cgps-own-reception-and-the-lessons-in-it).
+  [the bridge terms](../../communication-strategy/vocabulary.md#the-name-and-the-bridge-terms);
+  and [CGP's reception](../../communication-strategy/evidence.md#cgps-reception).
 - **SEO:** [the comparisons](../seo.md#comparison-pages).
 
 ### Projects pages
@@ -228,7 +228,7 @@ the naming rule exempts them.
   and [when not to reach for CGP](../../communication-strategy/message.md#when-not-to-reach-for-cgp);
   [readers by role](../../communication-strategy/readers.md#readers-by-role-and-point-of-contact), for
   the evaluator; [qualifiers](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target);
-  and [the canonical examples](../../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs),
+  and [the canonical examples](../../communication-strategy/voice-and-register.md#canonical-examples-diagrams-and-diffs),
   for the exception Projects pages hold.
 - **SEO:** [adding a page](../seo.md#adding-a-page),
   for the Hypershell section's measured demand.
@@ -237,12 +237,12 @@ the naming rule exempts them.
 
 - **Guide:** [orientation.md](orientation.md), which the AI section's overview also follows.
 - **Strategy:** [the tag line](../../communication-strategy/identity.md#the-tag-line) and
-  [the pitch](../../communication-strategy/identity.md#the-pitch-that-follows-the-line);
+  [the pitch](../../communication-strategy/identity.md#the-pitch);
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring) and
   [when not to reach for CGP](../../communication-strategy/message.md#when-not-to-reach-for-cgp);
   [readers by role](../../communication-strategy/readers.md#readers-by-role-and-point-of-contact);
   [the conversion ladder](../../communication-strategy/formats.md#the-conversion-ladder); and
-  [what we watch](../../communication-strategy/evidence.md#what-we-watch-and-what-counts-as-a-result),
+  [what we watch](../../communication-strategy/evidence.md#what-we-watch),
   for the Quickstart's activation target.
 - **SEO:** [the stale pages that rank](../seo.md#stale-pages-that-rank),
   for the Introduction's routing, and
@@ -273,14 +273,14 @@ the naming rule exempts them.
 
 - **Guide:** [release-announcement.md](release-announcement.md), in the author's voice.
 - **Strategy:** [the tag line](../../communication-strategy/identity.md#the-tag-line),
-  [the pitch](../../communication-strategy/identity.md#the-pitch-that-follows-the-line), and
+  [the pitch](../../communication-strategy/identity.md#the-pitch), and
   [the headline features](../../communication-strategy/identity.md#the-headline-feature-set);
   [the strengths](../../communication-strategy/message.md#the-strengths-worth-advertising),
   [the objections](../../communication-strategy/message.md#the-objections-readers-bring), and
-  [the agent skill's placement](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these);
+  [the agent skill's placement](../../communication-strategy/message.md#the-agent-skill);
   [the blog deep-dive](../../communication-strategy/formats.md#the-blog-deep-dive) and
   [the launch post](../../communication-strategy/formats.md#the-link-aggregator-launch-post);
-  [CGP's reception](../../communication-strategy/evidence.md#cgps-own-reception-and-the-lessons-in-it)
+  [CGP's reception](../../communication-strategy/evidence.md#cgps-reception)
   and [where the profiles gather](../../communication-strategy/evidence.md#where-the-profiles-gather);
   and [revision of human-written drafts](../../communication-strategy/ai-disclosure.md#revision-of-human-written-drafts).
 - **SEO:** [the truncated titles](../seo.md#truncated-titles)

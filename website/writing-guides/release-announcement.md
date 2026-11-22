@@ -26,7 +26,7 @@ release addresses, which gives the newcomer a concrete Rust pain and tells the e
 what the release is about. Orientation for the newcomer is **one paragraph and a link**: it names
 **Context-Generic Programming** in full beside a plain description, links the Introduction, and uses or
 echoes the tag line, as
-[the naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page)
+[the naming rule](../../communication-strategy/identity.md#the-naming-rule)
 asks of a post before it publishes. Migration detail is a clearly marked section the existing user can
 jump to.
 

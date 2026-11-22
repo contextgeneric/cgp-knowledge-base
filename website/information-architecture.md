@@ -149,7 +149,7 @@ pitch or as a disclosure dressed up. The section stays at `docs/ai/`, because re
 every URL for no benefit, and the disclaimer stays in it rather than beside Contribute, because a
 reader looking for provenance looks under AI first. **The navigation bar's "AI" entry is the one place
 the site leads with the word**, tolerated as a label under
-[message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these) on the
+[message.md](../communication-strategy/message.md#the-agent-skill) on the
 condition that nothing else above the fold does.
 
 ## Navigation and sidebar order
@@ -175,7 +175,7 @@ Contribute.
 - **AI follows Projects**, at the author's request, which closes the sections about using CGP before
   Resources and Contribute, the pages about the project, and keeps the section below the first
   screen, where
-  [message.md](../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)
+  [message.md](../communication-strategy/message.md#the-agent-skill)
   wants agent support kept out of the opening.
 - **Release notes follow Resources** as a top-level category rather than a Resources page, as the
   author decided, because Resources holds material about CGP from beyond the site and the places

@@ -44,7 +44,7 @@ neighbouring type owns what this one refuses:
   project and state the tag line whole; the Quickstart and Resources relate a short form to what they
   do, as in "CGP enables pluggable trait implementations in Rust, and this page gets one running", or
   leave it out, per the
-  [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
+  [naming rule](../../communication-strategy/identity.md#the-naming-rule).
 - **End every path somewhere**, naming routes by the question each answers (*how its ideas work*)
   rather than by the section's title (*Concepts*).
 - **Carry a written `description`**, one sentence saying what the page is for, because these are
@@ -110,7 +110,7 @@ The page has these parts, in this order:
 
 **The headline features run one scenario**, the profile-picture scenario under the names the `cgp`
 README uses, among the
-[canonical examples](../../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs),
+[canonical examples](../../communication-strategy/voice-and-register.md#canonical-examples-diagrams-and-diffs),
 compiled in the website's `example-code` crate at `tests/overview.rs`. Off the page: a construct
 reference, a second explanation of what a Concepts page explains, and the project's maturity.
 
@@ -119,7 +119,7 @@ reference, a second explanation of what a Concepts page explains, and the projec
 **The smallest page on the site, with a measurable target: ten minutes** for a reader who has Rust
 installed and uses only this page, measured with a
 [friction log](../../communication-strategy/readers.md#keeping-the-model-observed) on a clean machine.
-[evidence.md](../../communication-strategy/evidence.md#what-we-watch-and-what-counts-as-a-result)
+[evidence.md](../../communication-strategy/evidence.md#what-we-watch)
 records it as the site's activation signal, and this guide owns it. A draft over ten minutes loses a
 step rather than explaining it faster.
 

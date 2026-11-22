@@ -7,7 +7,7 @@ Keep these parts together when revising a claim. A changed strength may need a m
 its motivating problem, objection, and boundary. [readers.md](readers.md) identifies audiences;
 [vocabulary.md](vocabulary.md) governs the terms used to address them.
 
-## Lead with the pain, not the paradigm
+## Leading with the pain
 
 Open with the reader's problem before explaining CGP's mechanism. Show a recognizable workaround,
 then a small, fair before-and-after. State where the extra abstraction is useful and where a plain
@@ -23,7 +23,7 @@ arrangements, using the
 
 ## The problems CGP removes
 
-### Give one interface many implementations that Rust rejects outright
+### Overlapping implementations
 
 Use overlapping implementations to show why separate providers can be useful. Rust rejects these
 impls because a type such as `String` satisfies both bounds. This complete example intentionally
@@ -92,7 +92,7 @@ can keep the value in `Self`, as the homepage does, but then a given value type 
 implementation program-wide. In either arrangement, providers add machinery that a single
 implementation may not need.
 
-### Implement a trait for a type you don't own, with no newtype dance
+### The orphan rule
 
 Explain the orphan-rule benefit through a provider that the implementing crate owns. Ordinary Rust
 forbids a foreign trait impl for a foreign type. A CGP provider instead implements a provider trait
@@ -106,7 +106,7 @@ supported by [coherence](../cgp/concepts/coherence.md) and the hand-written patt
 [evidence.md](evidence.md). A program that needs one globally consistent implementation may be
 better served by a plain trait.
 
-### Mock in tests, run the real thing in production, without `dyn` or a framework
+### Production and test contexts
 
 Show production and test contexts choosing different providers for the same operation. A trait
 object, a generic parameter, and CGP wiring are all valid ways to separate an interface from its
@@ -134,7 +134,7 @@ and required data. `CanFetchStorageObject` is self-targeted because fetching a s
 operation on that application. Per-application choice does not require a target parameter. The
 choice is explicit, and a dependency with one implementation can remain a plain trait.
 
-### Your second application already exists: it is spelled as a feature flag
+### Feature flags
 
 Look for existing variation before proposing another context type. Feature-gated backends, a backend
 enum, a trait object, a generic application type, or a test harness can show that the program
@@ -148,7 +148,7 @@ Keep runtime choices in a runtime representation. Configuration read at startup 
 variant or a trait object stored inside the context. Static wiring does not replace that decision,
 and not every configuration needs a distinct context type.
 
-### Swap your error type or runtime by changing one line
+### Swappable error and runtime types
 
 Use abstract types to show how generic logic can avoid committing to a particular error or runtime.
 This fragment selects an error type for a context defined elsewhere; it assumes an `anyhow`
@@ -173,7 +173,7 @@ Use this example for systems and ML-module readers. Link to
 [modular error handling](../cgp/concepts/modular-error-handling.md), and distinguish configurable
 associated types from representation hiding through Rust's module privacy.
 
-### Break up a trait that grew into a monolith
+### Monolithic traits
 
 Show how independently chosen implementations can motivate smaller components. CGP grew from work on
 the large `ChainHandle` interface described in [author-personality.md](author-personality.md). The
@@ -189,7 +189,7 @@ State the refactoring cost. Changing the interface affects its callers, and a sm
 with one implementation should usually stay as it is. A large component is legal; size alone does
 not establish that splitting it is worthwhile.
 
-### Write a framework over any type's structure, without runtime reflection
+### Structural programming
 
 Explain structural programming through types that expose their fields or variants to generic code.
 CGP derives encode that shape as type-level data, allowing reusable builders, serializers, and
@@ -201,7 +201,7 @@ in types, not runtime introspection of arbitrary values. Static shape informatio
 for a runtime metadata lookup; the operation still does its actual work, such as reading fields or
 serializing values.
 
-### Stop threading a dozen generic parameters through every layer
+### Threaded generic parameters
 
 Lead with intermediate signatures that repeat dependencies they do not use. Separate generic error,
 runtime, and storage parameters can spread through a call chain. A context can instead supply
@@ -217,7 +217,7 @@ and its value is simpler dependency signatures. A type inferred from a field may
 abstract type at all, and a function with a few independent inputs may be clearer as a plain
 generic. Follow [naming a type dependency](../cgp/guides/naming-a-type-dependency.md).
 
-### Keep a provider's dependencies out of your public API
+### Impl-side dependencies
 
 Explain how impl-side constraints separate an operation's interface from its implementation needs. A
 provider can use `#[uses]` and `#[implicit]` without adding those dependencies to the consumer
@@ -229,7 +229,7 @@ needs appropriate visibility. CGP helps avoid exposing some dependencies in that
 not make a private type valid in a public interface. See
 [impl-side dependencies](../cgp/concepts/impl-side-dependencies.md) and [evidence.md](evidence.md).
 
-### Read a CGP compile error without decoding a wall of generated types
+### Long compiler errors
 
 Show a real missing dependency and the diagnostic that identifies it. This example is based on
 cargo-cgp's
@@ -279,7 +279,7 @@ Explain the repair rather than only praising the shorter output. The check force
 The [toolchain reference](../cgp/reference/cargo-cgp.md) explains how the driver recovers and
 presents the cause. Recheck the fixture before publishing its output.
 
-Keep the [canonical cargo-cgp qualification](vocabulary.md#terms-to-use-and-how-to-introduce-each)
+Keep the [canonical cargo-cgp qualification](vocabulary.md#terms-to-use)
 beside the tool claim.
 
 ### Choosing which problem to lead with
@@ -481,7 +481,7 @@ front page's cost section.
 introduce useful context-generic code before components and wiring. Teach the later machinery when
 the reader needs it instead of describing the whole learning curve as trivial.
 
-### The one mitigation that spans three of these
+### The agent skill
 
 Mention CGP's [agent skill](https://github.com/contextgeneric/cgp-skills) where it can help with
 learning vocabulary, reading diagnostics, or writing wiring. It teaches an assistant to read and

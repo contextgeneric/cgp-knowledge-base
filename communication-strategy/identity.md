@@ -6,7 +6,7 @@ headline features.
 These descriptions express the same identity at different lengths. Each must show what CGP adds to
 Rust, why a reader would use it, and where its benefits stop.
 
-## The positioning, in the order it was decided
+## The positioning
 
 Choose the positioning before writing the tag line. Work through alternatives, differences,
 benefits, audience, and category in that order. The method comes from the
@@ -44,12 +44,12 @@ Use the settled descriptor at first contact:
 > A language extension for Rust, with pluggable trait implementations at compile-time.
 
 Put it beneath the project name on the homepage and README, and use or echo it in talks and posts;
-other pages use the short forms in [the naming rule](#the-name-and-the-tag-line-on-every-page). Keep
+other pages use the short forms in [the naming rule](#the-naming-rule). Keep
 the wording consistent. If readers repeatedly misinterpret it, use that reception to reassess the
 shared guidance rather than inventing a new descriptor for each piece. Follow
 [evidence.md](evidence.md) when interpreting those reactions.
 
-## The frame the whole identity serves: enhances, not replaces
+## The frame
 
 CGP extends Rust's trait system. A consumer trait remains an ordinary trait, can be implemented
 directly, and can coexist with code that does not use CGP. Explain those facts early so readers
@@ -88,7 +88,7 @@ problem CGP solves, and some readers associate it with runtime dependency-inject
 it helps later in a piece, qualify the meaning: explicit wiring resolved at compile time, without
 runtime dispatch overhead.
 
-## The name and the tag line on every page
+## The naming rule
 
 Name the project in full, as **Context-Generic Programming**, once in the prose of every web page,
 in its opening paragraph, where it orients a reader who arrives from a search result, and link that
@@ -117,7 +117,7 @@ Where "pluggable" could suggest runtime plugins, say nearby that the choice is m
 which is the job of the line's last words. One mention of the name and one of the line's idea are
 enough; neither is a keyword to repeat.
 
-## The pitch that follows the line
+## The pitch
 
 Follow the tag line with reassurance, a concrete example, and enough breadth for the format. The
 homepage and README use a short identity block; a problem-led article can establish the motivating
@@ -175,7 +175,7 @@ dependencies, as [the checked-dependencies strength](message.md#the-strengths-wo
 explains, so pair the feature with `check_components!` or a use of the component. See
 [check traits](../cgp/concepts/check-traits.md).
 
-### What the set deliberately leaves out
+### Features left out
 
 Leave "Dependency Injection" out of the general feature panel. Explain its benefits through checked
 wiring and abstract dependencies, then use the DI comparison where the reader's background makes it

@@ -15,7 +15,7 @@ reader goes next; this document decides how a reader who is not on the site arri
 **Search visibility is a question of placement, not of wording.** The communication strategy settles
 every public claim: [identity.md](../communication-strategy/identity.md) owns the tag line, the frame,
 the headline features, and
-[the naming rule](../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page);
+[the naming rule](../communication-strategy/identity.md#the-naming-rule);
 [vocabulary.md](../communication-strategy/vocabulary.md) owns the terms; and
 [formats.md](../communication-strategy/formats.md#titles-first-lines-and-search) owns the rules for a
 page's title and opening. This document decides where that wording is placed: which page owns which
@@ -257,7 +257,7 @@ older site, appears for the full term; what happens to it is
 
 ### Owning the name
 
-**The [naming rule](../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page)
+**The [naming rule](../communication-strategy/identity.md#the-naming-rule)
 places the name for the reader, not for search.** Each page other than the skill pages and the
 published posts names Context-Generic Programming once in its opening paragraph, linked to the
 Introduction, so a reader from a search result knows what the page belongs to. The name already ranks
@@ -417,7 +417,7 @@ Five techniques are excluded, each by a rule the project already holds:
 
 - **No keyword stuffing, and no page written to catch a query.** Repeating the name, the tag line, or
   its short form for density is stuffing too; the
-  [naming rule](../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page) asks
+  [naming rule](../communication-strategy/identity.md#the-naming-rule) asks
   for one mention of each.
 - **No rewriting the tag line, the feature titles, or a construct's name for search.**
   [identity.md](../communication-strategy/identity.md) owns that wording.
@@ -432,7 +432,7 @@ Five techniques are excluded, each by a rule the project already holds:
 
 **Search Console is in place, and it is not analytics**: it places no script on the site, sees no
 visitor, and reports only what Google knows about its own index, so the stock-Docusaurus policy is
-untouched. [evidence.md](../communication-strategy/evidence.md#what-the-search-data-shows-about-demand)
+untouched. [evidence.md](../communication-strategy/evidence.md#search-demand)
 summarizes the export for the communication strategy. Bing Webmaster Tools works the same way, is not
 set up, and would be the only view of Bing and the engines built on its index.
 

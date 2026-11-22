@@ -30,7 +30,7 @@ threads or quoting identifiable readers. This follows the rule for a
 [public repository](../AGENTS.md#this-repository-is-public). Published work that is not itself a
 reaction to CGP remains citable.
 
-## Two decisions that shape everything here
+## Voice and frame
 
 CGP speaks in a project voice on the website and in the author's personal voice on the blog.
 [voice-and-register.md](voice-and-register.md) owns that distinction and its exceptions.
@@ -90,7 +90,7 @@ provenance. Each subject has one owning document, so a writer finds its reasonin
 - [AI disclosure](ai-disclosure.md): How to describe AI's role in documentation, revisions, tooling,
   tests, and the core library; review limits; and website provenance notes.
 
-## Where this guidance gets spent
+## Applying the guidance
 
 The [website section](../website/README.md) turns this strategy into page-specific guidance and
 records of published work. Start with its [writing guides](../website/writing-guides/README.md) when

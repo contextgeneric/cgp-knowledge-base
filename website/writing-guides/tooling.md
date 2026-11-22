@@ -22,7 +22,7 @@ command or understand an error, so the opening names that task and why it matter
 Context-Generic Programming once beside a plain description of what the tool checks, and links the
 Introduction. The overview may relate a short form of the tag line, since the tool checks wiring that
 selects implementations; a lookup page leaves it out, per the
-[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
+[naming rule](../../communication-strategy/identity.md#the-naming-rule).
 
 **The form still follows the content.** The symptom index, the decision table, the command tables, and
 each code's entry stay tables or short structured entries for lookup, and commands and quoted output
@@ -96,7 +96,7 @@ troubleshooting page, then the two lookup pages.
 - **Distinguish the tool's errors from the ones it forwards** from cargo, so a reader debugs the right
   program.
 - **Concede the limits without a version number**, copying the canonical sentence from
-  [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
+  [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use)
   unchanged: `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool
   does not yet reshape every class. Name the classes that pass through where a reader needs them, and
   never call the problem *solved* or *fixed*.

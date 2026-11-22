@@ -6,10 +6,10 @@ The fuller documents govern when a summary disagrees with them. Start with the a
 [preferences](author-personality.md) and [voice guidance](voice-and-register.md), then choose the
 reader and problem before writing the opening.
 
-## The line, and the two lines after it
+## The tag line and the pitch
 
 Use the settled descriptor and follow it with reassurance and relevant breadth. The wording and
-positioning belong to [identity.md](identity.md#the-pitch-that-follows-the-line):
+positioning belong to [identity.md](identity.md#the-pitch):
 
 - **Tag line:** A language extension for Rust, with pluggable trait implementations at compile-time.
 - **Reassurance:** Still ordinary Rust: a library on the stable toolchain, with provider selection
@@ -26,7 +26,7 @@ description, except on the skill pages and the published blog posts. State the t
 where a page presents the project; elsewhere relate a short form such as "CGP enables pluggable
 trait implementations in Rust" to the page's content, or leave it out where it does not fit. The
 rule and its short forms belong to
-[identity.md](identity.md#the-name-and-the-tag-line-on-every-page).
+[identity.md](identity.md#the-naming-rule).
 
 ## The five headline features
 
@@ -43,7 +43,7 @@ requiring readers to pass the full panel first.
 | Abstract Over Every Dependency | Write core logic against abstract error, runtime, and I/O dependencies, then let each context supply them. This supports a `no_std`-friendly core when the chosen implementations support it. |
 | Still Ordinary Rust | Adopt CGP one component at a time. Providers use familiar impl syntax, implicit arguments resemble parameters, and consumer traits can still be implemented directly. |
 
-## The pain to lead with, by reader
+## Pains by reader
 
 Choose the problem the intended reader recognizes. The examples and their limits are in
 [message.md](message.md#the-problems-cgp-removes):
@@ -60,7 +60,7 @@ Choose the problem the intended reader recognizes. The examples and their limits
 | Structural-framework author | Generic operations over opted-in fields and variants |
 | Reader concerned about diagnostics | A real wiring failure explained by the toolchain |
 
-## The objections, and the one-line answers
+## Objections and answers
 
 Grant the valid concern, then explain the mechanism and limit. See
 [message.md](message.md#the-objections-readers-bring) for the full answers:
@@ -84,7 +84,7 @@ Grant the valid concern, then explain the mechanism and limit. See
 Use the canonical checker qualification without paraphrasing: `cargo cgp check` leads with the root
 cause for the classes it recognizes, and the tool does not yet reshape every class.
 
-## The boundary, and the costs to concede every time
+## The boundary and the costs
 
 Use the lowest level of abstraction that solves the problem. Plain traits and generics suit simple
 choices; direct consumer impls suit context-specific behavior; enums suit small closed sets; and
@@ -97,13 +97,13 @@ verbose raw diagnostics, and learning. A delegation entry alone does not verify 
 or use the component to force verification.
 
 Mention the [CGP agent skill](https://github.com/contextgeneric/cgp-skills) only beside the costs it
-can help address, following [message.md](message.md#the-one-mitigation-that-spans-three-of-these).
+can help address, following [message.md](message.md#the-agent-skill).
 It teaches an assistant to read and write CGP; it does not remove the reader's review
 responsibility. Keep AI support out of the pitch and distinguish it from
 [AI authorship](ai-disclosure.md). The website's AI navigation label is the documented exception to
 placement, not a feature claim.
 
-## The ask, by stage
+## Next steps by stage
 
 Match the next step to the reader, following [formats.md](formats.md#the-conversion-ladder):
 
@@ -128,7 +128,7 @@ Use concrete terms and preserve their scope. [vocabulary.md](vocabulary.md) owns
 | AI-native or AI-first | an agent skill, described beside a cost |
 | context without explanation | value or environmental context, with its role stated |
 
-## The rules that apply to every piece
+## Rules for every piece
 
 Apply these rules across formats:
 

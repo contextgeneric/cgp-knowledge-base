@@ -52,7 +52,7 @@ which also owns the
 [contribution policy](../../communication-strategy/ai-disclosure.md#contributions-from-outside-the-project);
 the page shape, how-to rules, and draft checks come from
 [writing-guides/knowledge-base.md](../writing-guides/knowledge-base.md). The term follows
-[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
+[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use),
 and the readers are the two hypothesis profiles in
 [readers.md](../../communication-strategy/readers.md#the-reader-who-doubts-agent-written-documentation).
 

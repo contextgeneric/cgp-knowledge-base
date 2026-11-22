@@ -102,7 +102,7 @@ so the first screen does three things before any code:
 - **Place it**: one sentence on what the project is, linking the project index, and one clause naming
   Context-Generic Programming in full and linking the Introduction; where the program's point is a
   choice of implementation, relate a short form of the tag line to it, per the
-  [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
+  [naming rule](../../communication-strategy/identity.md#the-naming-rule).
 - **Offer the prerequisites** in a `:::tip` admonition titled `### New to CGP?`, per the
   [admonition convention](reference.md#conventions-the-port-must-follow): the two or three pages to
   know first, usually Hello World and the Concepts page for the pattern, and that the page can be read
@@ -177,7 +177,7 @@ each page linking the other's *Try a change*.
 **Every change must have been made and run**, its result recorded in the internal record first and
 quoted as produced; a change nobody has run is left out. A page quoting `cargo cgp check` carries the
 canonical qualification from
-[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
+[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use)
 unchanged.
 
 ### The closing route

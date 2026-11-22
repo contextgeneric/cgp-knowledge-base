@@ -134,7 +134,7 @@ Reference pages are the exception: use the construct name readers are looking up
 purpose in the overview's first sentence.
 
 Orient unfamiliar readers in the first paragraph. Name the project and relate the tag line's idea
-to the page, as [the naming rule](identity.md#the-name-and-the-tag-line-on-every-page) sets out,
+to the page, as [the naming rule](identity.md#the-naming-rule) sets out,
 then state what this page covers, without repeating a long introduction on every page.
 
 Use established problem names naturally where they apply. Terms such as "orphan rule", "conflicting
@@ -143,7 +143,7 @@ search ranking or claim knowledge of search traffic the project does not measure
 
 Qualify bridge terms such as "structural typing" when using them. CGP remains nominal and wired; the
 analogy should explain a resemblance without asserting a different type system. Follow
-[vocabulary.md](vocabulary.md#the-name-and-the-communitys-bridge-terms).
+[vocabulary.md](vocabulary.md#the-name-and-the-bridge-terms).
 
 Write an explicit page description and blog excerpt. Use Docusaurus `description` front matter for a
 concise summary, and check the excerpt above a blog post's truncate marker. Search engines may
@@ -164,7 +164,7 @@ question, using [message.md](message.md#the-objections-readers-bring) for detail
 | I have only one application. | Assess present needs such as foreign targets or reusable providers. Do not invent a future second context to justify wiring. |
 | Will every configuration need a context? | Separate only useful type-level distinctions. Keep runtime choices in enums or trait objects inside the context. |
 
-Use the [canonical qualification](vocabulary.md#terms-to-use-and-how-to-introduce-each) when
+Use the [canonical qualification](vocabulary.md#terms-to-use) when
 recommending the checker.
 
 ## The conversion ladder

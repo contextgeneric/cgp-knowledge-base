@@ -26,7 +26,7 @@ amounts to; `App` without `bucket_id` rejected by `check_components!`, with the 
 output quoted; the error type made abstract with `#[use_type]` and a provider's `#[uses]`
 dependency; and `get_user` as a `#[cgp_fn]` with an implicit `database`. Every method is
 synchronous, as the
-[canonical example](../../communication-strategy/voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs)
+[canonical example](../../communication-strategy/voice-and-register.md#canonical-examples-diagrams-and-diffs)
 sets out, and the opening says once that a real storage client would be async, linking the storage
 tutorial. Each section keeps its condition: wiring checks nothing until a component is used or
 checked, portability depends on the selected providers, and the raw errors stay long without

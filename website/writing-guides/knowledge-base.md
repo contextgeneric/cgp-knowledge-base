@@ -37,7 +37,7 @@ the process or a disclosure dressed as a feature.
 Four pages, ordered by what the reader is doing: orienting, deciding whether to trust the process,
 then acting on it. Every page opens by naming Context-Generic Programming beside a plain description
 and linking the Introduction, per the
-[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page), and
+[naming rule](../../communication-strategy/identity.md#the-naming-rule), and
 leaves out the tag line, since the pages are about how CGP is documented rather than about choosing an
 implementation.
 
@@ -60,7 +60,7 @@ implementation.
   miss, sending a reader who finds an error to the issue tracker. Every claim comes from
   [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#the-knowledge-base-behind-the-first-level),
   and the page is on the author's
-  [read-in-full list](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong).
+  [read-in-full list](../../communication-strategy/ai-disclosure.md#authorship-and-review-claims).
 - **Using the Knowledge Base with Your Agent** (`using-it-with-your-agent.md`), a how-to: when the
   agent skill is enough and when the base is needed, covering both meanings of auditing CGP (reviewing
   the library's source, and reviewing what the macros add to a project through `cargo cgp expand`);
@@ -115,7 +115,7 @@ needs the steps:
   attestations, or review steps; the policy is light and says a fuller one will follow.
 - **Keep AI-led framing off the pages that link here.** Contribute and the skill index link in one
   line beside the reader's task, per
-  [message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these).
+  [message.md](../../communication-strategy/message.md#the-agent-skill).
 
 ## Checking a draft
 

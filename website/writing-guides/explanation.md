@@ -96,7 +96,7 @@ the Introduction. Where the concept concerns choosing an implementation, as cohe
 consumer/provider split, and wiring do, it relates a short form of the tag line, as in "CGP extends
 Rust with pluggable trait implementations, and Rust's coherence rules are why that needs more than an
 ordinary impl"; otherwise, as with the `Send`-bound workaround, it leaves the line out, per the
-[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page). Every
+[naming rule](../../communication-strategy/identity.md#the-naming-rule). Every
 page carries a written `description` and a problem-oriented `title` in the reader's words, per
 [formats.md](../../communication-strategy/formats.md#titles-first-lines-and-search), written in the
 same edit as the opening.

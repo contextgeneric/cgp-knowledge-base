@@ -7,7 +7,7 @@ This document governs the rest of the communication strategy. When another rule 
 preference recorded here, correct that rule. [voice-and-register.md](voice-and-register.md) turns
 this account into instructions for individual passages.
 
-## Why this document exists at all
+## Why this document exists
 
 CGP's public writing should reflect its author, Soares Chen. He writes personally about his work,
 uncertainties, and limits. General marketing advice can produce accurate but impersonal copy that he
@@ -38,7 +38,7 @@ final, or the expression problem when readers know those ideas. He also develops
 own time, so public writing should remain candid about capacity and invite readers to help direct
 his effort without promising coverage he cannot provide.
 
-## How he writes, as evidenced by the corpus
+## How he writes
 
 His published work favors detailed explanations with a clear entry. The
 [Hypershell announcement](../website/blog/hypershell-release.md) runs to roughly 16,500 words and
@@ -91,7 +91,7 @@ The author's stated preferences govern recurring choices in public writing:
   elsewhere in a short form such as "CGP enables pluggable trait implementations in Rust", blended
   into the page's explanation, never pasted as boilerplate, and left out where it does not fit. The
   skill pages and published posts are exempt; identity.md's
-  [naming rule](identity.md#the-name-and-the-tag-line-on-every-page) owns the detail.
+  [naming rule](identity.md#the-naming-rule) owns the detail.
 - **Give the homepage a clear purpose.** Help readers understand CGP and its benefits, then direct
   them to teaching material. Follow the [homepage guide](../website/writing-guides/homepage.md).
 - **Preserve the background when revising a draft.** Retain his account of earlier challenges,
@@ -109,12 +109,12 @@ The author's stated preferences govern recurring choices in public writing:
 - **Improve placeholder copy when editing it.** Replace inflated phrases such as "a beautiful
   overhaul redesign" with direct wording. This permits local improvements, not an unsolicited
   site-wide rewrite. Preserve personal passages and the rules for dated posts in
-  [voice-and-register.md](voice-and-register.md#improving-copy-that-is-already-published).
+  [voice-and-register.md](voice-and-register.md#improving-published-copy).
 - **Disclose the production process plainly.** State what AI did, the limits of review, and the
   author's responsibility. Follow [ai-disclosure.md](ai-disclosure.md) for the different levels; do
   not turn disclosure into a boast, apology, or debate about legitimacy.
 
-## What this means for an agent writing in his name
+## Writing in his name
 
 Review a draft for choices the author would recognize as his own. Give explanations the space they
 need and make their scope clear at the start. Explain the existing approach fairly before

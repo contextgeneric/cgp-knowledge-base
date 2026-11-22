@@ -53,13 +53,13 @@ the code element.
 
 - **The name, then the tag line, verbatim.** The hero names **Context-Generic Programming** in text,
   so readers and search engines can read it, and states the tag line whole beneath it, per the
-  [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page):
+  [naming rule](../../communication-strategy/identity.md#the-naming-rule):
   *"A language extension for Rust, with pluggable trait implementations at compile-time."* Never
   paraphrase it or replace it with a headline; one that leads with "modular" uses the word
   identity.md retires.
 - **The reassurance line, with the install line.** *"Still ordinary Rust: a library on the stable
   toolchain, with provider selection resolved at compile time, adopted one trait at a time."*,
-  verbatim from [identity.md](../../communication-strategy/identity.md#the-pitch-that-follows-the-line),
+  verbatim from [identity.md](../../communication-strategy/identity.md#the-pitch),
   which heads off reading "language extension" as a new language and "pluggable" as a runtime
   framework. `cargo add cgp` sits beside it, because the evaluator scans for the toolchain gamble.
 - **The before/after code block**, the hook: the implementations Rust rejects, then the same
@@ -240,7 +240,7 @@ payoff to section 3.
 **3. It goes further than trait implementations.** One sentence each for abstract types a context
 chooses, extensible records and variants, and the composable handler family, repaying the tag line's
 "trait implementations" undersell; no elaboration. The abstract-types sentence carries the **payoff**,
-matching the [breadth line](../../communication-strategy/identity.md#the-pitch-that-follows-the-line):
+matching the [breadth line](../../communication-strategy/identity.md#the-pitch):
 an error type or a runtime stops being a parameter every layer carries.
 
 **4. What it costs.** Not optional and not softened, written as part of describing the thing
@@ -261,7 +261,7 @@ site that states the project's maturity**.
 - **Agent support:** mentioned here and nowhere else on the page, in one clause, as a smaller cost
   rather than a solved one, linking the skill. Never in the hero, the reassurance line, a card, or a
   feature title: a landing page that leads on AI is read as chasing attention by this audience. The
-  rule is [message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)'s,
+  rule is [message.md](../../communication-strategy/message.md#the-agent-skill)'s,
   with the wording to avoid in
   [vocabulary.md](../../communication-strategy/vocabulary.md#words-and-framings-to-avoid).
 

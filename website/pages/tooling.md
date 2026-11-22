@@ -22,7 +22,7 @@ cause the generated code hides, and a macro whose output the reader wants to see
 are optional. It leaves out the tag line, because the
 section's subject is not choosing an implementation. The *cargo-cgp* section describes the tool with
 the canonical sentence from
-[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each)
+[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use)
 and links the installation, check, expand, reading, and error-codes pages. *More tools to come* says
 `cargo-cgp` is the only tool so far and that more tooling will be added.
 

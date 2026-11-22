@@ -29,7 +29,7 @@ a reference index.
 **Its opening paragraph names Context-Generic Programming** once, beside a plain description and linked
 to the Introduction, and where the outcome is a choice of implementation, relates a short form of the
 tag line to it, per the
-[naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page). Its
+[naming rule](../../communication-strategy/identity.md#the-naming-rule). Its
 front matter carries a written `description`, and `docs/tutorials/_category_.json`'s `description`
 carries the name for the generated index.
 

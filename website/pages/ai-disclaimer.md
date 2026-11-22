@@ -32,7 +32,7 @@ The sections then run from most AI to least:
 - **Blog posts and tutorials,** where the author drafts and an agent revises.
 - **Tooling and tests,** covering `cargo-cgp` and the test suite under one rule, that neither becomes
   part of a user's program, and closing on the canonical `cargo cgp check` qualification from
-  [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each).
+  [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use).
 - **The CGP library,** whose design is entirely the author's, separated from the macro implementation
   work he directs and shares, with the limits of source verification, human review, and tests,
   including wrong test expectations and missing cases.
@@ -47,7 +47,7 @@ The sections then run from most AI to least:
 [ai-disclosure.md](../../communication-strategy/ai-disclosure.md) owns the policy, the wording
 rules, the two claims easiest to get wrong, and the page's specification. Its review claim is taken
 from the
-[authorship rule](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong)
+[authorship rule](../../communication-strategy/ai-disclosure.md#authorship-and-review-claims)
 rather than paraphrased, because a wrong version is a false public claim about the project. The
 disposition behind it is in
 [author-personality.md](../../communication-strategy/author-personality.md), and the linking

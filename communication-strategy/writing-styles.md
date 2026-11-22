@@ -8,7 +8,7 @@ structure, [voice-and-register.md](voice-and-register.md) covers the project's a
 and [vocabulary.md](vocabulary.md) fixes CGP terminology. Use
 [reader-simulation.md](reader-simulation.md) to check what a reader can understand from the result.
 
-## Say it straight: the real subject, doing the real thing
+## Direct sentences
 
 Name the subject early and give it a direct verb. A sentence about `#[implicit]` should explain what
 the attribute does before discussing its resemblance to ordinary parameters.
@@ -65,7 +65,7 @@ An em dash may separate a list item's subject from its description when used con
 serves the same purpose. Apply the prose rule within the description, and revise existing dashes
 only in passages already within the task's scope.
 
-## Plain, direct English for agent-drafted content
+## Plain English for agent drafts
 
 Use literal, accessible English when an agent writes the first draft. This applies to reference
 pages, concepts, guides, and other agent-authored documentation. When revising a human draft,

@@ -153,7 +153,7 @@ inline only, because `example-code` builds against the current `cgp`.
 ## What every page owes its reader
 
 - **The naming rule**: Context-Generic Programming once, in the opening, per
-  [identity.md](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page).
+  [identity.md](../../communication-strategy/identity.md#the-naming-rule).
 - **The title and description levers**, per
   [seo.md](../seo.md#titles-and-descriptions):
   the artifact and version first, under about 60 characters, and a description written for this

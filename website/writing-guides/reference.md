@@ -130,7 +130,7 @@ an advanced reader continues into the machinery.
   component, a provider, a wiring macro), relate a short form of the tag line to its job, as in "CGP
   enables pluggable trait implementations in Rust, and `delegate_components!` is where a context picks
   them"; a type-level building block leaves it out, per the
-  [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page). This
+  [naming rule](../../communication-strategy/identity.md#the-naming-rule). This
   is the internal Purpose section rewritten for a reader without the skill, and the section most often
   ported badly.
 - **Usage:** every accepted form, each argument and option, and the defaults, from the internal Syntax
@@ -217,7 +217,7 @@ These mechanics are settled; copy them rather than rediscover them.
 
 **Glossing "context":** introduce the word with a gloss on first use, on every page, above the
 advanced line, because a reference page is read on its own. Use the canonical clause from
-[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each),
+[vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use),
 "the type the method runs on, which supplies the values it needs as its fields", or a variant it
 permits: "the type the implementation runs against", "the type the code runs against", "the type it
 runs against", or, on abstract-type pages, "the type that implements the trait". Add a new variant to

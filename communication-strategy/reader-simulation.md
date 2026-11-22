@@ -6,7 +6,7 @@ where that prediction differs from the intended meaning.
 Treat these predictions as editing hypotheses. They help expose missing explanations, confusing
 wording, and unsupported claims, but they do not substitute for feedback from readers.
 
-## What this adds, and where it sits
+## Scope
 
 Use reader simulation after checking the draft's structure and style. [readers.md](readers.md)
 defines audience profiles, [writing-styles.md](writing-styles.md) guides sentence choices, and the
@@ -34,7 +34,7 @@ that the usefulness of supplied explanations can vary with readers' knowledge an
 strategies. The practical rule here is to make unfamiliar CGP relationships explicit while avoiding
 unnecessary lessons on Rust concepts the reader already understands.
 
-## The loop: predict, compare, repair
+## The loop
 
 Review each sentence and paragraph through this sequence:
 
@@ -51,7 +51,7 @@ explain it; showing how a context selects a provider can.
 Use these categories to diagnose a passage. They overlap and are not numerical measurements, but
 each suggests a different kind of revision.
 
-### Common ground: what the reader now knows
+### Common ground
 
 Check that the passage builds on knowledge the reader plausibly has. **Common ground** includes the
 chosen prerequisites and the facts and terms already introduced. A term such as `DelegateComponent`
@@ -62,7 +62,7 @@ replace it with a description. The given-new approach in
 [Clark and Haviland](#the-science-this-rests-on) informs this check: readers need a connection
 between familiar and new information.
 
-### Working memory: how much the reader holds at once
+### Working memory
 
 Reduce the effort needed to connect parts of a sentence. Long interruptions between a subject and
 verb, ambiguous pronouns, and several unexplained terms make readers retain unresolved information
@@ -73,7 +73,7 @@ move a long qualification, or repeat a noun when a pronoun is unclear. Cognitive
 motivates reducing avoidable difficulty; it does not establish a fixed number of terms that every
 CGP reader can hold.
 
-### The model under construction: what the reader is building, and whether it is right
+### The model under construction
 
 Check the explanation the reader could reconstruct from the passage. Reading involves connecting
 text with prior knowledge, as described by the
@@ -85,7 +85,7 @@ suggest a runtime container, explain that CGP resolves provider selection at com
 [objection guidance](message.md#the-objections-readers-bring) to identify relevant misreadings
 without assuming every reader has them.
 
-### Expectation: what the reader now predicts comes next
+### Expectation
 
 Make each transition follow from the question the passage has raised. A problem should lead to its
 consequence or solution; a claim should receive its promised explanation. An abrupt topic change
@@ -96,7 +96,7 @@ bad. [Levy's work](#the-science-this-rests-on) models difficulty in syntactic co
 Applying it to paragraph organization is a writing heuristic: prepare a change of direction and name
 its relationship to the preceding point.
 
-### Stance: trust, skepticism, and interest
+### Stance
 
 Check whether a clear sentence also makes a credible claim. A reader can understand a sentence and
 still reject its exaggeration, hidden cost, or unfair comparison. Use [evidence.md](evidence.md) for
@@ -106,7 +106,7 @@ Replace unsupported assurance with a specific claim and its limit. State costs w
 represent Rust and other tools fairly, and remove praise that adds no information. Follow
 [voice-and-register.md](voice-and-register.md).
 
-### Energy: the reader's remaining willingness to continue
+### Energy
 
 Remove effort that does not advance the explanation. Repeated definitions, decorative sentences, and
 paragraphs that merely restate a point give readers more work without more understanding.
@@ -136,7 +136,7 @@ Keep the paragraph's main point first. Sentence-final emphasis can reinforce tha
 not become a reason to delay the paragraph's conclusion. Apply these habits with judgment; word
 order alone cannot make a missing explanation clear.
 
-## Word choice as a lever on the reader's state
+## Word choice
 
 Choose words for both their meaning and the interpretation they invite. A technically valid term can
 still imply the wrong mechanism to an unfamiliar reader.
@@ -162,7 +162,7 @@ universal limit on what a paragraph can contain.
 
 Review from the reader's available knowledge rather than the writer's full understanding. A fluent
 draft can skip steps precisely because the writer finds them obvious, which is the
-[curse of knowledge](vocabulary.md#reaching-people-at-scale-and-sounding-like-one-project).
+[curse of knowledge](vocabulary.md#reach-and-consistency).
 
 Run a separate reading pass after drafting. For each CGP term or inference, identify the earlier
 explanation or prerequisite that supports it. If that support is missing, add it or move the
@@ -199,7 +199,7 @@ happens and limits the runtime claim to that selection. The generated traits can
 the reader understands what they implement; see
 [the wiring-table teaching guidance](readers.md#the-wiring-table-and-its-machinery).
 
-## Running the method: the checklist
+## The checklist
 
 After the structural and style checks, review the draft in this order:
 

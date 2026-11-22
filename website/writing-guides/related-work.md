@@ -85,12 +85,12 @@ The titles below are jobs; a page's headings may name the compared tool.
 - **Orientation**, two or three sentences: CGP in one sentence, naming Context-Generic Programming in
   full beside a short form of the tag line and linking the Introduction, related to the compared idea
   where it meets it, per the
-  [naming rule](../../communication-strategy/identity.md#the-name-and-the-tag-line-on-every-page); who
+  [naming rule](../../communication-strategy/identity.md#the-naming-rule); who
   the page is for, what it covers, and how far it goes, because the pages are long.
 - **In your terms**, a short table mapping the reader's interface, implementation, resolution step,
   constraint, and environment onto component, provider, wiring, impl-side dependency, and context.
   "Context" is glossed here on first use, with the canonical gloss from
-  [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use-and-how-to-introduce-each).
+  [vocabulary.md](../../communication-strategy/vocabulary.md#terms-to-use).
 - **The idea**: the compressed refresher, each sub-concept with one cited snippet in the
   tool's own language, and what its users value, stated as they would. Name the version where behavior
   is version-specific.
@@ -188,7 +188,7 @@ explanations do not fit, since this reader arrives with a vocabulary rather than
 
 **Publishing the section adds a public claim**: the author reads every page's *What each approach
 costs* and *Where the other tool is the better choice* in full before publication, per the
-[authorship rule](../../communication-strategy/ai-disclosure.md#the-two-claims-that-are-easiest-to-get-wrong),
+[authorship rule](../../communication-strategy/ai-disclosure.md#authorship-and-review-claims),
 and the [disclosure page](../pages/ai-disclaimer.md) says so.
 
 ## What must not be on a comparison page
@@ -204,7 +204,7 @@ and the [disclosure page](../pages/ai-disclaimer.md) says so.
   carries the argument.
 - **No mention of agent support.** The cost section names the diagnostics and the wiring and links
   *Modularity Hierarchy*, one of the three places
-  [message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these)
+  [message.md](../../communication-strategy/message.md#the-agent-skill)
   states the agent skill beside the costs; a dozen pages each mentioning AI would read together as the
   AI-led pitch the strategy rules out.
 - **No first-person narration.** Ground a judgement that rests on the author's choice, and link the

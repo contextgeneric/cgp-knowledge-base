@@ -67,6 +67,6 @@ clone before the tag existed, as far as the maintainer's machine allowed:
 
 - Change a route here and in the `cgp-skills` README together, and keep every route on `main`; no
   route names a tag, as `cgp-skills`' `AGENTS.md` requires.
-- Follow [message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these):
+- Follow [message.md](../../communication-strategy/message.md#the-agent-skill):
   the page says what the skill helps with and keeps the review warning, without promising that it
   removes a cost.

@@ -34,7 +34,7 @@ governs its shape: one line of orientation, routes named by the question each an
 that teaches or persuades. Its summary of how the project uses AI comes from the
 [disclaimer](ai-disclaimer.md) and [ai-disclosure.md](../../communication-strategy/ai-disclosure.md);
 its sentence on what agent support can do follows
-[message.md](../../communication-strategy/message.md#the-one-mitigation-that-spans-three-of-these). It
+[message.md](../../communication-strategy/message.md#the-agent-skill). It
 links no knowledge-base file.
 
 ## Maintaining it

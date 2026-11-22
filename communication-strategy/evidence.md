@@ -14,7 +14,7 @@ the whole community thinks, and silence does not prove a lack of interest. Disti
 findings, observed patterns, and strategic judgments. Revisit guidance when its evidence changes.
 Publication schedules and campaign results are managed outside this repository.
 
-## What the Rust community worries about, and what it rewards
+## Community concerns and rewards
 
 Rust surveys support addressing compilation cost, debugging, and complexity directly. The
 [2025 survey](https://blog.rust-lang.org/2026/03/02/2025-State-Of-Rust-Survey-results/), published
@@ -30,7 +30,7 @@ message will perform.
 
 State compilation and diagnostic costs beside the benefits of abstraction, and pair the diagnostic
 concession with [`cargo-cgp`](../cgp/reference/cargo-cgp.md) and its
-[canonical qualification](vocabulary.md#terms-to-use-and-how-to-introduce-each).
+[canonical qualification](vocabulary.md#terms-to-use).
 
 Show why the added abstraction is useful before introducing it. The concern about complexity
 supports the [enhances-not-replaces framing](identity.md): explain CGP through ordinary Rust,
@@ -82,14 +82,14 @@ measurements:
 - **AI-assisted development:** Discuss CGP's published
   [agent skill](https://github.com/contextgeneric/cgp-skills) beside the costs of wiring,
   vocabulary, and diagnostics, as
-  [message.md](message.md#the-one-mitigation-that-spans-three-of-these) prescribes. Its existence
+  [message.md](message.md#the-agent-skill) prescribes. Its existence
   does not prove that it removes those costs.
 
 The 2025 survey suggests that some learning questions may be moving to LLM tools. Its authors infer
 this from open answers and shifts in community participation. Treat that as context for agent
 support, not as a measurement of CGP users or evidence that the skill solves their difficulties.
 
-## What the search data shows about demand
+## Search demand
 
 Google Search Console gives the project one measured view of what readers look for, and the finding
 worth carrying into public writing is which vocabulary they use. Over the twelve months to
@@ -103,7 +103,7 @@ entry point readers actually search for**, which supports leading with that idea
 audience and is independent evidence for the hand-rolled-workaround finding below. And **the
 project's own name has almost no search demand**: *context generic programming* and *cgp rust*
 together drew 112 impressions in a year, at average positions of 1.1 and 1.3. That is measured
-support for [identity.md](identity.md#the-name-and-the-tag-line-on-every-page)'s rule that the
+support for [identity.md](identity.md#the-naming-rule)'s rule that the
 name always travels with a plain description. The bare acronym drew 736 impressions and no clicks
 at all.
 
@@ -111,7 +111,7 @@ These are Google figures for one property over one year. They describe what reac
 what the Rust community wants, and the query table is capped at 1,000 rows, so roughly nine
 impressions in ten are long-tail queries nobody can inspect.
 
-## The pains are real, and developers already hand-roll the fix
+## Existing workarounds
 
 An independently published workaround shows that CGP addresses a problem developers encounter. The
 [alternative blanket implementations article](https://www.greyblake.com/blog/alternative-blanket-implementations-for-single-rust-trait/)
@@ -135,7 +135,7 @@ explains the cost of exposing types needed by an injection interface. CGP's impl
 provide a useful contrast where a dependency can stay inside an implementation. They do not make a
 private type usable in a public method signature.
 
-## CGP's own reception, and the lessons in it
+## CGP's reception
 
 The recorded reception of CGP is small and mixed-to-skeptical. The observations below summarize
 recurring reactions without identifying readers. They guide revisions but do not quantify the
@@ -210,7 +210,7 @@ alone is unlikely to provide it. Explain the fragment CGP implements, the desuga
 and the problems it leaves unresolved. Relevance to a live discussion matters more than a broad
 claim that CGP validates a language proposal.
 
-## What we watch, and what counts as a result
+## What we watch
 
 Use a signal that matches the reader's stage in the
 [conversion ladder](formats.md#the-conversion-ladder). The stages move from awareness to trying,
@@ -238,7 +238,7 @@ Track these signals where they are available:
 - **Search: available through Google Search Console, for Google only.** The site has no analytics
   and needs none for this: Search Console places no script on the site and reports what Google
   already knows about its own index. A twelve-month export to 2026-09-18 is summarized
-  [above](#what-the-search-data-shows-about-demand) and analyzed in the website section's
+  [above](#search-demand) and analyzed in the website section's
   [SEO strategy](../website/seo.md). Nothing equivalent exists for Bing, Kagi, or Brave, so claims
   about those engines still rest on hand checks. Keep raw exports outside this repository.
 
@@ -262,7 +262,7 @@ Space substantial publications apart to reduce competition for the same readers.
 can divide attention and make their results harder to interpret. Treat spacing as part of the
 external publication plan.
 
-## Sources, and when each was last checked
+## Sources
 
 Check a source before using its claim in public, and update its verification date. The table records
 what each source supports and how it was checked. "Read" means the claim was checked against the
@@ -295,11 +295,11 @@ verification against the full original work.
 
 | Source | Used for | Last checked |
 |---|---|---|
-| April Dunford, *Obviously Awesome*, summarized in [Lenny's Newsletter](https://www.lennysnewsletter.com/p/summary-april-dunford-on-product) | the five-step order of positioning in [identity.md](identity.md#the-positioning-in-the-order-it-was-decided) | 2026-09-19, summary read |
-| Phil Leggetter, [the AAARRRP framework](https://www.leggetter.co.uk/aaarrrp/) | the funnel stages behind [What we watch](#what-we-watch-and-what-counts-as-a-result) | 2026-09-19, summary read |
+| April Dunford, *Obviously Awesome*, summarized in [Lenny's Newsletter](https://www.lennysnewsletter.com/p/summary-april-dunford-on-product) | the five-step order of positioning in [identity.md](identity.md#the-positioning) | 2026-09-19, summary read |
+| Phil Leggetter, [the AAARRRP framework](https://www.leggetter.co.uk/aaarrrp/) | the funnel stages behind [What we watch](#what-we-watch) | 2026-09-19, summary read |
 | [Time to hello world](https://instruqt.com/glossary/time-to-hello-world) | the activation measure | 2026-09-19, summary read |
 | Nielsen Norman Group, [How Users Read on the Web](https://www.nngroup.com/articles/how-users-read-on-the-web/) and [Scrolling and Attention](https://www.nngroup.com/articles/scrolling-and-attention/) | the scanning and above-the-fold figures in the homepage guide | 2026-09-19, summary read |
 | Mark Baker, [Every Page is Page One](https://everypageispageone.com/the-book/) | the titles-and-search rules in [formats.md](formats.md#titles-first-lines-and-search) | 2026-09-19, summary read |
-| Richard Mayer's multimedia principles, summarized by [Devlin Peck](https://www.devlinpeck.com/content/mayers-principles-of-multimedia-learning) | the diagram rules in [voice-and-register.md](voice-and-register.md#show-it-canonical-examples-diagrams-and-diffs) | 2026-09-19, summary read |
+| Richard Mayer's multimedia principles, summarized by [Devlin Peck](https://www.devlinpeck.com/content/mayers-principles-of-multimedia-learning) | the diagram rules in [voice-and-register.md](voice-and-register.md#canonical-examples-diagrams-and-diffs) | 2026-09-19, summary read |
 | Google, [code samples](https://developers.google.com/style/code-samples) and the [samples style guide](https://googlecloudplatform.github.io/samples-style-guide/) | the code-sample rules in voice-and-register.md | 2026-09-19, summary read |
 | *Docs for Developers* (Bhatti and others, 2021), described by the [publisher](https://www.ebooks.com/en-us/book/210383942/docs-for-developers/jared-bhatti/) | the friction-log practice in [readers.md](readers.md#keeping-the-model-observed) | 2026-09-19, summary read |

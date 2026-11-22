@@ -31,7 +31,7 @@ Never use “we” to mean the author alone. Use “CGP” for a project claim o
 personal passage. Ground judgments in project prose: explain which use case CGP fits and why, rather
 than calling it the best approach without a stated comparison.
 
-## The register: plain, unhurried, and specific
+## The register
 
 Explain CGP as a knowledgeable colleague would: carefully, with familiar words and enough detail to
 understand the claim. Keep the same clarity in both voices while preserving the blog's personal
@@ -51,7 +51,7 @@ Name the construct, operation, or limitation behind an abstract claim. Show the 
 “explicit,” the generated call behind “static dispatch,” or a verified diagnostic behind “difficult
 errors.” The evidence makes the claim assessable.
 
-## The moves that make CGP prose work
+## Explaining CGP
 
 Introduce a construct as an answer to a problem the reader can recognize. Explain the ordinary Rust
 approach fairly, show where it becomes insufficient for the example, and then show what CGP changes.
@@ -72,7 +72,7 @@ Use analogies to explain relationships, then state their limits. Wiring can be d
 settings table, provided the passage says the compiler resolves it without a runtime table lookup.
 An analogy should lead to the mechanism rather than replace it.
 
-## Show it: canonical examples, diagrams, and diffs
+## Canonical examples, diagrams, and diffs
 
 Reuse established examples so readers can concentrate on the changing CGP idea. Choose among these
 before introducing another domain:
@@ -141,7 +141,7 @@ Preserve useful uncertainty and warmth. The author's pleasure in sharing work be
 post; an intensifier attached to a technical claim needs evidence. [Vocabulary.md](vocabulary.md)
 contains the accuracy rules for terms such as “capability,” “zero-cost,” and “AI-assisted.”
 
-## Improving copy that is already published
+## Improving published copy
 
 Improve unclear or inflated prose within the requested scope. Existing wording is not a reason to
 retain an unsupported claim, but a local revision is not permission to rewrite the whole site.

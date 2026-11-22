@@ -9,7 +9,7 @@ observations behind the model; [keeping the model observed](#keeping-the-model-o
 how to test it. Use [reader-simulation.md](reader-simulation.md) to apply a chosen profile to a
 draft.
 
-## Naming the reader is the first decision in a piece
+## Naming the reader
 
 Choose the reader before the outline and examples. Their knowledge and purpose determine which
 problem to introduce, which terms need explanation, and how much mechanism the piece should show. An
@@ -61,7 +61,7 @@ responses, including the case of a single application context.
 Introduce higher-order providers after the reader understands a provider and its wiring. Composition
 adds another relationship to follow, so establish a reason for a wrapper before showing its type
 parameters. For debugging, show checks and the tool's limits using the
-[canonical cargo-cgp wording](vocabulary.md#terms-to-use-and-how-to-introduce-each).
+[canonical cargo-cgp wording](vocabulary.md#terms-to-use).
 
 ### The advanced Rust developer
 
@@ -202,7 +202,7 @@ assuming every working Rust developer follows the same progression.
 Use CGP's [recommended idioms](../cgp/guides/README.md) to control how much machinery appears at
 once. The concise forms are normal CGP code, not a temporary dialect the reader must later replace.
 
-### Generic parameters are intimidating
+### Generic parameters
 
 Introduce each generic parameter when the example needs the variation it represents. `#[cgp_fn]` can
 introduce an operation without written generic parameters, `#[cgp_impl]` can omit an explicit
@@ -212,7 +212,7 @@ Show what the code does before explaining every generated bound. When a paramete
 identify its role: context, target, selector, or inner provider. Avoid reassuring readers that a
 long signature is simple without explaining those relationships.
 
-### The provider trait reads inside-out
+### `Self` in a provider
 
 Distinguish the meaning of `Self` in ergonomic syntax from its meaning in a raw provider impl.
 Inside `#[cgp_impl]`, `self` and `Self` refer to the context. In a raw provider-trait impl, Rust's
@@ -223,7 +223,7 @@ tracing the method body. Use the
 [consumer/provider account](../cgp/concepts/consumer-and-provider-traits.md) for the generated
 traits; do not describe raw provider-side `Self` as the context.
 
-### A type can stand for your whole application
+### Application contexts
 
 Explain an application context by showing what it selects and stores. `struct App;` can carry wiring
 without fields, while another context can hold a client, configuration, or mutable state. An empty
@@ -239,7 +239,7 @@ pointless in ordinary Rust or that sharing logic always requires overlapping bla
 [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) explains the available choices, and
 [vocabulary.md](vocabulary.md#qualifying-a-context-and-a-target) names their roles.
 
-### The trait a reader would design hides the payoff
+### Component grouping
 
 Explain component grouping as a decision about provider reuse. A `Shape` component containing
 `area`, `perimeter`, `scale`, and `rotate` is valid, but every provider must supply that interface.
@@ -249,14 +249,14 @@ the dependencies needed for rotation.
 Show a multi-item component before recommending a split. `CanCompute` and `CanHandle` each contain
 an associated `Output` and a method; components also support multiple methods and consts. This
 prevents the observed misunderstanding that CGP limits a trait to one item, recorded in
-[evidence.md](evidence.md#cgps-own-reception-and-the-lessons-in-it).
+[evidence.md](evidence.md#cgps-reception).
 
 Compare the reuse of a grouped component with that of focused components. Group items when one
 provider choice should determine them together. A noun-based consumer trait name can prompt a
 review, but it does not prove the grouping is wrong. The author decides whether the reuse benefit
 justifies a split; [sizing a component](../cgp/guides/sizing-a-component.md) supplies the procedure.
 
-### Bounds on the context are a barrier of their own
+### Bounds on the context
 
 Explain `#[uses]` as declaring a trait dependency on the context. It generates a bound such as
 `Self: HasName`; it does not act as a Rust `use` statement or import a trait into module scope. A
@@ -266,7 +266,7 @@ Start less experienced readers with `#[cgp_fn]` when a single implementation is 
 author writes a function, and the macro generates a trait and blanket impl. Defer the expansion
 until useful, but do not claim the generated operation works without traits.
 
-### Traits that are "magically" implemented
+### Generated implementations
 
 Explain where generated implementations come from when a method appears without a handwritten impl.
 An automatic getter uses a blanket impl over matching `HasField` bounds. The relevant trait must
@@ -304,15 +304,15 @@ Prepare readers for verbose errors involving generated types and transitive depe
 does not guarantee that every diagnostic becomes short or identifies the cause equally well.
 
 Introduce cargo-cgp when demonstrating a wiring failure, with the
-[canonical qualification](vocabulary.md#terms-to-use-and-how-to-introduce-each). Teach readers to
+[canonical qualification](vocabulary.md#terms-to-use). Teach readers to
 inspect the reported cause and use the [error catalog](../cgp/errors/README.md) or
 [tool reference](../cgp/reference/cargo-cgp.md) for unfamiliar cases. Check actual output rather
 than promising a particular rewrite.
 
 Mention the agent skill beside these costs when relevant, within the placement and limits
-[message.md](message.md#the-one-mitigation-that-spans-three-of-these) sets.
+[message.md](message.md#the-agent-skill) sets.
 
-### Knowing where to start, and why it is worth it
+### Where to start
 
 Give the reader a minimal useful path and a reason to follow it. An operation with one shared
 implementation may need only a plain trait or `#[cgp_fn]`. Introduce provider selection when the
@@ -322,7 +322,7 @@ Use the [modularity hierarchy](../cgp/concepts/modularity-hierarchy.md) to expla
 reader who can parse every macro may still need an example showing why the split is useful; a reader
 who sees the benefit may still need prerequisites before reading the expansion.
 
-### The teaching discipline this points to
+### The teaching discipline
 
 Check instructional writing for these requirements:
 
@@ -343,7 +343,7 @@ explicit Rust before macro syntax; an applied tutorial may defer that explanatio
 Treat the profiles as hypotheses until evidence supports a more specific claim. CGP's recorded
 reception includes requests for a clearer motivating problem, confusion about the project name, and
 the mistaken inference that components are limited to one method. The
-[reception summary](evidence.md#cgps-own-reception-and-the-lessons-in-it) records these patterns; it
+[reception summary](evidence.md#cgps-reception) records these patterns; it
 does not establish their frequency across the whole Rust community.
 
 Use reading and usage feedback to test the model. A **friction log** records where someone following

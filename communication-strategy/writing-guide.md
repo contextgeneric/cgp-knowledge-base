@@ -4,7 +4,7 @@ This guide holds the rules for writing and revising the communication-strategy d
 knowledge base's [AGENTS.md](../AGENTS.md) holds the rules every document follows, including
 never fabricating evidence.
 
-## Honesty is the strategy
+## Honesty
 
 An honest claim is framed better rather than inflated:
 

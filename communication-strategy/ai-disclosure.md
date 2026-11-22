@@ -3,7 +3,7 @@
 Describe AI's role in each part of CGP accurately, including who writes, who reviews, and what the
 review covers.
 
-## Why this needs a policy rather than a footnote
+## Why disclosure needs a policy
 
 CGP must disclose its substantial use of AI. Agent-written documentation, the
 [public knowledge base](https://github.com/contextgeneric/cgp-knowledge-base), and `Co-Authored-By`
@@ -41,7 +41,7 @@ correct.
 
 ## The four levels
 
-### Documentation and articles, written by agents from a public knowledge base
+### Agent-written documentation and articles
 
 Agents write the reference, concepts, guides, error catalog, and website pages derived from them.
 Describe the process that governs this work so readers can assess it.
@@ -59,7 +59,7 @@ helps explain how a page was produced; it does not prove every statement is corr
 The author directs the work and remains accountable for publication. He sets the rules, chooses what
 gets written, and reads the pages that carry the argument. He does not read every line of every
 ported reference page. Disclosures must preserve that limit; see
-[the review requirements](#the-two-claims-that-are-easiest-to-get-wrong).
+[the review requirements](#authorship-and-review-claims).
 
 ### Revision of human-written drafts
 
@@ -127,7 +127,7 @@ The claims the project can make, and their limits, are these:
   skill and the website's ported pages) are derived from the base rather than written fresh.
 - **A person directs the work, and agents ask rather than guess.** The author designs CGP, writes
   and revises the rules, and chooses what gets documented, per
-  [the first level](#documentation-and-articles-written-by-agents-from-a-public-knowledge-base).
+  [the first level](#agent-written-documentation-and-articles).
   Every `AGENTS.md` tells an agent to stop and ask when a choice has more than one defensible
   answer. A review of a document checks its claims against the source in one pass before improving
   its prose in another, per
@@ -196,10 +196,10 @@ Use a short factual description of the actual process. Apply these rules:
   names. A dated account, such as the [new-website post](../website/blog/new-website.md), may name
   the tools used in that episode.
 - **Keep provenance out of the feature pitch.** AI authorship describes how the project is made.
-  [Agent support](message.md#the-one-mitigation-that-spans-three-of-these) describes help with using
+  [Agent support](message.md#the-agent-skill) describes help with using
   CGP and belongs beside adoption costs. Keep those claims separate.
 
-## The two claims that are easiest to get wrong
+## Authorship and review claims
 
 Preserve the qualifications on core-library authorship and human review. The
 [core-library section](#the-core-library) distinguishes the author's design from assisted
