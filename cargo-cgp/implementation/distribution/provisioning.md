@@ -32,7 +32,7 @@ breaking change, and has an installer do the toolchain setup, since
 [`cargo install` ignores a bundled `rust-toolchain.toml`](https://github.com/rust-lang/cargo/issues/11036).
 `cargo-cgp` differs by forcing the toolchain itself and by finding the compiler library at runtime.
 
-## The pinned toolchain is an internal detail
+## The pinned toolchain
 
 `cargo-cgp` forces its own nightly for the check and never asks the project to supply it, where
 `rustc_plugin`'s tools require the analyzed project to pin the same one. For a tool that mostly runs
@@ -71,7 +71,7 @@ keep them symlinks rather than copies. The front-end's `README.md` is a symlink 
 for the same reason, since its crate documentation includes the file and a package has no
 repository above it.
 
-## Provisioning: `setup` does the work, `check` only verifies
+## Provisioning and verification
 
 `check` never installs or builds anything, because a command that prints diagnostics should not
 spend minutes compiling or alter toolchains as a side effect. Having `check` repair things itself

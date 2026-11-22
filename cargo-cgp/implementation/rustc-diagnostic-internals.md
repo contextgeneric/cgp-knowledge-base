@@ -28,7 +28,7 @@ backs `Ty`'s `Display`. It is where a `Symbol` or a `Chars` chain becomes the ch
 and where the `pretty_print_const_scalar_int` function renders a `char` const literal such as `'h'`.
 It also holds `should_print_verbose`, the gate on the compiler's *internal* debug printing,
 discussed under
-[the two verbosity switches](#the-two-verbosity-switches---verbose-versus--zverbose-internals)
+[the two verbosity switches](#the-verbosity-switches)
 below.
 
 **Trait-error reporting lives in
@@ -46,7 +46,7 @@ replaces text with `_` or `...`, it is doing so at the point the string is pushe
 so the elided information never reaches the diagnostic at all, which is exactly why a text-only
 post-processor cannot recover it.
 
-## The two verbosity switches: `--verbose` versus `-Zverbose-internals`
+## The verbosity switches
 
 rustc has two distinct verbosity flags, and one is the lever `cargo-cgp` wants while the other is
 not.
@@ -76,7 +76,7 @@ injection defeats it. The first three are text elisions gated on `opts.verbose`,
 closes all three, and the emitter then cuts the third's candidate list back to rustc's length; the
 fourth is left deliberately on.
 
-### Matching generic arguments are elided to `_`
+### Elided generic arguments
 
 The similar-impl hint diffs the two traits it names and replaces every generic argument they *share*
 with `_`. This elision is the main reason for the `--verbose` injection. The diffing is done by
@@ -98,7 +98,7 @@ is what the fixture's blessed
 [`.cgp.stderr`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/checks/check-trait-failure/fields/base_area_1.cgp.stderr)
 records.
 
-### A long type is truncated and written to a file
+### Truncated long types
 
 When a type's printed form grows long, rustc does not print it inline; it writes the full form to a
 `long-type-<hash>.txt` file and shows a length-limited version in the diagnostic, ending the note
@@ -118,7 +118,7 @@ replaced by `...` and moved to the file. `--verbose` sets `opts.verbose`, so
 file. (When the type *is* diverted to a file, the UI-test harness normalizes the hash-named path
 away; see [Testing](testing.md).)
 
-### Extra impl candidates are collapsed to "and N others"
+### Collapsed impl candidates
 
 When more than nine impls could satisfy a bound, rustc prints a few and summarizes the rest. The
 cutoff is in `report_similar_impl_candidates` in `fulfillment_errors.rs`: the number of candidates
@@ -129,21 +129,21 @@ would list them all. The primary "not implemented for" line carries the failing 
 driver's emitter cuts the list back to rustc's eight and the count (`bound_candidate_list`, see
 [The driver](driver/program.md#un-eliding-the-diagnostic)), restoring the text plain rustc prints.
 
-### Internal debug printing is left off (deliberately)
+### Internal debug printing
 
 The `should_print_verbose` branches in `pretty.rs` are gated on `verbose_internals`, so `--verbose`
 leaves them off. They add disambiguator suffixes, region and inference-variable ids, and explicit
 binders without recovering any field name. Turning them on would change the shape of nearly every
 type and re-bless the whole UI suite, so make it a considered choice.
 
-## A different kind of suppression: the trait solver
+## The trait solver
 
 Not every hidden cause is a printing elision. The default solver may never compute a consumer call's
 real missing bound, and then no verbosity flag recovers it. The rule of thumb: if the cause is
 *present but compressed* in the text, `--verbose` is the lever; if it is *absent* because the solver
 stopped short, [`-Znext-solver`](driver/program.md#choosing-the-trait-solver) is.
 
-## Panic hazards: running compiler code inside the emitter
+## Panic hazards
 
 rustc calls the emitter to render a finished diagnostic, and does not expect it to drive the trait
 solver, force queries, or relate types. So the resolver lives where rustc's invariants do not cover
@@ -289,7 +289,7 @@ is re-entrant-safe against a diagnostic being emitted mid-solve. Everything else
 that can emit, relating an un-instantiated binder, leaking a variable across contexts, or listing
 the crates before the store is frozen, must be avoided or neutralized.
 
-## Finding these again, and going further
+## Finding these again
 
 Two grep patterns relocate the elision sites when a nightly bump moves them. Searching the compiler
 for `opts.verbose` (excluding `verbose_internals`) enumerates every elision gate. On the pinned

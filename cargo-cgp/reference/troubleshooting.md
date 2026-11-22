@@ -9,7 +9,7 @@ with the **exact error each prints**, what it means, and how to fix it, so an ag
 symptom to a cause quickly. It builds on the driver-level debugging tools in
 [Usage](usage.md#calling-the-driver-directly-debugging).
 
-## The moving parts, and where they can break
+## The moving parts
 
 Three things must line up for a check to run, and each is a place a failure can originate. The
 **front-end** (`cargo-cgp`) is the cargo subcommand you invoke; it locates the **driver**
@@ -34,7 +34,7 @@ cargo-cgp-driver --version
 ```
 
 If that fails, the problem is the driver or its library path, not the front-end; jump to
-[The driver cannot load the compiler library](#the-driver-cannot-load-the-compiler-library). If it
+[Compiler loading failures](#compiler-loading-failures). If it
 succeeds, run the check verbosely to see exactly how the front-end invokes the driver and where it
 stops:
 
@@ -47,7 +47,7 @@ called; an error before them is a front-end or preflight problem, and an error f
 driver or compiler problem. [Usage](usage.md#calling-the-driver-directly-debugging) covers running
 that printed command in isolation.
 
-## The command itself fails
+## Command failures
 
 The simplest failures never reach the driver. If you invoke an unknown subcommand, the front-end
 says so and lists the four it accepts:
@@ -85,9 +85,9 @@ The front end prints its own errors as cargo does: the message after `error:`, t
 cause, here the operating system's, under a `Caused by:` of its own. This case is hard to reach in
 practice: the managed preflight runs rustup first, so a machine missing cargo usually fails there
 instead, with the `rustup was not found on PATH` message in
-[the preflight section](#the-managed-preflight-rejects-the-setup).
+[the preflight section](#preflight-failures).
 
-## The front-end cannot find the driver
+## A missing driver
 
 The front-end expects the driver beside it, so a driver that is missing, or a `CARGO_CGP_DRIVER`
 override pointing at the wrong path, fails at the point the driver would be launched, but the
@@ -119,7 +119,7 @@ back to the first `cargo-cgp-driver` on `PATH`, which may be a stale one from an
 preflight message names the driver it ran and where it was found, so such a driver reads
 `the cargo-cgp-driver at /nix/profile/bin/cargo-cgp-driver (found on PATH, since none is beside cargo-cgp)`.
 
-## The driver cannot load the compiler library
+## Compiler loading failures
 
 This is the most common and most confusing failure, because the driver aborts *before* its own code
 runs and the message comes from the operating system's loader:
@@ -162,7 +162,7 @@ forces the matching nightly regardless of the directory. The `--version` line th
 success names both the `pinned-toolchain:` it needs and the `built-against-rustc:` it was compiled
 with, which is the fastest way to see which nightly a driver actually wants.
 
-## The managed preflight rejects the setup
+## Preflight failures
 
 Before a managed check, the front-end runs a read-only preflight that verifies the toolchain and the
 driver, and each failure it can repair ends with a `help` naming `cargo cgp setup` as the fix (the
@@ -239,7 +239,7 @@ deliberately running an unprovisioned build (from source, or a hand-picked toolc
 `CARGO_CGP_NO_MANAGE` to skip the preflight and trust the environment instead, but then the
 toolchain-match responsibility is yours, per the section above.
 
-## Provisioning fails
+## Provisioning failures
 
 `cargo cgp setup` manages toolchains through rustup, so on a machine without rustup it stops plainly
 after its first progress line rather than failing obscurely:
@@ -254,7 +254,7 @@ help: install rustup, or install cargo-cgp through its Nix flake, which needs no
 On such a machine, install through the [Nix flake](installation.md#installing-with-nix) instead,
 which provisions the toolchain at build time and needs no rustup.
 
-## A check hangs or its output varies between runs
+## Hangs and unstable output
 
 **Run the check on one thread to rule out rustc's parallel front end.** From `nightly-2026-11-14`,
 rustc type-checks on several threads by default
@@ -298,19 +298,19 @@ you see, then read the section for the fix.
 
 | Error fragment | Cause | Section |
 | --- | --- | --- |
-| `` no such command: `frobnicate` `` with the four commands listed | wrong invocation | [The command itself fails](#the-command-itself-fails) |
-| `` no such command: `cgp` `` | cargo-cgp not installed, or not on `PATH` | [The command itself fails](#the-command-itself-fails) |
-| `could not find Cargo.toml` | run outside a cargo package | [The command itself fails](#the-command-itself-fails) |
-| `is cargo on PATH?` | cargo not installed / not on `PATH` | [The command itself fails](#the-command-itself-fails) |
-| `failed to run the cargo-cgp-driver …` | driver missing (managed) | [The front-end cannot find the driver](#the-front-end-cannot-find-the-driver) |
-| `could not execute process` … `(never executed)` | driver path wrong (unmanaged) | [The front-end cannot find the driver](#the-front-end-cannot-find-the-driver) |
-| `error while loading shared libraries: librustc_driver-…` | library path unset, or toolchain mismatch | [The driver cannot load the compiler library](#the-driver-cannot-load-the-compiler-library) |
-| `toolchain … is not available` | pinned nightly absent | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
-| `could not run under toolchain …` | driver built against another nightly | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
-| `out of lockstep` / `was built against` | front-end and driver versions/builds differ | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
-| `could not parse the` … `--version` output | an old or foreign driver binary | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup) |
-| `rustup was not found on PATH` | no rustup for the preflight or `setup` | [The managed preflight rejects the setup](#the-managed-preflight-rejects-the-setup), [Provisioning fails](#provisioning-fails) |
-| no error: a check hangs, or its errors change between runs | a bug under rustc's parallel front end | [A check hangs or its output varies between runs](#a-check-hangs-or-its-output-varies-between-runs) |
+| `` no such command: `frobnicate` `` with the four commands listed | wrong invocation | [Command failures](#command-failures) |
+| `` no such command: `cgp` `` | cargo-cgp not installed, or not on `PATH` | [Command failures](#command-failures) |
+| `could not find Cargo.toml` | run outside a cargo package | [Command failures](#command-failures) |
+| `is cargo on PATH?` | cargo not installed / not on `PATH` | [Command failures](#command-failures) |
+| `failed to run the cargo-cgp-driver …` | driver missing (managed) | [A missing driver](#a-missing-driver) |
+| `could not execute process` … `(never executed)` | driver path wrong (unmanaged) | [A missing driver](#a-missing-driver) |
+| `error while loading shared libraries: librustc_driver-…` | library path unset, or toolchain mismatch | [Compiler loading failures](#compiler-loading-failures) |
+| `toolchain … is not available` | pinned nightly absent | [Preflight failures](#preflight-failures) |
+| `could not run under toolchain …` | driver built against another nightly | [Preflight failures](#preflight-failures) |
+| `out of lockstep` / `was built against` | front-end and driver versions/builds differ | [Preflight failures](#preflight-failures) |
+| `could not parse the` … `--version` output | an old or foreign driver binary | [Preflight failures](#preflight-failures) |
+| `rustup was not found on PATH` | no rustup for the preflight or `setup` | [Preflight failures](#preflight-failures), [Provisioning failures](#provisioning-failures) |
+| no error: a check hangs, or its errors change between runs | a bug under rustc's parallel front end | [Hangs and unstable output](#hangs-and-unstable-output) |
 
 ## Further reading
 

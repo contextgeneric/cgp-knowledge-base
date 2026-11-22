@@ -152,7 +152,7 @@ These errors keep the compiler's output because nothing in the tool starts from 
   error keeps rustc's `E0277`, which states the missing field in a `help` under the bound
   ([`cgp_fn_struct_bound_in_type`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/cgp_fn_struct_bound_in_type.rs)).
 
-## Errors that need a new class or a deeper walk
+## Errors needing new classes or walks
 
 These errors are reshaped in part or not at all, and stating their cause needs a class, a walk, or a
 reading of the compiler's state the tool does not have:

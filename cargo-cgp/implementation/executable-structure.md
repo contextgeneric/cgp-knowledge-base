@@ -16,7 +16,7 @@ carry the compiler dylib and LLVM behind every invocation, and `cargo install` c
 stable Rust. The [architecture document](architecture.md#the-crates) places the two rustc-free library
 crates the driver uses.
 
-## Wrapping cargo: the front-end
+## The front-end
 
 The front-end's main job is to run cargo with the driver installed as the compiler for the user's own
 crates: `cargo check` for a check, `cargo rustc` for an [expansion](expand-command.md). It sets
@@ -70,7 +70,7 @@ so its own `error:` lines read as part of the quote. The help and version texts 
 do, and so does an expansion. A reader that closes stdout early, as `head` does, got what it wanted,
 so the front-end then ends successfully rather than with a panic or an error.
 
-## Wrapping rustc: the driver
+## The driver
 
 Cargo invokes the driver the way `RUSTC_WORKSPACE_WRAPPER` prescribes, with the real compiler's path
 first:
@@ -94,7 +94,7 @@ cross the boundary:
   the `librustc_driver` the driver loads both belong to the nightly it embeds, whatever the project pins.
   A preflight confirms a matching driver first. `CARGO_CGP_NO_MANAGE` turns both off and uses the ambient
   compiler
-  ([why this is internal](distribution/provisioning.md#the-pinned-toolchain-is-an-internal-detail)).
+  ([why this is internal](distribution/provisioning.md#the-pinned-toolchain)).
 - **The sysroot:** `CARGO_CGP_SYSROOT` holds what `rustc --print sysroot` reports. The driver injects it
   as `--sysroot` unless the invocation carries one, because a `rustc_driver` binary outside a toolchain
   has no other way to find `std`. The two crates declare the variable's name independently, so the shared

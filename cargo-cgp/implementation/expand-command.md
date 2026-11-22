@@ -54,9 +54,9 @@ whole-crate fixed point, driven to completion before anything can look at the re
 no mode that filters by macro. No driver callback sits inside expansion, and
 `after_crate_root_parsing` runs before submodules are parsed. The only route to selectivity is
 *un*-expansion, which the tool does not do
-([the limitation](#known-limitation-every-macro-is-expanded)).
+([the limitation](#known-limitation)).
 
-## The front-end: the `expand` subcommand
+## The `expand` subcommand
 
 **It runs `cargo rustc`, not `cargo check`,** because the driver must be told which crate to expand, and
 `cargo rustc` is the one subcommand that appends rustc arguments to a *single* target's invocation:
@@ -156,7 +156,7 @@ stdout ahead of the expansion, since stdout is inherited.
 Cargo re-runs the expanded unit on each invocation, and a `cargo cgp check` in the same target
 directory afterward re-checks the crate normally.
 
-## The driver: expand mode
+## The driver's expand mode
 
 The driver strips its two flags first, since neither is rustc's, and records them as its expand
 request. The pair is the second half of the contract between the executables, alongside
@@ -204,7 +204,7 @@ than failing.
   which the `Symbol!` matcher's final `>` check rejects. Which name stays raw would then depend on
   its length.
 - **Its passes are separate whole-tree visits, and each list folds outermost-first.** The separation
-  is the [`Nil` overlap hazard](resugaring.md#the-rules-every-resugaring-follows): a visitor
+  is the [`Nil` overlap hazard](resugaring.md#resugaring-rules): a visitor
   recurses innermost-first, so one combined visitor would rewrite a `Symbol`'s terminating `Nil` to
   `Product![]` before examining the `Symbol`, and every field name would stay raw. A list's tail is
   itself a list, so folding the innermost cell first leaves `Cons<A, Product![B]>`.
@@ -232,7 +232,7 @@ The `cgp::macro_prelude::` qualifier is always stripped, as the first pass, so t
 does not compile as it stands, and no option keeps it. Other module qualifiers stay, unlike in a
 diagnostic, because in source they carry information a reader may want.
 
-## Known limitation: every macro is expanded
+## Known limitation
 
 The command expands the whole crate, so `println!` and `#[derive(Debug)]` appear expanded beside the
 CGP code. Printing only the CGP expansions would mean un-expanding the rest. Every `ExpnData`

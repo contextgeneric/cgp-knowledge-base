@@ -30,7 +30,7 @@ two can share a matcher:
 | **Output form** | a string | a string | a syntax node |
 | **May live outside `rustc_private`** | no | yes | yes |
 
-### Typed: `Ty<'tcx>` inside the resolver
+### The typed approach
 
 [`render_ty`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-driver/src/resolve/label/render_ty.rs)
 and
@@ -41,7 +41,7 @@ spelled `Cons` elsewhere is never resugared, and the rules need only describe th
 reads a `Symbol!` character exactly, from the const argument's valtree, and sees a placeholder as
 such. It must link the compiler, so its coverage comes from UI fixtures.
 
-### Text: `&str` in the rustc-free crate
+### The text approach
 
 The
 [`postprocess`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess)
@@ -62,7 +62,7 @@ rustc also
 a hazard this approach alone has. In return, each transform is a pure function, so the whole catalog
 of cases runs as library tests.
 
-### Syntax tree: `syn::Type` in the expand command
+### The syntax-tree approach
 
 [`cargo-cgp-expand`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-expand)
 resugars a whole printed crate for
@@ -85,7 +85,7 @@ These demands are specific to it:
   lines. That pass only removes whitespace inside the bodies of the macros the crate emits, keeping
   the space after a `Struct!` field's `:`, so it cannot alter meaning.
 
-## The rules every resugaring follows
+## Resugaring rules
 
 **Match exactly or decline.** An inference placeholder mid-list, a wrong terminator, or a same-named
 foreign type all leave the raw type. Declining is a normal outcome.
@@ -117,7 +117,7 @@ a first cell.
 
 Each construct below is one transform in each implementation that owns it.
 
-### `Symbol!`: the type-level string
+### `Symbol!`
 
 `Symbol!` encodes a string as a type so it can key a trait, which is how every CGP field name
 travels ([`Symbol!` reference](../../cgp/reference/macros/symbol.md)). A getter declares the fields
@@ -157,7 +157,7 @@ by `DefId` against `cgp-base-types` and reads each character out of the const ar
 the text implementation is
 [`resugar_symbol`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_symbol.rs).
 
-### `Path!`: the type-level path
+### `Path!`
 
 `Path!` encodes a routing path as a type-level list, which is what a namespace or an `open`
 statement dispatches on ([`Path!` reference](../../cgp/reference/macros/path.md)). A context that
@@ -201,7 +201,7 @@ PathCons<Symbol!("app"), PathCons<GreeterComponent, Nil>>   →   @app.GreeterCo
 A segment qualified only inside its arguments (`Wrap<a::Item>`) is an ordinary compound type, whose
 head decides. A **module-qualified** segment is rendered as written, since `Path!` parses each
 segment as a type: `PathCons<ErrorRaiserComponent, PathCons<std::io::Error, Nil>>` reads
-`@ErrorRaiserComponent.std::io::Error`. The [path strip](#the-path-strips-that-run-first) runs first
+`@ErrorRaiserComponent.std::io::Error`. The [path strip](#path-strips) runs first
 and keeps a qualifier only where it tells two types apart, so the one that reaches this pass is
 meaningful, and dropping it would make `std::io::Error` read as any other `Error`. The exception is a
 key in a code an `E0207` or `E0210` carries, `CGP-E017`, `CGP-E018`, `CGP-E019`, or `CGP-E022`, whose
@@ -235,7 +235,7 @@ error-processing crate's
 [`syntax`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/syntax)
 module, as the expand crate does, so a segment classifies alike in a diagnostic and an expansion.
 
-### `Product!` and `Sum!`: the lists
+### `Product!` and `Sum!`
 
 `Product!` and `Sum!` encode a type list and a type sum, the lists behind every field list, variant
 list, and handler pipeline ([`Product!`](../../cgp/reference/macros/product.md),
@@ -272,7 +272,7 @@ at the end of `PathCons<` is never mistaken for a list cell.
 The typed implementation is `render_ty`'s `cgp_spine`; the text implementation is
 [`resugar_lists`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/postprocess/resugar_list.rs).
 
-### `Struct!` and `Enum!`: a list of fields
+### `Struct!` and `Enum!`
 
 When every element of a list is a `Field` cell, the list is not really a list to the reader: it is
 a record or a variant set, and resugaring folds it one step further, to CGP's
@@ -341,7 +341,7 @@ module, which the text and typed passes both call: `render_struct_shape`, `rende
 disagree on a spelling. The syntax-tree pass applies the same rules to `syn` nodes, and calls the
 same writable-name check, `shape_name`.
 
-### The path strips that run first
+### Path strips
 
 A path strip is not a resugaring but must run before them, since every rule above matches bare type
 names. It also does real work of its own. rustc shortens a path only when the name is unique across

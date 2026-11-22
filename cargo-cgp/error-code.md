@@ -9,7 +9,7 @@ The hundreds digit says what a code classifies. A **`CGP-E0xx`** code names a ma
 diagnostic's headline, and a **`CGP-E1xx`** code names one dependency-tree entry: `CGP-E101` to
 `CGP-E109` for the steps of the chain, and `CGP-E110` onward for the root causes it ends at.
 
-## The scheme, and why it looks unlike a Rust code
+## The code scheme
 
 A CGP error code is the letters `CGP-E` and three digits, in square brackets at the start of the
 rewritten message:
@@ -34,14 +34,14 @@ The headline codes come in family blocks of ten, and the block says how the tool
 
 | Block | Family | How the tool recovers it |
 | --- | --- | --- |
-| `CGP-E001` to `CGP-E009` | A trait the context cannot use, and the two type mismatches | The [typed resolver](implementation/typed-resolution/overview.md), with a `root cause:` note over the chain |
-| `CGP-E010` to `CGP-E019` | Conflicting wiring, and structural mistakes | The generated items at the caret; rustc's carets show the colliding entries |
-| `CGP-E020` to `CGP-E029` | Wiring that never resolves, and the orphan rule | A walk of the lookup, or the impl at the caret |
-| `CGP-E030` to `CGP-E039` | Mistakes in what a macro was given | The generated item holding the failing token |
-| `CGP-E040` to `CGP-E049` | Wiring keys and values that do not resolve | The name's position in the wiring, read once name resolution is over |
+| `CGP-E001` to `CGP-E009` | A trait the context cannot use | The [typed resolver](implementation/typed-resolution/overview.md), with a `root cause:` note over the chain |
+| `CGP-E010` to `CGP-E019` | Conflicting wiring and structural mistakes | The generated items at the caret; rustc's carets show the colliding entries |
+| `CGP-E020` to `CGP-E029` | Endless lookups and the orphan rule | A walk of the lookup, or the impl at the caret |
+| `CGP-E030` to `CGP-E039` | Macro input mistakes | The generated item holding the failing token |
+| `CGP-E040` to `CGP-E049` | Unresolved wiring names | The name's position in the wiring, read once name resolution is over |
 | `CGP-E050` to `CGP-E059` | Extensible data | The typed resolver |
-| `CGP-E060` to `CGP-E069` | Structural mistakes, continued | The generated items at the caret |
-| `CGP-E070` to `CGP-E079` | Mistakes in what a macro was given, continued | The provider header at the caret, read once name resolution is over |
+| `CGP-E060` to `CGP-E069` | Structural mistakes | The generated items at the caret |
+| `CGP-E070` to `CGP-E079` | More macro input mistakes | The provider header at the caret, read once name resolution is over |
 
 [Diagnostic reshapes](implementation/driver/diagnostic-reshapes.md) explains how each family is
 recognized. Each entry below gives the message, the mistake, what the tool does with rustc's output,

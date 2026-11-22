@@ -8,7 +8,7 @@ anchor reads a call through a consumer or blanket trait on a context. Three sibl
 [a bound of a called generic function](#bounds-of-a-called-generic-function). They are tried seventh
 to tenth, so a failure a span-matching anchor can recover keeps that more exact recovery.
 
-## The failure shape: wiring that matches unconditionally
+## The failure shape
 
 The call-site anchor exists for a wiring that answers a whole family of component parameters with
 one generic entry, so the method is found and only the provider's deeper dependencies fail. The
@@ -111,7 +111,7 @@ reports `[CGP-E129]` with no walk, and a `help` naming the bound
 The parameter's type is built from the item's generics, since asking `type_of` for it reports a
 compiler bug into the diagnostic context the emitter holds.
 
-## Parameters by signature unification, not by convention
+## Parameters by signature unification
 
 The anchor assumes **no calling convention**, and a change must not add one. Reading "the first
 argument's `PhantomData` tag" would work for handlers, but CGP does not prescribe how a method
@@ -137,7 +137,7 @@ tuple, so collapsing `(Vec::new(), Vec::new())` to one unknown would leave the i
 hide a field its branch reads
 ([`call_site_tuple_input`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/hidden/unsatisfied-dependency/call_site_tuple_input.rs)).
 
-## Unknown parameters become rigid placeholders
+## Unknown parameters
 
 What the call does not write, the anchor does not invent. Each unconstrained parameter becomes a
 rigid placeholder, because it unifies with nothing concrete and can cross between the walk's fresh

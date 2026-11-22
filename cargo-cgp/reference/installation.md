@@ -26,7 +26,7 @@ cargo-cgp requires the pinned nightly, which `cargo cgp setup` installs (or the 
 against), and forces it only for the check, so your own project is never asked to adopt it and keeps
 whatever toolchain it already uses for its ordinary builds.
 
-## Platforms and the CGP version it reads
+## Platforms and CGP versions
 
 The tool is tested on **Linux** only. The front-end carries macOS and Windows branches (the
 dynamic-library variable, and `update`'s Windows fallback), but neither platform has been run, so

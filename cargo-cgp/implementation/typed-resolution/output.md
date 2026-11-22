@@ -105,7 +105,7 @@ The chain repeats the root cause as its own last entry, so it always ends at the
 [elided against an earlier block](../dependency-graph-rendering.md#eliding-across-blocks) keeps that
 end too, and a note with no chain names the cause in its lead. Paths render as a bare
 `@app.GreeterComponent`, and module qualifiers are stripped except where they tell two types apart,
-as [Resugaring](../resugaring.md#the-path-strips-that-run-first) describes.
+as [Resugaring](../resugaring.md#path-strips) describes.
 
 A lead is worded by why its leaf is unmet.
 [The leaf shapes](leaves.md#the-leaf-shapes) decide which leaf a bound is, and

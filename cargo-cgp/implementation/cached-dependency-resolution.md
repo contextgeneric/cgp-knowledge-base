@@ -42,7 +42,7 @@ obligation, which lies outside a leaf-rooted subtree, and a leaf is cheap to der
 non-terminal node's leaves classify against parents within its subtree, so its value is
 self-contained.
 
-## Why a node key is not automatically a complete key
+## Node keys and complete keys
 
 **The walk is not a pure function of the node, and the whole soundness argument turns on this.** The
 cycle guard cuts a branch when an obligation reappears among its ancestors, so a node's leaves
@@ -58,7 +58,7 @@ Both are no-ops in acyclic wiring, which is nearly all wiring. Keep both even so
 rely on the upstream `E0275` interception to keep cycles out, and dropping either would make it rely
 on that.
 
-### Population: cache only complete subtrees
+### Population
 
 **A subtree that a guard cut is never stored.** The cycle guard and the `MAX_DEPTH` backstop both
 truncate silently, and both depend on position, since a node deep in one walk has less depth budget
@@ -75,7 +75,7 @@ A cached node is therefore complete: every branch ended on a natural terminator,
 depended on the remaining depth budget. A cache hit can even return a fuller subtree than a fresh
 bounded walk from a deep position would.
 
-### Consultation: reuse only where no cycle would form
+### Consultation
 
 **A cached subtree is reused only when no current ancestor is in its reachable set.** Completeness
 settles depth, not cycles. If `N` was cached from a walk that never passed through `A`, its subtree

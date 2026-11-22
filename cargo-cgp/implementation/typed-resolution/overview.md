@@ -96,7 +96,7 @@ consumer trait. The tree is the obligation chain the walk descended, and it hold
 node because the walk never went through one. The `help` names the field with the type the getter
 requires. [error-code.md](../../error-code.md) catalogs the codes.
 
-## When the resolver engages, and when it declines
+## When the resolver engages
 
 A diagnostic is a candidate when it reports an **unmet obligation**: `E0271`, `E0277`, or a
 method-bounds `E0599` ("the method `…` exists … but its trait bounds were not satisfied"). The gate
@@ -146,7 +146,7 @@ this work. Every fixture the resolver reshapes exercises that assumption.
 This position is also the source of every panic risk the tool faces. A diagnostic outside
 `analysis` is still transformed under rustc's lock, and the resolver keeps the rules that path
 needs for every diagnostic.
-[rustc diagnostic internals](../rustc-diagnostic-internals.md#panic-hazards-running-compiler-code-inside-the-emitter)
+[rustc diagnostic internals](../rustc-diagnostic-internals.md#panic-hazards)
 catalogs the constraints: never force a query that emits (so `tcx.typeck` is off limits),
 instantiate a binder before relating it, and keep each `InferCtxt`'s variables to itself.
 

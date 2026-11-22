@@ -19,7 +19,7 @@ diagnostic-printing problem. Both flags are in
 [rustc diagnostic internals](../implementation/rustc-diagnostic-internals.md) maps the printing
 side.
 
-### Defeated: a cause the default trait solver never computed
+### Uncomputed causes
 
 This kind is a wiring mistake exercised by a direct consumer-method call, where the compiler reports
 only that a method's bounds are unsatisfied (`E0599`) without ever naming the failed dependency. On
@@ -32,7 +32,7 @@ since the leaf was never in the diagnostic. `cargo-cgp` defeats this by injectin
 demonstrates the recovered cause, and since the typed resolver also presents it as a `[CGP-E001]`
 headline over a `root cause:` note, it has `acceptable` quality rather than `usability`.
 
-### Defeated: a field name the printer elided a character from
+### Elided field names
 
 This kind is a field name the compiler prints with a character missing, so the name cannot be read
 back from the diagnostic. When a provider needs a field the context lacks and the context has a

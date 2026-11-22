@@ -6,7 +6,7 @@ of structured nodes for each way it reaches a cause. This layer merges the nodes
 share, and marks with `(*)` a subtree already drawn. It is a pure function over owned data, so every
 shape is unit-tested without a compiler.
 
-## Why a graph rather than a chain per cause
+## Why a graph
 
 Real wiring produces three shapes a stack of linear chains cannot show:
 

@@ -17,7 +17,7 @@ Three rules hold across the reshapes, and a new one should keep them:
 - **Keep the wording rustc-free.** A detector fills an owned model, and a `plan_*` and `*_help` pair
   in [error processing](../error-processing.md) words it, so the wording is tested without a compiler.
 
-## The stages, in order
+## The stages
 
 Each stage recognizes one class and returns a verdict: continue, drop the diagnostic, or reshape it.
 The first that does not continue decides, so the order is part of the behaviour. The stages run in

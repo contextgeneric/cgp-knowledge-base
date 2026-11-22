@@ -15,7 +15,7 @@ elsewhere:
 | Module | Holds | Documented in |
 | --- | --- | --- |
 | [`postprocess`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/postprocess) | The final text pass over each message | [Below](#the-post-processing-transforms) |
-| [`shape`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape) | `Struct!` and `Enum!` spellings, shared by the text and typed resugaring so they cannot disagree | [Resugaring](resugaring.md#struct-and-enum-a-list-of-fields) |
+| [`shape`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/shape) | `Struct!` and `Enum!` spellings, shared by the text and typed resugaring so they cannot disagree | [Resugaring](resugaring.md#struct-and-enum) |
 | [`rewrite`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/rewrite) | The wiring-message rename and `ComponentNameMap` | [Diagnostic reshapes](driver/diagnostic-reshapes.md#naming-the-traits-behind-a-component-marker) |
 | [`diagnosis`](https://github.com/contextgeneric/cargo-cgp/tree/main/crates/cargo-cgp-error-processing/src/diagnosis) | The `Resolved` model, its wording, the shape decision of a `DelegateComponent` leaf, and the plan and models of each reshape | [The transformed diagnostic](typed-resolution/output.md), [Leaves](typed-resolution/leaves.md#the-leaf-shapes), [Diagnostic reshapes](driver/diagnostic-reshapes.md) |
 | [`tree`](https://github.com/contextgeneric/cargo-cgp/blob/main/crates/cargo-cgp-error-processing/src/tree.rs) | The `cargo tree`-style renderer the graph expands into | [Dependency-graph rendering](dependency-graph-rendering.md) |
@@ -53,7 +53,7 @@ on who built the diagnostic, as the `Origin` it receives says.
 
 **A rewritten diagnostic gets the whole chain.** The tool built its sentences, so the strip gives
 every name the bare form the tool's wording uses, except a name whose qualifier
-[tells two types apart](resugaring.md#the-path-strips-that-run-first), and the resugaring tidies the
+[tells two types apart](resugaring.md#path-strips), and the resugaring tidies the
 compiler-formatted CGP types a rewrite embeds.
 
 **An untransformed diagnostic changes only where the chain recovers a CGP encoding.** The tool's job
