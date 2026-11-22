@@ -362,7 +362,7 @@ Ask people who have used CGP about concrete attempts. Useful questions include w
 first, where they stopped, what they did next, how they would describe CGP to a colleague, and what
 it failed to do that they expected. Summarize answers without attributed quotations or links to
 individual reactions, following the
-[public-repository rule](../AGENTS.md#this-repository-is-public).
+[public-repository rule](../AGENTS.md#a-public-repository).
 
 Mark supported findings as observed and link to their evidence. When a finding contradicts an
 inference, rewrite the inference rather than appending a history of the correction. Keep the scope

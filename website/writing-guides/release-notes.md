@@ -175,7 +175,7 @@ inline only, because `example-code` builds against the current `cgp`.
 - **No commit log.** Pull-request titles, refactors, test changes, and CI changes without a
   user-visible effect stay out; the release document keeps the internal ones.
 - **No pre-release.** No page names an alpha, beta, or prerelease version, or says how one behaved,
-  per the base's [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases).
+  per the base's [rule on versions](../../AGENTS.md#document-official-versions).
 - **No history of the documentation.** Where the old changelog was wrong, the page states what
   shipped, and the release document records the error.
 - **No knowledge-base links**, per the

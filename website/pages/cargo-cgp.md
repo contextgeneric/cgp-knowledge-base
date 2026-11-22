@@ -96,7 +96,7 @@ programs the pages say compile under `tests/cargo_cgp/`.
 - **The quoted output comes from `cargo-cgp`'s `main`, the v0.1.0 release the pages document,**
   captured with the source-built tool on Linux against the sibling `cgp` checkout on the release
   branch; output naming the version is quoted as `0.1.0`, per the base's
-  [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases). Once
+  [rule on versions](../../AGENTS.md#document-official-versions). Once
   v0.1.0 is tagged, every quoted command is re-run against the tagged build, together with every
   `cargo cgp check` output the site quotes on other pages.
 - **Four front-end behaviors are the pages' newest facts:** `cargo cgp --version` (quoted as

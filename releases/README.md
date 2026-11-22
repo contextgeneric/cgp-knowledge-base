@@ -17,7 +17,7 @@ says which.
 
 ## Why a release history is worth keeping
 
-The rest of this base deliberately [documents the present](../AGENTS.md#document-the-present-not-the-history):
+The rest of this base deliberately [documents the present](../AGENTS.md#document-the-present):
 a reference document describes how a construct works now, with no trace of how it got there. That rule
 keeps those documents readable, but it leaves a real gap, because CGP's public material is full of
 history that a reader cannot date from the text alone. Almost every blog post on the
@@ -133,7 +133,7 @@ renumbered to v0.8.0; the announcement drafted under the old number is documente
 
 A document exists here for every tag in [`cgp`](https://github.com/contextgeneric/cgp) that names a
 published version. Pre-release tags are test runs of a release and are not tracked, per the base's
-[rule on versions](../AGENTS.md#document-official-versions-never-pre-releases); the work in them is
+[rule on versions](../AGENTS.md#document-official-versions); the work in them is
 recorded against the release it shipped in.
 
 Every claim in these documents is verified against the tag rather than taken from a summary, because

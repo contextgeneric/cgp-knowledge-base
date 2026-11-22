@@ -368,7 +368,7 @@ Hypershell's nightly toolchain and network-bound backends; the rule is in
 
 **Quote `cargo-cgp` output from the tool built at its current source**, which is the release the site
 documents, so a pre-release on crates.io is neither quoted nor compared against, per the base's
-[rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases). Re-check the quoted
+[rule on versions](../../AGENTS.md#document-official-versions). Re-check the quoted
 output when the tool releases.
 
 **The code uses current idioms.** Where the project's source uses a form the

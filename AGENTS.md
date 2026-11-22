@@ -69,7 +69,7 @@ These changes make a section's documents stale, so each one carries the matching
 - Revise the matching `cargo-cgp/` document in the same change as a change to the tool's behavior, its
   argument handling, its environment contract, its driver, or its crate structure.
 
-## Verify against the source, not from memory
+## Verify against the source
 
 Check each claim against a source before writing it:
 
@@ -81,7 +81,7 @@ Check each claim against a source before writing it:
 - Prefer verifying against a source over reasoning about what it probably does.
 - Read the expansion snapshot when you doubt what a macro emits, rather than guessing.
 
-## Document the present, not the history
+## Document the present
 
 Documents describe CGP as it is now; only the release documents and the blog records keep history:
 
@@ -94,7 +94,7 @@ Documents describe CGP as it is now; only the release documents and the blog rec
   [website/blog/](website/blog/README.md); when you need to say what something used to be, link the
   release document that records it.
 
-## Document official versions, never pre-releases
+## Document official versions
 
 The base names only official releases:
 
@@ -104,7 +104,7 @@ The base names only official releases:
 - Yield only to an explicit user instruction to document a particular pre-release.
 - Do not apply the rule to a manifest or lockfile; they state what they must to build.
 
-## This repository is public
+## A public repository
 
 Anyone can read this base, so write each document for a public reader:
 
@@ -130,7 +130,7 @@ Link each subject to the document that owns it, in the path form each kind of ta
 - Link a construct, error class, or example to the document that owns it rather than re-explaining it.
 - Cross-link generously; prefer one explanation plus a link over two explanations that will disagree.
 
-## Project facts and CGP patterns have separate owners
+## Owners of facts and patterns
 
 Each fact has one owner, and other documents link to it instead of restating it:
 
@@ -139,7 +139,7 @@ Each fact has one owner, and other documents link to it instead of restating it:
 - Keep CGP patterns in [cgp/](cgp/README.md) and [examples/](examples/README.md); a project links to
   them instead of restating them.
 
-## Registering a document, and adding a section
+## Registering documents and sections
 
 Every document is registered where readers look for it, in the same change that adds, moves, or
 removes it:

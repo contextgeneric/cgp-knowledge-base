@@ -47,7 +47,7 @@ also wrap a detail onto an existing error:
 
 These documents describe the crates on the `cgp` repository's `main` branch as release 0.8.0, per
 the
-base's [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases). Source links point at `main`, which is the branch
+base's [rule on versions](../../AGENTS.md#document-official-versions). Source links point at `main`, which is the branch
 [sibling-projects.md](../../sibling-projects.md) records for this project.
 
 ## Building and testing

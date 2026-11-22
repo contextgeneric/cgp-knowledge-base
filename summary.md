@@ -26,7 +26,7 @@ it stale.
 - [sibling-projects.md](sibling-projects.md) — the member projects, their repositories, the revision
   of each to read, and the rules for finding a sibling locally versus linking to it.
 
-## `cgp/`: the CGP library
+## `cgp/`
 
 - [cgp/README.md](cgp/README.md) — what this member section documents, why prose beats reading the
   proc-macro source, and how its five parts divide.
@@ -35,7 +35,7 @@ it stale.
   document shape and its Syntax Grammar notation, what a concept and a guide each owe, naming the
   context shape an example wires, and reviewing a document.
 
-### `cgp/reference/`: one document per construct
+### `cgp/reference/`
 
 - [cgp/reference/README.md](cgp/reference/README.md) — the construct index: a grouped summary of
   every documented construct, the directory layout, and where a new document goes.
@@ -231,7 +231,7 @@ it stale.
 - [mref.md](cgp/reference/types/mref.md) — an owned-or-borrowed getter value.
 - [path_cons.md](cgp/reference/types/path_cons.md) — the type-level path list behind `Path!`.
 
-### `cgp/concepts/`: cross-cutting overviews
+### `cgp/concepts/`
 
 - [README.md](cgp/concepts/README.md) — the concept catalog, and how a concept differs from a
   reference document, an example, and a guide.
@@ -278,7 +278,7 @@ it stale.
 - [type-level-dsls.md](cgp/concepts/type-level-dsls.md) — encoding a small language as types and
   interpreting it at compile time.
 
-### `cgp/guides/`: which construct to choose
+### `cgp/guides/`
 
 - [README.md](cgp/guides/README.md) — the guide catalog plus a summary table condensing every
   recommendation into one cheat-sheet.
@@ -310,7 +310,7 @@ it stale.
 - [writing-providers.md](cgp/guides/writing-providers.md) — prefer `#[cgp_impl]` in consumer-trait
   shape over the inside-out provider forms.
 
-### `cgp/errors/`: post-codegen compile errors, by class
+### `cgp/errors/`
 
 - [README.md](cgp/errors/README.md) — the catalog: why these errors are hard, the hidden-versus-
   surfaced axis it is built around, what belongs here, and the index of every class.
@@ -401,7 +401,7 @@ it stale.
 - [error_codes/e0782.md](cgp/errors/error_codes/e0782.md) — a trait written bare where a type
   belongs.
 
-### `cgp/implementation/`: how the macros are built
+### `cgp/implementation/`
 
 - [README.md](cgp/implementation/README.md) — the implementation catalog plus the cross-cutting notes
   every reviewer needs: leading-generic insertion and lifetime ordering, keeping the generic kinds
@@ -414,7 +414,7 @@ it stale.
   implementation and tests, scrutinizing the codegen, keeping the views in sync, and asking when in
   doubt.
 
-#### `cgp/implementation/entrypoints/`: one document per macro
+#### `cgp/implementation/entrypoints/`
 
 - [async_trait.md](cgp/implementation/entrypoints/async_trait.md) — the `async fn` → `-> impl Future`
   rewrite.
@@ -477,7 +477,7 @@ it stale.
 - [sum.md](cgp/implementation/entrypoints/sum.md) — the `Sum!` type-level sum macro.
 - [symbol.md](cgp/implementation/entrypoints/symbol.md) — the `Symbol!` type-level string macro.
 
-#### `cgp/implementation/asts/`: one document per evaluation stack
+#### `cgp/implementation/asts/`
 
 - [attributes/README.md](cgp/implementation/asts/attributes/README.md) — what the attribute modifiers
   share: how a host collects them, and which host accepts which.
@@ -552,7 +552,7 @@ it stale.
 - [macros/parse_internal.md](cgp/implementation/macros/parse_internal.md) — building a `syn` node from
   quoted tokens with a descriptive parse error.
 
-## `examples/`: worked examples
+## `examples/`
 
 - [README.md](examples/README.md) — the example catalog with the context shape each one wires, and how
   an example differs from a reference document.
@@ -580,7 +580,7 @@ it stale.
 - [social-media-app.md](examples/social-media-app.md) — a users-and-posts CRUD backend, from coarse
   manager traits to provider bundles and namespace-grouped wiring.
 
-## `related-work/`: CGP against the ideas it resembles
+## `related-work/`
 
 - [README.md](related-work/README.md) — the catalog, why honesty is the section's whole value, how
   related work differs from the inward-looking sections, and the pointer to the website's Comparisons
@@ -617,7 +617,7 @@ it stale.
 - [type-classes.md](related-work/type-classes.md) — dictionary passing, coherence, and overlapping
   instances, and CGP as a type-class system without global coherence.
 
-## `communication-strategy/`: writing about CGP in public
+## `communication-strategy/`
 
 - [README.md](communication-strategy/README.md) — the catalog and reading order, the marketing-naive
   expert this section writes for, the voicelessness failure mode it exists to prevent, the two things
@@ -667,7 +667,7 @@ it stale.
   the wording rules, the non-uniform-review claim that is easiest to get wrong, the site's
   disclosure page, and the rule that only new pages link to it.
 
-## `cargo-cgp/`: the CGP toolchain
+## `cargo-cgp/`
 
 - [README.md](cargo-cgp/README.md) — what this member section documents, why the tool's design needs
   prose, and how its categories divide.
@@ -677,7 +677,7 @@ it stale.
 - [error-code.md](cargo-cgp/error-code.md) — the catalog of the `[CGP-Exxx]` codes the tool stamps on
   a rewritten message: what each means, what triggers it, and how to fix it.
 
-### `cargo-cgp/reference/`: using the tool
+### `cargo-cgp/reference/`
 
 - [README.md](cargo-cgp/reference/README.md) — the usage index: installing the tool, running it, and
   diagnosing a run that fails.
@@ -688,7 +688,7 @@ it stale.
 - [usage.md](cargo-cgp/reference/usage.md) — running `check` and `expand`, reading the output and its
   codes, editor integration, and the environment variables that override behavior.
 
-### `cargo-cgp/implementation/`: how the tool is built
+### `cargo-cgp/implementation/`
 
 - [README.md](cargo-cgp/implementation/README.md) — the implementation catalog and what each document
   covers.
@@ -750,7 +750,7 @@ it stale.
 - [distribution/rust-analyzer-integration.md](cargo-cgp/implementation/distribution/rust-analyzer-integration.md) — running the
   check on save, where its quick fixes appear, and the `target/cgp` directory that keeps it off cargo's build lock.
 
-### `cargo-cgp/issues/`: the gaps still open
+### `cargo-cgp/issues/`
 
 - [README.md](cargo-cgp/issues/README.md) — how pending issues are organized, and the rule that every
   issue is backed by a reproducing fixture.
@@ -760,7 +760,7 @@ it stale.
 - [usability.md](cargo-cgp/issues/usability.md) — output that carries the cause but buries it, the
   readability gaps that remain.
 
-## `website/`: the public website, page by page
+## `website/`
 
 - [website/README.md](website/README.md) — what this section records and why a public site needs an
   internal record, records against specifications, the document template, the status words, the
@@ -799,7 +799,7 @@ it stale.
   key file and script, deployment, broken-link checks, the branches that hold unpublished work, the
   `example-code/` crate, the sidebar order, and the announcement bar.
 
-### `website/pages/`: one record per standalone page and docs section
+### `website/pages/`
 
 - [README.md](website/pages/README.md) — the index of page records, and where blog, tutorial, and
   Projects pages are recorded instead.
@@ -842,7 +842,7 @@ it stale.
   official release of `cgp`, `cargo-cgp`, `cgp-serde`, and Hypershell, how each is made, and the
   document behind each.
 
-### `website/writing-guides/`: how new pages should be written
+### `website/writing-guides/`
 
 - [README.md](website/writing-guides/README.md) — what a writing guide is, the five decisions every
   guide assumes (voice, frame, name, style, and offloading), what to read before writing a page,
@@ -906,7 +906,7 @@ it stale.
   another community's tool, code verification in two languages, the index, and the placement after
   Concepts under the label *Comparisons*.
 
-### `website/blog/`: one document per published post
+### `website/blog/`
 
 - [README.md](website/blog/README.md) — how stale the posts are, the chronological catalog, the drafts
   on branches, the five breaking changes that account for the drift, and the publication conventions.
@@ -950,7 +950,7 @@ it stale.
   `incoherent-rust` branch reading CGP against the dictionary-passing and incoherent-traits discussion,
   and what it needs before it can be published.
 
-### `website/projects/`: the blueprint and one plan per project section
+### `website/projects/`
 
 - [README.md](website/projects/README.md) — the blueprint for the Projects section, partly
   published: the deep dives it replaces, the section index, the four gating conditions, the order of
@@ -971,7 +971,7 @@ it stale.
   and guides, 15 construct pages, no limitations page, the verified wiring the eyre and std records
   still need, and publication gated on the `cgp` release.
 
-### `website/tutorials/`: one document per tutorial series
+### `website/tutorials/`
 
 - [README.md](website/tutorials/README.md) — what a tutorial's teaching contract fixes, the catalog,
   and the document shape.
@@ -984,7 +984,7 @@ it stale.
   functions to higher-order providers and on to catching a mis-wiring, its two load-bearing orderings,
   and the vocabulary extension its Checking and Debugging page makes.
 
-## `releases/`: the version history
+## `releases/`
 
 - [releases/README.md](releases/README.md) — why the base keeps one historical section, its two layers
   with the website's release-notes pages, the **removal ledger** dating every renamed or deleted
@@ -1016,7 +1016,7 @@ it stale.
   paths, the `open` statement, the removal of presets, the `no_std` build and its `alloc` feature,
   the syntax and behavior changes since v0.7.0, and why it is not v0.7.1.
 
-## `projects/`: the libraries built with CGP
+## `projects/`
 
 - [projects/README.md](projects/README.md) — what qualifies as an ecosystem project (a library, a
   demonstration repository such as cgp-examples, or separate crates shipped from a member repository

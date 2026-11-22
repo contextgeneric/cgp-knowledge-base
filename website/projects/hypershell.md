@@ -43,7 +43,7 @@ A revision must respect these facts:
   re-run, so their pages describe what they print from the records without quoting uncaptured output;
   `rust-playground` says it was not run, since running it publishes a public gist.
 - **The diagnostics come from `cargo-cgp` built from source**, which is the v0.1.0 release the site
-  documents, per the base's [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases);
+  documents, per the base's [rule on versions](../../AGENTS.md#document-official-versions);
   re-check them against the tagged release.
 - **The *Try a change* results** are recorded in the example records for `hello_name`,
   `http_checksum_native`, and `bluesky_websocket`.

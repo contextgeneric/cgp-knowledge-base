@@ -9,7 +9,7 @@ CGP must disclose its substantial use of AI. Agent-written documentation, the
 [public knowledge base](https://github.com/contextgeneric/cgp-knowledge-base), and `Co-Authored-By`
 commit trailers make that use visible. A disclosure should give readers an accurate account without
 making them reconstruct it from repository history. The
-[honesty rule](../AGENTS.md#this-repository-is-public) applies to process as well as technical claims.
+[honesty rule](../AGENTS.md#a-public-repository) applies to process as well as technical claims.
 
 The author's own writing provides the model for disclosure. The
 [new-website post](../website/blog/new-website.md) describes LLM assistance with the site's design,

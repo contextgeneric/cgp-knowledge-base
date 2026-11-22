@@ -14,7 +14,7 @@ changes in the port.
 - **Derived from**: [related-work/](../../related-work/README.md), one internal document per page,
   which stays the source of truth
 - **Records**: one record, [pages/comparisons.md](../pages/comparisons.md), for the whole section, per
-  the [ported-catalog exception](../../AGENTS.md#registering-a-document-and-adding-a-section)
+  the [ported-catalog exception](../../AGENTS.md#registering-documents-and-sections)
 - **Reading**: the shared set and [the comparison pages' row](README.md#comparison-pages) of the
   reading map
 
@@ -118,7 +118,7 @@ the toolchains named in Sources, per
 ## Writing about another community's tool
 
 **Never disparage the compared tool, and assume its maintainers are reading**, per the
-[base-wide rule](../../AGENTS.md#this-repository-is-public). The internal
+[base-wide rule](../../AGENTS.md#a-public-repository). The internal
 documents faithfully record what users dislike about their tools, so three habits keep the port
 honest:
 

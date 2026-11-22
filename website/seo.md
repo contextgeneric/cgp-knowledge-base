@@ -509,7 +509,7 @@ Three decisions are taken, and two remain open:
 
 **Measurements expire**: every figure carries the export or the date it came from, and a re-check
 replaces the finding rather than appending to it, per
-[document-the-present](../AGENTS.md#document-the-present-not-the-history). **Techniques expire faster**,
+[document-the-present](../AGENTS.md#document-the-present). **Techniques expire faster**,
 so re-read a recommendation that rests on a cited study against its source before acting on it again.
 Revisit the document when a new export is taken, when a section is added to
 the site, and when a hand check on another engine disagrees with Google's data.

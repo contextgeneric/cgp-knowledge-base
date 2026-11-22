@@ -7,7 +7,7 @@ This document holds the section's external sources for audience claims and commu
 [Related-work](../related-work/README.md) holds the sources for comparisons with other technologies.
 Link general audience claims to published evidence. Summarize reactions to CGP without linking
 threads or quoting identifiable readers, following the
-[public-repository rule](../AGENTS.md#this-repository-is-public).
+[public-repository rule](../AGENTS.md#a-public-repository).
 
 Treat engagement as an imperfect signal. Small samples and limited visibility cannot establish what
 the whole community thinks, and silence does not prove a lack of interest. Distinguish measured

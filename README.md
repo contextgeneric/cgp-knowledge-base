@@ -23,7 +23,7 @@ unfinished work and known defects, which is what makes them internal in the sens
 are also readable by anyone, and the `cgp` crate's own documentation links here. The rules that
 follow from that (distil public discussion rather than citing it, never disparage another project,
 and keep out anything that would harm someone if read) are in
-[AGENTS.md](AGENTS.md#this-repository-is-public).
+[AGENTS.md](AGENTS.md#a-public-repository).
 
 ## Why this exists
 
@@ -139,7 +139,7 @@ architecture, the search strategy, and the visual design.
 ### `releases/`: the version history
 
 [releases/](releases/README.md) is the one section that deliberately looks backwards. Everywhere
-else the base [documents the present](AGENTS.md#document-the-present-not-the-history), which leaves
+else the base [documents the present](AGENTS.md#document-the-present), which leaves
 no answer to a question an agent hits constantly: this code, blog post, or book chapter uses
 `#[cgp_context]` or `cgp_preset!`; when did that exist, and what replaced it? A document per
 released version records what it introduced, what it broke, and how much of it still stands, and a

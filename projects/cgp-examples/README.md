@@ -18,7 +18,7 @@ documents treat each one as its own subproject.
 Each crate develops one scenario, and four of the five correspond to a worked example under
 [examples/](../../examples/README.md) that teaches the same patterns on its own. The crates are the
 code as it ships; the worked examples are where an agent learns the patterns, per
-[../../AGENTS.md](../../AGENTS.md#project-facts-and-cgp-patterns-have-separate-owners). The table
+[../../AGENTS.md](../../AGENTS.md#owners-of-facts-and-patterns). The table
 records, for each crate, what kind of context it wires, which blog post presents its code, and
 whether it runs. Every post in it links the repository at the crate or directory it shows. Every
 crate uses current CGP idioms, so its code is safe to copy for the patterns it shows, apart from

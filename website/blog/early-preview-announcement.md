@@ -40,7 +40,7 @@ It closes with links to its launch discussions on Reddit, Lobsters, and Hacker N
   dependencies](../../cgp/concepts/impl-side-dependencies.md).
 - **The launch discussions:** part of the reception
   [evidence.md](../../communication-strategy/evidence.md) summarizes without linking or quoting, per the
-  [public-repository rule](../../AGENTS.md#this-repository-is-public); its "verbose or
+  [public-repository rule](../../AGENTS.md#a-public-repository); its "verbose or
   over-engineered", "prior work reinvented", and "the name does not communicate" patterns appear in
   them. Revise CGP's framing from that summary.
 

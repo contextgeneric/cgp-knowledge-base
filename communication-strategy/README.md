@@ -27,7 +27,7 @@ results.
 Specific reactions to CGP are summarized without identifying the people who made them.
 [evidence.md](evidence.md) records recurring objections and unsuccessful framings, without linking
 threads or quoting identifiable readers. This follows the rule for a
-[public repository](../AGENTS.md#this-repository-is-public). Published work that is not itself a
+[public repository](../AGENTS.md#a-public-repository). Published work that is not itself a
 reaction to CGP remains citable.
 
 ## Voice and frame

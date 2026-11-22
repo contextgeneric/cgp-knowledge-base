@@ -87,7 +87,7 @@ troubleshooting page, then the two lookup pages.
   quoted output with their screen character by character, and a paraphrase reads as a version mismatch.
 - **Write against the official release the site ships with**, as already out, including commands and
   fixes that land on the tool's default branch before the tag. No page names a pre-release, per the
-  base's [rule on versions](../../AGENTS.md#document-official-versions-never-pre-releases): output
+  base's [rule on versions](../../AGENTS.md#document-official-versions): output
   naming one is quoted with the official version. Re-running every quoted command against the tagged
   release is a publication step, and a passage about behavior no build has yet carries no quoted
   output.
