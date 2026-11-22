@@ -260,7 +260,7 @@ which is how a reusable input dispatcher is packaged. The key forms, and the res
 cannot share a table with a longer key beneath it, are in the `open` section of
 [`delegate_components!`](../macros/delegate_components.md).
 
-### The legacy form: `UseInputDelegate`
+### The legacy form
 
 `UseInputDelegate<Components>` is the older, table-based dispatcher for the same job, still common
 in existing code and in the [dispatch combinators](dispatch_combinators.md):

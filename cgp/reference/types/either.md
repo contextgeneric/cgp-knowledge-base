@@ -89,7 +89,7 @@ type as its payload, a named-field variant a product of `Field` entries keyed by
 multi-field tuple variant one keyed by `Index`, and a unit variant `Nil`. Neither type is in the
 prelude; both are imported from `cgp::core::field::types`, and `Sum!` writes them for you.
 
-### Matching a sum, and what goes wrong
+### Usage and common mistakes
 
 A `match` on a sum selects a branch by depth, and its last arm is the `Void` position. By value that
 arm may be left out, since Rust treats an uninhabited payload as unreachable in a match on a value, so

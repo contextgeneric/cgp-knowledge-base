@@ -56,7 +56,7 @@ shaped or qualified `MRef` falls through to the owned form, which expects a fiel
 so `fn greeting(&self) -> cgp::core::field::types::MRef<'_, String>;` under `#[cgp_auto_getter]`
 places `'_` in a `HasField` bound and fails with ``error[E0637]: `'_` cannot be used here``.
 
-### Choosing it, and what goes wrong
+### Usage and common mistakes
 
 `MRef` is the getter return type for a value some contexts store and others build: a context wired
 to [`UseField`](../providers/use_field.md) lends its field as `MRef::Ref`, and a hand-written

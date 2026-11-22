@@ -6,7 +6,7 @@ argument that looks like an ordinary parameter rather than a getter trait declar
 This guide is the value-level counterpart to [writing providers](writing-providers.md): the same
 move from visible machinery to an ordinary-looking parameter, applied to reading a field.
 
-## Read context fields with implicit arguments, not getter traits
+## Read context fields with implicit arguments
 
 Read a value from a context field with an [`#[implicit]`](../reference/attributes/implicit.md)
 argument, in a [`#[cgp_impl]`](../reference/macros/cgp_impl.md) provider method just as in a

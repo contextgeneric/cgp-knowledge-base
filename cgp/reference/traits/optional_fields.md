@@ -37,7 +37,7 @@ conversions, and the entry-point traits `CanBuildWithDefault`, `CanFinalizeWithD
 `HasOptionalBuilder`, `ToOptional`, `SetOptional`, and `FinalizeOptional` expose them as usable
 operations.
 
-### `TransformMapDefault`: filling unset fields from `Default`
+### `TransformMapDefault`
 
 `TransformMapDefault` is the [`TransformMap`](map_type.md) natural transformation that re-wraps
 every field into `IsPresent`, supplying `Default::default()` wherever a field has no value. It is a
@@ -70,7 +70,7 @@ builder. On a core builder it is every field still `IsNothing`; a core builder w
 converts whatever its field types. On an optional builder it is every field, set or not, because a set
 field is still `IsOptional` and goes through the third impl.
 
-### `CanFinalizeWithDefault`: finalize, defaulting whatever is unset
+### `CanFinalizeWithDefault`
 
 `CanFinalizeWithDefault` finalizes a partial record into its target struct, defaulting any field
 that is not present. It is implemented for any partial value whose fields can be transformed by
@@ -124,7 +124,7 @@ whose notes stop at ``__PartialServer<IsPresent, IsNothing>: TransformMapFields<
 `__PartialServer<IsOptional, IsOptional>`. Reached through a `where` clause instead, as through
 `CanBuildWithDefault` below, rustc follows the chain and names the root cause.
 
-### `CanBuildWithDefault`: build from a source, defaulting the rest
+### `CanBuildWithDefault`
 
 `CanBuildWithDefault<Source>` constructs the target struct by copying every field of a `Source`
 record into it and defaulting every remaining field. It chains the core
@@ -164,7 +164,7 @@ above from a `Host { host: String }` fails with
 ``required for `TransformMapDefault` to implement `TransformMap<IsNothing, IsPresent, Port>` `` and
 then through `TransformMapFields`, `CanFinalizeWithDefault`, and `CanBuildWithDefault<Host>`.
 
-### `ToOptional` and `TransformOptional`: re-wrap every field as `Option`
+### `ToOptional` and `TransformOptional`
 
 `ToOptional` converts a partial record so every field is wrapped in `IsOptional`, and
 `TransformOptional` is the `TransformMap` that performs the per-field conversion. Where
@@ -207,7 +207,7 @@ again. `Context::optional_builder().to_optional()` fails with
 noting the unmet ``TransformMapFields<TransformOptional, IsOptional>`` bound. Unlike
 `TransformMapDefault`, it carries no `Default` bound, so the conversion applies to every field type.
 
-### `HasOptionalBuilder`: start an all-optional builder
+### `HasOptionalBuilder`
 
 `HasOptionalBuilder` is the entry point that hands back a fresh builder in which every field is
 already optional. It composes `HasBuilder::builder()` with `ToOptional`, so the resulting builder
@@ -233,7 +233,7 @@ This is the usual starting point for the optional-field workflow: `Context::opti
 gives a builder whose fields can be set in any order and any number of times, deferring the decision
 about which fields must ultimately be present until finalization.
 
-### `SetOptional`: set or replace an optional field
+### `SetOptional`
 
 `SetOptional<Tag>` sets the value of an optional field, optionally returning whatever value it
 replaced. It is implemented for any context whose `Tag` field is in the `IsOptional` state and stays
@@ -274,7 +274,7 @@ reports two `E0271` errors on `__PartialContext<IsNothing, IsNothing>`, one reso
 `…>::Mapper == IsOptional` and one resolving `…>::Output == __PartialContext<IsNothing, IsNothing>`,
 the second noting it found `__PartialContext<IsOptional, IsNothing>`.
 
-### `FinalizeOptional`: finalize, erroring on a genuinely missing field
+### `FinalizeOptional`
 
 `FinalizeOptional` finalizes an optional builder into its concrete struct, succeeding only if every
 field holds a value and otherwise returning an error that names a missing field. Unlike
@@ -340,7 +340,7 @@ through `UpdateField`, and neither changes a value's runtime layout beyond wrapp
 only way a partial value becomes a concrete struct; these extensions simply guarantee the
 all-present configuration is reached before it is invoked.
 
-### Choosing between the paths, and their pitfalls
+### Choosing a path
 
 Moving to this layer gives up the core builder's compile-time completeness check, which is the
 trade to weigh before reaching for it. With the core builder a missing field is a compile error; on

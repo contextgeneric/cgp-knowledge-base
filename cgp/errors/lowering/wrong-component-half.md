@@ -270,5 +270,5 @@ These fixtures pin the class, one group per shape:
   but not declared at all.
 - [`E0107`](../error_codes/e0107.md), [`E0425`](../error_codes/e0425.md), and
   [`E0207`](../error_codes/e0207.md): the Rust error codes this class is reported under.
-- [Debugging CGP compile errors](../../guides/debugging.md#grep-for-the-suspected-line-instead-of-reading-the-whole-log):
+- [Debugging CGP compile errors](../../guides/debugging.md#grep-for-the-suspected-line):
   the grep that recognizes the class by its `E0107`.

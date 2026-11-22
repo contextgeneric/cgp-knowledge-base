@@ -109,7 +109,7 @@ With `IsPresent` it is the identity, with `IsNothing` every entry becomes `()`, 
 provider, such as `TryPromoteProviders` with `Map<P> = TryPromote<P>`, rewrites a list of providers
 the same way. Because `MapFields` covers both lists, one marker applies to a product or a sum alike.
 
-### Using them, and what each rejects
+### Usage and common mistakes
 
 The three results carry different names, and reaching for the wrong one is a plain resolution error:
 `AppendProduct` and `ConcatProduct` expose `Output` while `MapFields` exposes `Mapped`, so

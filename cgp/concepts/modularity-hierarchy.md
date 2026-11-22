@@ -5,7 +5,7 @@ independent implementations of one interface than the tier below, by loosening a
 constraint at a matching cost in syntax or coupling, so the right tier is the lowest one that still
 expresses what a use case needs.
 
-## A hierarchy, not a switch
+## Gradual adoption
 
 Adopting CGP is not an all-or-nothing jump from ordinary Rust traits to fully context-generic code.
 The same operation, say serializing a value, can be expressed at several levels of modularity, and
@@ -21,7 +21,7 @@ the [modular serialization](../../examples/modular-serialization.md) example, so
 changes between tiers is the modularity technique rather than the problem. All snippets assume
 `use cgp::prelude::*;`.
 
-## What actually varies: the context and the target
+## The context and the target
 
 Two independent questions decide which tier an operation sits on, and naming them before the tiers
 makes the whole hierarchy legible: the tier numbers describe *consequences*, while these two
@@ -170,7 +170,7 @@ is chosen, that choice is global and final. This is where Rust's coherence guara
 value and also where it starts to bind: a type gets exactly one implementation of a trait, no matter
 what a particular application would prefer.
 
-## Tier 3: many implementations, one wiring per type
+## Tier 3: one provider per wired type
 
 The first CGP tier keeps the type in the `Self` position but splits the trait into a
 consumer/provider pair, so many overlapping implementations can coexist as named providers while
@@ -217,7 +217,7 @@ can be no separate wiring for a generic `Vec<T>` that would overlap it, and the
 [orphan rule](coherence.md) still applies, since `delegate_components!` for `Vec<u8>` must live in a
 crate that owns either the trait or `Vec`.
 
-### The tier holds two shapes, and only one of them is limited
+### Value contexts and application contexts
 
 **How binding that limitation is depends entirely on whether the `Self` type is a value context or
 an environmental one**, and this tier contains both, which is why it is the tier most often misread.
@@ -245,7 +245,7 @@ stored object, querying a user, or running the server, wired per application. Re
 merely "the retrofit tier" therefore undersells it substantially, and reading tier 4 as the first
 tier with per-application choice is simply wrong.
 
-## Tier 4: many implementations, one wiring per type per context
+## Tier 4: one provider per target type
 
 This tier moves the type being implemented out of `Self` and into an explicit parameter, so the
 `Self` position is always an environmental context, which lifts the orphan rule and lets each
@@ -296,7 +296,7 @@ CGP code still sits on tier 3's application shape, as [choosing a tier](#choosin
 per-type dispatch it relies on is the subject of [dispatching](dispatching.md), wired through the
 [`open` statement](../reference/macros/delegate_components.md) over [namespaces](namespaces.md).
 
-## Tier 5: many implementations, wiring per type per provider
+## Tier 5: an inner provider chosen locally
 
 The top tier lets one provider override the wiring of a nested type locally, without routing that
 choice back through the context, by taking the inner provider as a parameter, a

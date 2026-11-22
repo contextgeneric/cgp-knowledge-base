@@ -73,7 +73,7 @@ A bare `Chars` chain lacks the length, so `StaticString` is implemented for `Sym
 `cgp::core::field::types` or `cgp::core::base::types`, and the `Symbol!` macro, which is in the
 prelude, writes them for you.
 
-### Reading it, and what goes wrong
+### Usage and common mistakes
 
 `Chars` is read in errors and written through [`Symbol!`](../macros/symbol.md), preferably through
 the constructs that derive the tag from an argument or method name. A raw error names a missing

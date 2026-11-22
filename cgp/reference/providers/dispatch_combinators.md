@@ -25,7 +25,7 @@ Both halves are handler providers, so they wire into a context with
 None of these names is in the prelude. Every one of them, the value matchers included, is imported
 from `cgp::extra::dispatch`.
 
-## The matcher loop: `DispatchMatchers`
+## The matcher loop
 
 Every matcher runs its handler list through one loop, a monadic pipeline that stops at the first
 handler that matches:
@@ -129,7 +129,7 @@ pub struct DowncastAndHandle<Input, Provider = UseContext>(pub PhantomData<(Inpu
 
 The convenience matchers build the adapter list from the input enum's own variants, so no list is
 written by hand. `MatchWithFieldHandlers` and `MatchWithValueHandlers` are aliases over
-[`UseInputDelegate`](handler_combinators.md#the-legacy-form-useinputdelegate) that key on the input
+[`UseInputDelegate`](handler_combinators.md#the-legacy-form) that key on the input
 type and, for each input, derive the list from its [`HasFields`](../traits/has_fields.md):
 
 ```rust

@@ -54,7 +54,7 @@ against a `HasField<Symbol!("name")>` bound, never from stored data. Those four 
 set: `Field` is not `Clone`, `Copy`, or `Default` whatever its `Value` is. It is not in the prelude
 and is imported from `cgp::core::field::types`.
 
-### Reading it, and what goes wrong
+### Usage and common mistakes
 
 `Field` is read far more often than it is written. The derives, [`#[derive(HasFields)]`](../derives/derive_has_fields.md)
 and [`#[derive(CgpData)]`](../derives/derive_cgp_data.md), produce a type's entries, so a type the

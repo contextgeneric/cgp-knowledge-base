@@ -41,7 +41,7 @@ every longer key beneath it: `@cgp.core.error.ErrorTypeProviderComponent` alread
 in its position, so `@ComputerComponent.<Code> Code.u64` overlaps `@ComputerComponent.Eval` too, at
 `Code = Eval`. Both forms are easy to write while converting nested `UseDelegate` and
 `UseInputDelegate` tables to the
-[`open` statement](../../reference/macros/delegate_components.md#statements-open-namespace-and-for),
+[`open` statement](../../reference/macros/delegate_components.md#statements),
 by keying one code on its own beside keys for the same code, or for every code, per input.
 
 The same shape appears with an `open` header colliding with an explicit mapping, a `@`-path

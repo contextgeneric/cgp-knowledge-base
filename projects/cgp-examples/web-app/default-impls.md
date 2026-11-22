@@ -121,7 +121,7 @@ binds is final. A context that needs a different getter must use a namespace oth
 - Defaults registered two ways: by `#[default_impl]` on a provider, and by a `cgp_namespace!` block
   for a composite provider.
 - A context that wires only what the namespace leaves open; see the
-  [namespaces and prefixes guide](../../../cgp/guides/namespaces-and-prefixes.md#limitations-why-default_impl-is-for-the-basic-case)
+  [namespaces and prefixes guide](../../../cgp/guides/namespaces-and-prefixes.md#limitations-of-default_impl)
   for when this arrangement fits.
 
 ## Known issues

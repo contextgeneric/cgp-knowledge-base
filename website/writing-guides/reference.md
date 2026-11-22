@@ -256,7 +256,7 @@ generate such a construct's impls and the library's recursions consume it, so a 
 in an expansion or an error, and a page written like `#[cgp_impl]`'s reads as an instruction.
 
 The notice is an `:::info` block after the one-line summary and before *Overview*, the position and
-shape of the *Legacy — read, don't write* notice on
+shape of the notice headed *The legacy form* on
 [`#[derive_delegate]`](../../cgp/reference/attributes/derive_delegate.md). A page carries at most one:
 legacy means *superseded, prefer the replacement*; this one means *current, but not yours to write*.
 The block says three things:

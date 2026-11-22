@@ -8,7 +8,7 @@ This guide is the method-trait counterpart to
 [importing abstract types](importing-abstract-types.md), which handles a supertrait whose *type* the
 signature names.
 
-## Add supertraits with `#[extend]`, not native `:` syntax
+## Add supertraits with `#[extend]`
 
 Add a non-type supertrait, one that contributes methods, to a
 [`#[cgp_component]`](../reference/macros/cgp_component.md) trait with

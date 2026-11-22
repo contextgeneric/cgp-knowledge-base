@@ -5,7 +5,7 @@ entry at a time until it is the hardest thing in the codebase to read; this guid
 shrink it back down with path prefixes, namespaces, and per-type defaults, worked as a refactoring
 of a real application.
 
-## The problem: a wiring table that outgrows its reader
+## The problem
 
 The first thing a newcomer sees when they open an application's context module is its wiring table,
 and by the time the application does anything interesting that table is long enough to overwhelm
@@ -73,7 +73,7 @@ copy the whole block. The rest of this guide refactors this exact table down to 
 introducing one technique at a time. The three techniques compose, and each is useful on its own, so
 you can stop at whichever level of organization your application needs.
 
-## Technique 1: group components under path prefixes with `#[prefix]`
+## Technique 1: path prefixes
 
 The first move is to give each component a **path**, a dotted address like `@app.auth` or
 `@app.finance`, so that related components sort together instead of scattering through the table.
@@ -126,7 +126,7 @@ The HTTP error raiser and the API handler each get their own layer path, `@app.e
 tree (`@app.auth.types`, `@app.auth`, `@app.finance.types`, `@app.finance`, `@app.error`,
 `@app.api`), and a reader can find the auth wiring without reading the finance wiring.
 
-### Choosing prefixes for implementations you have not written yet
+### Prefixes for future implementations
 
 The prefix you choose depends less on how *this* application wires a component and more on whether a
 *different* implementation would ever wire it separately. The natural instinct is to group by the
@@ -189,7 +189,7 @@ the
 [aggregate providers](../concepts/aggregate-providers.md#aggregate-providers-behind-namespace-paths)
 concept traces why. A bundle keyed by bare names, at a leaf path, needs no `namespace` line.
 
-## Technique 2: bind providers to a namespace so the context just joins it
+## Technique 2: namespace bindings
 
 Prefixes organize the table, and bundles behind them shorten it, but every context still names each
 group it uses and every configuration needs its own set of bundles. The second technique lifts the
@@ -301,7 +301,7 @@ shared prefixes. Put the prefixes in the base namespace that describes the appli
 *structure*, and put each backend's provider choices in an inheriting namespace that describes one
 *configuration*.
 
-## Technique 3: merge several namespaces in one table with a `for` loop
+## Technique 3: merged namespaces
 
 The API handlers are the one part of the wiring that is neither a plain library provider nor a
 `#[cgp_impl]` block (each is a hand-assembled pipeline of combinators), and they describe the
@@ -355,7 +355,7 @@ loop is the natural tool for a component with a generic parameter: the API marke
 parameter of `ApiHandlerComponent`, so each looped entry lands on that component's per-type dispatch
 path.
 
-## The payoff, and supplying a path the namespace leaves open
+## The payoff and open paths
 
 The three techniques together turn the thirty-line opening table into four lines, and the difference
 is not just length: each remaining line now states a *decision* rather than a mechanical fact:
@@ -388,7 +388,7 @@ that key, and the compiler would reject the overlap. To leave a path open for a 
 route the component through the namespace but terminate the redirect on the context, not in the
 namespace.
 
-## Limitations: why `#[default_impl]` is for the basic case
+## Limitations of `#[default_impl]`
 
 `#[default_impl]` is the most convenient of these tools and also the most constrained, and knowing
 where it stops keeps you from designing around it and then hitting a wall. Its central limitation is
@@ -430,7 +430,7 @@ deferring the full wiring tables until later. When an application outgrows a sin
 affected wirings from `#[default_impl]` attributes into namespace **body** entries, which have no
 such crate restriction because the namespace's own crate writes them.
 
-## Advanced: flattening multi-provider dispatch into one table
+## Flattening multi-provider dispatch
 
 The deepest payoff of namespace paths appears when a single generic-parameter component is served by
 *several* providers depending on its parameter, and the providers live in different crates. The

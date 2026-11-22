@@ -36,7 +36,7 @@ produces happens to be, and a caller working through the trait has no way to *sa
 be." The opacity that makes return-position `impl Trait` zero-cost is exactly what hides the
 future's auto-traits behind the trait boundary.
 
-## Why spawning needs `Send`, and why you cannot ask for it
+## Why spawning needs `Send`
 
 The bound becomes load-bearing the moment the future is spawned onto a multi-threaded executor. A
 work-stealing runtime, such as the default Tokio runtime that an Axum server runs on, may migrate a

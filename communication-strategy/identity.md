@@ -137,7 +137,7 @@ The breadth line explains what else the same approach supports:
 Keep the payoff beside the mechanism. An associated type is determined by its context, so callers
 need not pass it as an independent type parameter. This does not remove all generics or bounds. The
 reasoning is in
-[impl-side dependencies](../cgp/concepts/impl-side-dependencies.md#type-dependencies-and-why-they-need-no-parameter).
+[impl-side dependencies](../cgp/concepts/impl-side-dependencies.md#type-dependencies).
 The [extensible-data](../cgp/concepts/extensible-records.md) and
 [handler](../cgp/concepts/handlers.md) documents explain the rest of the breadth claim.
 

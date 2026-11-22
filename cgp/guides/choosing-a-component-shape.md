@@ -40,7 +40,7 @@ Because both are types you define, "one wiring per type" is not a limit: when on
 enough you define a second context. Reach for a parameter only when this shape genuinely cannot
 express the case, which the two sections below identify.
 
-## Reach for a value context when the operation belongs to the data
+## Use a value context for the data's operations
 
 Put the data in `Self` when the operation really is a property of the data rather than of the
 application, such as computing a shape's area or formatting a value, or when you are adding
@@ -63,7 +63,7 @@ applications, and the [orphan rule](../concepts/coherence.md) additionally requi
 `delegate_components!` entry to live in a crate owning either the trait or the type. Choose this
 shape knowing that limit, not by inheriting it.
 
-## Move the target into a parameter when the type is not yours
+## Move a foreign target into a parameter
 
 **Add a `Value` parameter when the operation is about a type you do not own *and* different
 applications must treat it differently.** That combination is the only thing the parameter buys; if
@@ -86,7 +86,7 @@ context touches needs a wiring entry, which grows tedious and is what
 [namespaces](namespaces-and-prefixes.md) exist to shorten. And providers become slightly harder to
 read, because the value arrives as an argument rather than as `self`.
 
-## The refactoring, worked
+## A worked refactoring
 
 Promoting a self-targeted component to a parameter-targeted one is mechanical once the decision is
 made, and seeing it done shows exactly what changes. Start from the self-targeted form, wired on the

@@ -115,7 +115,7 @@ context wires for rectangles. Writing `ScaledArea<RectangleArea>` instead fixes 
 statically and bypasses the context's wiring. The
 [`UseContext`](../reference/providers/use_context.md) reference develops this example in full.
 
-## Not every generic provider is higher-order
+## Other generic providers
 
 A provider that merely has generic parameters is not a higher-order provider; it becomes one only
 when a parameter is constrained to implement a provider trait. The distinction matters because many

@@ -255,7 +255,7 @@ own attributes and carries only a generated doc line, so it has none of the reco
 attributes go too, except each field's documentation, so another derive's helper attribute does
 not reach it ([`#[derive(BuildField)]`](../derives/derive_build_field.md)).
 
-### Using the family, and where it stops
+### Usage and limits
 
 The builder family is for code that cannot name the record it builds, and concrete code that can is
 better served by plain Rust. A struct literal already checks completeness and generates nothing, a

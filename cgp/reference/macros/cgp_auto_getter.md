@@ -80,7 +80,7 @@ mutable mirror: `&mut T`, `&mut str` (a `String` field, via `.as_mut()`), `&mut 
 implementing `AsMut<[T]>`, via `.as_mut()`), `Option<&mut T>` (via `.as_mut()`), and
 `Option<&mut str>` (via `.as_deref_mut()`).
 
-### Mutability follows the receiver
+### Mutability
 
 A getter takes its access mode from the receiver, not from its return type. A `&mut self` getter
 reads through `get_field_mut` and applies the mutable conversion, and a `&self` getter reads through

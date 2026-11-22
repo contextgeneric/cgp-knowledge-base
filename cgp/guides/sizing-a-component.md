@@ -23,7 +23,7 @@ stand for a deployment or a test harness. Every component is self-targeted; noth
 target parameter. The shapes themselves are the subject of
 [choosing a component's shape](choosing-a-component-shape.md).
 
-## Group the items one provider choice decides together
+## Group items by provider choice
 
 **A component is the unit of wiring, so the question to ask is not "how many methods?" but "how many
 independent choices?"** Everything inside one component is answered by one provider, so two items in
@@ -216,7 +216,7 @@ sign that one component is carrying two decisions. Splitting `Angle` out with
 [`#[cgp_type]`](../reference/macros/cgp_type.md) and `rotate` into its own component lets an
 area-only context ignore both entirely.
 
-## The entity trait is the shape you will reach for anyway
+## The entity trait
 
 **A trait grouping every operation of an entity is the natural design for anyone with an
 object-oriented background, and it is worth being honest that the recommendation here cuts against a
@@ -237,7 +237,7 @@ design. That is a real outcome and not a failure: it is tier 2 of the
 [modularity hierarchy](../concepts/modularity-hierarchy.md), one implementation per type, chosen
 deliberately rather than settled for.
 
-## Split an existing trait along the axis its contexts differ on
+## Split a trait where its contexts differ
 
 **When a component has grown past one decision and it matters, do not redesign it in the abstract;
 split it along the axis on which the contexts you actually want differ.** A split only pays where it

@@ -7,7 +7,7 @@ error back to its cause. The fastest path, though, is usually not to trace it by
 hand techniques in this guide as the fallback for when it is unavailable or leaves an error
 unrewritten.
 
-## Why CGP errors are shaped the way they are
+## The shape of CGP errors
 
 The first thing to internalize is that CGP wiring is resolved *lazily*, so a single missing or wrong
 entry does not error at the entry; it errors at every place that transitively needs it. A context
@@ -83,7 +83,7 @@ file is how you recover *which* path or *which* context the error is really abou
 is frequently the one segment that reveals the mistake, as when a dependency's context parameter
 turns out to be a `PathCons<..>` path rather than the real context.
 
-## Grep for the suspected line instead of reading the whole log
+## Grep for the suspected line
 
 When you already suspect what went wrong, grep the captured error output for the one line that would
 confirm it rather than reading the cascade top to bottom. A CGP failure routinely runs to hundreds
@@ -112,7 +112,7 @@ recovered without scrolling. From the headlines alone you know whether you face 
 (`E0277`/`E0599`), a coherence conflict (`E0119`), a cycle (`E0275`), an orphan violation (`E0210`),
 an unconstrained generic (`E0207`), a name-resolution failure (`E0576`/`E0433`/`E0425`), or a
 mistake in how a CGP definition names its dependencies (`E0107`/`E0220`) or a wiring entry its key
-(`E0782`), and the [decoder below](#a-decoder-for-the-errors-you-will-actually-see) says what each
+(`E0782`), and the [decoder below](#common-errors-and-their-causes) says what each
 means. Pair it with the tail of the file (`tail -n 3`), which shows the error count and any
 `the full name for the type has been written to '…long-type-….txt'` note telling you a cause is
 hiding behind an elided `...`.
@@ -151,7 +151,7 @@ on a bare consumer trait) on a concrete context, with no `CanUseComponent`/`IsPr
 beneath it, you are looking at a [hidden dependency](../errors/hidden/unsatisfied-dependency.md):
 the root cause is *absent from the output*, not merely far down it, so no grep can find it. (The
 same `E0599` on `&__Context__` is an undeclared dependency instead, whose trait the `help:` names.) Do not keep searching;
-[promote the error with a check](#move-the-error-to-where-the-mistake-is-with-checks) and re-run,
+[promote the error with a check](#surface-the-mistake-with-checks) and re-run,
 which turns it into a surfaced `E0277` whose leaf the greps above do find.
 
 Spawn a sub-agent instead of grepping when the search will not converge. Grep is the right tool when
@@ -164,7 +164,7 @@ an elided `...` that forces you to cross-reference the `long-type-….txt` file 
 whether you know what you are looking for: a targeted question is a grep, an open-ended read is a
 delegation.
 
-## Move the error to where the mistake is with checks
+## Surface the mistake with checks
 
 Because a lazy failure surfaces far from its cause, the most reliable first move is to force the
 check *at the wiring site* with [`check_components!`](../reference/macros/check_components.md). A
@@ -249,7 +249,7 @@ useful. The same approach applies to a context that joins a namespace *and* adds
 reduce the context to just the `namespace N;` join first to confirm the namespace alone resolves,
 then add the `for` loops and overrides back one at a time to find which addition conflicts.
 
-## A decoder for the errors you will actually see
+## Common errors and their causes
 
 A handful of specific compiler errors recur in CGP code, and each maps to a small set of causes. Use
 this as a lookup once you have the error code and the trait it names.

@@ -72,7 +72,7 @@ different tables, and the entry it reaches may redirect again. Neither `PathCons
 is in the prelude: `PathCons` is imported from `cgp::core::base::types` and `ConcatPath` from
 `cgp::core::base::traits`, and the `Path!` macro writes the type for you.
 
-### Reading it, and what goes wrong
+### Usage and common mistakes
 
 A path is read in expansions, left to right, one step per segment: a `Symbol` for a lowercase name
 and the named type for a capitalized one. It is written through [`Path!`](../macros/path.md) when one

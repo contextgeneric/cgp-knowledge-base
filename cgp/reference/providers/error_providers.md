@@ -38,7 +38,7 @@ The seven providers fall into three groups:
 | `DebugError` | both | any `Debug` value | formats with `{:?}` and forwards as a `String` |
 | `DisplayError` | both | any `Display` value | formats with `to_string()` and forwards as a `String` |
 
-### `RaiseFrom`: convert through `From`
+### `RaiseFrom`
 
 `RaiseFrom` is the `ErrorRaiser` provider that raises a source error by converting it into the
 context's error type with the standard `From` trait. It implements `ErrorRaiser<Context, E>` for any
@@ -65,7 +65,7 @@ at the check: on a context whose error is `String`, raising a `ParseIntError` th
 ``error[E0277]: the trait bound `RaiseFrom: ErrorRaiser<App, ParseIntError>` is not satisfied`` and
 ``the trait bound `String: From<ParseIntError>` is not satisfied``.
 
-### `ReturnError`: the source is already the abstract error
+### `ReturnError`
 
 `ReturnError` is the `ErrorRaiser` provider for the case where the source error *is* the context's
 abstract error, so raising is the identity. It implements `ErrorRaiser<Context, E>` only when the
@@ -88,7 +88,7 @@ returns its argument untouched. A context uses this when generic code raises a v
 of the context's chosen error type. `RaiseFrom` would also work there, through the standard library's
 reflexive `impl<T> From<T> for T`; `ReturnError` states the intent and needs no `From` bound.
 
-### `RaiseInfallible`: absorb an impossible error
+### `RaiseInfallible`
 
 `RaiseInfallible` is the `ErrorRaiser` provider for `core::convert::Infallible`, the error type that
 can never be constructed. It implements `ErrorRaiser<Context, Infallible>` for any context with an
@@ -110,7 +110,7 @@ Since an `Infallible` value cannot exist, the empty `match` is total and the fun
 actually called at runtime. This provider lets generic code that is parameterized over a fallible
 operation be wired uniformly even when the operation chosen for a given context cannot fail.
 
-### `DiscardDetail`: wrap by ignoring the detail
+### `DiscardDetail`
 
 `DiscardDetail` is the `ErrorWrapper` provider that throws away whatever detail is attached and
 returns the error unchanged. It implements `ErrorWrapper<Context, Detail>` for any context and any
@@ -132,7 +132,7 @@ This satisfies the `CanWrapError` trait without actually enriching the error, wh
 context's error type cannot carry extra context, or when the wrapping detail is deliberately not
 retained. It is the wrapping counterpart to a no-op: the error propagates as-is.
 
-### `PanicOnError`: abort instead of producing an error
+### `PanicOnError`
 
 `PanicOnError` is the `ErrorRaiser` provider that panics with the source error's debug
 representation rather than returning an abstract error. It implements `ErrorRaiser<Context, E>` for
@@ -157,7 +157,7 @@ rather than be handled, such as tests or fail-fast tooling. The context still wi
 since the bound requires `HasErrorType`; the panic message is the source's `Debug` output, so a
 `String` source `"unrecoverable"` panics with `"\"unrecoverable\""`.
 
-### `DebugError` and `DisplayError`: format through a string
+### `DebugError` and `DisplayError`
 
 `DebugError` and `DisplayError` implement *both* error components by redirecting through the
 context's string-based error handling. Each formats the source error or detail into a `String` and

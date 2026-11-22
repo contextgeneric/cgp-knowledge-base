@@ -58,7 +58,7 @@ The second is that **two types have to agree**. A transaction type only means an
 database, so the operation that opens one and the operation that commits it must be talking about
 the same transaction. An inferred parameter cannot express that, because each impl infers its own.
 
-## Do not answer either condition with a trait generic
+## Avoid a trait generic
 
 **Declaring the type as a generic parameter on the trait is the form to avoid, and it is what
 vanilla Rust leaves you with.** A generic on a [`#[cgp_fn]`](../reference/macros/cgp_fn.md) goes
@@ -188,7 +188,7 @@ fails its [check](../reference/macros/check_components.md) with `E0271`, reporte
 and naming both types. Under `#[impl_generics]` the two could never disagree, because there was only
 ever one of them; here the agreement is stated and verified rather than assumed.
 
-## Four things that bite
+## Pitfalls
 
 Four details are easy to get wrong, and three of them are about naming rather than design.
 

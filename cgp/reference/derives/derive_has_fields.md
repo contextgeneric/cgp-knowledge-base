@@ -55,7 +55,7 @@ is treated specially: its `Fields` is the inner type directly, not wrapped in a 
 and a unit struct is the empty case, whose `Fields` is `Nil`. Applying the derive to anything other
 than a struct or enum fails with `expect body to be either a struct or enum`.
 
-### Every variant shape is accepted
+### Variant shapes
 
 **`HasFields` is the one derive in the extensible-data family that places no restriction on an
 enum's variant shapes.** The derives that *deconstruct* an enum

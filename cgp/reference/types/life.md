@@ -51,7 +51,7 @@ so the provider's dependency reads the same way it would for a type parameter. T
 its blanket impl, and every impl that satisfies it agree on the same `(Life<'a>, T)` shape, which is
 what lets a borrowing component be wired and checked like any other.
 
-### Writing it, and what goes wrong
+### Usage and common mistakes
 
 A reader writes `Life` in a check and nowhere else. A `check_components!` entry names a component's
 parameters in the form the marker records them, so a lifetime component is checked as

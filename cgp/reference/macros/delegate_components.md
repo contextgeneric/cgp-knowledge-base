@@ -40,7 +40,7 @@ The parser couples none of the three choices, so every operator accepts every ke
 combinations are useful, and each subsection below says which. Treating the grammar as a menu is how
 a table ends up with an entry that expands correctly and resolves to nothing.
 
-### The table header: target, `new`, and generics
+### The table header
 
 The simplest table names a target type and lists `Key: Value` entries in braces. The target is the
 context, or an [aggregate provider](../../concepts/aggregate-providers.md), whose table is being
@@ -76,7 +76,7 @@ A leading `<...>` generic list makes the whole table generic, so one table wires
 types. `delegate_components! { <T> MyContext<T> { ... } }` wires every `MyContext<T>`, and the list
 is threaded onto every impl the block generates.
 
-### Operators: `:`, `->`, and `=>`
+### Operators
 
 The operator decides what an entry's `Delegate` resolves to.
 
@@ -132,7 +132,7 @@ mechanism behind the path-rewriting entries described under [`cgp_namespace!`](c
 The redirect operator also explains the `open` statement: `open AreaCalculatorComponent;` generates
 the same impl as `AreaCalculatorComponent => @AreaCalculatorComponent,`.
 
-### Keys: a single name, a list, or a path
+### Keys
 
 A key takes one of three forms. A single key and a path key may each carry their own leading generic
 list, which merges with the table's. A list key carries none of its own, but each of its elements is
@@ -209,7 +209,7 @@ per combination.
 Every bracketed and braced list, including the list key and `open { … }`, also parses when empty. An
 empty list produces no entries and no error.
 
-### Values: a provider type, or a nested table
+### Values
 
 The value of a `:` or `->` mapping is normally a type: the provider, or the table being forwarded
 to. One further form exists, and it is legacy.
@@ -250,7 +250,7 @@ to. One further form exists, and it is legacy.
 >
 > The nested-table value, the `UseDelegate` provider, and `#[derive_delegate]` together make up the legacy dispatch mechanism. The `open` statement gives the same per-type dispatch without a separate inner table or a wrapper, and is preferred for new code. The nested form remains for compatibility and is expected to be deprecated once `open` is shown to cover every dispatch case.
 
-### Statements: `open`, `namespace`, and `for`
+### Statements
 
 A statement generates entries without being written as a `Key OP Value` mapping, and every statement
 must come before the first mapping. The ordering is a parse rule, so a statement written after a
@@ -372,7 +372,7 @@ The block is still one table. Every line lowers to the same `DelegateComponent` 
 impl pair; the syntaxes differ only in how many entries a line produces and what each entry's
 `Delegate` is.
 
-### Attributes are rejected
+### Attributes
 
 The macro accepts no attributes anywhere: not on the table, on a key, on a key inside a `for` loop,
 or on a key inside a nested `UseDelegate<new Inner { … }>` value. It rejects each with a spanned
@@ -509,7 +509,7 @@ an unsized params tuple such as `(Life<'a>, str)`, still resolves through the ta
 Every other form lowers to the same pair, including the three statements. What a form changes is how
 many pairs one line produces and what the `Delegate` type is, as the rest of this section shows.
 
-### List keys repeat the pair per name
+### List keys
 
 A list key repeats the pair once per element. The table:
 
@@ -526,7 +526,7 @@ expands as if each element were written on its own line, giving three `DelegateC
 (`FooComponent` and `BarComponent` to `FooBarProvider`, `BazComponent` to `BazProvider`) and their
 three `IsProviderFor` impls.
 
-### Direct delegation projects the value's own entry
+### Direct delegation
 
 A `->` mapping keeps the pair but makes the `Delegate` a projection through the value's table, and
 adds the bound that makes the projection well-formed. From `Index<1> -> FooComponents`:
@@ -553,7 +553,7 @@ where
 {}
 ```
 
-### Redirection wires a `RedirectLookup`
+### Redirection
 
 A `=>` mapping sets the `Delegate` to a [`RedirectLookup`](../providers/redirect_lookup.md) over the
 table type and the path. Against a plain key the path is complete, so
@@ -563,7 +563,7 @@ the shared `__Wildcard__` parameter. So `@cgp.core.error => @app` maps the key p
 `PathCons<"cgp", PathCons<"core", PathCons<"error", __Wildcard__>>>` onto the value prefix
 `PathCons<"app", __Wildcard__>`, rewriting one prefix into the other and passing the rest through.
 
-### The nested-table value lifts an inner table out
+### Nested-table values
 
 A nested-table value expands in two parts: the inner table is lifted into its own table definition,
 and the outer entry is wired to the wrapper over the inner table's type. The earlier `MyApp` example
@@ -591,7 +591,7 @@ Because the inner value was written with `new`, the macro also declares
 [`UseDelegate`](../providers/use_delegate.md) describes that inner lookup. This is the legacy form,
 and the `open` expansion below is its modern equivalent.
 
-### `open` expands to a redirect plus wildcard-tailed entries
+### The `open` statement
 
 The `open` statement expands each listed component to a redirect entry, and the per-value mappings
 are stored on the context itself. From:
@@ -659,7 +659,7 @@ Because the tail after the last written segment is always a wildcard, a key's im
 longer key sharing its segments. That is why a one-segment key and a two-segment key beneath it
 cannot share a table.
 
-### Path groups expand to the cartesian product
+### Path groups
 
 A grouped path key expands to one impl pair per combination.
 `@app.[FooProviderComponent, BarProviderComponent].[u64, String]: DummyImpl` emits four
@@ -681,7 +681,7 @@ A braced group behaves the same way, except that its alternatives are whole tail
 different lengths. The lowercase `app` segment is a `Symbol!` string in every case, per
 [`Path!`](path.md).
 
-### `namespace` and `for` expand to namespace-bounded impls
+### `namespace` and `for`
 
 The two namespace statements share one lowering. Both build an impl generic over a `__Key__` and a
 `__Value__`, bounded on the namespace trait with the table type and a `Delegate = __Value__`

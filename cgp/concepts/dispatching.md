@@ -6,7 +6,7 @@ and each field of a record is produced by its own handler.
 
 This page is about dispatching on the *value* of extensible data. Choosing a provider per *type*
 through wiring, with the `open` statement of
-[`delegate_components!`](../reference/macros/delegate_components.md#statements-open-namespace-and-for)
+[`delegate_components!`](../reference/macros/delegate_components.md#statements)
 or the legacy [`UseDelegate`](../reference/providers/use_delegate.md) tables, is a different
 mechanism, covered by the [dispatching per type](../guides/dispatching-per-type.md) guide. The two
 often meet: a context can wire an enum type to one of the matchers below through `open`.

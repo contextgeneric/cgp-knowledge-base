@@ -33,7 +33,7 @@ at all when they are abstract types: the layers that do not touch a scalar never
 is why abstract types are what let generic code accumulate type dependencies without its signatures
 growing: the count of things a context decides can rise freely, because deciding is not passing. The
 mechanism is
-[impl-side dependencies](impl-side-dependencies.md#type-dependencies-and-why-they-need-no-parameter)
+[impl-side dependencies](impl-side-dependencies.md#type-dependencies)
 applied to types, and the choice between an abstract type and a parameter is worked out in
 [naming a type dependency](../guides/naming-a-type-dependency.md).
 
@@ -123,7 +123,7 @@ areas does, via its `HasScalarType` wiring, and switching the context's `UseType
 `UseType<f64>` changes the scalar for every shape at once. The same arrangement is how CGP shares an
 error type across an entire application, which is the canonical example.
 
-## The canonical example: `HasErrorType`
+## A shared error type
 
 CGP's most-used abstract type is [`HasErrorType`](../reference/components/has_error_type.md), which
 supplies one `Error` type that an entire context's code agrees on. It is defined with `#[cgp_type]`

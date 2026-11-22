@@ -78,7 +78,7 @@ of [`PathCons`](path_cons.md) cells ends in `Nil`. It is also the shape of a uni
 derives `HasFields`, and `product![]` is the `Nil` value. Neither type is in the prelude; both are
 imported from `cgp::core::field::types`, and `Product!` writes them for you.
 
-### Reading and writing them, and what goes wrong
+### Usage and common mistakes
 
 The cells are read in expansions and written through [`Product!`](../macros/product.md), since the
 macro builds the same chain and a hand-written one is longer and harder to change. A struct's shape

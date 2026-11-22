@@ -4,7 +4,7 @@ An aggregate provider is a zero-sized provider whose implementation is a delegat
 than a method body: it dispatches each component to a sub-provider, so a group of component wirings
 can be bundled once and reused by many contexts as a single unit.
 
-## Wiring a table that is not a context
+## Wiring an aggregate provider
 
 The [`delegate_components!`](../reference/macros/delegate_components.md) macro usually defines the
 wiring of a concrete context, the type a caller holds and invokes methods on. But its target need
@@ -48,7 +48,7 @@ same benefit a [namespace](namespaces.md) gives, reached by a lighter mechanism:
 provider is delegated to explicitly, component by component, rather than joined and inherited by
 path.
 
-## A provider, not a context
+## Aggregates as providers
 
 The defining property of an aggregate provider, and the one that governs how it is checked, is that
 it is a **provider**, occupying the delegate position in a wiring, and is *never its own context*.
@@ -92,7 +92,7 @@ bundles deep still propagates back to the context where the component is finally
 than vanishing at a bundle boundary. Layering bundles this way is how a base set of behaviors is
 extended or specialized without rewriting the base.
 
-## Why the context-side check asks the wrong question
+## Checking an aggregate as a context
 
 An aggregate provider must be wired with plain
 [`delegate_components!`](../reference/macros/delegate_components.md), never

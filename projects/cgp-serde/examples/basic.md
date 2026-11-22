@@ -101,7 +101,7 @@ let deserialized: Payload = context
 ```
 
 In this handler the `Code` is a selector and the input is the target, per the
-[modularity hierarchy](../../../cgp/concepts/modularity-hierarchy.md#what-actually-varies-the-context-and-the-target).
+[modularity hierarchy](../../../cgp/concepts/modularity-hierarchy.md#the-context-and-the-target).
 The generic `<T> DeserializeJson<T>` entry sends every target type to one provider, and the
 deserializing call passes a `&String`, which
 [`DeserializeFromJsonString`](../reference/json.md#deserializefromjsonstring) accepts because it

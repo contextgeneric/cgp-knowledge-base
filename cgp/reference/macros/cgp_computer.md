@@ -108,7 +108,7 @@ the bundle, as this table shows:
 | `async`, returns a value | `AsyncComputer` | `PromoteAsyncComputer<Self>` |
 | `async`, returns `Result<T, E>` | `AsyncComputer` | `PromoteHandler<Self>` |
 
-### The synchronous, value-returning case
+### Returning a plain value
 
 A synchronous function returning a plain value implements [`Computer`](../components/computer.md).
 Given:

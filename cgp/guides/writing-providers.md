@@ -8,7 +8,7 @@ This guide pairs with [declaring a provider's dependencies](declaring-dependenci
 [reading its context's fields](reading-context-fields.md), which cover what goes inside the provider
 once its header is written this way.
 
-## Write providers with `#[cgp_impl]`, not the raw provider forms
+## Write providers with `#[cgp_impl]`
 
 Write a provider with [`#[cgp_impl]`](../reference/macros/cgp_impl.md), which keeps `self`, `Self`,
 and the consumer method signatures, rather than with the lower-level

@@ -92,7 +92,7 @@ A method without a return type is treated as returning `()`:
 fn run(&self) -> impl ::core::future::Future<Output = ()>;
 ```
 
-### A default body becomes the future
+### Default bodies
 
 A method with a default body keeps it, wrapped in `async move { … }`, so the body is the future the
 method returns, as the body of an `async fn` is. Each by-value parameter bound to a plain name is
@@ -117,7 +117,7 @@ so a value the body does not use is dropped when the method returns, earlier tha
 would drop it; give a `_` or destructured parameter a name (`_guard`) to keep it alive until the
 future completes.
 
-### Items other than traits pass through
+### Items other than traits
 
 The macro rewrites only trait definitions and returns any other item, most importantly an `impl`
 block, unchanged. This is what lets it compose with the macros that generate both a trait and its

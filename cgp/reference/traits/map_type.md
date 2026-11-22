@@ -122,7 +122,7 @@ the list, after first recursing into the rest of the list, `TransformMapFields` 
 under `TargetMap`. The result type therefore has every field re-marked to `TargetMap`, with the
 values transformed accordingly.
 
-### Calling it, and what goes wrong
+### Usage and common mistakes
 
 `transform_map_fields` takes no type arguments, so something must fix `Transform` and `TargetMap`.
 Inside generic code a `where` clause does, and the method is called bare; at a concrete call site

@@ -52,7 +52,7 @@ no bounds check and no runtime indexing, and an out-of-range index is a type err
 panic: `Index<5>` on a three-field struct has no matching `HasField` impl. `Index` is not in the
 prelude; it is imported from `cgp::core::field::types`.
 
-### Writing it, and what goes wrong
+### Usage and common mistakes
 
 `Index<N>` is the tag for a tuple position and a [`Symbol!`](../macros/symbol.md) the tag for a named
 field, and the derive generates the right one for each, so `Index` is written by hand only to tag a

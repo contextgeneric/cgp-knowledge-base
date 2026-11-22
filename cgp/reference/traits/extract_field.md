@@ -203,7 +203,7 @@ help line naming the trait to import. And comparing a whole extraction result,
 with `E0369` (``binary operation `==` cannot be applied to type `Result<Circle, __PartialShape<IsVoid, IsPresent>>` ``)
 and `E0277` (``doesn't implement `Debug` ``), because the companions carry none of the enum's derives.
 
-### Using the family, and where it stops
+### Usage and limits
 
 The family is for code that handles one variant each independently, or that cannot name the enum; a
 concrete `match` is shorter, clearer, already exhaustive, and generates nothing, and `matches!` or

@@ -8,7 +8,7 @@ This guide connects directly to
 [organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md), which develops the
 namespace side of the choice in depth.
 
-## Dispatch per type with `open` and namespaces, not `UseDelegate`
+## Dispatch per type with `open`
 
 Route a generic-parameter component to a different provider per type with the
 [`open` statement](../reference/macros/delegate_components.md) or a
@@ -58,11 +58,11 @@ separate type. Reach for a [namespace](namespaces-and-prefixes.md) when a reusab
 dispatch table is worth sharing across contexts, or when a single generic component is served by
 several providers whose per-type entries you want to merge into one flat table.
 
-## Dispatch on a later parameter with a longer path key, not `UseInputDelegate`
+## Dispatch on a later parameter
 
 Dispatch on a component's second or later type parameter with the same `open` statement, writing a
 path key with one segment per parameter, rather than the legacy
-[`UseInputDelegate`](../reference/providers/handler_combinators.md#the-legacy-form-useinputdelegate)
+[`UseInputDelegate`](../reference/providers/handler_combinators.md#the-legacy-form)
 table. The redirect appends every type parameter of the consumer trait to the path, so for
 `CanCompute<Code, Input>` the lookup follows `@ComputerComponent.Code.Input`, and a key whose first
 segment is a per-entry generic ignores the `Code` and dispatches on the input. Written the legacy

@@ -75,7 +75,7 @@ a line that reads like a `use` statement. The dependency lands on the impl, hidd
 uses the trait. This is the same injection as a hand-written `where Self: HasName`, dressed to match
 a programmer's existing intuition.
 
-## Value dependencies, not just trait dependencies
+## Value dependencies
 
 Impl-side dependencies inject values as readily as they inject trait implementations, through the
 same `where`-clause mechanism keyed on fields instead of traits. A provider that needs a `name`
@@ -93,7 +93,7 @@ familiar-looking code. That value-injection model, where providers look like fun
 arguments sourced from context fields, is the subject of
 [implicit arguments](implicit-arguments.md).
 
-## Type dependencies, and why they need no parameter
+## Type dependencies
 
 The injection reaches *types* as well, and this is where it buys the most, because the alternative
 it displaces is not a leaked bound but a leaked **parameter**. A provider that needs a type it does
