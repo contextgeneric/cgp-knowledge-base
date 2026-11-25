@@ -1,6 +1,6 @@
 # Using an incoherent, dictionary-passing style Rust today
 
-An unpublished post of about 9,600 words reading CGP against the Rust language-design discussion of
+An unpublished post of about 9,300 words reading CGP against the Rust language-design discussion of
 dictionary-passing style, incoherent traits, and context and capabilities, and arguing that CGP is a
 working implementation strategy for a substantial fragment of those designs, on stable Rust today at a
 stated cost.
@@ -97,12 +97,19 @@ environmental contexts, and `App` is an application context, per
   valuable content for this audience, which is mapping the boundary.
 - **Publication mechanics.** The front matter has only `authors: [soares]`: it needs an explicit `slug`,
   a `tags` entry, `deepdive`, and a written `description`. The `<!--truncate-->` marker is in place. The conventions are in [README.md](README.md#publication-conventions).
+- **The nightly crate merges with it.** `example-code-nightly` and its CI job in `test-deploy.yaml` exist only
+  on the post's branch, so the merge into `main` carries them, and
+  [site.md](../site.md#the-example-code-crate) then describes the crate beside `example-code`.
 - **A last currency check** of the discussion before publication, since the project goal and the
   authors' blogs may move again.
 
 The post's CGP snippets compile in the website's
-[`example-code/tests/blog/incoherent_rust_today.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/blog/incoherent_rust_today.rs),
-with its rejected snippet as a compile-fail fixture.
+[`example-code/tests/blog/incoherent_rust_today.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/blog/incoherent_rust_today.rs).
+The four sections that use the `Name` component keep Boxy's associated constant, whose `RealName`
+calls `core::any::type_name` and so needs nightly's `const_type_name` feature; the post says so, and
+they compile in
+[`example-code-nightly/tests/blog/incoherent_rust_today.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code-nightly/tests/blog/incoherent_rust_today.rs),
+with the rejected struct-binding snippet as a compile-fail fixture there.
 
 ## Maintaining it
 
