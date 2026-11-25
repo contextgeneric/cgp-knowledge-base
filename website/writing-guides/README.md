@@ -63,7 +63,7 @@ Every blog post follows the site's file and front-matter conventions:
 - Name a blog post `blog/<YYYY-MM-DD>-<name>.md`, or a directory with an `index.md` when it carries
   images.
 - Set `authors`, `tags` from the fixed set, and usually an explicit `slug`; separate the excerpt with
-  `{/* truncate */}`.
+  `<!--truncate-->`.
 - Match a new release slug to its neighbours rather than assuming one rule.
 
 ## The catalog

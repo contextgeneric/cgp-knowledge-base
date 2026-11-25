@@ -80,7 +80,7 @@ named**, so the catalog inventories all of CGP's writing; a draft on a feature b
 anyone reading `main`.
 
 - [Using an incoherent, dictionary-passing style Rust today](incoherent-rust-today.md): on the
-  `incoherent-rust` branch, dated 2026-03-30, *draft*. About 12,800 words reading CGP against the
+  `incoherent-rust` branch, dated 2026-11-25, *draft*. About 10,200 words reading CGP against the
   dictionary-passing, incoherent-traits, and context-and-capabilities discussion, and arguing that CGP
   implements a fragment of it on stable Rust today. The only post aimed at the language-design
   reader, and the only one whose value decays with time.
@@ -127,7 +127,7 @@ adds a release post's own.
   one or more tags from the fixed set in
   [blog/tags.yml](https://github.com/contextgeneric/contextgeneric.dev/blob/main/blog/tags.yml)
   (`release`, `deepdive`, `walkthrough`); an explicit `slug`; and a written `description`.
-- **Excerpt:** a `{/* truncate */}` marker separates it from the body; Docusaurus warns on a post
+- **Excerpt:** a `<!--truncate-->` marker separates it from the body; Docusaurus warns on a post
   without one.
 
 **Always set the `slug` on a new post, and never change a published one.** Without a slug, Docusaurus

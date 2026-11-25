@@ -57,7 +57,7 @@ main problem-and-solution walkthrough. Only the front matter and the discussion 
   is cut from the first source line. A post that is also a deep dive carries `deepdive` too. The tag
   set and other conventions are in [blog/README.md](../blog/README.md).
 - **The opening and the truncate marker**: two or three sentences saying what shipped and what it is
-  for, then `{/* truncate */}`. The excerpt shows on the blog index and in previews, so it stands
+  for, then `<!--truncate-->`. The excerpt shows on the blog index and in previews, so it stands
   alone; Docusaurus warns on a post without the marker.
 - **Discussion links**: a short section linking the Reddit, Lobsters, Hacker News, and GitHub
   Discussion threads, added after submission, so a later reader finds the conversation and the
