@@ -1,17 +1,18 @@
 # Using an incoherent, dictionary-passing style Rust today
 
-An unpublished post of about 12,800 words reading CGP against the Rust language-design discussion of
+An unpublished post of about 10,200 words reading CGP against the Rust language-design discussion of
 dictionary-passing style, incoherent traits, and context and capabilities, and arguing that CGP is a
 working implementation strategy for a substantial fragment of those designs, on stable Rust today at a
 stated cost.
 
 - **URL**: none; the post is not published
-- **Source**: `blog/2026-03-30-incoherent-rust-today.md` on the `incoherent-rust` branch of the
+- **Source**: `blog/2026-11-25-incoherent-rust-today.md` on the `incoherent-rust` branch of the
   [website repository](https://github.com/contextgeneric/contextgeneric.dev), not on `main`
-- **Date in filename**: 2026-03-30, when the draft was written, not a publication date
+- **Date in filename**: 2026-11-25, set when the author approved the first revision; the draft dates
+  from 2026-03-30
 - **Status**: Draft
-- **Publication**: held until after the v0.8.0 release, so it does not compete with the
-  announcement
+- **Publication**: after the documents it links, *Rust's own proposals* revised and a new *Traits
+  without coherence* comparison, are published
 
 ## Why this post is different
 
@@ -29,10 +30,11 @@ depends on whether that conversation is live, which makes its timing a real deci
 Five movements, long because each is taken at the precision its audience expects:
 
 - **The discussion it joins**, as the author's own reading of public material, with the caveat that
-  the author may be missing context: Nadrieril's posts on elaborating traits to dictionary-passing
-  style and on traits carrying values, Boxy's *An Incoherent Rust*, and Tyler Mandry's
-  context-and-capabilities work, read as one conversation with two separable goals, formalizing the
-  trait system and building features on it. The post coins **TIR** (a traitless intermediate
+  the author may be missing context: Nadrieril's posts on explicit trait proofs and on traits carrying
+  values, Boxy's *An Incoherent Rust*, and Tyler Mandry's context-and-capabilities work, read as one
+  conversation with two separable goals, formalizing the trait system and building features on it,
+  which has since become the types team's Dictionary Passing Style Experiment and a line of work on
+  cyclic trait impls. The post coins **TIR** (a traitless intermediate
   representation) and **Incoherent Rust** (the envisioned language), and analyzes the goals
   separately so one's feasibility does not decide the other.
 - **A CGP primer for compiler-team readers:** no analogies or progressive disclosure, straight to
@@ -42,23 +44,23 @@ Five movements, long because each is taken at the precision its audience expects
 - **Incoherent Rust desugared into CGP**, feature by feature: incoherent traits, named impls,
   incoherent trait bounds, incoherent bounds in a struct, and impl-specific bindings. Its sharpest idea
   is that **the context type is the dictionary**, one top-level dictionary carrying the others, which
-  makes dependency instantiation tractable and lets cyclic dependencies resolve. Context and
+  makes dependency instantiation tractable. A runtime dictionary does not need an instantiation order,
+  but CGP's wiring rejects a cycle with `E0275`, so recursive providers need a provider written for the
+  concrete context, which the post presents as a use case for the cyclic-impl work. Context and
   capabilities is a special case, worked as an arena-allocating deserializer.
 - **Limitations, which make the post credible:** a `&self` context cannot supply mutable or owned
   values without interior mutability, and all bindings are declared in one place, so the nested
   dynamically scoped bindings *scoped impls* envision have no CGP equivalent short of something like
   inheritance. Centralized bindings may be a virtue, being easier to reason about, but are conceded as
   a restriction.
-- **Where CGP diverges from Incoherent Rust:** what CGP has that the proposals do not (named impls as
-  first-class types, incoherent functions, zero-arity traits, abstract types, explicit context types),
-  related work (Cairo, ML modules, Scala implicits), and a conclusion split into what CGP solves,
-  partially solves, and does not solve.
+- **What CGP adds and the ideas it suggests:** named impls as first-class types and explicit context
+  types, then incoherent functions, zero-arity traits, and abstract types as ideas for Incoherent Rust;
+  a related-work paragraph that links a planned *Traits without coherence* comparison, with lessons
+  drawn from Cairo, Scala, modular implicits, and Boxy's sketch; and a conclusion split into what CGP
+  solves, partially solves, and does not solve.
 
-**The conclusion's staging argument:** a full dictionary-passing TIR is research-level and may need
-dependent types, so Incoherent Rust need not wait for it; a front-end desugaring into CGP-shaped code
-could ship the surface language first and be replaced later. If these features land, parts of the CGP
-library become unnecessary while its patterns stay valuable, and CGP never aimed to be a framework
-developers depend on indefinitely.
+**The conclusion's close:** if these features land, parts of the CGP library become unnecessary while
+its patterns stay valuable, and CGP never aimed to be a framework developers depend on indefinitely.
 
 ## How it relates to the knowledge base
 
@@ -80,27 +82,27 @@ developers depend on indefinitely.
   its authors would recognize it; the conversation is recorded in
   [evidence.md](../../communication-strategy/evidence.md#the-conversations-that-draw-attention).
 
+**Context shapes.** The primer's `Hash` example wires a value context, `Person`, to a self-targeted
+component. From the fully incoherent `Serialize<T>` on, the post moves the value into a parameter and makes
+the context environmental, saying so where it happens; the `Name`, `Clone`, arena, and `Greet` examples use
+environmental contexts, and `App` is an application context, per
+[vocabulary.md](../../communication-strategy/vocabulary.md#qualifying-a-context-and-a-target).
+
 ## What it needs before publication
 
-- **A currency pass, the substantial item.** The draft was written days after the posts it answers.
-  Re-read where the discussion now stands: a conversation that has moved on needs the post reframed,
-  and newer material needs engaging. That is the difference between a contribution and a late reply,
-  and the author's judgement, not an agent's.
-- **The concessions survive, checked first.** The limitations and what-CGP-does-not-solve sections
-  are the most valuable content for this audience, which is mapping the boundary; a revision that trims
-  them removes the reason to read the post.
-- **Publication mechanics.** The front matter has only `authors: [soares]`: it needs an explicit
-  `slug` and a `tags` entry, `deepdive`. The `{/* truncate */}` marker is in place. The filename date
-  becomes the publication date. The conventions are in [README.md](README.md#publication-conventions).
-- **Every snippet verified against v0.8.0** and the modern idioms the
-  [guides](../../cgp/guides/README.md) teach, since this audience scrutinizes the code most, and
-  showing forms the project recommends against undermines a post arguing CGP is a viable strategy.
-- **Decide whether the CGP primer stays.** It makes the post self-contained for a reader new to CGP,
-  and the [explanation tier](../writing-guides/explanation.md) now exists to link instead. Keeping it:
-  this audience wants precision the explanation pages do not carry, and will not follow a link out
-  mid-argument. Cutting it: the rule, stated for the [Projects pages](../writing-guides/project.md),
-  that a piece teaches its own subject only. The primer is short and pitched differently, so keeping
-  it is probably right, but it should be a decision.
+- **The documents it links.** The related-work paragraph links the planned *Traits without coherence*
+  comparison through a `TODO:` placeholder, and *Rust's own proposals* is due its update for the
+  current discussion; both come before the post's final revision.
+- **The concessions survive.** The limitations and what-CGP-does-not-solve sections are the most
+  valuable content for this audience, which is mapping the boundary.
+- **Publication mechanics.** The front matter has only `authors: [soares]`: it needs an explicit `slug`,
+  a `tags` entry, `deepdive`, and a written `description`. The `<!--truncate-->` marker is in place. The conventions are in [README.md](README.md#publication-conventions).
+- **A last currency check** of the discussion before publication, since the project goal and the
+  authors' blogs may move again.
+
+The post's CGP snippets compile in the website's
+[`example-code/tests/blog/incoherent_rust_today.rs`](https://github.com/contextgeneric/contextgeneric.dev/blob/main/example-code/tests/blog/incoherent_rust_today.rs),
+with its rejected snippet as a compile-fail fixture.
 
 ## Maintaining it
 
