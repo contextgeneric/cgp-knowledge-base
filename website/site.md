@@ -76,7 +76,8 @@ Two other branches hold content that is not on `main`:
 - **`incoherent-rust`:** an unpublished blog post, recorded in
   [blog/incoherent-rust-today.md](blog/incoherent-rust-today.md), and `example-code-nightly`, a
   sibling of `example-code` on a pinned nightly that checks the post's snippets needing an unstable
-  feature, with a CI job of its own; both reach `main` with the post.
+  feature, with a CI job of its own; the *Traits without coherence* comparison and the revised *Rust's
+  own proposals*, which the post links; all reach `main` with the post.
 - **`rustlab-presentation`:** the slide assets for the RustLab talk transcript.
 
 The `notes/` tree on `main` is working notes on applying Diátaxis to the site and on

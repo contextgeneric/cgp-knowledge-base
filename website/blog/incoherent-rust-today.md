@@ -90,9 +90,9 @@ environmental contexts, and `App` is an application context, per
 
 ## What it needs before publication
 
-- **The documents it links.** The related-work paragraph links the planned *Traits without coherence*
-  comparison through a `TODO:` placeholder, and *Rust's own proposals* is due its update for the
-  current discussion; both come before the post's final revision.
+- **The documents it links.** The related-work paragraph links the *Traits without coherence*
+  comparison, which sits on `incoherent-rust` with the revised *Rust's own proposals* and merges with
+  the post.
 - **The concessions survive.** The limitations and what-CGP-does-not-solve sections are the most
   valuable content for this audience, which is mapping the boundary.
 - **Publication mechanics.** The front matter has only `authors: [soares]`: it needs an explicit `slug`,
