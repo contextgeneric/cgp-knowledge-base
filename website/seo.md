@@ -297,7 +297,7 @@ as [the base's link rule](../AGENTS.md#writing-links) already applies to explana
 
 ### Comparison pages
 
-**The eleven comparison pages are CGP's best untested search asset.** A reader searching "Rust type
+**The twelve comparison pages are CGP's best untested search asset.** A reader searching "Rust type
 classes" or "dependency injection in Rust without a framework" has a specific, low-competition,
 high-intent question, and the site carries a long, sourced page for each. Their guide requires what
 makes such a page rank: a `description`, and

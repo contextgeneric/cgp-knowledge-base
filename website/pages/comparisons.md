@@ -5,7 +5,7 @@ related-work document, plus an index that routes by background.
 
 - **URL:** <https://contextgeneric.dev/docs/comparisons/>
 - **Source:** [docs/comparisons/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/comparisons)
-- **Status:** Current: the index and all eleven pages are written, each with its `example-code`
+- **Status:** Current: the index and all twelve pages are written, each with its `example-code`
   mirror, and revised against the naming rule and the
   [comparison guide](../writing-guides/related-work.md)
 - **How it was made:** ported by an agent from [related-work/](../../related-work/README.md); level
@@ -25,7 +25,8 @@ with the canonical `cargo cgp check` sentence; where the other tool is the bette
 expect that differs; onward routing; Sources, opening with the toolchain sentence; and the comparison
 variant of the provenance note.
 
-The sidebar follows the internal catalog's order: *Rust's own proposals* and *Policy-based design*,
+The sidebar follows the internal catalog's order: *Rust's own proposals*, *Without coherence*
+(*Traits without coherence*, at `sidebar_position` 1.5), and *Policy-based design*,
 then *Type classes*, *ML modules*, *Implicit parameters*, *Algebraic effects*, and *Row
 polymorphism*, then *Dependency injection*, *Dynamic dispatch*, *Reflection*, and *Capabilities*.
 
@@ -58,6 +59,10 @@ Every page explains its analogy point first, with explicit limits:
 - **Row polymorphism:** predicate-based rows against a row kind and against row inference.
 - **Rust's own proposals:** proposal syntax against runnable Rust; what CGP cannot infer or nest; the
   `E0275` limit on a provider that needs its own instance, beside the cycles work.
+- **Traits without coherence:** five systems compared on how each chooses among several impls,
+  grouped into three families; CGP keeps Rust's coherence checks; the Cairo snippet and its `E2313`
+  errors as Cairo 2.21.0 runs them. It is the one page that compares several systems, in the
+  guide's [shape for that](../writing-guides/related-work.md#pages-that-compare-several-systems).
 - **Type classes:** scoped coherence against global uniqueness; where a canonical instance is the
   simpler choice.
 
@@ -77,7 +82,8 @@ sections; the refreshers were compressed; every internal link was repointed
 to a Concepts, reference, tutorial, or blog page; and Sources were kept. The two documents that drew
 on the [unpublished incoherent-Rust draft](../blog/incoherent-rust-today.md) state those points as
 the project's analysis or attribute them to the [RustLab transcript](../blog/rustlab-2025-coherence.md),
-never citing the draft: the Rust proposals page states the Cairo reading, the context-as-dictionary
+never citing the draft, and *Traits without coherence* states the draft's reading of Cairo as the
+project's analysis too: the Rust proposals page states the Cairo reading, the context-as-dictionary
 framing, and the single-context limits as the project's analysis, and attributes to the transcript
 what the transcript makes; the algebraic-effects page keeps the coeffects pointer as a pointer. Both
 pages gain a citation when the incoherent-Rust post publishes.
@@ -106,7 +112,7 @@ Nothing is stale, and two things decay on their own:
 - The reflection page describes Rust's nightly `type_info` API, marked unstable; a revision re-reads
   [tracking issue #146922](https://github.com/rust-lang/rust/issues/146922) and the project goal.
 - Every page pins the toolchains that compiled its foreign snippets (GHC 9.10, Scala 3.8.4, OCaml
-  5.5.0, Koka 3.2.3, Flix 0.76.0, Zig 0.16, PureScript 0.15.15, Agda 2.8.0, Lean 4.34.0, GCC 15.2.0,
+  5.5.0, Cairo 2.21.0, Koka 3.2.3, Flix 0.76.0, Zig 0.16, PureScript 0.15.15, Agda 2.8.0, Lean 4.34.0, GCC 15.2.0,
   `cap-std` 3), which the internal documents own.
 
 ## Maintaining it

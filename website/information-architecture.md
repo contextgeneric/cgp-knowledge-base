@@ -106,7 +106,8 @@ Every page below is published unless marked **new**, and each section's record u
   - *Area calculation*: the first-principles series, ending with *Checking and debugging*, which
     carries one mis-wiring through `check_components!` and `cargo cgp check`.
 - **Comparisons**, placed after Tooling: labelled *Comparisons* because "related work" is the
-  internal directory's word, not a reader's.
+  internal directory's word, not a reader's. One page per related-work document, with *Traits
+  without coherence* the one page that compares several systems on a single question.
 - **Reference**, grouped as `macros/`, `attributes/`, `derives/`, `components/`, `providers/`,
   `traits/`, and `types/`, with a hand-written index that names what a newcomer needs first and
   reaches every construct, an error catalog page, and a glossary.
@@ -204,8 +205,9 @@ where each should end up. A page that fits no path probably should not exist.
 - **Type-system and functional-programming reader:** *Bypassing coherence* → *Consumer and provider
   traits* → the comparison for the paradigm they know → the Hypershell section, the deep-dive posts,
   and the [RustLab transcript](blog/rustlab-2025-coherence.md), the best thing on the site for them.
-- **Language-design reader:** the *Rust's own proposals* comparison → the RustLab transcript → the
-  incoherent-Rust post once it publishes. The comparison is this reader's only orientation surface.
+- **Language-design reader:** the *Rust's own proposals* comparison → *Traits without coherence* →
+  the RustLab transcript → the incoherent-Rust post once it publishes. The two comparisons are this
+  reader's only orientation surfaces.
 - **Dependency-injection, dynamic-language, or C++ reader:** the matching comparison first, instead of
   *Bypassing coherence*, then the working developer's path from *Hello World*.
 - **Framework and library author:** the Overview's problems → the applied tutorial → the *Extensible

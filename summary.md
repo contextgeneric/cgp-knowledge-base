@@ -820,7 +820,7 @@ it stale.
   author's voice in the sponsorship section.
 - [concepts.md](website/pages/concepts.md) — the explanation tier: its eighteen pages, what each must
   preserve, the page shape, and each page's context shape.
-- [comparisons.md](website/pages/comparisons.md) — the eleven comparison pages, what each must
+- [comparisons.md](website/pages/comparisons.md) — the twelve comparison pages, what each must
   preserve, and where their code differs from the internal documents.
 - [reference.md](website/pages/reference.md) — the construct reference: its groups, the mapping from
   internal documents, and the port's conventions.

@@ -387,7 +387,7 @@ a way to fix the choices for a whole program in one place.
 
 The public version of this document is the website's
 [traits-without-coherence comparison page](https://contextgeneric.dev/docs/comparisons/traits-without-coherence),
-to be ported per the [comparison page guide](../website/writing-guides/related-work.md#pages-that-compare-several-systems);
+ported per the [comparison page guide](../website/writing-guides/related-work.md#pages-that-compare-several-systems);
 a change here updates that page in the same change.
 
 The Cairo snippets were compiled and run with Cairo 2.21.0 (`cairo-run`, from nixpkgs), and the
