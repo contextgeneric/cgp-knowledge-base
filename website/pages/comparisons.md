@@ -85,7 +85,7 @@ to a Concepts, reference, tutorial, or blog page; and Sources were kept. The two
 on the [unpublished incoherent-Rust draft](../blog/incoherent-rust-today.md) state those points as
 the project's analysis or attribute them to the [RustLab transcript](../blog/rustlab-2025-coherence.md),
 never citing the draft, and *Traits without coherence* states the draft's reading of Cairo as the
-project's analysis too: the Rust proposals page states the Cairo reading, the context-as-dictionary
+project's analysis too: the Rust proposals page states the context-as-dictionary
 framing, and the single-context limits as the project's analysis, and attributes to the transcript
 what the transcript makes; the algebraic-effects page keeps the coeffects pointer as a pointer. Both
 pages gain a citation when the incoherent-Rust post publishes.

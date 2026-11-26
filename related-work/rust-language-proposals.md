@@ -40,8 +40,8 @@ for whom CGP is interesting as evidence rather than as a tool.
 The proposals share a starting point, Rust's coherence rules as the Reference states them, and
 diverge in which rule they relax and how. The subsections take them in the order the ideas were
 published: coherence itself, specialization, the dictionary-passing account and the named-impl
-proposals built on it, contexts and capabilities, and finally Cairo, a Rust-like language that
-shipped named impls and shows what the design costs in practice.
+proposals built on it, and contexts and capabilities. Languages that shipped named or scoped impls,
+Cairo among them, are compared in [traits without coherence](traits-without-coherence.md).
 
 ### Coherence as Rust states it
 
@@ -206,14 +206,6 @@ such as `HashSet` that rely on consistency, and methods that capture implicit va
 rather than function pointers
 ([Nadrieril, *What If Traits Carried Values*](https://nadrieril.github.io/blog/2026/03/22/what-if-traits-carried-values.html)).
 
-### Named impls in Cairo
-
-Cairo, the smart-contract language of Starknet, borrows Rust's surface syntax and gives every impl a
-name, so it is the nearest thing to a shipped Incoherent Rust. Its compiler infers each impl from those
-a call site imports, so the imports decide which implementation a call uses. The
-[traits without coherence](traits-without-coherence.md) comparison covers Cairo in depth, beside
-Scala's givens, OCaml's modular implicits, and Haskell's overlapping instances.
-
 ## How CGP expresses it
 
 CGP is a desugaring of these proposals into stable Rust, and the correspondence is close enough to
@@ -284,9 +276,9 @@ delegate_components! {
 }
 ```
 
-This is the proposal's incoherence with a different resolution point. Boxy and Cairo resolve at the
-call site (explicitly, or from what is in scope); CGP resolves at the context, so every call through
-`AppA` agrees. That is also how CGP answers the `HashMap` soundness concern the proposals must
+This is the proposal's incoherence with a different resolution point. Boxy's sketch resolves at the
+call site, explicitly, and the languages in [traits without coherence](traits-without-coherence.md)
+resolve from what is in scope; CGP resolves at the context, so every call through `AppA` agrees. That is also how CGP answers the `HashMap` soundness concern the proposals must
 address separately: a context selects one provider per component, so all code sharing a context
 agrees on one impl, which is the property the proposal recovers by moving `Hash` onto the type
 definition. The [type classes](type-classes.md) comparison develops this as "incoherent instances
@@ -294,11 +286,11 @@ made deterministic".
 
 ### Passing providers as type parameters
 
-Where the proposals and Cairo let a caller pass an impl as a parameter, CGP has
+Where the proposals let a caller pass an impl as a parameter, CGP has
 [higher-order providers](../cgp/concepts/higher-order-providers.md). A provider takes another
 provider as a type parameter and binds it with
-[`#[use_provider]`](../cgp/reference/attributes/use_provider.md), which is Cairo's
-`impl TDrop: Drop<T>` as a Rust generic:
+[`#[use_provider]`](../cgp/reference/attributes/use_provider.md), so the impl passed to a bound
+becomes a Rust generic:
 
 ```rust
 #[cgp_impl(new ScaledArea<InnerCalculator>)]
@@ -310,10 +302,9 @@ impl<InnerCalculator> AreaCalculator {
 }
 ```
 
-A context wires `AreaCalculatorComponent: ScaledArea<RectangleArea>`, naming the inner impl the way
-a Cairo caller would have the compiler infer it. The difference is again where the choice lives.
-CGP's author's draft compares the two directly and notes that assembling providers explicitly at
-every call site, Cairo-style, is possible in CGP but tedious, and that idiomatic CGP defers the
+A context wires `AreaCalculatorComponent: ScaledArea<RectangleArea>`, naming the inner impl in its
+wiring. The difference is again where the choice lives. CGP's author's draft notes that assembling
+providers explicitly at every call site is possible in CGP but tedious, and that idiomatic CGP defers the
 assembly to the context, which is more verbose up front and more predictable at scale. Higher-order
 providers are the exception for the cases where a provider must override its inner choice locally,
 and they often default their inner parameter to
@@ -394,8 +385,9 @@ the question that work asks.
 ### What CGP cannot express
 
 The proposals reach two places CGP does not, and both follow from CGP being a library with a single
-context type. The first is *inference from scope*. Cairo and the named-impl proposal let the
-compiler pick an impl from those visible at a call site; CGP has no such search, and a context must
+context type. The first is *inference from scope*. Scoped impls, and the languages that
+[traits without coherence](traits-without-coherence.md) compares, let the compiler pick an impl from
+those visible at a call site; CGP has no such search, and a context must
 name every provider it uses. The second is *nested, dynamically scoped bindings*. Mandry's `with`
 blocks nest, and Nadrieril's *scoped impls* would let an inner scope override an outer impl for the
 code it encloses. In CGP every binding lives at the one place the concrete context is defined, so an
@@ -469,11 +461,11 @@ proposals, available on stable Rust now, with all bindings declared in one place
 invites the reader to check the claim against designs they already know rather than to learn a new
 paradigm.
 
-Correct two expectations before they mislead. The first is *inference*. A reader who knows Cairo or
-the named-impl sketch expects the compiler to pick an impl from scope, and CGP never does; the
-wiring table is written by hand. Present that as the reason CGP avoids the fragility
-[traits without coherence](traits-without-coherence.md) finds in Cairo, where imports decide
-resolution and two call sites can disagree, and as
+Correct two expectations before they mislead. The first is *inference*. A reader who knows scoped
+impls or a language that infers impls expects the compiler to pick an impl from scope, and CGP never
+does; the wiring table is written by hand. Present that as the reason CGP avoids the fragility
+[traits without coherence](traits-without-coherence.md) finds in scope-based resolution, where imports
+decide resolution and two call sites can disagree, and as
 the same move the [type classes](type-classes.md) comparison describes: incoherence made
 deterministic by naming. The second is *scope*. A reader who knows contexts and capabilities expects
 nested `with` blocks that shadow each other, while CGP fixes provider selection on the context type.
@@ -512,7 +504,7 @@ select providers. A different context or context adapter can supply another sele
 introducing dynamically scoped wiring.
 
 The account of the related work draws on the Rust Reference and RFCs, the specialization tracking
-issue, the design posts by Boxy, Nadrieril, and Tyler Mandry, the Cairo book, and the knowledge
+issue, the design posts by Boxy, Nadrieril, and Tyler Mandry, and the knowledge
 base's record of CGP's author's own engagement with the discussion. The CGP snippets are taken from
 the [coherence](../cgp/concepts/coherence.md) concept and the
 [area calculation](../examples/area-calculation.md) example, and the greeter is the one the
@@ -545,10 +537,6 @@ greeting instead of printing it.
 - [Mandry, *Contexts and capabilities in Rust*](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/):
   the `with` clause and block, context-dependent trait impls, the zero-cost compilation to ordinary
   arguments, and the open thread-safety questions.
-- [Cairo Book: *Traits in Cairo*](https://www.starknet.io/cairo-book/ch08-02-traits-in-cairo.html)
-  and [*Generic Data Types*](https://www.starknet.io/cairo-book/ch08-01-generic-data-types.html):
-  the `impl Name of Trait` syntax, named and anonymous impl parameters, and compiler inference of
-  the impl.
 - [Ixrec, *rust-orphan-rules*](https://github.com/Ixrec/rust-orphan-rules) and
   [Greyblake, *Alternative blanket implementations for a single Rust trait*](https://www.greyblake.com/blog/alternative-blanket-implementations-for-single-rust-trait/):
   the orphan rule as a durable frustration and the hand-rolled marker-struct workaround for overlap.
@@ -557,4 +545,4 @@ greeting instead of printing it.
   and the
   [record of the unpublished incoherent-Rust draft](../website/blog/incoherent-rust-today.md): CGP's
   author's own argument for why specialization does not solve overlap, the context-as-dictionary
-  framing, the limitations of the single-context approach, and the reading of Cairo.
+  framing, and the limitations of the single-context approach.

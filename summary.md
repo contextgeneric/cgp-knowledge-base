@@ -589,9 +589,8 @@ it stale.
   snippets and recording the toolchain, what every comparison covers, the sourcing obligation, and the
   CGP side and document shape.
 - [rust-language-proposals.md](related-work/rust-language-proposals.md) — specialization, the
-  dictionary-passing account of traits, named and incoherent impls, contexts and capabilities, and
-  Cairo's shipped named impls, and CGP as a stable-Rust desugaring of a fragment of each with two stated
-  limits.
+  dictionary-passing account of traits, named and incoherent impls, and contexts and capabilities, and
+  CGP as a stable-Rust desugaring of a fragment of each with two stated limits.
 - [capabilities.md](related-work/capabilities.md) — the five senses of "capability" (object
   capabilities, OS and hardware capability security, Pony's reference capabilities and Linux privilege
   bits, effects as capabilities, and the Rust community's uses), the properties that separate them, and

@@ -63,10 +63,10 @@ policy-based design and the comparison of trait systems without coherence.
 
 - [Rust's own proposals](rust-language-proposals.md): specialization (RFC 1210, unstable since 2016
   with a lifetime soundness hole), the dictionary-passing account of traits, Boxy's named and
-  incoherent impls, Tyler Mandry's contexts and capabilities, and Cairo as the Rust-like language
-  that shipped named impls. CGP is read as a library-level desugaring of a fragment of each, with
-  providers as named impls, implicit arguments as capabilities, and the context as the root
-  dictionary, and with two stated limits: no inference from scope and no nested bindings.
+  incoherent impls, and Tyler Mandry's contexts and capabilities. CGP is read as a library-level
+  desugaring of a fragment of each, with providers as named impls, implicit arguments as
+  capabilities, and the context as the root dictionary, and with two stated limits: no inference from
+  scope and no nested bindings.
 - [Type classes](type-classes.md): the principled ad-hoc polymorphism of Haskell, Agda, and Lean,
   dictionary passing and coherence, the overlapping and incoherent-instance extensions that strain
   against it, the diamond problem in dependently typed settings, and Dreyer, Harper, and
