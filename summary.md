@@ -592,6 +592,9 @@ it stale.
   dictionary-passing account of traits, named and incoherent impls, contexts and capabilities, and
   Cairo's shipped named impls, and CGP as a stable-Rust desugaring of a fragment of each with two stated
   limits.
+- [traits-without-coherence.md](related-work/traits-without-coherence.md) — Cairo, Scala, modular
+  implicits, Haskell, and Boxy's sketch compared on how each chooses among several impls of one trait,
+  in three families of answer, with CGP fixing the choice on the context.
 - [capabilities.md](related-work/capabilities.md) — the five senses of "capability" (object
   capabilities, OS and hardware capability security, Pony's reference capabilities and Linux privilege
   bits, effects as capabilities, and the Rust community's uses), the properties that separate them, and

@@ -208,30 +208,11 @@ rather than function pointers
 
 ### Named impls in Cairo
 
-Cairo, the smart-contract language of StarkNet, borrows Rust's surface syntax and gives every impl a
-name, so it is the nearest thing to a shipped Incoherent Rust. Its book states the rule: "after
-`impl`, we put a name for the implementation, then use the `of` keyword, and then specify the name
-of the trait"
-([Cairo Book, *Traits in Cairo*](https://www.starknet.io/cairo-book/ch08-02-traits-in-cairo.html)).
-A generic function may take an impl as an explicit parameter, either named or anonymous:
-
-```rust
-// Cairo
-fn largest_list<T, impl TDrop: Drop<T>>(l1: Array<T>, l2: Array<T>) -> Array<T> { /* ... */ }
-
-fn smallest_element<T, +PartialOrd<T>, +Copy<T>, +Drop<T>>(list: @Array<T>) -> T { /* ... */ }
-```
-
-The `+Drop<T>` form is the anonymous spelling of `impl TDrop: Drop<T>`
-([Cairo Book, *Generic Data Types*](https://www.starknet.io/cairo-book/ch08-01-generic-data-types.html)).
-A caller does not pass the impl: "There is no need to specify the concrete type of T because it is
-inferred by the compiler", and the compiler likewise infers the impl from those visible at the call
-site. That inference is the design decision that matters for the comparison. CGP's author examines
-it in the unpublished draft that the [website record](../website/blog/incoherent-rust-today.md)
-describes, and reads it as the cost of resolving from scope rather than from a declared context:
-because resolution depends on which impls are imported, the set of imports decides which
-implementation a call uses, a caller must import the whole chain of intermediate impls a generic
-impl needs, and two call sites in one project may resolve the same type differently.
+Cairo, the smart-contract language of Starknet, borrows Rust's surface syntax and gives every impl a
+name, so it is the nearest thing to a shipped Incoherent Rust. Its compiler infers each impl from those
+a call site imports, so the imports decide which implementation a call uses. The
+[traits without coherence](traits-without-coherence.md) comparison covers Cairo in depth, beside
+Scala's givens, OCaml's modular implicits, Haskell's overlapping instances, and Boxy's sketch.
 
 ## How CGP expresses it
 
@@ -490,8 +471,9 @@ paradigm.
 
 Correct two expectations before they mislead. The first is *inference*. A reader who knows Cairo or
 the named-impl sketch expects the compiler to pick an impl from scope, and CGP never does; the
-wiring table is written by hand. Present that as the reason CGP avoids the fragility the author's
-own draft finds in Cairo, where imports decide resolution and two call sites can disagree, and as
+wiring table is written by hand. Present that as the reason CGP avoids the fragility
+[traits without coherence](traits-without-coherence.md) finds in Cairo, where imports decide
+resolution and two call sites can disagree, and as
 the same move the [type classes](type-classes.md) comparison describes: incoherence made
 deterministic by naming. The second is *scope*. A reader who knows contexts and capabilities expects
 nested `with` blocks that shadow each other, while CGP fixes provider selection on the context type.

@@ -56,7 +56,7 @@ comparisons span all three.
 ## The catalog
 
 Each document below names an external concept and compares it to CGP. The authoring rules for adding
-one live in [writing-guide.md](writing-guide.md). The first two documents are the ones a Rust reader
+one live in [writing-guide.md](writing-guide.md). The first documents are the ones a Rust reader
 compares CGP to before any other, so they are listed first. The type-theoretic ideas follow, then
 dependency injection, the runtime mechanisms, and the senses of the word "capability".
 
@@ -66,6 +66,10 @@ dependency injection, the runtime mechanisms, and the senses of the word "capabi
   that shipped named impls. CGP is read as a library-level desugaring of a fragment of each, with
   providers as named impls, implicit arguments as capabilities, and the context as the root
   dictionary, and with two stated limits: no inference from scope and no nested bindings.
+- [Traits without coherence](traits-without-coherence.md): how Cairo's named impls, Scala's givens,
+  OCaml's modular implicits, Haskell's overlapping and incoherent instances, and Boxy's sketch choose
+  among several impls of one trait for one type. They infer the choice from scope, name it at each
+  call, or fix it on a type; CGP fixes it on the context while keeping Rust's coherence checks.
 - [C++ policy-based design, CRTP, and concepts](policy-based-design.md): policies and host classes,
   CRTP, and C++20 concepts compared with providers, higher-order providers, and context wiring. The
   comparison distinguishes constraint satisfaction from generic-body checking, acknowledges aliases
