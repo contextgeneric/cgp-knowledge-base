@@ -1,6 +1,6 @@
 # Using an incoherent, dictionary-passing style Rust today
 
-An unpublished post of about 9,300 words reading CGP against the Rust language-design discussion of
+An unpublished post of about 9,200 words reading CGP against the Rust language-design discussion of
 dictionary-passing style, incoherent traits, and contexts and capabilities, and arguing that CGP is a
 working implementation strategy for a substantial fragment of those designs, on stable Rust today at a
 stated cost.
