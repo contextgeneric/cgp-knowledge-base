@@ -56,7 +56,8 @@ Every page explains its analogy point first, with explicit limits:
   examples were compiled and run with GCC 15.2.0 in C++23 mode.
 - **Reflection:** role correspondences rather than language-feature equivalence.
 - **Row polymorphism:** predicate-based rows against a row kind and against row inference.
-- **Rust's own proposals:** proposal syntax against runnable Rust; what CGP cannot infer or nest.
+- **Rust's own proposals:** proposal syntax against runnable Rust; what CGP cannot infer or nest; the
+  `E0275` limit on a provider that needs its own instance, beside the cycles work.
 - **Type classes:** scoped coherence against global uniqueness; where a canonical instance is the
   simpler choice.
 
