@@ -114,8 +114,8 @@ Nothing is stale, and two things decay on their own:
 - The reflection page describes Rust's nightly `type_info` API, marked unstable; a revision re-reads
   [tracking issue #146922](https://github.com/rust-lang/rust/issues/146922) and the project goal.
 - Every page pins the toolchains that compiled its foreign snippets (GHC 9.10, Scala 3.8.4, OCaml
-  5.5.0, Cairo 2.21.0, Koka 3.2.3, Flix 0.76.0, Zig 0.16, PureScript 0.15.15, Agda 2.8.0, Lean 4.34.0, GCC 15.2.0,
-  `cap-std` 3), which the internal documents own.
+  5.5.0, Cairo 2.21.0, Koka 3.2.3, Flix 0.76.0, Zig 0.16, PureScript 0.15.15, Agda 2.8.0, Lean 4.34.0,
+  GCC 15.2.0, `cap-std` 3), which the internal documents own.
 
 ## Maintaining it
 
