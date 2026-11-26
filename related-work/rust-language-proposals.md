@@ -18,8 +18,9 @@ forbids implementing a foreign trait for a foreign type. And a trait impl has no
 value from its caller's environment except through `Self` or a global. Specialization targets the
 first, named impls target the first two, and contexts and capabilities target the third. None of
 them has shipped. Specialization has been unstable since 2016 with a known soundness hole, the
-named-impl and dictionary-passing designs are blog posts and design sketches, and contexts and
-capabilities is a proposal from 2021 that its author framed as a research direction.
+named-impl designs are blog posts and design sketches, the dictionary-passing account is a types-team
+experiment, and contexts and capabilities is a proposal from 2021 that its author framed as a
+research direction.
 
 CGP occupies the same design space from the library side, which is why its author's own writing
 engages these proposals directly
@@ -107,7 +108,7 @@ overlapping impls nor orphan impls
 
 A second line of thought treats the trait system as sugar over *dictionary passing*, the elaboration
 Haskell compilers perform and the [type classes](type-classes.md) comparison describes. Nadrieril's
-*Elaborating Rust Traits to Dictionary-Passing Style* (March 2026) works it out for Rust: a trait
+*Elaborating Rust Traits to Explicit Trait Proofs* (March 2026) works it out for Rust: a trait
 becomes a struct of function pointers, an impl becomes a value of that struct, and a trait bound
 becomes an argument the caller passes:
 
@@ -125,9 +126,22 @@ that supplies these proofs, and it names the open problems honestly: how to hand
 equality constraints, whether the elaborated program recurses excessively, and what conditions
 beyond individual proof justification are needed for soundness. It also identifies coherence as the
 point of friction, since a global impl can constrain a caller in ways the caller cannot see
-([Nadrieril, *Dictionary-passing style*](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html)).
+([Nadrieril, *Explicit Trait Proofs*](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html)).
 The value of the framing for this comparison is that once impls are values, *choosing* an impl is
 passing a different value, which is exactly the freedom coherence forbids.
+
+The account has since become project work. The types team's 2026 goal, *Dictionary Passing Style
+Experiment*, has Nadrieril as its contact and a project repository whose reading list gives Boxy's
+post, below, as its entry on incoherence; its update of 2026-10-29 reports no progress
+([goal #630](https://github.com/rust-lang/goals/issues/630);
+[project-dictionary-passing](https://github.com/rust-lang/project-dictionary-passing)). Two later
+lines of writing ask which cycles between impls are sound. Nadrieril's *When can Traits Depend on
+Themselves?* (May 2026) uses explicit proofs to look for a criterion that rejects cycles proving false
+facts, and does not yet give a finished one. Niko Matsakis's posts on cyclic trait impls (August and
+October 2026) motivate them through perfect derive and conclude that modular proofs are the only
+workable option
+([Nadrieril, *When can Traits Depend on Themselves?*](https://nadrieril.github.io/blog/2026/05/14/when-can-traits-depend-on-themselves.html);
+[Matsakis, *Cyclic Trait Impls*](https://smallcultfollowing.com/babysteps/series/cyclic-trait-impls/)).
 
 ### Named and incoherent impls
 
@@ -381,12 +395,20 @@ value passed alongside the data. In CGP every provider receives the context, and
 wiring table is a type-level record of dictionaries, one `DelegateComponent` entry per component.
 The draft lowers a CGP program to a dictionary-passing form in which the context becomes a struct
 whose fields are the other dictionaries, and observes an almost one-to-one correspondence between a
-`delegate_components!` entry and a field of that struct. The arrangement has a practical consequence
-the proposals have to solve separately: because every dictionary reaches the others through the
-context, a graph of dependencies with cycles resolves without an instantiation order, since the
-context is one stable root from which all of them are reachable. That is the same property that lets
-CGP wire a table in any order, which the [ML modules](ml-modules.md) comparison contrasts with
-manual functor application.
+`delegate_components!` entry and a field of that struct. In that lowering the dictionaries need no
+instantiation order, because each reaches the others through the context, one root from which all of
+them are reachable. The same root lets CGP wire a table in any order, which the
+[ML modules](ml-modules.md) comparison contrasts with manual functor application.
+
+The freedom stops at cycles, because CGP works one level below the lowering. Each CGP lookup is a
+trait obligation the compiler proves, so a provider that requires the instance it is defining
+overflows the trait solver with `E0275`. A dependency on another instance resolves: an encoder for
+`Vec<T>` that requires the encoder for `T` ends because the type is finite. A provider for a recursive
+type, such as the [expression interpreter](../examples/expression-interpreter.md)'s dispatcher, needs
+its own instance and overflows; the workaround is a provider implemented for the concrete context
+without the recursive bound, one per context and operation. Such providers are a use case for the
+sound cyclic impls that the work above studies, and whether a lowered program's cycles are sound is
+the question that work asks.
 
 ### What CGP cannot express
 
@@ -477,7 +499,8 @@ Say so, and say that the author's own analysis treats this as both a limitation 
 
 For the language-design reader specifically, the concessions are the contribution. This reader wants
 to know what a working implementation of a fragment of Incoherent Rust reveals about the design:
-that a single top-level context makes dependency instantiation and cyclic dependencies tractable,
+that a single top-level context removes the instantiation order among dictionaries but does not make
+a provider that requires its own instance resolve, since that cycle overflows the trait solver,
 that resolving at the context rather than the call site preserves the `HashMap`-style agreement the
 proposals otherwise have to recover, that reaching every capability through one shared context is a
 real restriction, and that nested scoping does not fit the single-context model. Write those as
@@ -525,11 +548,18 @@ greeting instead of printing it.
 - [Boxy, *An Incoherent Rust*](https://www.boxyuwu.blog/posts/an-incoherent-rust/): named impls,
   `incoherent trait`, impls passed in bounds, the ecosystem-evolution motivation, and the `HashMap`
   and associated-type soundness answers.
-- [Nadrieril, *Elaborating Rust Traits to Dictionary-Passing Style*](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html)
+- [Nadrieril, *Elaborating Rust Traits to Explicit Trait Proofs*](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html)
   and
   [*What If Traits Carried Values*](https://nadrieril.github.io/blog/2026/03/22/what-if-traits-carried-values.html):
   traits as structs and impls as values, the coherence friction, the open soundness questions, and
   the extension that carries values with the ownership, scoping, and closure problems it raises.
+- [Dictionary Passing Style Experiment, goal #630](https://github.com/rust-lang/goals/issues/630) and
+  [rust-lang/project-dictionary-passing](https://github.com/rust-lang/project-dictionary-passing):
+  the types-team goal, its contact, its reading list, and its update of 2026-10-29.
+- [Nadrieril, *When can Traits Depend on Themselves?*](https://nadrieril.github.io/blog/2026/05/14/when-can-traits-depend-on-themselves.html)
+  and [Niko Matsakis, *Cyclic Trait Impls*](https://smallcultfollowing.com/babysteps/series/cyclic-trait-impls/):
+  the search for a criterion that rejects unsound cycles, perfect derive as the motivating case, and
+  the conclusion that modular proofs are the only workable option.
 - [Mandry, *Contexts and capabilities in Rust*](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/):
   the `with` clause and block, context-dependent trait impls, the zero-cost compilation to ordinary
   arguments, and the open thread-safety questions.

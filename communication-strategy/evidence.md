@@ -67,13 +67,15 @@ measurements:
   stable Rust and potentially complementary. Do not imply a settled future language design or
   stabilization date.
 - **Dictionary passing and context-carried implementations:** Nadrieril's
-  [dictionary-passing](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html)
+  [explicit trait proofs](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html)
   and
   [traits carrying values](https://nadrieril.github.io/blog/2026/03/22/what-if-traits-carried-values.html)
-  posts, Boxy's [An Incoherent Rust](https://www.boxyuwu.blog/posts/an-incoherent-rust/), and Tyler
+  posts, Boxy's [An Incoherent Rust](https://www.boxyuwu.blog/posts/an-incoherent-rust/), Tyler
   Mandry's
   [context and capabilities](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/)
-  proposal provide a relevant comparison for the
+  proposal, the types team's
+  [Dictionary Passing Style Experiment](https://github.com/rust-lang/goals/issues/630), and the
+  work on which cyclic impls are sound provide a relevant comparison for the
   [language-design reader](readers.md#the-language-design-and-compiler-team-reader). Present CGP as
   a working desugaring of part of this design space. It neither supplies the formalization those
   efforts seek nor migrates the existing trait ecosystem. The comparison itself, including
@@ -277,9 +279,11 @@ have not been checked again.
 | [Function-coloring debate](https://www.thecodedmessage.com/posts/async-colors/) | the async attachment point | 2026-09-19, link resolved |
 | [`Send` bounds and `dyn` issue](https://github.com/rust-lang/rust/issues/103854) | the async-trait friction | 2026-09-19, link resolved |
 | [Reflection and comptime project goal](https://goals.rust-lang.org/2026/reflection-and-comptime.html) | the reflection goal, landed MVP, and experimental scope | 2026-09-20, read |
-| [Dictionary-passing style](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html) | the language-design conversation | 2026-09-19, link resolved |
+| [Elaborating Rust Traits to Explicit Trait Proofs](https://nadrieril.github.io/blog/2026/03/20/dictionary-passing-style.html) | the language-design conversation | 2026-11-25, read |
 | [What if traits carried values](https://nadrieril.github.io/blog/2026/03/22/what-if-traits-carried-values.html) | the language-design conversation | 2026-09-19, link resolved |
-| [An Incoherent Rust](https://www.boxyuwu.blog/posts/an-incoherent-rust/) | the language-design conversation | 2026-09-19, link resolved |
+| [An Incoherent Rust](https://www.boxyuwu.blog/posts/an-incoherent-rust/) | the language-design conversation | 2026-11-25, read |
+| [Dictionary Passing Style Experiment](https://github.com/rust-lang/goals/issues/630) | the types-team goal and its status | 2026-11-26, read |
+| [When can Traits Depend on Themselves?](https://nadrieril.github.io/blog/2026/05/14/when-can-traits-depend-on-themselves.html) and [Cyclic Trait Impls](https://smallcultfollowing.com/babysteps/series/cyclic-trait-impls/) | the work on which cyclic impls are sound | 2026-11-26, read |
 | [Context and capabilities](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/) | the language-design conversation | 2026-09-19, link resolved |
 | [cgp-skills](https://github.com/contextgeneric/cgp-skills) | the agent skill exists and is published | 2026-09-19, link resolved |
 | [Alternative blanket implementations](https://www.greyblake.com/blog/alternative-blanket-implementations-for-single-rust-trait/) | developers hand-roll CGP's marker-struct pattern | 2026-09-19, link resolved |
