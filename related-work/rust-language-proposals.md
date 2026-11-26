@@ -277,8 +277,8 @@ delegate_components! {
 ```
 
 This is the proposal's incoherence with a different resolution point. Boxy's sketch resolves at the
-call site, explicitly, and the languages in [traits without coherence](traits-without-coherence.md)
-resolve from what is in scope; CGP resolves at the context, so every call through `AppA` agrees. That is also how CGP answers the `HashMap` soundness concern the proposals must
+call site, explicitly, and the scope-based languages in
+[traits without coherence](traits-without-coherence.md) resolve from what is in scope; CGP resolves at the context, so every call through `AppA` agrees. That is also how CGP answers the `HashMap` soundness concern the proposals must
 address separately: a context selects one provider per component, so all code sharing a context
 agrees on one impl, which is the property the proposal recovers by moving `Hash` onto the type
 definition. The [type classes](type-classes.md) comparison develops this as "incoherent instances
@@ -289,8 +289,8 @@ made deterministic".
 Where the proposals let a caller pass an impl as a parameter, CGP has
 [higher-order providers](../cgp/concepts/higher-order-providers.md). A provider takes another
 provider as a type parameter and binds it with
-[`#[use_provider]`](../cgp/reference/attributes/use_provider.md), so the impl passed to a bound
-becomes a Rust generic:
+[`#[use_provider]`](../cgp/reference/attributes/use_provider.md), which writes the impl it is
+given as a Rust generic parameter:
 
 ```rust
 #[cgp_impl(new ScaledArea<InnerCalculator>)]
@@ -385,7 +385,7 @@ the question that work asks.
 ### What CGP cannot express
 
 The proposals reach two places CGP does not, and both follow from CGP being a library with a single
-context type. The first is *inference from scope*. Scoped impls, and the languages that
+context type. The first is *inference from scope*. Scoped impls, and the scope-based languages that
 [traits without coherence](traits-without-coherence.md) compares, let the compiler pick an impl from
 those visible at a call site; CGP has no such search, and a context must
 name every provider it uses. The second is *nested, dynamically scoped bindings*. Mandry's `with`
@@ -454,12 +454,12 @@ price of that.
 
 A Rust reader who has followed these proposals holds the exact vocabulary CGP needs, so use it. A
 **provider is a named impl**, a **consumer-trait bound on the context is an incoherent trait
-bound**, a **higher-order provider is an impl passed as a parameter**, an **implicit argument is a
-capability**, and **defining a context and its wiring is the `with` block**. Then say the one
-sentence that positions CGP correctly: CGP is a library-level desugaring of a fragment of these
-proposals, available on stable Rust now, with all bindings declared in one place. That framing
-invites the reader to check the claim against designs they already know rather than to learn a new
-paradigm.
+bound**, a **higher-order provider is a generic impl that takes another impl as a parameter**, an
+**implicit argument is a capability**, and **defining a context and its wiring is the `with`
+block**. Then say the one sentence that positions CGP correctly: CGP is a library-level desugaring
+of a fragment of these proposals, available on stable Rust now, with all bindings declared in one
+place. That framing invites the reader to check the claim against designs they already know rather
+than to learn a new paradigm.
 
 Correct two expectations before they mislead. The first is *inference*. A reader who knows scoped
 impls or a language that infers impls expects the compiler to pick an impl from scope, and CGP never
