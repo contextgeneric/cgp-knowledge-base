@@ -136,9 +136,9 @@ mod uses_hex {
 }
 ```
 
-The caller does not pass the impls: the compiler infers each one from the impls visible at the call,
-including the `Inner` impl that `ArrayDescribe` needs. So the imports decide the choice. The two
-modules above resolve `Describe<u8>` differently because they import different impls; a module that
+The imports decide the choice, because the caller does not pass the impls: the compiler infers each
+one from the impls visible at the call, including the `Inner` impl that `ArrayDescribe` needs. The two
+modules above resolve `Describe<u8>` differently because each imports a different impl. A module that
 imports both fails with `E2313`, "Trait `Describe::<u8>` has multiple implementations", and one that
 imports neither fails with "Trait has no implementation in context". A caller must also import every
 impl in the chain a generic impl needs, here `U8Decimal` for `ArrayDescribe`. A glob import shortens
@@ -166,9 +166,9 @@ def max[A](x: A, y: A)(using c: Comparator[A]): A =
 max(1, 2)     // Comparator[Int] resolved and passed implicitly
 ```
 
-Where several givens fit, the rules decide by nesting and specificity: a given nested more deeply
-wins, where Scala 2 reported an ambiguity, and an ambiguity found in a recursive step propagates to
-the caller as an error
+Where several givens fit, the rules rank them by nesting and specificity. A given nested more deeply
+wins, a case Scala 2 reported as ambiguous, and an ambiguity found in a recursive step of the search
+propagates to the caller as an error
 ([Scala 3 Reference, *Changes in Implicit Resolution*](https://docs.scala-lang.org/scala3/reference/changed-features/implicit-resolution.html)).
 Scala 3 also separates given imports from ordinary ones: a wildcard `import A.*` brings in everything
 but givens, and `import A.given` brings in the givens, so that "it is made clearer where givens in
@@ -308,10 +308,10 @@ check_components! {
 
 Code that serializes through `App` imports only the consumer trait `CanSerializeValue`. The
 [`open`](../cgp/reference/macros/delegate_components.md) statement dispatches the component per value
-type, and the table is the one place a reader looks to learn which provider each type gets. Against
-the three problems, every call through one context agrees; imports do not select providers; and the
-hash-table agreement follows from the context, as in Boxy's `HashMap`, but for every component at
-once. A second context, such as an `AppB` with another `u8` provider, makes a different choice with
+type, and the table is the one place a reader looks to learn which provider each type gets. The
+context answers all three problems. Every call through one context agrees, and imports do not select
+providers. The agreement a hash table needs follows from the context, as it follows from the type in
+Boxy's `HashMap`, but for every component the context wires. A second context, such as an `AppB` with another `u8` provider, makes a different choice with
 the same providers.
 
 CGP does not relax Rust's coherence to do this. Each provider implements the provider trait for its

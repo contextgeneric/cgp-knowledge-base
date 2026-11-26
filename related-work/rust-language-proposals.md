@@ -138,7 +138,7 @@ post, below, as its entry on incoherence; its update of 2026-10-29 reports no pr
 lines of writing ask which cycles between impls are sound. Nadrieril's *When can Traits Depend on
 Themselves?* (May 2026) uses explicit proofs to look for a criterion that rejects cycles proving false
 facts, and does not yet give a finished one. Niko Matsakis's posts on cyclic trait impls (August and
-October 2026) motivate them through perfect derive and conclude that modular proofs are the only
+October 2026) make the case for such impls through perfect derive and conclude that modular proofs are the only
 workable option
 ([Nadrieril, *When can Traits Depend on Themselves?*](https://nadrieril.github.io/blog/2026/05/14/when-can-traits-depend-on-themselves.html);
 [Matsakis, *Cyclic Trait Impls*](https://smallcultfollowing.com/babysteps/series/cyclic-trait-impls/)).
