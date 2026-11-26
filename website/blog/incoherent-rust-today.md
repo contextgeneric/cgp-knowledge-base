@@ -55,8 +55,8 @@ Five movements, long because each is taken at the precision its audience expects
   a restriction.
 - **What CGP adds and the ideas it suggests:** named impls as first-class types and explicit context
   types, then incoherent functions, zero-arity traits, and abstract types as ideas for Incoherent Rust;
-  a related-work paragraph that links a planned *Traits without coherence* comparison, with lessons
-  drawn from Cairo, Scala, modular implicits, and Boxy's sketch; and a conclusion split into what CGP
+  a related-work paragraph that links the *Traits without coherence* comparison, with lessons drawn
+  from Haskell, Cairo, Scala, modular implicits, and Boxy's sketch; and a conclusion split into what CGP
   solves, partially solves, and does not solve.
 
 **The conclusion's close:** if these features land, parts of the CGP library become unnecessary while
@@ -74,9 +74,10 @@ its patterns stay valuable, and CGP never aimed to be a framework developers dep
   [abstract types](../../cgp/concepts/abstract-types.md); the arena example is the deserialization half
   of [modular serialization](../../examples/modular-serialization.md).
 - **Related work:** [ML modules](../../related-work/ml-modules.md),
-  [implicit parameters](../../related-work/implicit-parameters.md), and
-  [Rust's own proposals](../../related-work/rust-language-proposals.md), which covers the proposals and
-  the Cairo material and draws on this draft's context-as-dictionary framing and limitations.
+  [implicit parameters](../../related-work/implicit-parameters.md),
+  [traits without coherence](../../related-work/traits-without-coherence.md), which takes this draft's
+  Cairo material, and [Rust's own proposals](../../related-work/rust-language-proposals.md), which
+  covers the proposals and draws on this draft's context-as-dictionary framing and limitations.
 - **Strategy:** the deep-dive playbook in [formats.md](../../communication-strategy/formats.md), not
   the release-announcement guide, and the comparison-piece rule that each compared design is shown as
   its authors would recognize it; the conversation is recorded in
