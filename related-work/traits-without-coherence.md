@@ -243,7 +243,8 @@ coexist without overlapping in Rust's eyes. A context's `delegate_components!` t
 provider per component and dispatch key, and every use through that context gets the same one. The
 snippets wire an **environmental context**, `App`, for a parameter-targeted component.
 
-The Cairo serializer translates in two ways. The direct translation makes the element's provider a
+Cairo's `ArrayDescribe`, a generic impl that takes its element's impl as a parameter, translates in
+two ways, shown here on a serializer for lists. The direct translation makes the element's provider a
 parameter of a [higher-order provider](../cgp/concepts/higher-order-providers.md), bound with
 [`#[use_provider]`](../cgp/reference/attributes/use_provider.md), and the caller assembles the chain
 that Cairo infers:
@@ -331,9 +332,9 @@ documentation anticipates:
   keyword was hard enough to teach that Scala 3 renamed it to `given` and `using` and separated given
   imports, as the [implicit parameters](implicit-parameters.md#what-users-like-and-dislike)
   comparison records.
-- **Cairo:** named impls give the freedom Rust's orphan rule withholds. The cost the project's
-  analysis finds is that the caller imports the whole chain of impls, and that imports decide the
-  choice.
+- **Cairo:** the project's analysis finds that the caller imports the whole chain of impls and that
+  imports decide the choice; Cairo's design discussion presents the absence of orphan rules and of a
+  uniqueness requirement as the design.
 - **Modular implicits:** the proposal has no users to report, since it has not shipped in OCaml; its
   paper rejects ambiguous choices rather than ranking them.
 - **Boxy's sketch:** its own post names the costs it would need to settle: syntax, ergonomics for
@@ -359,7 +360,8 @@ context's wiring for the code it encloses, which Scala's nesting rule and scoped
 
 The other systems are the better fit in their own settings. Scala's givens and Cairo's inference
 keep small programs free of wiring, where a single choice per type is all the program needs. Haskell's
-global instances give the same answer everywhere with no table, which is what most code wants. And a
+global instances give the same answer everywhere with no table, which suits code that needs one
+meaning per type. And a
 language change, unlike a library, would reach existing traits.
 
 ## Presenting CGP
@@ -372,8 +374,8 @@ to one type; CGP applies it to every component a context wires.
 
 Say that CGP keeps Rust's coherence rules. "Incoherent" describes the provider traits' freedom to
 have several implementations, not the impls Rust checks, and a reader who hears that CGP is
-incoherent looks for the soundness problems of Haskell's `INCOHERENT` instances, which CGP does not
-have. The [implicit parameters](implicit-parameters.md#coherence-and-instance-selection) comparison
+incoherent looks for the compiler choosing between candidates on its own, as Haskell's `INCOHERENT`
+instances allow, which CGP's coherent impls rule out. The [implicit parameters](implicit-parameters.md#coherence-and-instance-selection) comparison
 states the same rule: compare selection mechanisms rather than describing CGP as incoherent.
 
 For the language-design reader, the comparison is a finding about the design space rather than a
