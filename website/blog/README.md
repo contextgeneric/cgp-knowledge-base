@@ -80,7 +80,7 @@ named**, so the catalog inventories all of CGP's writing; a draft on a feature b
 anyone reading `main`.
 
 - [Using an incoherent, dictionary-passing style Rust today](incoherent-rust-today.md): on the
-  `incoherent-rust` branch, dated 2026-11-25, *draft*. About 9,200 words reading CGP against the
+  `incoherent-rust` branch, dated 2026-11-25, *draft*. About 9,300 words reading CGP against the
   dictionary-passing, incoherent-traits, and context-and-capabilities discussion, and arguing that CGP
   implements a fragment of it on stable Rust today. The only post aimed at the language-design
   reader, and the only one whose value decays with time.
