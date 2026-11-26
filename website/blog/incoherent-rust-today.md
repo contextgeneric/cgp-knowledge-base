@@ -8,8 +8,10 @@ stated cost.
 - **URL**: none; the post is not published
 - **Source**: `blog/2026-11-25-incoherent-rust-today.md` on the `incoherent-rust` branch of the
   [website repository](https://github.com/contextgeneric/contextgeneric.dev), not on `main`
-- **Date in filename**: 2026-11-25, set when the author approved the first revision; the draft dates
-  from 2026-03-30
+- **Date in filename**: 2026-11-25, set when the author approved the first revision; the draft's file
+  was dated 2026-03-30
+- **Author's note**: after the excerpt, a note says the author drafted the post in April as a quick response
+  to Boxy's and Nadrieril's March posts, held it for time and for the v0.8.0 work, and revised it only slightly
 - **Status**: Draft
 - **Publication**: after the documents it links, *Rust's own proposals* revised and a new *Traits
   without coherence* comparison, are published
