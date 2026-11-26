@@ -212,7 +212,7 @@ Cairo, the smart-contract language of Starknet, borrows Rust's surface syntax an
 name, so it is the nearest thing to a shipped Incoherent Rust. Its compiler infers each impl from those
 a call site imports, so the imports decide which implementation a call uses. The
 [traits without coherence](traits-without-coherence.md) comparison covers Cairo in depth, beside
-Scala's givens, OCaml's modular implicits, Haskell's overlapping instances, and Boxy's sketch.
+Scala's givens, OCaml's modular implicits, and Haskell's overlapping instances.
 
 ## How CGP expresses it
 

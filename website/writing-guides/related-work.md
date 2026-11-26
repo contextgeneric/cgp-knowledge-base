@@ -134,7 +134,7 @@ than with one tool, such as how trait systems manage without global coherence. S
 - **The idea:** one subsection per system, grouped by the family of answer the systems give, such as
   inference from scope, explicit naming at each call, and choices fixed on a type. The families, not
   the systems, organize the comparison.
-- **How CGP expresses it:** one section, which places CGP in its family.
+- **How CGP expresses it:** one section, which places CGP among those answers.
 - **Costs and the other systems' wins:** one entry per system in *What each approach costs* and in
   *Where the other tool is the better choice*, each stated as that system's community states it.
 - **Sources:** one toolchain sentence per language, and a sentence for any snippet that cannot run.
@@ -197,8 +197,8 @@ the code.
 **The category has a hand-written index, because a reader holding one background needs routing to one
 page.** It says what the section is for in two sentences, naming Context-Generic Programming, then
 routes by background with a short table from *what you know* to *the page to read*, grouped as the
-internal [catalog](../../related-work/README.md) groups them, with Rust's own proposals and C++
-policy-based design first. It closes with what every page shares: a mapping into the reader's terms,
+internal [catalog](../../related-work/README.md) groups them, with Rust's own proposals first and
+C++ policy-based design and *Traits without coherence* last. It closes with what every page shares: a mapping into the reader's terms,
 code side by side, costs on both sides, and where their tool wins.
 
 ## Placement, navigation, and bookkeeping

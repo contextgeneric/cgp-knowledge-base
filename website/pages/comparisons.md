@@ -27,10 +27,10 @@ with the canonical `cargo cgp check` sentence; where the other tool is the bette
 expect that differs; onward routing; Sources, opening with the toolchain sentence; and the comparison
 variant of the provenance note.
 
-The sidebar follows the internal catalog's order: *Rust's own proposals*, *Without coherence*
-(*Traits without coherence*, at `sidebar_position` 1.5), and *Policy-based design*,
-then *Type classes*, *ML modules*, *Implicit parameters*, *Algebraic effects*, and *Row
-polymorphism*, then *Dependency injection*, *Dynamic dispatch*, *Reflection*, and *Capabilities*.
+The sidebar follows the internal catalog's order: *Rust's own proposals*, then *Type classes*, *ML
+modules*, *Implicit parameters*, *Algebraic effects*, and *Row polymorphism*, then *Dependency
+injection*, *Dynamic dispatch*, *Reflection*, and *Capabilities*, and last *Policy-based design* and
+*Without coherence* (*Traits without coherence*).
 
 Fourteen concept pages end *Where to go next* with one entry per relevant comparison, labelled
 *Comparison:*; *Dispatching*, *Monadic handlers*, *Type-level DSLs*, and *Recovering `Send` bounds*
@@ -61,8 +61,8 @@ Every page explains its analogy point first, with explicit limits:
 - **Row polymorphism:** predicate-based rows against a row kind and against row inference.
 - **Rust's own proposals:** proposal syntax against runnable Rust; what CGP cannot infer or nest; the
   `E0275` limit on a provider that needs its own instance, beside the cycles work.
-- **Traits without coherence:** five systems compared on how each chooses among several impls,
-  grouped into three families; CGP keeps Rust's coherence checks; the Cairo snippet and its `E2313`
+- **Traits without coherence:** four systems compared on how each chooses among several impls, in
+  two families of answer beside CGP's choice fixed on the context; CGP keeps Rust's coherence checks; the Cairo snippet and its `E2313`
   errors as Cairo 2.21.0 runs them. It is the one page that compares several systems, in the
   guide's [shape for that](../writing-guides/related-work.md#pages-that-compare-several-systems).
 - **Type classes:** scoped coherence against global uniqueness; where a canonical instance is the

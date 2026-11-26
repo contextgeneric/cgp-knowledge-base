@@ -56,9 +56,10 @@ comparisons span all three.
 ## The catalog
 
 Each document below names an external concept and compares it to CGP. The authoring rules for adding
-one live in [writing-guide.md](writing-guide.md). The first documents are the ones a Rust reader
-compares CGP to before any other, so they are listed first. The type-theoretic ideas follow, then
-dependency injection, the runtime mechanisms, and the senses of the word "capability".
+one live in [writing-guide.md](writing-guide.md). The first document is the one a Rust reader
+compares CGP to before any other, so it is listed first. The type-theoretic ideas follow, then
+dependency injection, the runtime mechanisms, and the senses of the word "capability", and last C++
+policy-based design and the comparison of trait systems without coherence.
 
 - [Rust's own proposals](rust-language-proposals.md): specialization (RFC 1210, unstable since 2016
   with a lifetime soundness hole), the dictionary-passing account of traits, Boxy's named and
@@ -66,14 +67,6 @@ dependency injection, the runtime mechanisms, and the senses of the word "capabi
   that shipped named impls. CGP is read as a library-level desugaring of a fragment of each, with
   providers as named impls, implicit arguments as capabilities, and the context as the root
   dictionary, and with two stated limits: no inference from scope and no nested bindings.
-- [Traits without coherence](traits-without-coherence.md): how Cairo's named impls, Scala's givens,
-  OCaml's modular implicits, Haskell's overlapping and incoherent instances, and Boxy's sketch choose
-  among several impls of one trait for one type. They infer the choice from scope, name it at each
-  call, or fix it on a type; CGP fixes it on the context while keeping Rust's coherence checks.
-- [C++ policy-based design, CRTP, and concepts](policy-based-design.md): policies and host classes,
-  CRTP, and C++20 concepts compared with providers, higher-order providers, and context wiring. The
-  comparison distinguishes constraint satisfaction from generic-body checking, acknowledges aliases
-  and defaults, and explains where structural policies and inheritance differ from CGP.
 - [Type classes](type-classes.md): the principled ad-hoc polymorphism of Haskell, Agda, and Lean,
   dictionary passing and coherence, the overlapping and incoherent-instance extensions that strain
   against it, the diamond problem in dependently typed settings, and Dreyer, Harper, and
@@ -124,3 +117,11 @@ dependency injection, the runtime mechanisms, and the senses of the word "capabi
   and is not a capability system in the object-capability sense: it does not remove ambient
   authority, its requirements are not unforgeable tokens, and dependency checking does not enforce
   confinement. Wiring is static, while authority-bearing values can vary at runtime.
+- [C++ policy-based design, CRTP, and concepts](policy-based-design.md): policies and host classes,
+  CRTP, and C++20 concepts compared with providers, higher-order providers, and context wiring. The
+  comparison distinguishes constraint satisfaction from generic-body checking, acknowledges aliases
+  and defaults, and explains where structural policies and inheritance differ from CGP.
+- [Traits without coherence](traits-without-coherence.md): how Cairo's named impls, Scala's givens,
+  OCaml's modular implicits, and Haskell's overlapping and incoherent instances choose among several
+  impls of one trait for one type. Haskell keeps one global answer with exceptions, and the others
+  infer the choice from scope; CGP fixes it on the context while keeping Rust's coherence checks.

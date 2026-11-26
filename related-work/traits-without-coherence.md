@@ -1,12 +1,12 @@
 # Traits without coherence
 
 Several trait systems let one type have more than one implementation of a trait, and each must then
-decide which implementation a use of the trait gets. This document compares five of them on that
-question alone: Cairo's named impls, Scala's `given` instances, OCaml's modular implicits, Haskell's
-overlapping and incoherent instances, and Boxy's sketch of an incoherent Rust. They give three
-families of answer: infer the choice from what is in scope, name it at each call, or fix it on a type.
-CGP takes the third, by fixing the choice on a context type, and it does so while every Rust impl it
-generates still passes Rust's coherence checks.
+decide which implementation a use of the trait gets. This document compares four of them on that
+question alone: Cairo's named impls, Scala's `given` instances, OCaml's modular implicits, and
+Haskell's overlapping and incoherent instances. They answer in two ways: Haskell keeps one answer for
+the whole program and relaxes it by exception, and the other three infer the choice from what is in
+scope. CGP takes a third way, fixing the choice on a context type, and it does so while every Rust
+impl it generates still passes Rust's coherence checks.
 
 ## Purpose
 
@@ -15,25 +15,26 @@ the freedom to have several implementations. They then meet the same three probl
 can resolve the same type differently. A change of imports can change the choice. And a data
 structure such as a hash table, which needs every operation on one value to agree on one `Hash`,
 loses that agreement unless the design restores it some other way. Comparing the systems on these
-problems shows which answer each family gives and what each answer costs.
+problems shows which answer each system gives and what each answer costs.
 
 The document serves the
 [language-design reader](../communication-strategy/readers.md#the-language-design-and-compiler-team-reader)
 first, since the incoherent-Rust discussion is choosing among these answers now, and the reader who
 knows one of the systems second. Each system keeps its full account in its own comparison, linked
-from its section: [Rust's own proposals](rust-language-proposals.md) for Boxy's sketch and the other
-Rust designs, [type classes](type-classes.md) for Haskell, [implicit parameters](implicit-parameters.md)
-for Scala, and [ML modules](ml-modules.md) for modular implicits. Only Cairo has no comparison of its
+from its section: [type classes](type-classes.md) for Haskell,
+[implicit parameters](implicit-parameters.md) for Scala, and [ML modules](ml-modules.md) for modular
+implicits, while [Rust's own proposals](rust-language-proposals.md) covers the designs Rust itself has
+considered. Only Cairo has no comparison of its
 own, so its section here is the longest. The analysis of Cairo's resolution is the project's own; it
 first appeared in the author's unpublished draft that the
 [website record](../website/blog/incoherent-rust-today.md) describes.
 
 ## The concept in depth
 
-The five systems share a starting point: implementations that can overlap, and a rule for choosing
+The four systems share a starting point: implementations that can overlap, and a rule for choosing
 among them. They differ in where that rule looks. Haskell keeps a global search and relaxes its
 uniqueness in exceptional cases. Cairo, Scala, and modular implicits search what is in scope at the
-call. Boxy's sketch names the impl at the call and, for types such as `HashMap`, fixes it on the type.
+call.
 
 ### Uniqueness with exceptions in Haskell
 
@@ -214,27 +215,6 @@ follows the proposal paper; the extension exists only as an
 OCaml. Its answer is scope without ranking, and the [ML modules](ml-modules.md#modular-implicits)
 comparison covers it with the module system it extends.
 
-### Naming at the call, and fixing on the type, in Boxy's sketch
-
-Boxy's *An Incoherent Rust* drops Rust's coherence rules for traits declared `incoherent trait`,
-names each impl, and passes the impl where a bound needs one:
-
-```rust
-impl Name<T> = Trait<T> for T { /* ... */ }
-
-function::<T + TraitImpl<T>>(/* ... */)
-```
-
-The syntax is the post's sketch, not a proposal, and does not compile. Naming at the call removes
-inference, so imports cannot change a choice, but every call site states it. For the hash-table
-problem the post moves the bounds onto the type, as `struct HashMap<K: Hash + Eq, V> { ... }`, so
-that "once a value of HashMap is constructed the same Hash/Eq impls will always be used for that
-value, as which impl is used is part of the HashMap type itself"
-([Boxy, *An Incoherent Rust*](https://www.boxyuwu.blog/posts/an-incoherent-rust/)). The sketch thus
-uses two answers: naming at the call in general, and fixing the choice on a type where every
-operation must agree. [Rust's own proposals](rust-language-proposals.md#named-and-incoherent-impls)
-covers it with the rest of the Rust discussion.
-
 ## How CGP expresses it
 
 CGP fixes the choice on a type for every trait it manages: the context type. A provider is a named
@@ -310,9 +290,9 @@ Code that serializes through `App` imports only the consumer trait `CanSerialize
 [`open`](../cgp/reference/macros/delegate_components.md) statement dispatches the component per value
 type, and the table is the one place a reader looks to learn which provider each type gets. The
 context answers all three problems. Every call through one context agrees, and imports do not select
-providers. The agreement a hash table needs follows from the context, as it follows from the type in
-Boxy's `HashMap`, but for every component the context wires. A second context, such as an `AppB` with another `u8` provider, makes a different choice with
-the same providers.
+providers. The agreement a hash table needs follows from the context, for every component the context wires. A
+second context, such as an `AppB` with another `u8` provider, makes a different choice with the same
+providers.
 
 CGP does not relax Rust's coherence to do this. Each provider implements the provider trait for its
 own type, and each table entry is an ordinary impl of `DelegateComponent` for the context, so a second
@@ -337,16 +317,14 @@ documentation anticipates:
   uniqueness requirement as the design.
 - **Modular implicits:** the proposal has no users to report, since it has not shipped in OCaml; its
   paper rejects ambiguous choices rather than ranking them.
-- **Boxy's sketch:** its own post names the costs it would need to settle: syntax, ergonomics for
-  deriving incoherent traits, migration of the ecosystem, and whether the complexity is worth it.
 
 ## How CGP compares
 
-CGP gives the per-context choice of the third family on stable Rust, and its price is that the
+CGP gives a third answer on stable Rust, a choice fixed per context, and its price is that the
 choice must be written down. Against **inference from scope**, CGP never searches: a context names
 every provider it uses, so a program cannot pick up a different impl by importing one, and it also
-cannot leave the choice to the compiler. Against **naming at each call**, CGP names the choice once
-per context rather than per call; generic code only states the consumer trait it needs. Against
+cannot leave the choice to the compiler, while generic code states only the consumer trait it needs.
+Against
 **Haskell's global uniqueness**, CGP allows any number of providers for one type, each selected
 deterministically, where Haskell's overlap extensions trade that determinism away.
 
@@ -361,27 +339,26 @@ context's wiring for the code it encloses, which Scala's nesting rule and scoped
 The other systems are the better fit in their own settings. Scala's givens and Cairo's inference
 keep small programs free of wiring, where a single choice per type is all the program needs. Haskell's
 global instances give the same answer everywhere with no table, which suits code that needs one
-meaning per type. And a
-language change, unlike a library, would reach existing traits.
+meaning per type. And a language change, unlike a library, would reach existing traits.
 
 ## Presenting CGP
 
-Place CGP in the family that fixes the choice on a type, and name the type: the context. A reader
+Present CGP as the answer that fixes the choice on a type, and name the type: the context. A reader
 who knows Cairo or Scala expects the compiler to find an impl in scope, and CGP never does, so say it
 early and give the reason: the choice lives in one table, so imports cannot change it and every use
-through a context agrees. A reader who knows Boxy's `HashMap` answer has already met the idea, applied
-to one type; CGP applies it to every component a context wires.
+through a context agrees.
 
 Say that CGP keeps Rust's coherence rules. "Incoherent" describes the provider traits' freedom to
 have several implementations, not the impls Rust checks, and a reader who hears that CGP is
 incoherent looks for the compiler choosing between candidates on its own, as Haskell's `INCOHERENT`
-instances allow, which CGP's coherent impls rule out. The [implicit parameters](implicit-parameters.md#coherence-and-instance-selection) comparison
-states the same rule: compare selection mechanisms rather than describing CGP as incoherent.
+instances allow, which CGP's coherent impls rule out. The
+[implicit parameters](implicit-parameters.md#coherence-and-instance-selection) comparison states the
+same rule: compare selection mechanisms rather than describing CGP as incoherent.
 
 For the language-design reader, the comparison is a finding about the design space rather than a
-pitch. The three families trade the same goods: inference costs predictability, naming at each call
-costs repetition, and fixing on a type costs a declaration. CGP is evidence of what the third family
-is like to use at scale, with its verbosity stated beside its predictability. If an incoherent Rust
+pitch. The answers trade the same goods: inference costs predictability, one global answer costs the
+freedom to choose, and fixing the choice on a type costs a declaration. CGP is evidence of what the
+last is like to use at scale, with its verbosity stated beside its predictability. If an incoherent Rust
 adopts inference or scoped impls, the question CGP raises is whether the language should also offer
 a way to fix the choices for a whole program in one place.
 
@@ -396,8 +373,8 @@ The Cairo snippets were compiled and run with Cairo 2.21.0 (`cairo-run`, from ni
 `Serde` trait is quoted from that release's corelib, which also states the field modulus. The Haskell
 snippet is the [type classes](type-classes.md) comparison's, compiled there with GHC 9.10; the Scala
 snippet is the [implicit parameters](implicit-parameters.md) comparison's, compiled there with Scala
-3.8.4. The modular-implicits snippet follows the proposal paper and cannot run on released OCaml, and
-Boxy's syntax is a sketch that does not compile. The CGP snippets were compiled and run against `cgp`
+3.8.4. The modular-implicits snippet follows the proposal paper and cannot run on released OCaml. The
+CGP snippets were compiled and run against `cgp`
 0.8.0, with a `check_components!` assertion on `App`.
 
 - [Cairo Book: *Traits in Cairo*](https://www.starknet.io/cairo-book/ch08-02-traits-in-cairo.html)
@@ -414,8 +391,6 @@ Boxy's syntax is a sketch that does not compile. The CGP snippets were compiled 
 - [White, Bour & Yallop, *Modular implicits*](https://arxiv.org/abs/1512.01895) and the
   [experimental fork](https://github.com/ocamllabs/ocaml-modular-implicits): implicit module
   parameters, implicit functors, and the rejection of ambiguous choices.
-- [Boxy, *An Incoherent Rust*](https://www.boxyuwu.blog/posts/an-incoherent-rust/): named impls,
-  impls passed in bounds, the `HashMap` bounds moved onto the type, and the open costs.
 - The [record of the unpublished incoherent-Rust draft](../website/blog/incoherent-rust-today.md):
   the analysis of Cairo's resolution and the direct and idiomatic CGP translations, here stated as
   the project's own.
