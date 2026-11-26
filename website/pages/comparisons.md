@@ -8,8 +8,8 @@ related-work document, plus an index that routes by background.
 - **Status:** Current: the index and all twelve pages are written, each with its `example-code`
   mirror, and revised against the naming rule and the
   [comparison guide](../writing-guides/related-work.md); *Traits without coherence*, its index row,
-  and the revised *Rust's own proposals* are on the website's `incoherent-rust` branch and reach
-  `main` with the post
+  the revised *Rust's own proposals*, and the sidebar order below are on the website's
+  `incoherent-rust` branch and reach `main` with the post
 - **How it was made:** ported by an agent from [related-work/](../../related-work/README.md); level
   one of the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md). The author's
   read of each page's two judging sections, per the
