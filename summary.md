@@ -902,7 +902,8 @@ it stale.
 - [related-work.md](website/writing-guides/related-work.md) — the comparison pages ported from the
   internal related-work documents: the four transformations of the port (retire the positioning section
   and apply it as structure, compress the refresher, re-point every link, keep Sources), the page shape
-  from the *In your terms* table to the section where the other tool wins, the rules for writing about
+  from the *In your terms* table to the section where the other tool wins and its form for a page
+  that compares several systems, the rules for writing about
   another community's tool, code verification in two languages, the index, and the placement after
   Concepts under the label *Comparisons*.
 

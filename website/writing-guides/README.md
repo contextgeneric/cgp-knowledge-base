@@ -95,7 +95,8 @@ Register a new guide here in the same change that adds it, and in [../../summary
   exception to the one-way link rule, the four-page shape, the how-to pages, and why prompt templates
   wait until tested.
 - [related-work.md](related-work.md): the comparison pages: the port from the related-work documents,
-  the page shape, writing about another community's tool, and verifying code in two languages.
+  the page shape and its form for a page that compares several systems, writing about another
+  community's tool, and verifying code in two languages.
 
 The AI disclosure page has no guide here: it is specified with the policy it publishes, in
 [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#the-page-on-the-website).
@@ -285,6 +286,20 @@ the naming rule exempts them.
   and [revision of human-written drafts](../../communication-strategy/ai-disclosure.md#revision-of-human-written-drafts).
 - **SEO:** [the truncated titles](../seo.md#truncated-titles)
   and [the work, in order](../seo.md#the-order-of-work), for the relaunch-day submission.
+
+### Deep-dive posts
+
+- **Guide:** none; the [blog post conventions](#blog-post-conventions), in the author's voice.
+- **Strategy:** [the blog deep-dive](../../communication-strategy/formats.md#the-blog-deep-dive) and
+  [the comparison piece](../../communication-strategy/formats.md#the-comparison-or-positioning-piece),
+  for representing other designs;
+  [the strengths](../../communication-strategy/message.md#the-strengths-worth-advertising) and
+  [the objections](../../communication-strategy/message.md#the-objections-readers-bring);
+  the reader profile the post addresses, such as
+  [the language-design reader](../../communication-strategy/readers.md#the-language-design-and-compiler-team-reader);
+  [CGP's reception](../../communication-strategy/evidence.md#cgps-reception); and
+  [revision of human-written drafts](../../communication-strategy/ai-disclosure.md#revision-of-human-written-drafts).
+- **SEO:** [the truncated titles](../seo.md#truncated-titles).
 
 ### Release-notes pages
 

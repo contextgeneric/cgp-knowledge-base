@@ -80,7 +80,9 @@ public page that disagrees with its internal document is the one in error.
 ## The page shape
 
 Every comparison page has the same sections in the same order, so a reader of one can skim the next.
-The titles below are jobs; a page's headings may name the compared tool.
+The titles below are jobs; a page's headings may name the compared tool. A page that compares several
+systems adjusts them as [Pages that compare several systems](#pages-that-compare-several-systems)
+describes.
 
 - **Orientation**, two or three sentences: CGP in one sentence, naming Context-Generic Programming in
   full beside a short form of the tag line and linking the Introduction, related to the compared idea
@@ -114,6 +116,30 @@ The page closes with the provenance note in the wording the reference and Concep
 adding that its CGP code was verified against the library's source and its other snippets against
 the toolchains named in Sources, per
 [ai-disclosure.md](../../communication-strategy/ai-disclosure.md#linking-to-it-from-a-page).
+
+## Pages that compare several systems
+
+**A page may compare several systems on one question** when readers arrive with the question rather
+than with one tool, such as how trait systems manage without global coherence. Such a page keeps the shape above, with these changes:
+
+- **Derived from:** one internal document in [related-work/](../../related-work/README.md) that
+  compares the same systems on the same question, with its own catalog entry.
+- **Scope:** each system is compared on the page's question only, with one short snippet in its own
+  language, and links its own comparison page where the site has one, so each system keeps one full
+  account on the site.
+- **Orientation:** names the question and the systems, and says that CGP keeps Rust's coherence rules
+  while letting each context choose its providers.
+- **In your terms:** one row per system, giving how it resolves the choice, where the choice lives,
+  and the CGP construct that plays the same part.
+- **The idea:** one subsection per system, grouped by the family of answer the systems give, such as
+  inference from scope, explicit naming at each call, and choices fixed on a type. The families, not
+  the systems, organize the comparison.
+- **How CGP expresses it:** one section, which places CGP in its family.
+- **Costs and the other systems' wins:** one entry per system in *What each approach costs* and in
+  *Where the other tool is the better choice*, each stated as that system's community states it.
+- **Sources:** one toolchain sentence per language, and a sentence for any snippet that cannot run.
+- **Title:** the question's name rather than a tool's, since no one tool's name fits, with a
+  `description` naming the reader and a short sidebar label.
 
 ## Writing about another community's tool
 
@@ -181,7 +207,8 @@ code side by side, costs on both sides, and where their tool wins.
 position [site.md](../site.md) records. The label and the URL use the reader's word, matching
 `concepts` and `tutorials`; "related work" names the internal directory and stays there.
 
-**Page titles use the compared concept's name**, because that is what the reader searches for, with a
+**Page titles use the compared concept's name**, because that is what the reader searches for, except
+on a page that compares several systems, which takes the question's name, with a
 `description` naming the reader the page serves. The problem-oriented titles
 [formats.md](../../communication-strategy/formats.md#titles-first-lines-and-search) prescribes for
 explanations do not fit, since this reader arrives with a vocabulary rather than a problem.
