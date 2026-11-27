@@ -820,7 +820,7 @@ it stale.
   its Community page, and how the live page differs.
 - [contribute.md](website/pages/contribute.md) — the contribution paths, the acknowledgement, and the
   author's voice in the sponsorship section.
-- [concepts.md](website/pages/concepts.md) — the explanation tier: its eighteen pages, what each must
+- [concepts.md](website/pages/concepts.md) — the explanation tier: its nineteen pages, what each must
   preserve, the page shape, and each page's context shape.
 - [comparisons.md](website/pages/comparisons.md) — the twelve comparison pages, what each must
   preserve, and where their code differs from the internal documents.

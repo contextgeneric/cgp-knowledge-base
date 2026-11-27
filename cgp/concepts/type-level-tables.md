@@ -171,7 +171,7 @@ key and a longer key under it therefore overlap and fail with `E0119`; the table
 most specific entry wins. A generic segment, as in `@ComputerComponent.<Code> Code.Plus<MathExpr>`,
 matches every value in its position.
 
-## Tables that point to tables
+## Nested tables and namespaces
 
 An entry's value can be another table. An [aggregate provider](aggregate-providers.md) is a table
 declared with `new` and used as a provider: a context delegates a group of components to it, and each

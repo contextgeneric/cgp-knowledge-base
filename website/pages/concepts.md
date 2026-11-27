@@ -5,27 +5,27 @@ CGP work this way* rather than *how do I write it*.
 
 - **URL:** <https://contextgeneric.dev/docs/concepts/>
 - **Source:** [docs/concepts/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/concepts)
-- **Status:** Current: the index and all eighteen pages are written
+- **Status:** Current: the index and all nineteen pages are written
 - **How it was made:** written by an agent from [cgp/concepts/](../../cgp/concepts/README.md); level
   one of the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
 
 ## What it covers
 
 The section is a top-level category at `docs/concepts/`, position 5, with a hand-written index as its
-category link. It has eighteen pages, one per document under
+category link. It has nineteen pages, one per document under
 [cgp/concepts/](../../cgp/concepts/README.md) with matching file names, so the mapping is one to one.
 Three shared diagrams live in `static/img/`: *Bypassing coherence* carries coherence scoped to each
 provider, and *Consumer and provider traits* the split and the wiring table, so the ideas the
 homepage offloads to reuse one drawing.
 
 **Every page's code has a compiled counterpart** in the
-[`example-code` crate](../site.md#the-example-code-crate), one file per page; eighteen pages show
+[`example-code` crate](../site.md#the-example-code-crate), one file per page; nineteen pages show
 code and the index none. Every quoted error is real compiler output, including the `E0119` and
 `E0117` on *Bypassing coherence*, the `E0599` / `CanUseComponent` / `[CGP-E001]` progression on
 *Checking your wiring*, and the two override conflicts on *Namespaces*.
 
-**The sidebar order is the order a reader meets the ideas:** the coherence problem and the trait
-split, then the three faces of dependency injection, then composition and scale, then the applied
+**The sidebar order is the order a reader meets the ideas:** the coherence problem, the trait
+split, and the table that connects its two traits, then the three faces of dependency injection, then composition and scale, then the applied
 ideas, with *Recovering `Send` bounds* and *Modularity Hierarchy* last.
 
 **Every page and the index are in natural-writing style.** The index groups reading links by the
@@ -56,6 +56,12 @@ The pages carry qualifications that a shortening revision is likely to drop:
   consumer trait; that direct and wired implementations of one consumer trait cannot coexist for a
   context; and the hand-written expansion including the `IsProviderFor` supertrait, which only the
   introductory trait pair omits.
+- **Type-level tables:** the one page that explains table lookup and `DelegateComponent`. It opens on
+  a plain `HasEntry<Key>` table before naming CGP's trait, shows the provider blanket impl with its
+  table bound alone, then states the `IsProviderFor` bound and links *Checking your wiring* for it.
+  `DelegateComponent` has no `IsProviderFor` bound; the requirement sits on the blanket impl. A
+  shorter path key and a longer key beneath it overlap with `E0119`, and the namespace listing comes
+  from `#[prefix(@app in AppNamespace)]`, checked with `cargo cgp expand`.
 - **Abstract types:** shared type selection against provider compatibility, and when a type
   dependency must appear in the interface.
 - **Aggregate providers:** bundles checked against actual contexts; namespace customization needs
@@ -150,6 +156,9 @@ Each page records which of CGP's three context shapes its code is in, since no s
   [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md),
   [coherence](../../cgp/concepts/coherence.md), and the
   [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md).
+- **Type-level tables:** a plain Rust table that is not a context, then the storage example's
+  **environmental, self-targeted** `App` for the call trace, and an **environmental,
+  parameter-targeted** `MyApp` measuring shapes for `UseDelegate` and `open`, each marked in prose.
 - **Bypassing coherence:** a **value context, self-targeted** retrofit, `CanEncode` wired onto
   `String` and `Vec<u8>`, never crossing into the other shapes, which it defers to *Modularity
   Hierarchy*, per the [*Why CGP exists* spec](../writing-guides/explanation.md#why-cgp-exists).

@@ -27,7 +27,7 @@ Pages recorded elsewhere:
 
 ## Docs sections
 
-- [concepts.md](concepts.md): the explanation tier, eighteen pages, and what each must preserve.
+- [concepts.md](concepts.md): the explanation tier, nineteen pages, and what each must preserve.
 - [comparisons.md](comparisons.md): twelve pages placing CGP among related ideas.
 - [reference.md](reference.md): the construct reference, its groups, mapping, and port conventions.
 - [compile-errors.md](compile-errors.md): the reference's consolidated error page and code tables.
