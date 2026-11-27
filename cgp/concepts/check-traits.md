@@ -65,6 +65,12 @@ surfaces as an unsatisfied `HasField` bound pointing at the context, not as a ba
 implemented." `IsProviderFor` is otherwise a near-invisible marker; its whole purpose is to make
 this error-surfacing work, and check traits are where it earns its keep.
 
+The marker also travels with the wiring. Every provider trait requires it as a supertrait, and
+[`delegate_components!`](../reference/macros/delegate_components.md) writes an `IsProviderFor` impl
+beside each table entry that forwards to the chosen provider's, which the generated impl that reads
+the table requires. That is how a check on a context reaches the provider its entry names;
+[type-level tables](type-level-tables.md) shows the requirement in the lookup's blanket impl.
+
 ## Writing checks with the macros
 
 Rather than spell out check traits by hand,

@@ -50,12 +50,12 @@ The pages carry qualifications that a shortening revision is likely to drop:
   anchor. Independent application choices are deferred to *Modularity Hierarchy*.
 - **Consumer and provider traits:** context-style `Self` inside `#[cgp_impl]` against Rust's
   ordinary provider-side `Self`, with the exception for a provider's own associated types and
-  constants; multi-item components; a call trace explaining why `App` first fills both the context
-  and delegating-provider roles; simplified providers that keep the rejected blanket
-  implementations' context bounds; `fetch_profile_picture` as a generic caller bounded only by the
-  consumer trait; that direct and wired implementations of one consumer trait cannot coexist for a
-  context; and the hand-written expansion including the `IsProviderFor` supertrait, which only the
-  introductory trait pair omits.
+  constants; multi-item components; the call through the wiring table, named as a lookup through
+  `DelegateComponent` and linked to *Type-level tables*, which holds the trace; simplified providers
+  that keep the rejected blanket implementations' context bounds; `fetch_profile_picture` as a generic
+  caller bounded only by the consumer trait; that direct and wired implementations of one consumer
+  trait cannot coexist for a context; and the trait pair's omitted checking bound, linked to
+  *Checking your wiring*.
 - **Type-level tables:** the one page that explains table lookup and `DelegateComponent`. It opens on
   a plain `HasEntry<Key>` table before naming CGP's trait, shows the provider blanket impl with its
   table bound alone, then states the `IsProviderFor` bound and links *Checking your wiring* for it.
@@ -67,7 +67,8 @@ The pages carry qualifications that a shortening revision is likely to drop:
 - **Aggregate providers:** bundles checked against actual contexts; namespace customization needs
   unbound paths.
 - **Checking your wiring:** ordinary trait assertions, component checks, and diagnostic rewriting kept
-  distinct; one broken context followed unchecked, checked, and checked through the toolchain; its
+  distinct; the `IsProviderFor` section, the site's one explanation of the marker, from the provider
+  macros' bounds through the provider trait's supertrait to the entry `delegate_components!` writes; one broken context followed unchecked, checked, and checked through the toolchain; its
   quoted output is abbreviated.
 - **Implicit arguments:** matching `HasField` implementations; cloning against borrowing, named
   getters, and wireable field selection.

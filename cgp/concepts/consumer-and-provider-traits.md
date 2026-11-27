@@ -42,25 +42,17 @@ struct used as a key, and the blanket impls that connect them.
 
 ## How the two traits connect
 
-Two generated blanket impls bridge the consumer and provider sides, and together they make
-`context.area()` resolve to a chosen provider without the caller naming it. The **consumer blanket
-impl** says that any context which implements the provider trait *for itself* automatically gets the
-consumer trait, forwarding `context.area()` to `Context::area(self)`. The **provider blanket impl**
-says that any provider which delegates the component inherits the provider trait from whatever it
-delegates to, looked up through [`DelegateComponent`](../reference/traits/delegate_component.md).
+Generated blanket impls connect the two traits through the context's wiring table, so that
+`context.area()` resolves to a chosen provider without the caller naming it. A concrete context picks
+one provider per component in a type-level table whose entry for `AreaCalculatorComponent` names the
+chosen provider; [`delegate_components!`](../reference/macros/delegate_components.md) writes that
+table, as impls of [`DelegateComponent`](../reference/traits/delegate_component.md). Selecting a
+different provider in the table is the only change needed to swap the behavior; no caller is touched.
 
-Wiring is what supplies that delegation. A concrete context picks one provider per component by
-becoming a type-level table whose entry for `AreaCalculatorComponent` names the chosen provider;
-[`delegate_components!`](../reference/macros/delegate_components.md) writes that table. The two
-blanket impls then chain through it: `context.area()` resolves through the consumer impl to the
-context implementing the provider trait for itself, which resolves through the provider impl to the
-table entry, landing on the selected provider's `area`. Selecting a different provider in the table
-is the only change needed to swap the behavior; no caller is touched.
-
-The marker [`IsProviderFor`](../reference/traits/is_provider_for.md) rides along on the provider
-trait as a supertrait, capturing each provider's dependencies so that a missing one surfaces as a
-readable compiler error rather than a bare "trait not implemented". It is wiring's bookkeeping, not
-something a provider author writes; it is generated for them.
+[Type-level tables](type-level-tables.md) explains how that table works and traces the call through
+the generated impls. Every provider trait also carries the checking supertrait
+[`IsProviderFor`](../reference/traits/is_provider_for.md), generated for each provider so that a
+missing dependency surfaces as a readable error; [check traits](check-traits.md) explains it.
 
 ## In practice
 
@@ -145,7 +137,8 @@ implementation is ever needed and no wiring is wanted.
 The connective tissue is documented in the traits and provider sections.
 [`DelegateComponent`](../reference/traits/delegate_component.md) is the type-level table the
 provider blanket impl reads, written by
-[`delegate_components!`](../reference/macros/delegate_components.md);
+[`delegate_components!`](../reference/macros/delegate_components.md) and explained in
+[type-level tables](type-level-tables.md);
 [`IsProviderFor`](../reference/traits/is_provider_for.md) is the dependency-tracking marker on the
 provider trait; and [`UseContext`](../reference/providers/use_context.md) is the provider that
 closes the loop back to the consumer side. For the dependency-injection idea that providers express
