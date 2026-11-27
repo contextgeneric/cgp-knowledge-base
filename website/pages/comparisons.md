@@ -87,7 +87,7 @@ the project's analysis or attribute them to the [RustLab transcript](../blog/rus
 never citing the draft, and *Traits without coherence* states the draft's reading of Cairo as the
 project's analysis too: the Rust proposals page states the context-as-dictionary
 framing, and the single-context limits as the project's analysis, and attributes to the transcript
-what the transcript makes; the algebraic-effects page keeps the coeffects pointer as a pointer. Both
+what the transcript makes; the algebraic-effects page states the coeffect reading as the project's analysis. Both
 pages gain a citation when the incoherent-Rust post publishes.
 
 **The pages' CGP code differs from the internal documents' in two places,** so a later
