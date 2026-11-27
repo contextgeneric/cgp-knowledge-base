@@ -1,17 +1,18 @@
-# Using an incoherent, dictionary-passing style Rust today
+# Trying Incoherent Rust today with Context-Generic Programming
 
-An unpublished post of about 9,300 words reading CGP against the Rust language-design discussion of
-dictionary-passing style, incoherent traits, and contexts and capabilities, and arguing that CGP is a
-working implementation strategy for a substantial fragment of those designs, on stable Rust today at a
-stated cost.
+An unpublished post of about 9,500 words reading CGP against the Rust language-design discussion of
+dictionary-passing style, incoherent traits, and contexts and capabilities, and arguing that CGP lets a
+substantial fragment of those designs be tried on stable Rust today, at a stated cost, while a compiler
+with explicit trait proofs would implement them directly.
 
 - **URL**: none; the post is not published
 - **Source**: `blog/2026-11-25-incoherent-rust-today.md` on the `incoherent-rust` branch of the
   [website repository](https://github.com/contextgeneric/contextgeneric.dev), not on `main`
 - **Date in filename**: 2026-11-25, set when the author approved the first revision; the draft's file
   was dated 2026-03-30
-- **Author's note**: after the excerpt, a note says the author drafted the post in April as a quick response
-  to Boxy's and Nadrieril's March posts, held it for time and for the v0.8.0 work, and revised it only slightly
+- **Author's note**: after the excerpt, a note says the author drafted the post in April after Boxy's and
+  Nadrieril's March posts, held it for time and for the v0.8.0 work, and revised it before publication to
+  follow the discussion since
 - **Status**: Draft
 - **Publication**: after the documents it links, *Rust's own proposals* revised and a new *Traits
   without coherence* comparison, are published
@@ -33,12 +34,12 @@ Five movements, long because each is taken at the precision its audience expects
 
 - **The discussion it joins**, as the author's own reading of public material, with the caveat that
   the author may be missing context: Nadrieril's posts on explicit trait proofs and on traits carrying
-  values, Boxy's *An Incoherent Rust*, and Tyler Mandry's context-and-capabilities work, read as one
-  conversation with two separable goals, formalizing the trait system and building features on it,
-  which has since become the types team's Dictionary Passing Style Experiment and a line of work on
-  cyclic trait impls. The post coins **TIR** (a traitless intermediate
-  representation) and **Incoherent Rust** (the envisioned language), and analyzes the goals
-  separately so one's feasibility does not decide the other.
+  values, Boxy's *An Incoherent Rust*, and Tyler Mandry's context-and-capabilities work, each credited for
+  its own contribution, read as three lines of work analyzed separately so one's feasibility does not decide
+  another: the types team's Dictionary Passing Style Experiment in the compiler, Nadrieril's formal
+  specification with **PolyMiniRust** as its target beside the accepted executable-specification goal, and
+  the features explicit proofs would enable, with the work on cyclic trait impls. The post coins
+  **Incoherent Rust** for the envisioned language.
 - **A CGP primer for compiler-team readers:** no analogies or progressive disclosure, straight to
   provider traits with an explicit context parameter. It separates the two levels of coherence bypass
   (overlap through the provider-trait indirection, orphans by moving the target into a parameter) and
@@ -56,13 +57,18 @@ Five movements, long because each is taken at the precision its audience expects
   inheritance. Centralized bindings may be a virtue, being easier to reason about, but are conceded as
   a restriction.
 - **What CGP adds and the ideas it suggests:** named impls as first-class types and explicit context
-  types, then incoherent functions, zero-arity traits, and abstract types as ideas for Incoherent Rust;
+  types, set against the author's own labelled sketches of how the proposals might extend, then
+  incoherent functions and abstract types as ideas for Incoherent Rust; zero-arity traits, written with
+  Nadrieril's `#[selfless]` attribute, follow the capabilities section;
   a related-work paragraph that links the *Traits without coherence* comparison, with lessons drawn
   from Haskell, Cairo, Scala, modular implicits, and Boxy's sketch; and a conclusion split into what CGP
   solves, partially solves, and does not solve.
 
-**The conclusion's close:** if these features land, parts of the CGP library become unnecessary while
-its patterns stay valuable, and CGP never aimed to be a framework developers depend on indefinitely.
+**The conclusion's close:** CGP is a testing ground for Incoherent Rust, not the compiler's mechanism; if
+these features land, parts of the CGP library become unnecessary while its patterns stay valuable. The
+author would like to work with the Rust project so Incoherent Rust supports CGP's features, would
+experiment with desugaring CGP into explicit trait proofs if nightly exposes them, and ends by thanking
+the authors whose posts the discussion rests on.
 
 ## How it relates to the knowledge base
 

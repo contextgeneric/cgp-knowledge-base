@@ -79,10 +79,10 @@ status is one of the section's [status words](../README.md#status-words).
 named**, so the catalog inventories all of CGP's writing; a draft on a feature branch is invisible to
 anyone reading `main`.
 
-- [Using an incoherent, dictionary-passing style Rust today](incoherent-rust-today.md): on the
-  `incoherent-rust` branch, dated 2026-11-25, *draft*. About 9,300 words reading CGP against the
+- [Trying Incoherent Rust today with Context-Generic Programming](incoherent-rust-today.md): on the
+  `incoherent-rust` branch, dated 2026-11-25, *draft*. About 9,500 words reading CGP against the
   dictionary-passing, incoherent-traits, and context-and-capabilities discussion, and arguing that CGP
-  implements a fragment of it on stable Rust today. The only post aimed at the language-design
+  lets a fragment of it be tried on stable Rust today. The only post aimed at the language-design
   reader, and the only one whose value decays with time.
 
 The `rustlab-presentation` branch carries the RustLab transcript's slide assets rather than a post;

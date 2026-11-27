@@ -285,6 +285,8 @@ have not been checked again.
 | [Dictionary Passing Style Experiment](https://github.com/rust-lang/goals/issues/630) | the types-team goal and its status | 2026-11-26, read |
 | [When can Traits Depend on Themselves?](https://nadrieril.github.io/blog/2026/05/14/when-can-traits-depend-on-themselves.html) and [Cyclic Trait Impls](https://smallcultfollowing.com/babysteps/series/cyclic-trait-impls/) | the work on which cyclic impls are sound | 2026-11-26, read |
 | [Context and capabilities](https://tmandry.gitlab.io/blog/posts/2021-12-21-context-capabilities/) | the language-design conversation | 2026-09-19, link resolved |
+| [A Vision for a Rust Formal Specification](https://nadrieril.github.io/blog/2026/06/16/formal-spec-vision.html) and the [executable-specification goal](https://goals.rust-lang.org/2026/executable-spec.html) | the specification work and PolyMiniRust | 2026-11-27, read |
+| [Capabilities using Plain Traits](https://nadrieril.github.io/blog/2026/06/07/capabilities-with-plain-traits.html) | selfless traits, the shape of CGP's zero-arity traits | 2026-11-27, read |
 | [cgp-skills](https://github.com/contextgeneric/cgp-skills) | the agent skill exists and is published | 2026-09-19, link resolved |
 | [Alternative blanket implementations](https://www.greyblake.com/blog/alternative-blanket-implementations-for-single-rust-trait/) | developers hand-roll CGP's marker-struct pattern | 2026-09-19, link resolved |
 | [Rust traits and dependency injection](https://jmmv.dev/2022/04/rust-traits-and-dependency-injection.html) | trait-based injection leaks internal types into a public API | 2026-09-19, link resolved |

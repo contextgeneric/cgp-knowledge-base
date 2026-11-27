@@ -134,7 +134,13 @@ The account has since become project work. The types team's 2026 goal, *Dictiona
 Experiment*, has Nadrieril as its contact and a project repository whose reading list gives Boxy's
 post, below, as its entry on incoherence; its update of 2026-10-29 reports no progress
 ([goal #630](https://github.com/rust-lang/goals/issues/630);
-[project-dictionary-passing](https://github.com/rust-lang/project-dictionary-passing)). Two later
+[project-dictionary-passing](https://github.com/rust-lang/project-dictionary-passing)). Nadrieril's
+*A Vision for a Rust Formal Specification* (June 2026) builds explicit trait proofs into a planned
+specification whose target, *PolyMiniRust*, is MiniRust extended with generics and trait proofs; the
+project's accepted *End-to-End Executable Rust Specification* goal builds on a-mir-formality and MiniRust
+instead, and treats dictionary passing as a separate idea
+([Nadrieril, *Formal Specification*](https://nadrieril.github.io/blog/2026/06/16/formal-spec-vision.html);
+[executable specification](https://goals.rust-lang.org/2026/executable-spec.html)). Two later
 lines of writing ask which cycles between impls are sound. Nadrieril's *When can Traits Depend on
 Themselves?* (May 2026) uses explicit proofs to look for a criterion that rejects cycles proving false
 facts, and does not yet give a finished one. Niko Matsakis's posts on cyclic trait impls (August and
@@ -530,6 +536,9 @@ greeting instead of printing it.
 - [Dictionary Passing Style Experiment, goal #630](https://github.com/rust-lang/goals/issues/630) and
   [rust-lang/project-dictionary-passing](https://github.com/rust-lang/project-dictionary-passing):
   the types-team goal, its contact, its reading list, and its update of 2026-10-29.
+- [Nadrieril, *A Vision for a Rust Formal Specification*](https://nadrieril.github.io/blog/2026/06/16/formal-spec-vision.html)
+  and the [End-to-End Executable Rust Specification goal](https://goals.rust-lang.org/2026/executable-spec.html):
+  PolyMiniRust as a specification's target, and the accepted goal built on a-mir-formality and MiniRust.
 - [Nadrieril, *When can Traits Depend on Themselves?*](https://nadrieril.github.io/blog/2026/05/14/when-can-traits-depend-on-themselves.html)
   and [Niko Matsakis, *Cyclic Trait Impls*](https://smallcultfollowing.com/babysteps/series/cyclic-trait-impls/):
   the search for a criterion that rejects unsound cycles, perfect derive as the motivating case, and

@@ -950,8 +950,8 @@ it stale.
   defaults, verified cargo-cgp diagnostics, documentation and optional agent support, migration,
   code-verification coverage, and the remaining publication steps.
 - [incoherent-rust-today.md](website/blog/incoherent-rust-today.md) — an unpublished draft on the
-  `incoherent-rust` branch reading CGP against the dictionary-passing and incoherent-traits discussion,
-  and what it needs before it can be published.
+  `incoherent-rust` branch reading CGP against the dictionary-passing and incoherent-traits discussion as
+  a place to try those designs today, and what it needs before it can be published.
 
 ### `website/projects/`
 
