@@ -36,6 +36,9 @@ the constructs, each linking down to the per-construct references for the detail
   the difference and a reader who generalizes from one loses the meaning of "context".
 - [Consumer and provider traits](consumer-and-provider-traits.md): the trait duality at the heart of
   CGP and how it sidesteps coherence.
+- [Type-level tables](type-level-tables.md): a trait with an associated type as a compile-time map,
+  how a call reaches its provider through the wiring table, and the per-type, path, and namespace
+  lookups CGP builds on it.
 - [Impl-side dependencies](impl-side-dependencies.md): dependency injection through the `where`
   clause of blanket impls.
 - [Implicit arguments](implicit-arguments.md): writing providers as ordinary functions whose
