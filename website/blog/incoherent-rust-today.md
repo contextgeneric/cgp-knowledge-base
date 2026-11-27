@@ -1,6 +1,6 @@
 # Trying Incoherent Rust today with Context-Generic Programming
 
-An unpublished post of about 9,500 words reading CGP against the Rust language-design discussion of
+An unpublished post of about 9,600 words reading CGP against the Rust language-design discussion of
 dictionary-passing style, incoherent traits, and contexts and capabilities, and arguing that CGP lets a
 substantial fragment of those designs be tried on stable Rust today, at a stated cost, while a compiler
 with explicit trait proofs would implement them directly.

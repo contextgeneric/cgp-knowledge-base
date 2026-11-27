@@ -80,7 +80,7 @@ named**, so the catalog inventories all of CGP's writing; a draft on a feature b
 anyone reading `main`.
 
 - [Trying Incoherent Rust today with Context-Generic Programming](incoherent-rust-today.md): on the
-  `incoherent-rust` branch, dated 2026-11-25, *draft*. About 9,500 words reading CGP against the
+  `incoherent-rust` branch, dated 2026-11-25, *draft*. About 9,600 words reading CGP against the
   dictionary-passing, incoherent-traits, and context-and-capabilities discussion, and arguing that CGP
   lets a fragment of it be tried on stable Rust today. The only post aimed at the language-design
   reader, and the only one whose value decays with time.
