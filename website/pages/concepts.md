@@ -68,8 +68,9 @@ The pages carry qualifications that a shortening revision is likely to drop:
   unbound paths.
 - **Checking your wiring:** ordinary trait assertions, component checks, and diagnostic rewriting kept
   distinct; the `IsProviderFor` section, the site's one explanation of the marker, from the provider
-  macros' bounds through the provider trait's supertrait to the entry `delegate_components!` writes; one broken context followed unchecked, checked, and checked through the toolchain; its
-  quoted output is abbreviated.
+  macros' bounds through the provider trait's supertrait to the entry `delegate_components!` writes;
+  one broken context followed unchecked, checked, and checked through the toolchain; its quoted
+  output is abbreviated.
 - **Implicit arguments:** matching `HasField` implementations; cloning against borrowing, named
   getters, and wireable field selection.
 - **Modular error handling:** reusable failure reporting against context-selected error
@@ -84,12 +85,13 @@ The pages carry qualifications that a shortening revision is likely to drop:
   for a bound key overlaps it with `E0119`, the
   [override-conflict](../../cgp/errors/wiring/namespace-override-conflict.md) class; only an unbound
   path is open to a context, which is why the page teaches namespace design as *what varies?*.
-- **Modularity Hierarchy:** a hybrid of five tier sections with illustrative code and a
-  decision-guide tail that leads with a rule of thumb and uses tables, each alternatives row conceding
-  a case where the other tool wins. Every tier obeys coherence, one context can still justify
-  providers, and generic context instantiations stay distinct types. It is the site's only public
-  home for [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp)'s boundary
-  material, which the reference's *When to use it* sections point at.
+- **Modularity Hierarchy:** tier 4's parameter cannot be retrofitted onto an existing trait such as
+  `serde::Serialize` without a breaking change; a hybrid of five tier sections with illustrative
+  code and a decision-guide tail that leads with a rule of thumb and uses tables, each alternatives
+  row conceding a case where the other tool wins. Every tier obeys coherence, one context can still
+  justify providers, and generic context instantiations stay distinct types. It is the site's only
+  public home for [message.md](../../communication-strategy/message.md#when-not-to-reach-for-cgp)'s
+  boundary material, which the reference's *When to use it* sections point at.
 - **Monadic handlers:** the direct-composition mismatch limited to `Computer`; the outer error
   propagation fallible handlers already supply; the continuation cases for a nested result
   transformer.
@@ -106,7 +108,9 @@ The pages carry qualifications that a shortening revision is likely to drop:
   payload types; the single-payload derive restriction.
 - **Handlers:** the interfaces compared in a table; promotion's error and borrowing requirements;
   sequential pipelines; the separate need for `Send` futures.
-- **Higher-order providers:** static provider selection against runtime computation; aliases do not
+- **Higher-order providers:** a provider carried by a value's type and bound by a `#[cgp_fn]`
+  through `#[use_provider]`, whose generated trait is not a provider; static provider selection
+  against runtime computation; aliases do not
   verify a composition's requirements; `UseContext` traced from a collection trait to its element
   trait; the switch from shape contexts to an application context marked; an inner request must not
   route back to the same wrapper.

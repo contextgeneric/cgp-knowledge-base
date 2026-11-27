@@ -63,7 +63,9 @@ receives a value of exactly the declared type. The default rule is that an owned
 as `f64` or `String`, reads the field by reference and appends `.clone()`, so the body gets an owned
 value while the context keeps its field. A reference argument instead reads a field that satisfies
 its bound: a `&str` argument reads any field that implements `AsRef<str>`, such as `String`, with
-`.as_ref()`, letting the body borrow without forcing the context to store a `&str`.
+`.as_ref()`, letting the body borrow without forcing the context to store a `&str`. A plain `&T`
+argument borrows a field of type `T` directly, which includes a field whose type is itself a
+reference: a field of type `&'a Config` is read as `&&'a Config`.
 
 These same rules govern getter access in
 [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md), so an author who learns them once

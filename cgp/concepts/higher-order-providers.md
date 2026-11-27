@@ -115,6 +115,26 @@ context wires for rectangles. Writing `ScaledArea<RectangleArea>` instead fixes 
 statically and bypasses the context's wiring. The
 [`UseContext`](../reference/providers/use_context.md) reference develops this example in full.
 
+## A provider carried by a value
+
+A provider can be a type parameter of a value rather than of another provider. A
+`Measured<Calculator, Shape>` struct holding a shape and a `PhantomData<Calculator>` fixes its own
+area calculation, and a [`#[cgp_fn]`](../reference/macros/cgp_fn.md) function binds and calls the
+provider the same way a higher-order provider does:
+
+```rust
+#[cgp_fn]
+#[use_provider(Calculator: ShapeAreaCalculator<Shape>)]
+pub fn measured_area<Calculator, Shape>(&self, measured: &Measured<Calculator, Shape>) -> f64 {
+    Calculator::shape_area(self, &measured.shape)
+}
+```
+
+The trait `#[cgp_fn]` generates is not a provider, but `#[use_provider]` completes the bound to
+`Calculator: ShapeAreaCalculator<Self, Shape>` exactly as it does on `#[cgp_impl]`. Any context can
+then call `measured_area` and get the calculation the value names, regardless of its own wiring, as
+long as it meets the provider's requirements. Each fixed choice adds a type parameter to the value.
+
 ## Other generic providers
 
 A provider that merely has generic parameters is not a higher-order provider; it becomes one only

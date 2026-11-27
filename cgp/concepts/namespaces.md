@@ -56,10 +56,11 @@ the path eventually lands. Because lookups are paths rather than flat keys, a pa
 entire subtree can be rerouted at once (`@cgp.core.error => @app` redirects everything under that
 prefix), and a context can bind a path the namespace routes to but leaves open. It cannot bind a key
 the namespace already answers: that overlaps the namespace's forwarding impl and fails with `E0119`.
-Under the hood every `@` path desugars into a [`PathCons`](../reference/types/path_cons.md)
-type-level list built by the [`Path!`](../reference/macros/path.md) macro, with lowercase dotted
-segments becoming `Symbol` string literals and capitalized segments becoming named types; the `=>`
-entries become `RedirectLookup` impls while plain `:` entries map a key straight to a provider as in
+[Type-level tables](type-level-tables.md) explains how a path is looked up as one key. Under the
+hood every `@` path desugars into a [`PathCons`](../reference/types/path_cons.md) type-level list
+built by the [`Path!`](../reference/macros/path.md) macro, with lowercase dotted segments becoming
+`Symbol` string literals and capitalized segments becoming named types; the `=>` entries become
+`RedirectLookup` impls while plain `:` entries map a key straight to a provider as in
 `delegate_components!`.
 
 ## Per-component dispatch with `open`

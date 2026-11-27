@@ -294,7 +294,8 @@ and [money-transfer API](../../examples/money-transfer-api.md) examples build on
 reach for whenever a foreign type must be treated differently per application, though the *bulk* of
 CGP code still sits on tier 3's application shape, as [choosing a tier](#choosing-a-tier) says; the
 per-type dispatch it relies on is the subject of [dispatching](dispatching.md), wired through the
-[`open` statement](../reference/macros/delegate_components.md) over [namespaces](namespaces.md).
+[`open` statement](../reference/macros/delegate_components.md) over [namespaces](namespaces.md),
+whose path keys [type-level tables](type-level-tables.md) explains.
 
 ## Tier 5: an inner provider chosen locally
 

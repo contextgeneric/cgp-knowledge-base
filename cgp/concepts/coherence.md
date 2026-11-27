@@ -151,10 +151,10 @@ what is wanted is many independent local scopes, each internally consistent.
 The wiring step is what creates those scopes. A concrete context selects exactly one provider per
 component by becoming a type-level lookup table, written with
 [`delegate_components!`](../reference/macros/delegate_components.md), whose entry for a component
-names the provider to use. Within that one context the choice is unambiguous, so
-`context.serialize(...)` resolves coherently; a different context can wire the same component to a
-different provider and resolve differently, with no conflict between them because the resolution is
-keyed on the context type.
+names the provider to use, a lookup [type-level tables](type-level-tables.md) explains. Within that
+one context the choice is unambiguous, so `context.serialize(...)` resolves coherently; a different
+context can wire the same component to a different provider and resolve differently, with no
+conflict between them because the resolution is keyed on the context type.
 
 **How many such scopes are available depends on who owns the wired type, and this is the part most
 easily misread.** A scope is one context type, so the number of independent choices a program can
