@@ -5,7 +5,9 @@ CGP work this way* rather than *how do I write it*.
 
 - **URL:** <https://contextgeneric.dev/docs/concepts/>
 - **Source:** [docs/concepts/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/concepts)
-- **Status:** Current: the index and all nineteen pages are written
+- **Status:** Current: the index and all nineteen pages are written; *Type-level tables* and the
+  revisions that hand it the table lookup are on the website's `incoherent-rust` branch and reach
+  `main` with the incoherent-Rust post
 - **How it was made:** written by an agent from [cgp/concepts/](../../cgp/concepts/README.md); level
   one of the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
 
