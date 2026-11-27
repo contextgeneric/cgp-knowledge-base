@@ -160,9 +160,9 @@ an advanced reader continues into the machinery.
   issues, omitted when there are none and never softened.
 
 The page closes with three short lists: **Related constructs**, each with a phrase saying how it
-relates; **The ideas behind it**, two or three Concepts pages and never more, each with a phrase saying
-what it adds, as a route rather than a substitute for the page's own summary; and **Source**, linking
-the implementation on GitHub.
+relates; **The ideas behind it**, the Concepts pages that explain the construct, each with a phrase
+saying what it adds, as a route rather than a substitute for the page's own summary; and **Source**,
+linking the implementation on GitHub.
 
 Two groups vary the descent:
 

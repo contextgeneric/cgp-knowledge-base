@@ -159,19 +159,24 @@ around *what is actually generated, and what does it cost?*, and the site's answ
 in order:
 
 - the **two traits** one definition produces, and why the split makes the overlap legal;
-- the **wiring table** as a compile-time lookup, described with the settings-map analogy before any
-  trait name;
-- **what a call resolves to**, traced once end to end;
-- the **plain Rust** a small example expands into, ideally from
+- the **plain Rust** of that trait pair, ideally from
   [`cargo cgp expand`](../../cgp/reference/cargo-cgp.md) so the reader can reproduce it;
+- the **wiring table** as a compile-time lookup, described with the settings-map analogy, then named as
+  a lookup through `DelegateComponent`, with a link to *Type-level tables* for how a call resolves;
 - **why none of it costs anything at runtime**: no vtable, no container, nothing in the binary for an
   unused provider;
 - briefly, that **wiring is lazy**, which is why a check exists.
 
 It is built from [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md),
 [impl-side dependencies](../../cgp/concepts/impl-side-dependencies.md), and
-[check traits](../../cgp/concepts/check-traits.md). It is the one page in the tier that may name
-`DelegateComponent` and `IsProviderFor`, late, as the machinery behind a model that has already landed.
+[check traits](../../cgp/concepts/check-traits.md).
+
+**Type-level tables owns the lookup.** It is the one page in the tier that explains how a call reaches
+its provider through the table, and the one that explains `DelegateComponent`, after a plain
+`HasEntry<Key>` table has introduced the model; *Consumer and provider traits* names the trait only to
+link it. Its source is [type-level tables](../../cgp/concepts/type-level-tables.md). *Checking your
+wiring* is the one page that explains `IsProviderFor`, where it shows how a check reaches a missing
+dependency; *Type-level tables* names that requirement once and links it.
 
 ### When to use CGP
 
@@ -213,7 +218,8 @@ sidebar orders the pages as a reader meets the ideas rather than as the catalog 
 - **No first-person narration**; link the [transcript](../blog/rustlab-2025-coherence.md) or a blog
   post where the argument wants a person behind it.
 - **No unmotivated mechanism**: each piece of machinery answers a question the page has already made
-  the reader ask, so `IsProviderFor` is earned on *How CGP works* and not on *Why CGP exists*.
+  the reader ask, so `DelegateComponent` is earned on *Type-level tables*, `IsProviderFor` on *Checking
+  your wiring*, and neither on *Why CGP exists*.
 - **No claim without its cost.**
 
 ## Checking a draft
