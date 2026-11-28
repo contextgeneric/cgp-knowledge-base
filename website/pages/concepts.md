@@ -62,8 +62,8 @@ The pages carry qualifications that a shortening revision is likely to drop:
 - **Type-level tables:** type-level lookup in plain Rust, with no CGP outside its opening and each
   section's closing sentence. Each lookup returns a `&'static str` asserted against `type_name::<…>()`, never a
   literal, since `type_name` returns a full path, and each has a value-level `HashMap` counterpart,
-  a global `static`, compiled beside it. The cross-crate `E0210` and the `E0275` cycle are stated in prose, from the
-  campaign's two-crate probe, because `example-code` is one crate. Each section closes by naming
+  a global `static`, compiled beside it. The cross-crate `E0210` is stated in prose, from the campaign's two-crate
+  probe, because `example-code` is one crate; the `E0275` cycle is shown and has a compile-fail fixture. Each section closes by naming
   the CGP construct built on its operation (`DelegateComponent`, its common mistakes, `UseDelegate`, the
   provider blanket impl, `RedirectLookup`, and the namespace entry) and linking its page.
 - **Abstract types:** shared type selection against provider compatibility, and when a type
