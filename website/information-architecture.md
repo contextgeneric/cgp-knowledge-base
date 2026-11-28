@@ -97,8 +97,8 @@ Every page below is published unless marked **new**, and each section's record u
   three essays once planned are now pages: *Why CGP exists* is *Bypassing coherence*, *How CGP works*
   is *Consumer and provider traits* with *Impl-side dependencies*, and *When to use CGP* is *Modularity
   Hierarchy*.
-  *Type-level tables*, **new**, sits after *Consumer and provider traits* as the one page that explains
-  how a call reaches its provider through the wiring table.
+  *Type-level tables*, **new**, sits after *Consumer and provider traits* as the plain-Rust account of
+  type-level lookup, the mechanism behind the wiring table.
 - **Tutorials**, in the order a reader meets them:
   - *Hello World*: first contact, one durable idea.
   - *Swap a Storage Backend per Application*: the applied tutorial, second on purpose. It builds a
