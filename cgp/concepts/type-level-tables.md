@@ -145,8 +145,9 @@ The orphan rule decides which crate may write an entry, because an entry is an i
   `impl<Table> HasEntry<MyKey> for Table` outside the crate that defines `HasEntry`, which fails with
   ``E0210: type parameter `Table` must be covered by another type when it appears before the first
   local type (`MyKey`)``.
-- **Key side:** turning the trait around, `trait InTable<Table> { type Value; }`, lets the key's crate
-  write `impl<Table> InTable<Table> for MyKey`, one entry every table reads.
+- **Key side:** turning the trait around, `trait InTable<Table> { type Value; }` defined beside
+  `HasEntry`, lets the key's crate write `impl<Table> InTable<Table> for MyKey`, one entry every table
+  reads, since `MyKey` is local and comes first.
 
 ## The tables in CGP
 
@@ -163,8 +164,9 @@ CGP's wiring is these pieces under other names:
   [aggregate provider](aggregate-providers.md) is the case where the value is another table asked
   for the same key.
 - **`Redirect<Table, Prefix>`** is [`RedirectLookup`](../reference/providers/redirect_lookup.md),
-  behind `open` and [namespaces](namespaces.md); its keys are [`PathCons`](../reference/types/path_cons.md)
-  paths with a generic tail, so a shorter path covers every longer one beneath it.
+  behind `open` and [namespaces](namespaces.md); its table's entries are keyed by
+  [`PathCons`](../reference/types/path_cons.md) paths that end in a generic tail, so a shorter path
+  covers every longer one beneath it.
 - **`InTable<Table>`** is the shape of a namespace entry, which `#[prefix]` writes from the
   component's side.
 
