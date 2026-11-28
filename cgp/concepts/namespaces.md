@@ -56,7 +56,10 @@ the path eventually lands. Because lookups are paths rather than flat keys, a pa
 entire subtree can be rerouted at once (`@cgp.core.error => @app` redirects everything under that
 prefix), and a context can bind a path the namespace routes to but leaves open. It cannot bind a key
 the namespace already answers: that overlaps the namespace's forwarding impl and fails with `E0119`.
-[Type-level tables](type-level-tables.md) explains how a path is looked up as one key. Under the
+`RedirectLookup` makes one `DelegateComponent` query on the whole path, after appending the
+component's type parameters, and a path entry is emitted with a generic tail, so a key matches every
+longer path beneath it: a shorter key and a longer key under it overlap with `E0119`, since the table
+has no rule that the most specific entry wins. Under the
 hood every `@` path desugars into a [`PathCons`](../reference/types/path_cons.md) type-level list
 built by the [`Path!`](../reference/macros/path.md) macro, with lowercase dotted segments becoming
 `Symbol` string literals and capitalized segments becoming named types; the `=>` entries become
@@ -125,7 +128,16 @@ own [`HasErrorType`](../reference/components/has_error_type.md), for instance, c
 under the `cgp.core.error` prefix so any context joining that namespace inherits the standard error
 wiring. A context joins a namespace inside
 [`delegate_components!`](../reference/macros/delegate_components.md) with a `namespace` header line,
-which forwards every key the namespace answers through the namespace:
+which forwards every key the namespace answers through the namespace.
+
+A namespace is a table written from the key's side. A `#[prefix]` registration, like a
+[`cgp_namespace!`](../reference/macros/cgp_namespace.md) entry, emits `impl Namespace<Table> for Key`,
+the reverse of `impl DelegateComponent<Key> for Table`, and leaves the table generic, so one entry
+serves every context that joins. Because the impl is for the component marker, the component's crate
+can register its route into any namespace. A per-type default registered with
+[`#[default_impl]`](../reference/attributes/default_impl.md) follows the orphan rule more narrowly: the
+crate must own the namespace trait, or a local type must stand ahead of the table parameter, such as
+the key or a component in the namespace path; a path key is never local. A context then joins:
 
 ```rust
 delegate_components! {

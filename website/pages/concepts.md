@@ -87,7 +87,11 @@ The pages carry qualifications that a shortening revision is likely to drop:
   checks. Joining a namespace generates a forwarding impl for every key it answers, so a direct entry
   for a bound key overlaps it with `E0119`, the
   [override-conflict](../../cgp/errors/wiring/namespace-override-conflict.md) class; only an unbound
-  path is open to a context, which is why the page teaches namespace design as *what varies?*.
+  path is open to a context, which is why the page teaches namespace design as *what varies?*. Its
+prefix examples are `#[prefix(@app in AppNamespace)]`, whose route the macro completes with the
+marker; *Registering from the component's side* shows a namespace as a table written from the key's
+side, checked with `cargo cgp expand`; and *Presets and per-type dispatch* shows a shorter path key
+overlapping a longer one with `E0119`.
 - **Modularity Hierarchy:** tier 4's parameter cannot be retrofitted onto an existing trait such as
   `serde::Serialize` without a breaking change; a hybrid of five tier sections with illustrative
   code and a decision-guide tail that leads with a rule of thumb and uses tables, each alternatives
