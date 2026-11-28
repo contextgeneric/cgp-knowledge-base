@@ -69,7 +69,8 @@ The marker also travels with the wiring. Every provider trait requires it as a s
 [`delegate_components!`](../reference/macros/delegate_components.md) writes an `IsProviderFor` impl
 beside each table entry that forwards to the chosen provider's, which the generated impl that reads
 the table requires. That is how a check on a context reaches the provider its entry names;
-[type-level tables](type-level-tables.md) shows the requirement in the lookup's blanket impl.
+[consumer and provider traits](consumer-and-provider-traits.md) describes the requirement in the
+lookup's blanket impl.
 
 ## Writing checks with the macros
 

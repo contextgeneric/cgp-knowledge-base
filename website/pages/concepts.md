@@ -52,11 +52,12 @@ The pages carry qualifications that a shortening revision is likely to drop:
   anchor. Independent application choices are deferred to *Modularity Hierarchy*.
 - **Consumer and provider traits:** context-style `Self` inside `#[cgp_impl]` against Rust's
   ordinary provider-side `Self`, with the exception for a provider's own associated types and
-  constants; multi-item components; the call through the wiring table, named as a lookup through
-  `DelegateComponent` and linked to *Type-level tables*, which holds the trace; simplified providers
-  that keep the rejected blanket implementations' context bounds; `fetch_profile_picture` as a generic
-  caller bounded only by the consumer trait; that direct and wired implementations of one consumer
-  trait cannot coexist for a context; and the trait pair's omitted checking bound, linked to
+  constants; multi-item components; the call traced through both generated blanket impls and the
+  `DelegateComponent` entry, with the `IsProviderFor` bound named and linked to *Checking your
+  wiring*; simplified providers that keep the rejected blanket implementations' context bounds;
+  `fetch_profile_picture` as a generic caller bounded only by the consumer trait; that direct and
+  wired implementations of one consumer trait cannot coexist for a context; and the trait pair's
+  omitted checking bound, linked to
   *Checking your wiring*.
 - **Type-level tables:** the one page that explains table lookup and `DelegateComponent`. It opens on
   a plain `HasEntry<Key>` table before naming CGP's trait, shows the provider blanket impl with its
