@@ -61,8 +61,8 @@ The pages carry qualifications that a shortening revision is likely to drop:
   *Checking your wiring*.
 - **Type-level tables:** type-level lookup in plain Rust, with no CGP outside its opening and its
   mapping section. Each lookup returns a `&'static str` asserted against `type_name::<…>()`, never a
-  literal, since `type_name` returns a full path, and each has a value-level `HashMap` counterpart
-  compiled beside it. The cross-crate `E0210` and the `E0275` cycle are stated in prose, from the
+  literal, since `type_name` returns a full path, and each has a value-level `HashMap` counterpart,
+  a global `static`, compiled beside it. The cross-crate `E0210` and the `E0275` cycle are stated in prose, from the
   campaign's two-crate probe, because `example-code` is one crate. The mapping section comes before
   *What it costs* and names `DelegateComponent`, the provider blanket impl, `UseDelegate`,
   `RedirectLookup`, and the namespace entry, linking the pages that explain each.

@@ -46,8 +46,9 @@ pub fn get_foo_value<Table: HasEntry<FooKey>>() -> &'static str {
 The bound `Table: HasEntry<FooKey>` reads an entry, and `Table::Value` names its value; the short form
 stands for `<Table as HasEntry<FooKey>>::Value` and is accepted because one bound in scope supplies a
 `Value`. `type_name` returns a full path, so a test compares with `type_name::<Bar>()`, not the
-literal `"Bar"`. The value-level counterpart is `table["FooKey"]` on a
-`HashMap<&'static str, &'static str>`.
+literal `"Bar"`. The value-level counterpart reads `table["FooKey"]` from a global
+`static MY_TABLE: LazyLock<HashMap<&'static str, &'static str>>`, since a type-level table is one per
+program; its functions take the table as an argument, mirroring the `Table` parameter.
 
 ## Duplicate and missing keys
 
@@ -107,8 +108,8 @@ where
 ```
 
 With an `OuterTable` whose entry for `InnerKey` is `Lookup<MyTable>`, `Forward<OuterTable, InnerKey>`
-answers `FooKey` with `type_name::<Bar>()`. The value-level counterpart is a map of maps,
-`outer[key_b][key_a]`.
+answers `FooKey` with `type_name::<Bar>()`. The value-level counterpart is a global map whose values
+are references to other global maps, read as `outer[key_b][key_a]`.
 
 ## Composite keys
 
@@ -133,7 +134,8 @@ where
 
 `Redirect<MyTable, FooKey>` answers `BarKey` with `type_name::<Baz>()`. A generic position matches every
 type there, so `impl<Key> HasEntry<(FooKey, Key)>` overlaps the `(FooKey, BarKey)` entry with
-`E0119`. The value-level counterpart is a `HashMap<(&'static str, &'static str), &'static str>`.
+`E0119`. The value-level counterpart is a second global
+`HashMap<(&'static str, &'static str), &'static str>`, since a `HashMap` has one key type.
 
 ## Entry ownership
 
