@@ -173,8 +173,8 @@ It is built from [consumer and provider traits](../../cgp/concepts/consumer-and-
 [check traits](../../cgp/concepts/check-traits.md).
 
 **Each layer of the lookup has one page.** *Type-level tables* explains type-level lookup in plain
-Rust, with a `HasEntry<Key>` table and the value-level code each step mirrors, and names CGP's traits
-only in one mapping section before its costs; its source is
+Rust, with a `HasEntry<Key>` table and the value-level code each step mirrors, and names CGP's constructs
+only in each section's closing link; its source is
 [type-level tables](../../cgp/concepts/type-level-tables.md). *Consumer and provider traits* traces a
 call through `DelegateComponent` and the generated blanket impls. *Checking your wiring* is the one
 page that explains `IsProviderFor`, where it shows how a check reaches a missing dependency; the trace

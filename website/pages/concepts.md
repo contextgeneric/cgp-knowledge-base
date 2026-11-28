@@ -59,13 +59,13 @@ The pages carry qualifications that a shortening revision is likely to drop:
   wired implementations of one consumer trait cannot coexist for a context; and the trait pair's
   omitted checking bound, linked to
   *Checking your wiring*.
-- **Type-level tables:** type-level lookup in plain Rust, with no CGP outside its opening and its
-  mapping section. Each lookup returns a `&'static str` asserted against `type_name::<…>()`, never a
+- **Type-level tables:** type-level lookup in plain Rust, with no CGP outside its opening and each
+  section's closing sentence. Each lookup returns a `&'static str` asserted against `type_name::<…>()`, never a
   literal, since `type_name` returns a full path, and each has a value-level `HashMap` counterpart,
   a global `static`, compiled beside it. The cross-crate `E0210` and the `E0275` cycle are stated in prose, from the
-  campaign's two-crate probe, because `example-code` is one crate. The mapping section comes before
-  *What it costs* and names `DelegateComponent`, the provider blanket impl, `UseDelegate`,
-  `RedirectLookup`, and the namespace entry, linking the pages that explain each.
+  campaign's two-crate probe, because `example-code` is one crate. Each section closes by naming
+  the CGP construct built on its operation (`DelegateComponent`, its common mistakes, `UseDelegate`, the
+  provider blanket impl, `RedirectLookup`, and the namespace entry) and linking its page.
 - **Abstract types:** shared type selection against provider compatibility, and when a type
   dependency must appear in the interface.
 - **Aggregate providers:** bundles checked against actual contexts; namespace customization needs
