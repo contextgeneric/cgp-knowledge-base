@@ -278,8 +278,8 @@ it stale.
 - [type-level-dsls.md](cgp/concepts/type-level-dsls.md) — encoding a small language as types and
   interpreting it at compile time.
 - [type-level-tables.md](cgp/concepts/type-level-tables.md) — a trait with an associated type as a
-  compile-time map, and the lookups CGP builds on it: the wiring table, per-type and path keys, tables
-  that point to tables, and namespaces written from the key's side.
+  compile-time map in plain Rust, beside the value-level code it mirrors, and the CGP traits each piece
+  corresponds to.
 
 ### `cgp/guides/`
 

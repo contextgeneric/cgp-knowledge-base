@@ -6,7 +6,7 @@ CGP work this way* rather than *how do I write it*.
 - **URL:** <https://contextgeneric.dev/docs/concepts/>
 - **Source:** [docs/concepts/](https://github.com/contextgeneric/contextgeneric.dev/tree/main/docs/concepts)
 - **Status:** Current: the index and all nineteen pages are written; *Type-level tables* and the
-  revisions that hand it the table lookup are on the website's `incoherent-rust` branch and reach
+  revisions around it are on the website's `incoherent-rust` branch and reach
   `main` with the incoherent-Rust post
 - **How it was made:** written by an agent from [cgp/concepts/](../../cgp/concepts/README.md); level
   one of the four in [ai-disclosure.md](../../communication-strategy/ai-disclosure.md)
@@ -59,12 +59,13 @@ The pages carry qualifications that a shortening revision is likely to drop:
   wired implementations of one consumer trait cannot coexist for a context; and the trait pair's
   omitted checking bound, linked to
   *Checking your wiring*.
-- **Type-level tables:** the one page that explains table lookup and `DelegateComponent`. It opens on
-  a plain `HasEntry<Key>` table before naming CGP's trait, shows the provider blanket impl with its
-  table bound alone, then states the `IsProviderFor` bound and links *Checking your wiring* for it.
-  `DelegateComponent` has no `IsProviderFor` bound; the requirement sits on the blanket impl. A
-  shorter path key and a longer key beneath it overlap with `E0119`, and the namespace listing comes
-  from `#[prefix(@app in AppNamespace)]`, checked with `cargo cgp expand`.
+- **Type-level tables:** type-level lookup in plain Rust, with no CGP outside its opening and its
+  mapping section. Each lookup returns a `&'static str` asserted against `type_name::<…>()`, never a
+  literal, since `type_name` returns a full path, and each has a value-level `HashMap` counterpart
+  compiled beside it. The cross-crate `E0210` and the `E0275` cycle are stated in prose, from the
+  campaign's two-crate probe, because `example-code` is one crate. The mapping section comes before
+  *What it costs* and names `DelegateComponent`, the provider blanket impl, `UseDelegate`,
+  `RedirectLookup`, and the namespace entry, linking the pages that explain each.
 - **Abstract types:** shared type selection against provider compatibility, and when a type
   dependency must appear in the interface.
 - **Aggregate providers:** bundles checked against actual contexts; namespace customization needs
@@ -168,9 +169,7 @@ Each page records which of CGP's three context shapes its code is in, since no s
   [consumer and provider traits](../../cgp/concepts/consumer-and-provider-traits.md),
   [coherence](../../cgp/concepts/coherence.md), and the
   [modularity hierarchy](../../cgp/concepts/modularity-hierarchy.md).
-- **Type-level tables:** a plain Rust table that is not a context, then the storage example's
-  **environmental, self-targeted** `App` for the call trace, and an **environmental,
-  parameter-targeted** `MyApp` measuring shapes for `UseDelegate` and `open`, each marked in prose.
+- **Type-level tables:** plain Rust tables that are not contexts, throughout.
 - **Bypassing coherence:** a **value context, self-targeted** retrofit, `CanEncode` wired onto
   `String` and `Vec<u8>`, never crossing into the other shapes, which it defers to *Modularity
   Hierarchy*, per the [*Why CGP exists* spec](../writing-guides/explanation.md#why-cgp-exists).

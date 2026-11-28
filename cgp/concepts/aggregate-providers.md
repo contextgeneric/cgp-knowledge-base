@@ -91,7 +91,7 @@ the real context at the end of the chain. The
 bundles deep still propagates back to the context where the component is finally checked, rather
 than vanishing at a bundle boundary. Layering bundles this way is how a base set of behaviors is
 extended or specialized without rewriting the base. [Type-level tables](type-level-tables.md)
-explains the lookups each step makes.
+shows the two-step lookup in plain Rust.
 
 ## Checking an aggregate as a context
 
